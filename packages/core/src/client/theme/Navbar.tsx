@@ -3,9 +3,13 @@ import { Link } from "./Link";
 import { Book, Globe, ChevronDown, Star } from "lucide-react";
 import { LitedocsConfig } from "../../node/config";
 import { ComponentRoute } from "../app";
-import { SearchDialog } from "./SearchDialog";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { VersionSwitcher } from "./VersionSwitcher";
 import { ThemeToggle } from "./ThemeToggle";
+
+const SearchDialog = React.lazy(() =>
+  import("./SearchDialog").then((m) => ({ default: m.SearchDialog })),
+);
 
 // SVG icon components
 const GithubIcon = () => (
@@ -40,11 +44,13 @@ export function Navbar({
   routes,
   allRoutes,
   currentLocale,
+  currentVersion,
 }: {
   config: LitedocsConfig;
   routes?: ComponentRoute[];
   allRoutes?: ComponentRoute[];
   currentLocale?: string;
+  currentVersion?: string;
 }) {
   const [stars, setStars] = useState<string | null>(null);
 
@@ -99,7 +105,20 @@ export function Navbar({
 
         {/* RIGHT SECTION */}
         <div className="navbar-right">
-          <SearchDialog routes={routes || []} />
+          <React.Suspense
+            fallback={<div className="navbar-search-placeholder" />}
+          >
+            <SearchDialog routes={routes || []} />
+          </React.Suspense>
+
+          {config.versions && currentVersion && allRoutes && (
+            <VersionSwitcher
+              versions={config.versions}
+              currentVersion={currentVersion}
+              currentLocale={currentLocale}
+              allRoutes={allRoutes}
+            />
+          )}
 
           {config.i18n && currentLocale && allRoutes && (
             <LanguageSwitcher
