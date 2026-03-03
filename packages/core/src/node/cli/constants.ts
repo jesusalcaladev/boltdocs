@@ -1,25 +1,4 @@
-import cac from "cac";
-import { resolveConfig } from "./config";
-import path from "path";
-
-const cli = cac("litedocs");
-
-cli
-  .command("config [root]", "Output the resolved litedocs configuration")
-  .action(async (root) => {
-    const rootDir = root ? path.resolve(root) : process.cwd();
-    const docsDir = path.resolve(rootDir, "docs"); // default docs dir used for resolve
-
-    try {
-      const config = await resolveConfig(docsDir);
-      console.log(JSON.stringify(config, null, 2));
-    } catch (e) {
-      console.error("Failed to resolve configuration:", e);
-      process.exit(1);
-    }
-  });
-
-const DEFAULT_CSS_VARIABLES = `:root {
+export const DEFAULT_CSS_VARIABLES = `:root {
   /* ─ Base palette ─ */
   --ld-bg-main: #0a0a0f;
   --ld-bg-soft: #0f0f18;
@@ -89,31 +68,3 @@ const DEFAULT_CSS_VARIABLES = `:root {
   --ld-code-text: #1f2937;
 }
 `;
-
-cli
-  .command(
-    "generate css [path]",
-    "Generate a custom.css file with default Litedocs CSS variables",
-  )
-  .action((outputPath) => {
-    import("node:fs").then((fs) => {
-      const target = process.cwd();
-      const filename = outputPath || "custom.css";
-      const filepath = path.resolve(target, filename);
-
-      if (fs.existsSync(filepath)) {
-        console.error(
-          "Error: File " + filename + " already exists in " + target + ".",
-        );
-        process.exit(1);
-      }
-
-      fs.writeFileSync(filepath, DEFAULT_CSS_VARIABLES);
-      console.log("Success! Generated " + filename);
-    });
-  });
-
-cli.help();
-cli.version(require("../../package.json").version); // we can read version
-
-cli.parse();
