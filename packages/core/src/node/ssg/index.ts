@@ -58,38 +58,44 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
     } catch (e) {}
   }
 
-  // Generate an HTML file for each route
-  for (const route of routes) {
-    const pageTitle = `${route.title} | ${siteTitle}`;
-    const pageDescription = route.description || siteDescription;
+  // Generate an HTML file for each route concurrently
+  await Promise.all(
+    routes.map(async (route) => {
+      const pageTitle = `${route.title} | ${siteTitle}`;
+      const pageDescription = route.description || siteDescription;
 
-    // We mock the modules for SSR so it doesn't crash trying to dynamically import
-    const fakeModules: Record<string, any> = {};
-    fakeModules[route.componentPath] = { default: () => {} }; // Mock MDX component
+      // We mock the modules for SSR so it doesn't crash trying to dynamically import
+      const fakeModules: Record<string, any> = {};
+      fakeModules[route.componentPath] = { default: () => {} }; // Mock MDX component
 
-    try {
-      const appHtml = await render({
-        path: route.path,
-        routes: routes,
-        config: config || {},
-        modules: fakeModules,
-        homePage: homePageComp,
-      });
+      try {
+        const appHtml = await render({
+          path: route.path,
+          routes: routes,
+          config: config || {},
+          modules: fakeModules,
+          homePage: homePageComp,
+        });
 
-      const html = replaceMetaTags(template, {
-        title: escapeHtml(pageTitle),
-        description: escapeHtml(pageDescription),
-      })
-        .replace("<!--app-html-->", appHtml)
-        .replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
+        const html = replaceMetaTags(template, {
+          title: escapeHtml(pageTitle),
+          description: escapeHtml(pageDescription),
+        })
+          .replace("<!--app-html-->", appHtml)
+          .replace(`<div id="root"></div>`, `<div id="root">${appHtml}</div>`);
 
-      const routeDir = path.join(outDir, route.path);
-      fs.mkdirSync(routeDir, { recursive: true });
-      fs.writeFileSync(path.join(routeDir, "index.html"), html, "utf-8");
-    } catch (e) {
-      console.error(`[litedocs] Error SSR rendering route ${route.path}:`, e);
-    }
-  }
+        const routeDir = path.join(outDir, route.path);
+        await fs.promises.mkdir(routeDir, { recursive: true });
+        await fs.promises.writeFile(
+          path.join(routeDir, "index.html"),
+          html,
+          "utf-8",
+        );
+      } catch (e) {
+        console.error(`[litedocs] Error SSR rendering route ${route.path}:`, e);
+      }
+    }),
+  );
 
   // Generate sitemap.xml
   const sitemap = generateSitemap(
