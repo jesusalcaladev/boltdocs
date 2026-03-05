@@ -30,7 +30,7 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   const siteDescription = config?.themeConfig?.description || "";
 
   // Resolve the SSR module (compiled by tsup)
-  const ssrModulePath = path.resolve(_dirname, "../../client/ssr.js");
+  const ssrModulePath = path.resolve(_dirname, "../client/ssr.js");
   if (!fs.existsSync(ssrModulePath)) {
     console.error(
       "[litedocs] SSR module not found at",
