@@ -4,32 +4,35 @@
    ═══════════════════════════════════════════════════════════ */
 
 @import "./styles/variables.css";
-@import "./styles/base.css";
+@import "./ui/Layout/base.css";
 
 /* Core Layout Components */
-@import "./styles/navbar.css";
-@import "./styles/sidebar.css";
-@import "./styles/toc.css";
-@import "./styles/footer.css";
-@import "./styles/language-switcher.css";
-@import "./styles/powered-by.css";
+@import "./ui/Navbar/navbar.css";
+@import "./ui/Sidebar/sidebar.css";
+@import "./ui/OnThisPage/toc.css";
+@import "./ui/Footer/footer.css";
+@import "./ui/LanguageSwitcher/language-switcher.css";
+@import "./ui/PoweredBy/powered-by.css";
 
 /* Markdown Content */
 @import "./styles/markdown.css";
-@import "./styles/video.css";
+@import "./components/Video/video.css";
 
 /* UI Components (MDX) */
-@import "./styles/mdx-components.css";
-@import "./styles/pkg-tabs.css";
+@import "./components/mdx/mdx-components.css";
+@import "./components/PackageManagerTabs/pkg-tabs.css";
 
 /* Interactive Elements */
-@import "./styles/search.css";
-@import "./styles/pagination.css";
+@import "./ui/SearchDialog/search.css";
+@import "./ui/Layout/pagination.css";
 
 /* Pages */
 @import "./styles/home.css";
-@import "./styles/not-found.css";
-@import "./styles/loading.css";
+@import "./ui/NotFound/not-found.css";
+@import "./ui/Loading/loading.css";
+
+/* Playground */
+@import "./components/Playground/playground.css";
 
 /* Media Queries */
-@import "./styles/responsive.css";
+@import "./ui/Layout/responsive.css";
