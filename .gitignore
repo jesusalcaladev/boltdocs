@@ -46,7 +46,6 @@ yarn-error.log*
 # Lock
 package-lock.json
 yarn.lock
-pnpm-lock.yaml
 
 # Language specific
 __pycache__/
