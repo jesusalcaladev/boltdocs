@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   Litedocs — Dark Theme (Stitch-inspired)
+   Litedocs — Dark Theme
    Main Entry Point
    ═══════════════════════════════════════════════════════════ */
 
@@ -17,6 +17,10 @@
 /* Markdown Content */
 @import "./styles/markdown.css";
 @import "./styles/video.css";
+
+/* UI Components (MDX) */
+@import "./styles/mdx-components.css";
+@import "./styles/pkg-tabs.css";
 
 /* Interactive Elements */
 @import "./styles/search.css";
