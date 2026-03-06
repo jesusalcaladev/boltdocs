@@ -1,7 +1,7 @@
 import { Plugin } from "vite";
-import { litedocsPlugin } from "./plugin";
+import { litedocsPlugin } from "./plugin/index";
 import { litedocsMdxPlugin } from "./mdx";
-import { LitedocsPluginOptions } from "./plugin";
+import { LitedocsPluginOptions } from "./plugin/index";
 
 import { resolveConfig } from "./config";
 
