@@ -25,7 +25,17 @@
     "build": "tsup",
     "dev": "tsup --watch"
   },
-  "keywords": ["docs", "documentation", "static site generator", "ssg", "markdown", "mdx", "react", "vite", "typescript"],
+  "keywords": [
+    "docs",
+    "documentation",
+    "static site generator",
+    "ssg",
+    "markdown",
+    "mdx",
+    "react",
+    "vite",
+    "typescript"
+  ],
   "author": "Jesus Alcala",
   "license": "ISC",
   "type": "commonjs",
@@ -37,8 +47,8 @@
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.575.0",
+    "react-live": "^4.1.8",
     "react-router-dom": "^6.30.3",
-    "rehype-autolink-headings": "^7.1.0",
     "rehype-pretty-code": "^0.14.1",
     "rehype-slug": "^6.0.0",
     "remark-frontmatter": "^5.0.0",
@@ -46,6 +56,7 @@
     "sharp": "^0.34.5",
     "shiki": "^3.23.0",
     "svgo": "^4.0.0",
+    "unist-util-visit": "^5.1.0",
     "vite": "^7.3.1",
     "vite-plugin-image-optimizer": "^2.0.3"
   },

@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
-import { ThemeLayout } from "../theme/Layout";
-import { NotFound } from "../theme/NotFound";
-import { Loading } from "../theme/Loading";
-import { Navbar } from "../theme/Navbar";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
+import { ThemeLayout } from "../theme/ui/Layout";
+import { NotFound } from "../theme/ui/NotFound";
+import { Loading } from "../theme/ui/Loading";
 import { MDXProvider } from "@mdx-js/react";
-import { createContext, useContext, Suspense, lazy } from "react";
+import {
+  createContext,
+  useContext,
+  Suspense,
+  lazy,
+  useLayoutEffect,
+} from "react";
+import { Link as LucideLink } from "lucide-react";
 
 export const ConfigContext = createContext<any>(null);
 
@@ -14,19 +26,40 @@ export function useConfig() {
   return useContext(ConfigContext);
 }
 
-import "../theme/pkg-tabs.css";
-
 const CodeBlock = lazy(() =>
-  import("../theme/CodeBlock").then((m) => ({ default: m.CodeBlock })),
+  import("../theme/components/CodeBlock").then((m) => ({
+    default: m.CodeBlock,
+  })),
 );
 const Video = lazy(() =>
-  import("../theme/Video").then((m) => ({ default: m.Video })),
+  import("../theme/components/Video").then((m) => ({ default: m.Video })),
 );
 const PackageManagerTabs = lazy(() =>
-  import("../theme/PackageManagerTabs").then((m) => ({
+  import("../theme/components/PackageManagerTabs").then((m) => ({
     default: m.PackageManagerTabs,
   })),
 );
+const Playground = lazy(() =>
+  import("../theme/components/Playground").then((m) => ({
+    default: m.Playground,
+  })),
+);
+
+import {
+  Button,
+  Badge,
+  Card,
+  Cards,
+  Tabs,
+  Tab,
+  Admonition,
+  Note,
+  Tip,
+  Warning,
+  Danger,
+  InfoBox,
+  List,
+} from "../theme/components/mdx";
 declare global {
   interface ImportMeta {
     env: Record<string, any>;
@@ -35,12 +68,42 @@ declare global {
 
 import { PreloadProvider } from "./preload";
 
+const Heading = ({
+  level,
+  id,
+  children,
+}: {
+  level: number;
+  id?: string;
+  children: React.ReactNode;
+}) => {
+  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  return (
+    <Tag id={id} className="litedocs-heading">
+      {children}
+      {id && (
+        <a href={`#${id}`} className="header-anchor" aria-label="Anchor">
+          <LucideLink size={16} />
+        </a>
+      )}
+    </Tag>
+  );
+};
+
 const mdxComponents = {
-  pre: (props: any) => (
-    <Suspense fallback={<div className="code-block-skeleton" />}>
-      <CodeBlock {...props}>{props.children}</CodeBlock>
-    </Suspense>
-  ),
+  h1: (props: any) => <Heading level={1} {...props} />,
+  h2: (props: any) => <Heading level={2} {...props} />,
+  h3: (props: any) => <Heading level={3} {...props} />,
+  h4: (props: any) => <Heading level={4} {...props} />,
+  h5: (props: any) => <Heading level={5} {...props} />,
+  h6: (props: any) => <Heading level={6} {...props} />,
+  pre: (props: any) => {
+    return (
+      <Suspense fallback={<div className="code-block-skeleton" />}>
+        <CodeBlock {...props}>{props.children}</CodeBlock>
+      </Suspense>
+    );
+  },
   video: (props: any) => (
     <Suspense fallback={<div className="video-skeleton" />}>
       <Video {...props} />
@@ -51,6 +114,24 @@ const mdxComponents = {
       <PackageManagerTabs {...props} />
     </Suspense>
   ),
+  Playground: (props: any) => (
+    <Suspense fallback={<div className="playground-skeleton" />}>
+      <Playground {...props} />
+    </Suspense>
+  ),
+  Button,
+  Badge,
+  Card,
+  Cards,
+  Tabs,
+  Tab,
+  Admonition,
+  Note,
+  Tip,
+  Warning,
+  Danger,
+  InfoBox,
+  List,
 };
 
 /**
@@ -98,6 +179,8 @@ export interface CreateLitedocsAppOptions {
   hot?: any;
   /** Optional custom React component to render when visiting the root path ('/') */
   homePage?: React.ComponentType;
+  /** Optional custom MDX components provided by plugins */
+  components?: Record<string, React.ComponentType<any>>;
 }
 
 export function AppShell({
@@ -106,12 +189,14 @@ export function AppShell({
   modules,
   hot,
   homePage: HomePage,
+  components: customComponents = {},
 }: {
   initialRoutes: ComponentRoute[];
   initialConfig: any;
   modules: Record<string, () => Promise<any>>;
   hot?: any;
   homePage?: React.ComponentType;
+  components?: Record<string, React.ComponentType<any>>;
 }) {
   const [routesInfo, setRoutesInfo] = useState<ComponentRoute[]>(initialRoutes);
   const [config] = useState(initialConfig);
@@ -154,16 +239,23 @@ export function AppShell({
   return (
     <ConfigContext.Provider value={config}>
       <PreloadProvider routes={routesInfo} modules={modules}>
+        <ScrollHandler />
         <Routes>
           {/* Custom home page WITHOUT docs layout */}
           {HomePage && (
             <Route
               path="/"
               element={
-                <div className="litedocs-layout">
-                  <Navbar config={config} routes={routesInfo} />
+                <ThemeLayout
+                  config={config}
+                  routes={routesInfo}
+                  sidebar={null}
+                  toc={null}
+                  breadcrumbs={null}
+                  {...config.themeConfig?.layoutProps}
+                >
                   <HomePage />
-                </div>
+                </ThemeLayout>
               }
             />
           )}
@@ -176,7 +268,10 @@ export function AppShell({
                 path={route.path === "" ? "/" : route.path}
                 element={
                   <React.Suspense fallback={<Loading />}>
-                    <MdxPage Component={route.Component} />
+                    <MdxPage
+                      Component={route.Component}
+                      customComponents={customComponents}
+                    />
                   </React.Suspense>
                 }
               />
@@ -186,16 +281,49 @@ export function AppShell({
           <Route
             path="*"
             element={
-              <div className="litedocs-layout">
-                <Navbar config={config} routes={routesInfo} />
+              <ThemeLayout
+                config={config}
+                routes={routesInfo}
+                {...config.themeConfig?.layoutProps}
+              >
                 <NotFound />
-              </div>
+              </ThemeLayout>
             }
           />
         </Routes>
       </PreloadProvider>
     </ConfigContext.Provider>
   );
+}
+
+/**
+ * Handles scroll restoration and hash scrolling on navigation.
+ */
+function ScrollHandler() {
+  const { pathname, hash } = useLocation();
+
+  useLayoutEffect(() => {
+    if (hash) {
+      const id = hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        const offset = 80;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+        return;
+      }
+    }
+    window.scrollTo(0, 0);
+  }, [pathname, hash]);
+
+  return null;
 }
 
 /** Wrapper layout for doc pages (sidebar + content + TOC) */
@@ -207,7 +335,11 @@ function DocsLayout({
   routes: ComponentRoute[];
 }) {
   return (
-    <ThemeLayout config={config} routes={routes}>
+    <ThemeLayout
+      config={config}
+      routes={routes}
+      {...config.themeConfig?.layoutProps}
+    >
       <Outlet />
     </ThemeLayout>
   );
@@ -220,9 +352,16 @@ function DocsLayout({
  *
  * @param props - Contains the dynamically loaded React component representing the MDX page
  */
-function MdxPage({ Component }: { Component: React.LazyExoticComponent<any> }) {
+function MdxPage({
+  Component,
+  customComponents = {},
+}: {
+  Component: React.LazyExoticComponent<any>;
+  customComponents?: Record<string, React.ComponentType<any>>;
+}) {
+  const allComponents = { ...mdxComponents, ...customComponents };
   return (
-    <MDXProvider components={mdxComponents}>
+    <MDXProvider components={allComponents}>
       <Component />
     </MDXProvider>
   );
@@ -267,6 +406,7 @@ export function createLitedocsApp(options: CreateLitedocsAppOptions) {
           modules={modules}
           hot={hot}
           homePage={homePage}
+          components={options.components}
         />
       </BrowserRouter>
     </React.StrictMode>
