@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    SIDEBAR
    ═══════════════════════════════════════════════════════════ */
-.litedocs-sidebar {
+.boltdocs-sidebar {
   width: var(--ld-sidebar-width);
   flex-shrink: 0;
   background-color: var(--ld-sidebar-bg);
@@ -23,12 +23,12 @@
     opacity 0.2s ease;
 }
 
-.litedocs-sidebar > nav {
+.boltdocs-sidebar > nav {
   flex: 1;
 }
 
 /* ─── Collapsible Sidebar ────────────────────────────────── */
-.litedocs-main-container.sidebar-collapsed .litedocs-sidebar {
+.boltdocs-main-container.sidebar-collapsed .boltdocs-sidebar {
   width: 0;
   padding-left: 0;
   padding-right: 0;
@@ -71,7 +71,7 @@
   transform: translateY(0px) scale(0.95);
 }
 
-.litedocs-main-container.sidebar-collapsed .sidebar-toggle-floating {
+.boltdocs-main-container.sidebar-collapsed .sidebar-toggle-floating {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);
@@ -105,15 +105,15 @@
   color: var(--ld-color-primary);
 }
 
-.litedocs-sidebar::-webkit-scrollbar {
+.boltdocs-sidebar::-webkit-scrollbar {
   width: 4px;
 }
 
-.litedocs-sidebar::-webkit-scrollbar-track {
+.boltdocs-sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.litedocs-sidebar::-webkit-scrollbar-thumb {
+.boltdocs-sidebar::-webkit-scrollbar-thumb {
   background: var(--ld-bg-mute);
   border-radius: 4px;
 }

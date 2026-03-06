@@ -1,6 +1,6 @@
-export type { LitedocsConfig, LitedocsThemeConfig } from "../node/config";
-export type { ComponentRoute, CreateLitedocsAppOptions } from "./app";
-export { createLitedocsApp } from "./app";
+export type { BoltdocsConfig, BoltdocsThemeConfig } from "../node/config";
+export type { ComponentRoute, CreateBoltdocsAppOptions } from "./app";
+export { createBoltdocsApp } from "./app";
 export { ThemeLayout } from "./theme/ui/Layout";
 export { Navbar } from "./theme/ui/Navbar";
 export { Sidebar } from "./theme/ui/Sidebar";

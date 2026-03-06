@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
 
-// Use beautiful default styling aligned with Litedocs themes
+// Use beautiful default styling aligned with Boltdocs themes
 mermaid.initialize({
   startOnLoad: false,
   theme: "base",
@@ -38,7 +38,7 @@ export function Mermaid({ chart }: MermaidProps) {
         setSvgStr(svg);
       })
       .catch((e) => {
-        console.error("[Litedocs] Failed to render Mermaid diagram:", e);
+        console.error("[Boltdocs] Failed to render Mermaid diagram:", e);
         // Display fallback errors
         setSvgStr(`<div class="mermaid-error">Failed to render diagram</div>`);
       });

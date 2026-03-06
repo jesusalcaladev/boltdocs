@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Link } from "../Link";
 import { ChevronLeft, ChevronRight, Menu } from "lucide-react";
 import { usePreload } from "../../../app/preload";
-import { LitedocsConfig } from "../../../../node/config";
+import { BoltdocsConfig } from "../../../../node/config";
 import { ComponentRoute } from "../../../app";
 export { Navbar } from "../Navbar";
 export { Sidebar } from "../Sidebar";
@@ -21,7 +21,7 @@ import { BackgroundGradient } from "../BackgroundGradient";
 import "../../styles.css";
 
 export interface ThemeLayoutProps {
-  config: LitedocsConfig;
+  config: BoltdocsConfig;
   routes: ComponentRoute[];
   children: React.ReactNode;
   /** Custom navbar component (slots) */
@@ -47,7 +47,7 @@ export interface ThemeLayoutProps {
  * Integrates the Navbar, Sidebar, and OnThisPage components into a cohesive shell.
  * It also manages mobile interaction states like the sidebar overlay toggle.
  *
- * @param config - The global Litedocs configuration object
+ * @param config - The global Boltdocs configuration object
  * @param routes - The array of available doc routes (used to render the sidebar)
  */
 export function ThemeLayout({
@@ -64,7 +64,7 @@ export function ThemeLayout({
   style,
 }: ThemeLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const siteTitle = config.themeConfig?.title || "Litedocs";
+  const siteTitle = config.themeConfig?.title || "Boltdocs";
   const siteDescription = config.themeConfig?.description || "";
   const location = useLocation();
 
@@ -108,7 +108,7 @@ export function ThemeLayout({
   }, [prevPage, nextPage, preload]);
 
   return (
-    <div className={`litedocs-layout ${className}`} style={style}>
+    <div className={`boltdocs-layout ${className}`} style={style}>
       {background !== undefined ? background : <BackgroundGradient />}
       {head !== undefined ? (
         head
@@ -131,7 +131,7 @@ export function ThemeLayout({
         />
       )}
       <div
-        className={`litedocs-main-container ${!isSidebarOpen ? "sidebar-collapsed" : ""}`}
+        className={`boltdocs-main-container ${!isSidebarOpen ? "sidebar-collapsed" : ""}`}
       >
         {sidebar !== undefined ? (
           sidebar
@@ -155,13 +155,13 @@ export function ThemeLayout({
           </button>
         )}
 
-        <main className="litedocs-content">
+        <main className="boltdocs-content">
           {breadcrumbs !== undefined ? (
             breadcrumbs
           ) : (
             <Breadcrumbs routes={filteredRoutes} config={config} />
           )}
-          <div className="litedocs-page">{children}</div>
+          <div className="boltdocs-page">{children}</div>
 
           {/* Prev / Next Navigation */}
           {(prevPage || nextPage) && (

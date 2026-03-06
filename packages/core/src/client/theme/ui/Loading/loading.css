@@ -1,5 +1,5 @@
 /* ─── Loading ─────────────────────────────────────────────── */
-.litedocs-loading {
+.boltdocs-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,10 +14,10 @@
   border: 3px solid var(--ld-border-subtle);
   border-top-color: var(--ld-color-primary);
   border-radius: 50%;
-  animation: litedocs-spin 0.7s linear infinite;
+  animation: boltdocs-spin 0.7s linear infinite;
 }
 
-@keyframes litedocs-spin {
+@keyframes boltdocs-spin {
   to {
     transform: rotate(360deg);
   }

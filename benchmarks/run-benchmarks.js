@@ -16,16 +16,16 @@ function measureExecutionTime(name, command, cwd) {
 function runBenchmarks() {
   const root = process.cwd();
   const nextraDir = path.join(root, 'nextra-site');
-  const litedocsDir = path.join(root, 'litedocs-site');
+  const boltdocsDir = path.join(root, 'boltdocs-site');
 
-  const litedocsTime = measureExecutionTime('LiteDocs', 'pnpm run build', litedocsDir);
+  const boltdocsTime = measureExecutionTime('LiteDocs', 'pnpm run build', boltdocsDir);
   const nextraTime = measureExecutionTime('Nextra', 'pnpm run build', nextraDir);
 
   const result = {
     benchmarks: {
-      litedocs: {
-        timeMs: litedocsTime,
-        timeSec: litedocsTime ? parseFloat((litedocsTime / 1000).toFixed(2)) : null
+      boltdocs: {
+        timeMs: boltdocsTime,
+        timeSec: boltdocsTime ? parseFloat((boltdocsTime / 1000).toFixed(2)) : null
       },
       nextra: {
         timeMs: nextraTime,
@@ -33,8 +33,8 @@ function runBenchmarks() {
       }
     },
     comparison: {
-      faster: litedocsTime < nextraTime ? 'litedocs' : 'nextra',
-      ratio: parseFloat((Math.max(litedocsTime, nextraTime) / Math.min(litedocsTime, nextraTime)).toFixed(2))
+      faster: boltdocsTime < nextraTime ? 'boltdocs' : 'nextra',
+      ratio: parseFloat((Math.max(boltdocsTime, nextraTime) / Math.min(boltdocsTime, nextraTime)).toFixed(2))
     }
   };
 

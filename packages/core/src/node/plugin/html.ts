@@ -1,15 +1,15 @@
-import type { LitedocsConfig } from "../config";
+import type { BoltdocsConfig } from "../config";
 
 /**
  * Injects OpenGraph, Twitter, and generic SEO meta tags into the final HTML output.
  * Also ensures the virtual entry file is injected if it's missing (e.g., standard Vite index.html).
  *
  * @param html - The original HTML string
- * @param config - The resolved Litedocs configuration containing site metadata
+ * @param config - The resolved Boltdocs configuration containing site metadata
  * @returns The modified HTML string with injected tags
  */
-export function injectHtmlMeta(html: string, config: LitedocsConfig): string {
-  const title = config.themeConfig?.title || "Litedocs";
+export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
+  const title = config.themeConfig?.title || "Boltdocs";
   const description = config.themeConfig?.description || "";
 
   const seoTags = [
@@ -20,14 +20,14 @@ export function injectHtmlMeta(html: string, config: LitedocsConfig): string {
     `<meta name="twitter:card" content="summary">`,
     `<meta name="twitter:title" content="${title}">`,
     `<meta name="twitter:description" content="${description}">`,
-    `<meta name="generator" content="Litedocs">`,
+    `<meta name="generator" content="Boltdocs">`,
   ].join("\n    ");
 
   const themeScript = `
     <script>
       (function() {
         try {
-          var stored = localStorage.getItem("litedocs-theme");
+          var stored = localStorage.getItem("boltdocs-theme");
           var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
           if (theme === "light") {
             document.documentElement.classList.add("theme-light");
@@ -47,7 +47,7 @@ export function injectHtmlMeta(html: string, config: LitedocsConfig): string {
   if (!html.includes("src/main")) {
     html = html.replace(
       "</body>",
-      '  <script type="module">import "virtual:litedocs-entry";</script>\n  </body>',
+      '  <script type="module">import "virtual:boltdocs-entry";</script>\n  </body>',
     );
   }
 

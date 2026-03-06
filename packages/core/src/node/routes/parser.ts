@@ -1,6 +1,6 @@
 import path from "path";
 import GithubSlugger from "github-slugger";
-import { LitedocsConfig } from "../config";
+import { BoltdocsConfig } from "../config";
 import { ParsedDocFile } from "./types";
 import {
   normalizePath,
@@ -24,7 +24,7 @@ export function parseDocFile(
   file: string,
   docsDir: string,
   basePath: string,
-  config?: LitedocsConfig,
+  config?: BoltdocsConfig,
 ): ParsedDocFile {
   const { data, content } = parseFrontmatter(file);
   const relativePath = normalizePath(path.relative(docsDir, file));

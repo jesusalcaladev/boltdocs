@@ -1,18 +1,19 @@
 {
-  "name": "litedocs-monorepo",
+  "name": "boltdocs-monorepo",
   "private": true,
   "scripts": {
     "preinstall": "pnpm -C packages/core build",
     "dev": "pnpm -C example dev",
-    "build:core": "pnpm --filter litedocs build",
-    "build:cli": "pnpm --filter create-litedocs build",
+    "build:core": "pnpm --filter boltdocs build",
+    "build:cli": "pnpm --filter create-boltdocs build",
     "build": "turbo run build",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish"
+    "prerelease": "pnpm build && changeset publish"
   },
+  "packageManager": "pnpm@10.30.2",
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
-    "turbo": "^1.13.0"
+    "turbo": "latest"
   }
 }

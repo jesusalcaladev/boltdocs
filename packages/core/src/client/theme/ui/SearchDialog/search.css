@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    SEARCH MODAL
    ═══════════════════════════════════════════════════════════ */
-.litedocs-search-overlay {
+.boltdocs-search-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -17,7 +17,7 @@
   padding-top: 10vh;
 }
 
-.litedocs-search-modal {
+.boltdocs-search-modal {
   width: 100%;
   max-width: 560px;
   background-color: var(--ld-bg-main);
@@ -27,10 +27,10 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: litedocs-search-appear 0.15s ease-out forwards;
+  animation: boltdocs-search-appear 0.15s ease-out forwards;
 }
 
-@keyframes litedocs-search-appear {
+@keyframes boltdocs-search-appear {
   from {
     opacity: 0;
     transform: scale(0.96) translateY(-10px);
@@ -41,7 +41,7 @@
   }
 }
 
-.litedocs-search-header {
+.boltdocs-search-header {
   display: flex;
   align-items: center;
   padding: 1rem 1.25rem;
@@ -50,14 +50,14 @@
   gap: 0.75rem;
 }
 
-.litedocs-search-header svg {
+.boltdocs-search-header svg {
   width: 18px;
   height: 18px;
   color: var(--ld-color-primary);
   opacity: 0.8;
 }
 
-.litedocs-search-header input {
+.boltdocs-search-header input {
   flex: 1;
   background: transparent;
   border: none;
@@ -69,11 +69,11 @@
   box-shadow: none;
 }
 
-.litedocs-search-header input::placeholder {
+.boltdocs-search-header input::placeholder {
   color: var(--ld-text-dim);
 }
 
-.litedocs-search-close {
+.boltdocs-search-close {
   background: var(--ld-bg-mute);
   border: 1px solid var(--ld-border-subtle);
   color: var(--ld-text-dim);
@@ -85,26 +85,26 @@
   transition: all 0.2s;
 }
 
-.litedocs-search-close:hover {
+.boltdocs-search-close:hover {
   background: var(--ld-border-strong);
   color: var(--ld-text-main);
 }
 
-.litedocs-search-results {
+.boltdocs-search-results {
   max-height: 50vh;
   overflow-y: auto;
   padding: 0.5rem;
 }
 
-.litedocs-search-results::-webkit-scrollbar {
+.boltdocs-search-results::-webkit-scrollbar {
   width: 6px;
 }
-.litedocs-search-results::-webkit-scrollbar-thumb {
+.boltdocs-search-results::-webkit-scrollbar-thumb {
   background: var(--ld-bg-mute);
   border-radius: 4px;
 }
 
-.litedocs-search-result-item {
+.boltdocs-search-result-item {
   display: flex;
   flex-direction: column;
   padding: 0.75rem 1rem;
@@ -114,7 +114,7 @@
   margin-bottom: 2px;
 }
 
-.litedocs-search-result-item.is-heading {
+.boltdocs-search-result-item.is-heading {
   padding-left: 2rem;
   border-left: 2px solid transparent;
 }
@@ -126,25 +126,25 @@
   font-family: var(--ld-font-mono);
 }
 
-.litedocs-search-result-item:hover,
-.litedocs-search-result-item:focus {
+.boltdocs-search-result-item:hover,
+.boltdocs-search-result-item:focus {
   background-color: var(--ld-bg-mute);
   outline: none;
 }
 
-.litedocs-search-result-title {
+.boltdocs-search-result-title {
   color: var(--ld-text-main);
   font-weight: 500;
   font-size: 0.95rem;
 }
 
-.litedocs-search-result-group {
+.boltdocs-search-result-group {
   color: var(--ld-text-muted);
   font-size: 0.75rem;
   margin-top: 0.15rem;
 }
 
-.litedocs-search-empty {
+.boltdocs-search-empty {
   padding: 2rem;
   text-align: center;
   color: var(--ld-text-dim);

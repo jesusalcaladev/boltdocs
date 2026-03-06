@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Globe, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LitedocsI18nConfig } from "../../../../node/config";
+import { BoltdocsI18nConfig } from "../../../../node/config";
 import { ComponentRoute } from "../../../app";
 
 function getBaseFilePath(
@@ -24,7 +24,7 @@ export function LanguageSwitcher({
   currentLocale,
   allRoutes,
 }: {
-  i18n: LitedocsI18nConfig;
+  i18n: BoltdocsI18nConfig;
   currentLocale: string;
   allRoutes: ComponentRoute[];
 }) {
@@ -92,7 +92,7 @@ export function LanguageSwitcher({
   };
 
   return (
-    <div className="litedocs-language-switcher" ref={dropdownRef}>
+    <div className="boltdocs-language-switcher" ref={dropdownRef}>
       <button
         className="language-btn"
         onClick={() => setIsOpen(!isOpen)}

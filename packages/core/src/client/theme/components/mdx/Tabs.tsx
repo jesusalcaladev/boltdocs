@@ -11,7 +11,7 @@ export interface TabProps {
  * A single tab panel. Must be used inside `<Tabs>`.
  *
  * ```mdx
- * <Tab label="npm">npm install litedocs</Tab>
+ * <Tab label="npm">npm install boltdocs</Tab>
  * ```
  */
 export function Tab({ children }: TabProps) {
@@ -30,9 +30,9 @@ export interface TabsProps {
  *
  * ```mdx
  * <Tabs>
- *   <Tab label="npm">npm install litedocs</Tab>
- *   <Tab label="pnpm">pnpm add litedocs</Tab>
- *   <Tab label="yarn">yarn add litedocs</Tab>
+ *   <Tab label="npm">npm install boltdocs</Tab>
+ *   <Tab label="pnpm">pnpm add boltdocs</Tab>
+ *   <Tab label="yarn">yarn add boltdocs</Tab>
  * </Tabs>
  * ```
  */
@@ -72,7 +72,7 @@ export function Tabs({ defaultIndex = 0, children }: TabsProps) {
               aria-controls={`tabpanel-${i}`}
               id={`tab-${i}`}
               tabIndex={i === active ? 0 : -1}
-              ref={(el) => (tabRefs.current[i] = el)}
+              ref={(el) => { tabRefs.current[i] = el; }}
               className={`ld-tabs__trigger ${i === active ? "ld-tabs__trigger--active" : ""}`}
               onClick={() => setActive(i)}
             >

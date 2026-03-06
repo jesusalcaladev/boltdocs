@@ -26,14 +26,14 @@ const _require = createRequire(import.meta.url);
 export async function generateStaticPages(options: SSGOptions): Promise<void> {
   const { docsDir, outDir, config } = options;
   const routes = await generateRoutes(docsDir, config);
-  const siteTitle = config?.themeConfig?.title || "Litedocs";
+  const siteTitle = config?.themeConfig?.title || "Boltdocs";
   const siteDescription = config?.themeConfig?.description || "";
 
   // Resolve the SSR module (compiled by tsup)
   const ssrModulePath = path.resolve(_dirname, "../client/ssr.js");
   if (!fs.existsSync(ssrModulePath)) {
     console.error(
-      "[litedocs] SSR module not found at",
+      "[boltdocs] SSR module not found at",
       ssrModulePath,
       "- Did you build the core package?",
     );
@@ -44,7 +44,7 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   // Read the built index.html as template
   const templatePath = path.join(outDir, "index.html");
   if (!fs.existsSync(templatePath)) {
-    console.warn("[litedocs] No index.html found in outDir, skipping SSG.");
+    console.warn("[boltdocs] No index.html found in outDir, skipping SSG.");
     return;
   }
   const template = fs.readFileSync(templatePath, "utf-8");
@@ -54,7 +54,7 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   if ((config as any)?._homePagePath) {
     try {
       // Simplistic: if there's a custom home page compiled, we'd need it available to SSR.
-      // In a full framework this is complex, but for Litedocs we assume it's bundled if needed.
+      // In a full framework this is complex, but for Boltdocs we assume it's bundled if needed.
     } catch (e) {}
   }
 
@@ -92,7 +92,7 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
           "utf-8",
         );
       } catch (e) {
-        console.error(`[litedocs] Error SSR rendering route ${route.path}:`, e);
+        console.error(`[boltdocs] Error SSR rendering route ${route.path}:`, e);
       }
     }),
   );
@@ -105,6 +105,6 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   fs.writeFileSync(path.join(outDir, "sitemap.xml"), sitemap, "utf-8");
 
   console.log(
-    `[litedocs] Generated ${routes.length} static pages + sitemap.xml`,
+    `[boltdocs] Generated ${routes.length} static pages + sitemap.xml`,
   );
 }

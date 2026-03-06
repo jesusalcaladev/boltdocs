@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    PLAYGROUND (SPLIT UI)
    ═══════════════════════════════════════════════════════════ */
-.litedocs-playground {
+.boltdocs-playground {
   display: flex;
   flex-direction: column;
   margin: 2rem 0;
@@ -124,7 +124,7 @@
 }
 
 /* Prevent editing styles if read-only */
-.litedocs-playground[data-readonly="true"] .playground-editor textarea {
+.boltdocs-playground[data-readonly="true"] .playground-editor textarea {
   cursor: default !important;
 }
 

@@ -1,4 +1,4 @@
-import { LitedocsConfig } from "../config";
+import { BoltdocsConfig } from "../config";
 
 /**
  * Options for the Static Site Generation process.
@@ -9,5 +9,5 @@ export interface SSGOptions {
   /** The output directory where Vite placed the compiled `index.html` and assets */
   outDir: string;
   /** Pre-resolved config (avoids re-resolving during the SSG phase) */
-  config?: LitedocsConfig;
+  config?: BoltdocsConfig;
 }

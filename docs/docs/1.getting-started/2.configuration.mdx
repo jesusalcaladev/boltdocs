@@ -1,32 +1,32 @@
 ---
 title: "Configuration Reference"
-description: "Detailed documentation of all available options in litedocs.config.js."
+description: "Detailed documentation of all available options in boltdocs.config.js."
 ---
 
-# Configuration (`litedocs.config.js`)
+# Configuration (`boltdocs.config.js`)
 
-The `litedocs.config.js` (or `.ts`, `.mjs`) file at the root of your project controls how LiteDocs functions, builds routes, and renders the UI.
+The `boltdocs.config.js` (or `.ts`, `.mjs`) file at the root of your project controls how LiteDocs functions, builds routes, and renders the UI.
 We strongly recommend adding a JSDoc type annotation to your JavaScript configuration for auto-complete and type safety:
 
 ```js
 /**
- * @type {import('litedocs').LitedocsConfig}
+ * @type {import('boltdocs').BoltdocsConfig}
  */
 export default {
   // Your options...
 };
 ```
 
-Below is the comprehensive list of all configuration options according to the `LitedocsConfig` interface.
+Below is the comprehensive list of all configuration options according to the `BoltdocsConfig` interface.
 
-## Root Options (`LitedocsConfig`)
+## Root Options (`BoltdocsConfig`)
 
 At the top level of your configuration file, you can define the following options:
 
 ### `siteUrl`
 - **Type**: \`string\`
 - **Description**: The base URL of the site, used primarily for generating absolute paths in your sitemap (if implemented) or canonical URLs.
-- **Example**: \`"https://litedocs.dev"\`
+- **Example**: \`"https://boltdocs.dev"\`
 
 ### `docsDir`
 - **Type**: \`string\`
@@ -34,24 +34,24 @@ At the top level of your configuration file, you can define the following option
 - **Description**: The root directory containing your Markdown/MDX documentation files. Change this if you keep your docs in a folder like \`"content"\`. _Note: It is recommended to configure this via the Vite Plugin options in `vite.config.ts`._
 
 ### `themeConfig`
-- **Type**: \`LitedocsThemeConfig\`
+- **Type**: \`BoltdocsThemeConfig\`
 - **Description**: Determines the appearance, navigation, and structure of the theme. _See [Theme Configuration](#theme-configuration) below._
 
 ### `i18n`
-- **Type**: \`LitedocsI18nConfig\`
+- **Type**: \`BoltdocsI18nConfig\`
 - **Description**: Configuration for internationalization.
   - \`defaultLocale\` (\`string\`): The fallback locale, e.g., \`"en"\`.
   - \`locales\` (\`Record&lt;string, string&gt;\`): Available locales mapping, e.g., \`&#123; en: "English", es: "Español" &#125;\`.
 
 ### `versions`
-- **Type**: \`LitedocsVersionsConfig\`
+- **Type**: \`BoltdocsVersionsConfig\`
 - **Description**: Configuration for documentation versioning.
   - \`defaultVersion\` (\`string\`): The fallback version, e.g., \`"v2"\`.
   - \`versions\` (\`Record&lt;string, string&gt;\`): Available versions mapping, e.g., \`&#123; v1: "Version 1.x", v2: "Version 2.x" &#125;\`.
 
 ### `plugins`
-- **Type**: \`LitedocsPlugin[]\`
-- **Description**: Array of custom Litedocs plugins to extend the build process or client-side functionality.
+- **Type**: \`BoltdocsPlugin[]\`
+- **Description**: Array of custom Boltdocs plugins to extend the build process or client-side functionality.
   - \`name\` (\`string\`): Unique identifier for the plugin.
   - \`enforce\` (\`"pre" | "post"\`): Optional. Run order.
   - \`remarkPlugins\` / \`rehypePlugins\` (\`any[]\`): Extends the MDX parsing pipeline.
@@ -66,7 +66,7 @@ The \`themeConfig\` object controls almost all visual aspects of the default the
 
 ### `title`
 - **Type**: \`string\`
-- **Default**: \`"Litedocs"\`
+- **Default**: \`"Boltdocs"\`
 - **Description**: The global title of the documentation site, shown in the `<title>` tag and Navbar.
 
 ### `description`
@@ -145,19 +145,19 @@ The \`themeConfig\` object controls almost all visual aspects of the default the
 ## Example Complex Configuration
 
 ```ts
-import { defineConfig } from 'litedocs/config';
+import { defineConfig } from 'boltdocs/config';
 
 export default defineConfig({
-  siteUrl: "https://litedocs.dev",
+  siteUrl: "https://boltdocs.dev",
   themeConfig: {
     title: "Awesome Docs",
     description: "The official guide for Awesome App",
     logo: "/logo.png",
     customCss: "./custom.css",
-    githubRepo: "litedocs/litedocs",
-    editLink: "https://github.com/litedocs/litedocs/edit/main/docs/:path",
+    githubRepo: "boltdocs/boltdocs",
+    editLink: "https://github.com/boltdocs/boltdocs/edit/main/docs/:path",
     socialLinks: [
-      { icon: "x", link: "https://x.com/litedocs" },
+      { icon: "x", link: "https://x.com/boltdocs" },
       { icon: "discord", link: "https://discord.gg/custom-link" }
     ],
     footer: {
@@ -175,17 +175,17 @@ export default defineConfig({
 
 # Vite Plugin Options (`vite.config.ts`)
 
-In addition to `litedocs.config.js`, you can pass specific options directly to the `litedocs()` Vite plugin inside `vite.config.ts`.
+In addition to `boltdocs.config.js`, you can pass specific options directly to the `boltdocs()` Vite plugin inside `vite.config.ts`.
 
 ```ts
 import { defineConfig } from 'vite';
-import { litedocs } from 'litedocs';
+import { boltdocs } from 'boltdocs';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [
     react(),
-    litedocs({
+    boltdocs({
       docsDir: "./docs",
       homePage: "./src/HomePage.tsx",
     })
@@ -204,5 +204,5 @@ export default defineConfig({
 
 ### `customCss`
 - **Type**: \`string\`
-- **Description**: Path to a custom CSS file to override theme variables. Can also be set in \`litedocs.config.js\`.
+- **Description**: Path to a custom CSS file to override theme variables. Can also be set in \`boltdocs.config.js\`.
 

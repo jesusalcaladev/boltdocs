@@ -2,21 +2,20 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import prompts from "prompts";
 import picocolors from "picocolors";
 
 const { green, yellow, bold } = picocolors;
 
 async function run() {
-  console.log(bold(green("\n🚀 Welcome to Litedocs!\n")));
+  console.log(bold(green("\n🚀 Welcome to Boltdocs!\n")));
 
   const response = await prompts([
     {
       type: "text",
       name: "projectName",
       message: "Project name:",
-      initial: "my-litedocs-project",
+      initial: "my-boltdocs-project",
     },
   ]);
 
@@ -45,7 +44,7 @@ async function run() {
       preview: "vite preview",
     },
     dependencies: {
-      litedocs: "latest",
+      boltdocs: "latest",
       react: "^18.2.0",
       "react-dom": "^18.2.0",
       "react-router-dom": "^6.22.3",
@@ -145,7 +144,7 @@ dist
   fs.writeFileSync(path.join(projectDir, "custom.css"), customCssContent);
 
   const configContent = `/**
- * @type {import('litedocs').LitedocsConfig}
+ * @type {import('boltdocs').BoltdocsConfig}
  */
 export default {
   title: '${response.projectName}',
@@ -154,16 +153,16 @@ export default {
   }
 };
 `;
-  fs.writeFileSync(path.join(projectDir, "litedocs.config.js"), configContent);
+  fs.writeFileSync(path.join(projectDir, "boltdocs.config.js"), configContent);
 
   const viteConfigContent = `import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import litedocs from 'litedocs';
+import boltdocs from 'boltdocs';
 
 export default defineConfig({
   plugins: [
     react(),
-    litedocs({
+    boltdocs({
       docsDir: "./docs",
       homePage: "./src/HomePage.tsx",
     }),
@@ -221,7 +220,7 @@ export function Button({ children, ...props }) {
 
   const indexMdx = `# Welcome to ${response.projectName}
 
-This is your new Litedocs project.
+This is your new Boltdocs project.
 
 ## Getting Started
 

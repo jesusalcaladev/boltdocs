@@ -133,7 +133,7 @@ export function OnThisPage({
   if (headings.length === 0) return null;
 
   return (
-    <nav className="litedocs-on-this-page" aria-label="Table of contents">
+    <nav className="boltdocs-on-this-page" aria-label="Table of contents">
       <p className="on-this-page-title">On this page</p>
       <div className="on-this-page-container">
         <div className="toc-indicator" style={indicatorStyle} />

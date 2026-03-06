@@ -101,7 +101,7 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
         }}
         aria-label="Open search dialog"
       >
-        <Search className="litedocs-search-icon" size={18} />
+        <Search className="boltdocs-search-icon" size={18} />
         Search docs...
         <kbd>⌘K</kbd>
       </div>
@@ -109,17 +109,17 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
       {isOpen &&
         createPortal(
           <div
-            className="litedocs-search-overlay"
+            className="boltdocs-search-overlay"
             onPointerDown={() => setIsOpen(false)}
           >
             <div
-              className="litedocs-search-modal"
+              className="boltdocs-search-modal"
               role="dialog"
               aria-modal="true"
               aria-label="Search"
               onPointerDown={(e) => e.stopPropagation()}
             >
-              <div className="litedocs-search-header">
+              <div className="boltdocs-search-header">
                 <Search size={18} />
                 <input
                   ref={inputRef}
@@ -130,7 +130,7 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
                   onChange={(e) => setQuery(e.target.value)}
                 />
                 <button
-                  className="litedocs-search-close"
+                  className="boltdocs-search-close"
                   onClick={() => setIsOpen(false)}
                   aria-label="Close search"
                 >
@@ -138,13 +138,13 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
                 </button>
               </div>
 
-              <div className="litedocs-search-results">
+              <div className="boltdocs-search-results">
                 {searchResults.length > 0 ? (
                   searchResults.map((result) => (
                     <Link
                       key={result.path}
                       to={result.path === "" ? "/" : result.path}
-                      className={`litedocs-search-result-item ${result.isHeading ? "is-heading" : ""}`}
+                      className={`boltdocs-search-result-item ${result.isHeading ? "is-heading" : ""}`}
                       onClick={(e) => {
                         const isSamePath =
                           result.path.split("#")[0] ===
@@ -171,21 +171,21 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
                         setIsOpen(false);
                       }}
                     >
-                      <span className="litedocs-search-result-title">
+                      <span className="boltdocs-search-result-title">
                         {result.isHeading ? (
                           <span className="heading-indicator">#</span>
                         ) : null}
                         {result.title}
                       </span>
                       {result.groupTitle && (
-                        <span className="litedocs-search-result-group">
+                        <span className="boltdocs-search-result-group">
                           {result.groupTitle}
                         </span>
                       )}
                     </Link>
                   ))
                 ) : (
-                  <div className="litedocs-search-empty">
+                  <div className="boltdocs-search-empty">
                     No results found for "{query}"
                   </div>
                 )}

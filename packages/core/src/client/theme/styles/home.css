@@ -3,7 +3,7 @@
    Component styles (badge, buttons, cards) now live in
    mdx-components.css and use the shared UI components.
    ═══════════════════════════════════════════════════════════ */
-.litedocs-home {
+.boltdocs-home {
   min-height: calc(100vh - var(--ld-navbar-height));
 }
 

@@ -8,7 +8,7 @@ export function ThemeToggle() {
   useEffect(() => {
     setMounted(true);
     // On mount, read from localStorage or matchMedia
-    const stored = localStorage.getItem("litedocs-theme");
+    const stored = localStorage.getItem("boltdocs-theme");
     if (stored === "light" || stored === "dark") {
       setTheme(stored);
     } else {
@@ -21,7 +21,7 @@ export function ThemeToggle() {
     // Listen to system changes if no localStorage is set
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem("litedocs-theme")) {
+      if (!localStorage.getItem("boltdocs-theme")) {
         setTheme(e.matches ? "dark" : "light");
       }
     };
@@ -44,7 +44,7 @@ export function ThemeToggle() {
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
-    localStorage.setItem("litedocs-theme", newTheme);
+    localStorage.setItem("boltdocs-theme", newTheme);
   };
 
   // Prevent hydration mismatch by rendering a placeholder with same layout

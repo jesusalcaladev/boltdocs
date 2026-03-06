@@ -40,7 +40,7 @@ export function PreloadProvider({
         if (loaderKey) {
           // Trigger the dynamic import
           modules[loaderKey]().catch((err: any) => {
-            console.error(`[litedocs] Failed to preload route ${path}:`, err);
+            console.error(`[boltdocs] Failed to preload route ${path}:`, err);
           });
         }
       }

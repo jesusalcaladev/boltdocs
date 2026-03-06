@@ -11,16 +11,16 @@ The system uses highly structured **CSS Variables** defined in standard `@media`
 
 ## The Global `custom.css` file
 
-When you scaffold a new LiteDocs app, a `custom.css` file is placed in the root of the project. This file overrides our default theme definitions. For it to work, it must be linked in your Vite Plugin options or `litedocs.config.js`:
+When you scaffold a new LiteDocs app, a `custom.css` file is placed in the root of the project. This file overrides our default theme definitions. For it to work, it must be linked in your Vite Plugin options or `boltdocs.config.js`:
 
 ```js
 // vite.config.ts
 import { defineConfig } from 'vite';
-import { litedocs } from 'litedocs';
+import { boltdocs } from 'boltdocs';
 
 export default defineConfig({
   plugins: [
-    litedocs({
+    boltdocs({
       customCss: './custom.css'
     })
   ]

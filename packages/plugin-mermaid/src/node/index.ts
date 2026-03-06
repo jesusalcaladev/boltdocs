@@ -34,14 +34,14 @@ export function remarkMermaid() {
 }
 
 /**
- * The standard Litedocs Mermaid plugin.
+ * The standard Boltdocs Mermaid plugin.
  */
 export default function mermaidPlugin() {
   return {
-    name: "litedocs-plugin-mermaid",
+    name: "boltdocs-plugin-mermaid",
     remarkPlugins: [remarkMermaid],
     components: {
-      Mermaid: "@litedocs/plugin-mermaid/client",
+      Mermaid: "@boltdocs/plugin-mermaid/client",
     },
   };
 }

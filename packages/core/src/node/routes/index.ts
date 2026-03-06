@@ -1,5 +1,5 @@
 import fastGlob from "fast-glob";
-import { LitedocsConfig } from "../config";
+import { BoltdocsConfig } from "../config";
 import { capitalize } from "../utils";
 
 import { RouteMeta, ParsedDocFile } from "./types";
@@ -24,7 +24,7 @@ export { invalidateRouteCache, invalidateFile };
  */
 export async function generateRoutes(
   docsDir: string,
-  config?: LitedocsConfig,
+  config?: BoltdocsConfig,
   basePath: string = "/docs",
 ): Promise<RouteMeta[]> {
   const files = await fastGlob(["**/*.md", "**/*.mdx"], {

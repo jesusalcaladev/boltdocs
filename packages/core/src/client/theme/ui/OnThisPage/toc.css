@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    ON THIS PAGE (TOC)
    ═══════════════════════════════════════════════════════════ */
-.litedocs-on-this-page {
+.boltdocs-on-this-page {
   width: var(--ld-toc-width);
   flex-shrink: 0;
   padding: 1.5rem 1rem;

@@ -13,6 +13,7 @@ out/
 *.dll
 *.so
 *.dylib
+.turbo/
 
 # Environment variables and secrets
 .env

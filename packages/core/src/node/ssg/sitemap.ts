@@ -1,15 +1,15 @@
-import { LitedocsConfig } from "../config";
+import { BoltdocsConfig } from "../config";
 
 /**
  * Generates a standard XML sitemap for search engine crawlers.
  *
  * @param routePaths - An array of existing URL paths (e.g., ['/docs/intro', '/docs/setup'])
- * @param config - The Litedocs configuration containing i18n and siteUrl settings
+ * @param config - The Boltdocs configuration containing i18n and siteUrl settings
  * @returns The formatted XML sitemap string
  */
 export function generateSitemap(
   routePaths: string[],
-  config?: LitedocsConfig,
+  config?: BoltdocsConfig,
 ): string {
   const baseUrl = config?.siteUrl?.replace(/\/$/, "") || "https://example.com";
   const today = new Date().toISOString().split("T")[0];

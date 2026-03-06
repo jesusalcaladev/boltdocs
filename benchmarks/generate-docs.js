@@ -60,8 +60,8 @@ Testing ${NUM_PAGES} pages.
 
 const root = process.cwd();
 const nextraDocs = path.join(root, 'nextra-site', 'pages');
-const litedocsDocs = path.join(root, 'litedocs-site', 'docs');
+const boltdocsDocs = path.join(root, 'boltdocs-site', 'docs');
 
 console.log(`Generating ${NUM_PAGES} pages for each site...`);
 createPages(nextraDocs, true);
-createPages(litedocsDocs, false);
+createPages(boltdocsDocs, false);

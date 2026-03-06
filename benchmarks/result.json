@@ -1,6 +1,6 @@
 {
   "benchmarks": {
-    "litedocs": {
+    "boltdocs": {
       "timeMs": 38682.1252,
       "timeSec": 38.68
     },
@@ -10,7 +10,7 @@
     }
   },
   "comparison": {
-    "faster": "litedocs",
+    "faster": "boltdocs",
     "ratio": 6.87
   }
 }

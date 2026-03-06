@@ -58,10 +58,10 @@ export function Video({
   }, []);
 
   return (
-    <div ref={containerRef} className="litedocs-video-wrapper">
+    <div ref={containerRef} className="boltdocs-video-wrapper">
       {isVisible ? (
         <video
-          className="litedocs-video"
+          className="boltdocs-video"
           src={src}
           poster={poster}
           controls={true}
@@ -74,7 +74,7 @@ export function Video({
         </video>
       ) : (
         <div
-          className="litedocs-video-placeholder"
+          className="boltdocs-video-placeholder"
           role="img"
           aria-label={alt || "Video"}
         />

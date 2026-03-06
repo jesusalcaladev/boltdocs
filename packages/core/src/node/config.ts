@@ -6,7 +6,7 @@ import type { Plugin as VitePlugin } from "vite";
 /**
  * Represents a single social link in the configuration.
  */
-export interface LitedocsSocialLink {
+export interface BoltdocsSocialLink {
   /** Identifier for the icon (e.g., 'github', 'twitter') */
   icon: "discord" | "x" | string;
   /** The URL the social link points to */
@@ -16,7 +16,7 @@ export interface LitedocsSocialLink {
 /**
  * Configuration for the site footer.
  */
-export interface LitedocsFooterConfig {
+export interface BoltdocsFooterConfig {
   /** Text to display in the footer (HTML is supported) */
   text?: string;
 }
@@ -24,7 +24,7 @@ export interface LitedocsFooterConfig {
 /**
  * Theme-specific configuration options governing the appearance and navigation of the site.
  */
-export interface LitedocsThemeConfig {
+export interface BoltdocsThemeConfig {
   /** The global title of the documentation site */
   title?: string;
   /** The global description of the site (used for SEO) */
@@ -36,9 +36,9 @@ export interface LitedocsThemeConfig {
   /** Items to display in the sidebar, organized optionally by group URLs */
   sidebar?: Record<string, Array<{ text: string; link: string }>>;
   /** Social links to display in the navigation bar */
-  socialLinks?: LitedocsSocialLink[];
+  socialLinks?: BoltdocsSocialLink[];
   /** Site footer configuration */
-  footer?: LitedocsFooterConfig;
+  footer?: BoltdocsFooterConfig;
   /** Whether to show breadcrumbs navigation (default: true) */
   breadcrumbs?: boolean;
   /** Path to a custom CSS file that overrides theme variables */
@@ -69,7 +69,7 @@ export interface LitedocsThemeConfig {
 /**
  * Configuration for internationalization (i18n).
  */
-export interface LitedocsI18nConfig {
+export interface BoltdocsI18nConfig {
   /** The default locale (e.g., 'en') */
   defaultLocale: string;
   /** Available locales and their display names (e.g., { en: 'English', es: 'Español' }) */
@@ -79,7 +79,7 @@ export interface LitedocsI18nConfig {
 /**
  * Configuration for documentation versioning.
  */
-export interface LitedocsVersionsConfig {
+export interface BoltdocsVersionsConfig {
   /** The default version (e.g., 'v2') */
   defaultVersion: string;
   /** Available versions and their display names (e.g., { v1: 'Version 1.x', v2: 'Version 2.x' }) */
@@ -87,9 +87,9 @@ export interface LitedocsVersionsConfig {
 }
 
 /**
- * Defines a Litedocs plugin that can extend the build process and client-side functionality.
+ * Defines a Boltdocs plugin that can extend the build process and client-side functionality.
  */
-export interface LitedocsPlugin {
+export interface BoltdocsPlugin {
   /** A unique name for the plugin */
   name: string;
   /** Whether to run this plugin before or after default ones (optional) */
@@ -105,43 +105,43 @@ export interface LitedocsPlugin {
 }
 
 /**
- * The root configuration object for Litedocs.
+ * The root configuration object for Boltdocs.
  */
-export interface LitedocsConfig {
+export interface BoltdocsConfig {
   /** The base URL of the site, used for generating the sitemap */
   siteUrl?: string;
   /** Configuration pertaining to the UI and appearance */
-  themeConfig?: LitedocsThemeConfig;
+  themeConfig?: BoltdocsThemeConfig;
   /** The root directory containing markdown documentation files (default: 'docs') */
   docsDir?: string;
   /** Configuration for internationalization */
-  i18n?: LitedocsI18nConfig;
+  i18n?: BoltdocsI18nConfig;
   /** Configuration for documentation versioning */
-  versions?: LitedocsVersionsConfig;
+  versions?: BoltdocsVersionsConfig;
   /** Custom plugins for extending functionality */
-  plugins?: LitedocsPlugin[];
+  plugins?: BoltdocsPlugin[];
 }
 
 export const CONFIG_FILES = [
-  "litedocs.config.js",
-  "litedocs.config.mjs",
-  "litedocs.config.ts",
+  "boltdocs.config.js",
+  "boltdocs.config.mjs",
+  "boltdocs.config.ts",
 ];
 
 /**
- * Loads user's configuration file (e.g., `litedocs.config.js` or `litedocs.config.ts`) if it exists,
- * merges it with the default configuration, and returns the final `LitedocsConfig`.
+ * Loads user's configuration file (e.g., `boltdocs.config.js` or `boltdocs.config.ts`) if it exists,
+ * merges it with the default configuration, and returns the final `BoltdocsConfig`.
  *
  * @param docsDir - The fallback/default documentation directory
  * @returns A promise resolving to the final merged configuration object
  */
-export async function resolveConfig(docsDir: string): Promise<LitedocsConfig> {
+export async function resolveConfig(docsDir: string): Promise<BoltdocsConfig> {
   const projectRoot = process.cwd();
 
-  const defaults: LitedocsConfig = {
+  const defaults: BoltdocsConfig = {
     docsDir: path.resolve(docsDir),
     themeConfig: {
-      title: "Litedocs",
+      title: "Boltdocs",
       description: "A Vite documentation framework",
       navbar: [
         { text: "Home", link: "/" },
@@ -161,7 +161,7 @@ export async function resolveConfig(docsDir: string): Promise<LitedocsConfig> {
         const userConfig = mod.default || mod;
 
         // Merge user themeConfig into defaults
-        // Support new format where user exports LitedocsConfig directly
+        // Support new format where user exports BoltdocsConfig directly
         const userThemeConfig = userConfig.themeConfig || userConfig;
 
         return {
@@ -176,7 +176,7 @@ export async function resolveConfig(docsDir: string): Promise<LitedocsConfig> {
           plugins: userConfig.plugins || [],
         };
       } catch (e) {
-        console.warn(`[litedocs] Failed to load config from ${filename}:`, e);
+        console.warn(`[boltdocs] Failed to load config from ${filename}:`, e);
       }
     }
   }

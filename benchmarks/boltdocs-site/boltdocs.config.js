@@ -1,4 +1,4 @@
-// litedocs.config.js
+// boltdocs.config.js
 export default {
   title: 'benchmark-site',
   theme: {

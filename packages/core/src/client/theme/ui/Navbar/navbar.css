@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    NAVBAR
    ═══════════════════════════════════════════════════════════ */
-.litedocs-navbar {
+.boltdocs-navbar {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,7 +58,7 @@
 }
 
 .navbar-logo-svg svg {
-  height: 20px;
+  height: 36px;
   width: auto;
   fill: currentColor;
   display: block;

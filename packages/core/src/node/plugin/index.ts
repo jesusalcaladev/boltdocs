@@ -5,19 +5,19 @@ import {
   invalidateFile,
 } from "../routes";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
-import { resolveConfig, LitedocsConfig, CONFIG_FILES } from "../config";
+import { resolveConfig, BoltdocsConfig, CONFIG_FILES } from "../config";
 import { generateStaticPages } from "../ssg";
 import { normalizePath, isDocFile } from "../utils";
 import path from "path";
 
-import { LitedocsPluginOptions } from "./types";
+import { BoltdocsPluginOptions } from "./types";
 import { generateEntryCode } from "./entry";
 import { injectHtmlMeta } from "./html";
 
 export * from "./types";
 
 /**
- * The core Litedocs Vite plugin.
+ * The core Boltdocs Vite plugin.
  * Handles virtual module resolution, HMR for documentation files,
  * injecting HTML meta tags for SEO, and triggering the SSG process on build.
  *
@@ -25,13 +25,13 @@ export * from "./types";
  * @param passedConfig - Pre-resolved configuration (internal use)
  * @returns An array of Vite plugins
  */
-export function litedocsPlugin(
-  options: LitedocsPluginOptions = {},
-  passedConfig?: LitedocsConfig,
+export function boltdocsPlugin(
+  options: BoltdocsPluginOptions = {},
+  passedConfig?: BoltdocsConfig,
 ): Plugin[] {
   const docsDir = path.resolve(process.cwd(), options.docsDir || "docs");
   const normalizedDocsDir = normalizePath(docsDir);
-  let config: LitedocsConfig = passedConfig!;
+  let config: BoltdocsConfig = passedConfig!;
   let viteConfig: ResolvedConfig;
   let isBuild = false;
 
@@ -40,13 +40,13 @@ export function litedocsPlugin(
 
   return [
     {
-      name: "vite-plugin-litedocs",
+      name: "vite-plugin-boltdocs",
       enforce: "pre",
 
       async config(userConfig, env) {
         isBuild = env.command === "build";
 
-        // Load env variables and inject into process.env so they are available in litedocs.config.js
+        // Load env variables and inject into process.env so they are available in boltdocs.config.js
         const envDir = userConfig.envDir || process.cwd();
         const envs = loadEnv(env.mode, envDir, "");
         Object.assign(process.env, envs);
@@ -83,7 +83,7 @@ export function litedocsPlugin(
         ) => {
           const normalized = normalizePath(file);
 
-          // Restart the Vite server if the Litedocs config changes
+          // Restart the Vite server if the Boltdocs config changes
           if (CONFIG_FILES.some((c) => normalized.endsWith(c))) {
             server.restart();
             return;
@@ -106,13 +106,13 @@ export function litedocsPlugin(
           const newRoutes = await generateRoutes(docsDir, config);
 
           const routesMod = server.moduleGraph.getModuleById(
-            "\0virtual:litedocs-routes",
+            "\0virtual:boltdocs-routes",
           );
           if (routesMod) server.moduleGraph.invalidateModule(routesMod);
 
           server.ws.send({
             type: "custom",
-            event: "litedocs:routes-update",
+            event: "boltdocs:routes-update",
             data: newRoutes,
           });
         };
@@ -124,20 +124,20 @@ export function litedocsPlugin(
 
       resolveId(id) {
         if (
-          id === "virtual:litedocs-routes" ||
-          id === "virtual:litedocs-config" ||
-          id === "virtual:litedocs-entry"
+          id === "virtual:boltdocs-routes" ||
+          id === "virtual:boltdocs-config" ||
+          id === "virtual:boltdocs-entry"
         ) {
           return "\0" + id;
         }
       },
 
       async load(id) {
-        if (id === "\0virtual:litedocs-routes") {
+        if (id === "\0virtual:boltdocs-routes") {
           const routes = await generateRoutes(docsDir, config);
           return `export default ${JSON.stringify(routes, null, 2)};`;
         }
-        if (id === "\0virtual:litedocs-config") {
+        if (id === "\0virtual:boltdocs-config") {
           const clientConfig = {
             themeConfig: config?.themeConfig,
             i18n: config?.i18n,
@@ -146,7 +146,7 @@ export function litedocsPlugin(
           };
           return `export default ${JSON.stringify(clientConfig, null, 2)};`;
         }
-        if (id === "\0virtual:litedocs-entry") {
+        if (id === "\0virtual:boltdocs-entry") {
           const code = generateEntryCode(options, config);
           return code;
         }

@@ -1,21 +1,21 @@
 import { Plugin } from "vite";
-import { litedocsPlugin } from "./plugin/index";
-import { litedocsMdxPlugin } from "./mdx";
-import { LitedocsPluginOptions } from "./plugin/index";
+import { boltdocsPlugin } from "./plugin/index";
+import { boltdocsMdxPlugin } from "./mdx";
+import { BoltdocsPluginOptions } from "./plugin/index";
 
 import { resolveConfig } from "./config";
 
-export default async function litedocs(
-  options?: LitedocsPluginOptions,
+export default async function boltdocs(
+  options?: BoltdocsPluginOptions,
 ): Promise<Plugin[]> {
   const docsDir = options?.docsDir || "docs";
   const config = await resolveConfig(docsDir);
 
-  return [...litedocsPlugin(options, config), litedocsMdxPlugin(config)];
+  return [...boltdocsPlugin(options, config), boltdocsMdxPlugin(config)];
 }
 
-export type { LitedocsPluginOptions };
+export type { BoltdocsPluginOptions };
 export { generateStaticPages } from "./ssg";
 export type { SSGOptions } from "./ssg";
 export type { RouteMeta } from "./routes";
-export type { LitedocsConfig, LitedocsThemeConfig } from "./config";
+export type { BoltdocsConfig, BoltdocsThemeConfig } from "./config";

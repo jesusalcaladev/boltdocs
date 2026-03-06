@@ -1,12 +1,15 @@
 {
-  "name": "litedocs",
+  "name": "boltdocs",
   "version": "1.0.0",
-  "description": "",
+  "description": "A lightweight documentation generator for React projects.",
   "main": "dist/node/index.js",
   "module": "dist/node/index.mjs",
   "types": "dist/node/index.d.ts",
   "bin": {
-    "litedocs": "./dist/node/cli/index.js"
+    "boltdocs": "./dist/node/cli/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "exports": {
     ".": {
@@ -64,6 +67,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
+  "packageManager": "pnpm@10.30.2",
   "devDependencies": {
     "@types/node": "^25.3.2",
     "@types/react": "^19.2.14",

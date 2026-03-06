@@ -3,16 +3,16 @@ import cac from "cac";
 import { configAction } from "./commands/config";
 import { generateCssAction } from "./commands/generate-css";
 
-const cli = cac("litedocs");
+const cli = cac("boltdocs");
 
 cli
-  .command("config [root]", "Output the resolved litedocs configuration")
+  .command("config [root]", "Output the resolved boltdocs configuration")
   .action(configAction);
 
 cli
   .command(
     "generate:css [path]",
-    "Generate a custom.css file with default Litedocs CSS variables",
+    "Generate a custom.css file with default Boltdocs CSS variables",
   )
   .action(generateCssAction);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "../Link";
 import { Book, ChevronDown } from "lucide-react";
-import { LitedocsConfig } from "../../../../node/config";
+import { BoltdocsConfig } from "../../../../node/config";
 import { ComponentRoute } from "../../../app";
 import { LanguageSwitcher } from "../LanguageSwitcher";
 import { VersionSwitcher } from "../VersionSwitcher";
@@ -37,31 +37,18 @@ export function Navbar({
   currentLocale,
   currentVersion,
 }: {
-  config: LitedocsConfig;
+  config: BoltdocsConfig;
   routes?: ComponentRoute[];
   allRoutes?: ComponentRoute[];
   currentLocale?: string;
   currentVersion?: string;
 }) {
-  const [stars, setStars] = useState<string | null>(null);
-
-  const title = config.themeConfig?.title || "Litedocs";
+  const title = config.themeConfig?.title || "Boltdocs";
   const navItems = config.themeConfig?.navbar || [];
   const socialLinks = config.themeConfig?.socialLinks || [];
 
-  // Fetch Github Stars if repo is provided
-  useEffect(() => {
-    if (config.themeConfig?.githubRepo) {
-      // Small dummy fetch simulation logic (real logic can be plugged here to `api.github.com/repos/...`)
-      // We will set a static value for testing if it fails, normally we fetch Github API.
-      getStarsRepo(config.themeConfig.githubRepo)
-        .then((stars) => setStars(stars))
-        .catch(() => setStars("0"));
-    }
-  }, [config.themeConfig?.githubRepo]);
-
   return (
-    <header className="litedocs-navbar">
+    <header className="boltdocs-navbar">
       <div className="navbar-container">
         {/* LEFT SECTION */}
         <div className="navbar-left">
@@ -82,9 +69,7 @@ export function Navbar({
                     className="navbar-logo-img"
                   />
                 )
-              ) : (
-                <Book width="20" height="20" />
-              )}
+              ) : null}
               {title}
             </Link>
           </div>

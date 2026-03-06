@@ -24,13 +24,13 @@ a {
 }
 
 /* ─── Layout Shell ───────────────────────────────────────── */
-.litedocs-layout {
+.boltdocs-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.litedocs-main-container {
+.boltdocs-main-container {
   display: flex;
   flex: 1;
   width: 100%;
@@ -41,7 +41,7 @@ a {
 }
 
 /* ─── Background Glow ────────────────────────────────────── */
-.litedocs-background-glow {
+.boltdocs-background-glow {
   position: fixed;
   top: 0;
   left: 0;

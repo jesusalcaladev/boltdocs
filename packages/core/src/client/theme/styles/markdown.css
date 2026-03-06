@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    MAIN CONTENT AREA
    ═══════════════════════════════════════════════════════════ */
-.litedocs-content {
+.boltdocs-content {
   flex: 1;
   padding: 2rem 2.5rem 2.5rem;
   max-width: var(--ld-content-max-width);
@@ -12,16 +12,16 @@
     padding 0.3s ease;
 }
 
-.litedocs-main-container.sidebar-collapsed .litedocs-content {
+.boltdocs-main-container.sidebar-collapsed .boltdocs-content {
   max-width: 100%;
 }
 
 /* ─── Breadcrumbs ────────────────────────────────────────── */
-.litedocs-breadcrumbs {
+.boltdocs-breadcrumbs {
   margin-bottom: 1.5rem;
 }
 
-.litedocs-breadcrumbs-list {
+.boltdocs-breadcrumbs-list {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -31,12 +31,12 @@
   font-size: 0.8125rem;
 }
 
-.litedocs-breadcrumbs-item {
+.boltdocs-breadcrumbs-item {
   display: flex;
   align-items: center;
 }
 
-.litedocs-breadcrumbs-link {
+.boltdocs-breadcrumbs-link {
   display: flex;
   align-items: center;
   color: var(--ld-text-muted);
@@ -44,11 +44,11 @@
   transition: color 0.2s;
 }
 
-.litedocs-breadcrumbs-link:hover {
+.boltdocs-breadcrumbs-link:hover {
   color: var(--ld-color-primary);
 }
 
-.litedocs-breadcrumbs-separator {
+.boltdocs-breadcrumbs-separator {
   display: flex;
   align-items: center;
   color: var(--ld-text-dim);
@@ -56,17 +56,17 @@
   opacity: 0.5;
 }
 
-.litedocs-breadcrumbs-text {
+.boltdocs-breadcrumbs-text {
   color: var(--ld-text-muted);
 }
 
-.litedocs-breadcrumbs-active {
+.boltdocs-breadcrumbs-active {
   color: var(--ld-text-main);
   font-weight: 500;
 }
 
 /* ─── Markdown Typography ────────────────────────────────── */
-.litedocs-page h1 {
+.boltdocs-page h1 {
   font-size: 2.25rem;
   margin: 0 0 0.75rem;
   font-weight: 700;
@@ -74,13 +74,13 @@
   color: var(--ld-text-main);
 }
 
-.litedocs-page h1 + p {
+.boltdocs-page h1 + p {
   color: var(--ld-text-muted);
   font-size: 1.05rem;
   margin-bottom: 2rem;
 }
 
-.litedocs-page h2 {
+.boltdocs-page h2 {
   font-size: 1.4rem;
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
@@ -92,7 +92,7 @@
   letter-spacing: -0.015em;
 }
 
-.litedocs-page h3 {
+.boltdocs-page h3 {
   font-size: 1.125rem;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
@@ -101,41 +101,41 @@
   scroll-margin-top: 5rem;
 }
 
-.litedocs-page p {
+.boltdocs-page p {
   margin-top: 0;
   margin-bottom: 1rem;
   color: var(--ld-text-muted);
 }
 
-.litedocs-page a {
+.boltdocs-page a {
   color: var(--ld-color-primary);
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.litedocs-page a:hover {
+.boltdocs-page a:hover {
   color: var(--ld-color-primary-hover);
   text-decoration: underline;
 }
 
-.litedocs-page ul,
-.litedocs-page ol {
+.boltdocs-page ul,
+.boltdocs-page ol {
   margin-top: 0;
   margin-bottom: 1rem;
   padding-left: 1.5rem;
   color: var(--ld-text-muted);
 }
 
-.litedocs-page li {
+.boltdocs-page li {
   margin-bottom: 0.35rem;
 }
 
-.litedocs-page strong {
+.boltdocs-page strong {
   color: var(--ld-text-main);
   font-weight: 600;
 }
 
-.litedocs-page blockquote {
+.boltdocs-page blockquote {
   margin: 1.5rem 0;
   padding: 0.75rem 1.25rem;
   border-left: 3px solid var(--ld-color-primary);
@@ -144,18 +144,18 @@
   color: var(--ld-text-muted);
 }
 
-.litedocs-page blockquote p {
+.boltdocs-page blockquote p {
   margin: 0;
 }
 
-.litedocs-page hr {
+.boltdocs-page hr {
   border: none;
   border-top: 1px solid var(--ld-border-subtle);
   margin: 2rem 0;
 }
 
 /* ─── Images ─────────────────────────────────────────────── */
-.litedocs-page img {
+.boltdocs-page img {
   max-width: 100%;
   height: auto;
   border-radius: var(--ld-radius-md);
@@ -163,14 +163,14 @@
   display: block;
 }
 
-.litedocs-page table {
+.boltdocs-page table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0;
   font-size: 0.875rem;
 }
 
-.litedocs-page th {
+.boltdocs-page th {
   text-align: left;
   padding: 0.6rem 0.75rem;
   border-bottom: 2px solid var(--ld-border-subtle);
@@ -178,18 +178,18 @@
   font-weight: 600;
 }
 
-.litedocs-page td {
+.boltdocs-page td {
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--ld-border-subtle);
   color: var(--ld-text-muted);
 }
 
-.litedocs-page tr:hover td {
+.boltdocs-page tr:hover td {
   background-color: rgba(255, 255, 255, 0.02);
 }
 
 /* ─── Inline Code ────────────────────────────────────────── */
-.litedocs-page :not(pre) > code {
+.boltdocs-page :not(pre) > code {
   background-color: var(--ld-surface);
   padding: 0.15rem 0.45rem;
   border-radius: 5px;
@@ -274,7 +274,7 @@
 }
 
 /* Default pre (without wrapper) */
-.litedocs-page pre {
+.boltdocs-page pre {
   margin: 1.5rem 0;
   border-radius: var(--ld-radius-md);
   overflow-x: auto;
@@ -286,7 +286,7 @@
   border: 1px solid var(--ld-border-subtle);
 }
 
-.litedocs-page pre > code {
+.boltdocs-page pre > code {
   display: grid;
   padding: 1rem 0;
   background-color: transparent;
@@ -295,11 +295,11 @@
   font-size: inherit;
 }
 
-.litedocs-page pre > code .line {
+.boltdocs-page pre > code .line {
   padding: 0 1.25rem;
 }
 
-.litedocs-page pre > code .line.highlighted {
+.boltdocs-page pre > code .line.highlighted {
   background-color: var(--ld-color-primary-muted);
   border-left: 2px solid var(--ld-color-primary);
 }
@@ -314,8 +314,8 @@
   font-weight: 400;
 }
 
-.litedocs-page h2:hover .header-anchor,
-.litedocs-page h3:hover .header-anchor {
+.boltdocs-page h2:hover .header-anchor,
+.boltdocs-page h3:hover .header-anchor {
   opacity: 1;
 }
 
@@ -323,12 +323,12 @@
   color: var(--ld-color-primary);
 }
 
-.litedocs-heading {
+.boltdocs-heading {
   display: flex;
   align-items: center;
 }
 
-.litedocs-heading .header-anchor {
+.boltdocs-heading .header-anchor {
   display: inline-flex;
   align-items: center;
   margin-left: 0.5rem;
@@ -338,6 +338,6 @@
   text-decoration: none;
 }
 
-.litedocs-heading:hover .header-anchor {
+.boltdocs-heading:hover .header-anchor {
   opacity: 1;
 }

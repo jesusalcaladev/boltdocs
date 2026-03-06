@@ -1,7 +1,7 @@
 packages:
   - packages/*
   - docs
-  - benchmarks
+  - benchmarks/*
 
 onlyBuiltDependencies:
   - sharp

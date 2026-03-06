@@ -12,7 +12,7 @@ Because LiteDocs is architected as a thin wrapper around **Vite**, its plugin sy
 LiteDocs internally runs several sub-plugins that manage core features:
 - **Routing Plugin**: Crawls your `docs/` folder to build a manifest of pages.
 - **HTML Document Injector**: Injects necessary `index.html` structure automatically during development servers and production SSR.
-- **Entry Plugin**: Uses virtual modules to dynamically resolve client-side hydration endpoints `virtual:litedocs-entry-client` and `virtual:litedocs-entry-server`.
+- **Entry Plugin**: Uses virtual modules to dynamically resolve client-side hydration endpoints `virtual:boltdocs-entry-client` and `virtual:boltdocs-entry-server`.
 
 ## Creating Custom Plugins
 
@@ -24,7 +24,7 @@ import type { Plugin } from 'vite';
 
 export function myCustomPlugin(): Plugin {
   return {
-    name: 'litedocs-custom-plugin',
+    name: 'boltdocs-custom-plugin',
     config(config) {
       return {
         define: {
@@ -40,12 +40,12 @@ Then in `vite.config.ts`:
 
 ```ts
 import { defineConfig } from 'vite';
-import litedocs from 'litedocs';
+import boltdocs from 'boltdocs';
 import { myCustomPlugin } from './my-custom-plugin';
 
 export default defineConfig({
   plugins: [
-    litedocs(),
+    boltdocs(),
     myCustomPlugin()
   ]
 });
@@ -59,7 +59,7 @@ Because LiteDocs is just an abstraction over Vite's configuration, any existing 
 
 LiteDocs maintains a set of official plugins to extend the capabilities of your documentation.
 
-### `litedocs-plugin-mermaid`
+### `boltdocs-plugin-mermaid`
 
 This plugin adds native support for rendering [Mermaid](https://mermaid.js.org/) diagrams directly from Markdown code blocks. It runs as a `remark` plugin to transform your syntax efficiently into a React component.
 
@@ -68,16 +68,16 @@ This plugin adds native support for rendering [Mermaid](https://mermaid.js.org/)
 Install the package via your favorite package manager:
 
 ```bash
-pnpm install @litedocs/plugin-mermaid
+pnpm install @boltdocs/plugin-mermaid
 ```
 
 #### Configuration
 
-Add the plugin to your `litedocs.config.js` or `litedocs.config.ts`:
+Add the plugin to your `boltdocs.config.js` or `boltdocs.config.ts`:
 
 ```js
-// litedocs.config.js
-import mermaidPlugin from '@litedocs/plugin-mermaid';
+// boltdocs.config.js
+import mermaidPlugin from '@boltdocs/plugin-mermaid';
 
 export default {
   // ... other options

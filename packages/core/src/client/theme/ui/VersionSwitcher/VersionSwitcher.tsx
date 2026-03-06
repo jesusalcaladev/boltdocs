@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Layers, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LitedocsVersionsConfig } from "../../../../node/config";
+import { BoltdocsVersionsConfig } from "../../../../node/config";
 import { ComponentRoute } from "../../../app";
 
 function getBaseFilePath(
@@ -25,7 +25,7 @@ export function VersionSwitcher({
   currentLocale,
   allRoutes,
 }: {
-  versions: LitedocsVersionsConfig;
+  versions: BoltdocsVersionsConfig;
   currentVersion: string;
   currentLocale?: string;
   allRoutes: ComponentRoute[];
@@ -90,7 +90,7 @@ export function VersionSwitcher({
 
   return (
     <div
-      className="litedocs-version-switcher"
+      className="boltdocs-version-switcher"
       ref={dropdownRef}
       style={{ position: "relative", display: "flex", alignItems: "center" }}
     >

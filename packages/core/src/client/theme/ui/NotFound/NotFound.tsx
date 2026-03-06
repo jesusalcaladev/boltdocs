@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 
 export function NotFound() {
   return (
-    <div className="litedocs-not-found">
+    <div className="boltdocs-not-found">
       <div className="not-found-content">
         <span className="not-found-code">404</span>
         <h1 className="not-found-title">Page Not Found</h1>

@@ -1,7 +1,7 @@
 {
-  "name": "@litedocs/plugin-mermaid",
+  "name": "@boltdocs/plugin-mermaid",
   "version": "1.0.0",
-  "description": "Mermaid diagram plugin for Litedocs",
+  "description": "Mermaid diagram plugin for Boltdocs",
   "main": "dist/node/index.js",
   "module": "dist/node/index.mjs",
   "types": "dist/node/index.d.ts",
@@ -22,6 +22,7 @@
     "build": "tsup",
     "dev": "tsup --watch"
   },
+  "packageManager": "pnpm@10.30.2",
   "author": "",
   "license": "ISC",
   "type": "commonjs",

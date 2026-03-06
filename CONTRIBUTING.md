@@ -16,8 +16,8 @@ This project is a monorepo using [pnpm workspaces](https://pnpm.io/workspaces) a
 1. Fork the repository and clone your fork:
 
    ```bash
-   git clone https://github.com/<your-username>/litedocs.git
-   cd litedocs
+   git clone https://github.com/<your-username>/boltdocs.git
+   cd boltdocs
    ```
 
 2. Install dependencies (this will also run `preinstall` for the core package):
@@ -34,7 +34,7 @@ This project is a monorepo using [pnpm workspaces](https://pnpm.io/workspaces) a
 ### Project Structure
 
 - `packages/core`: The core framework logic containing the theme, plugins, and Vite integration.
-- `packages/create-litedocs`: The CLI to bootstrap new projects.
+- `packages/create-boltdocs`: The CLI to bootstrap new projects.
 - `example/`: Example documentation site used for active development and testing.
 
 ## Making a Pull Request

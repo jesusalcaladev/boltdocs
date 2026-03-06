@@ -38,7 +38,7 @@ export function Playground({
   const extendedScope = { React, ...scope };
 
   return (
-    <div className="litedocs-playground" data-readonly={readonly}>
+    <div className="boltdocs-playground" data-readonly={readonly}>
       <LiveProvider
         code={activeCode}
         scope={extendedScope}

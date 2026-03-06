@@ -1,5 +1,5 @@
 /* ─── Video ──────────────────────────────────────────────── */
-.litedocs-video-wrapper {
+.boltdocs-video-wrapper {
   margin: 1.5rem 0;
   max-width: 100%;
   width: 100%;
@@ -10,7 +10,7 @@
   background-color: var(--ld-surface);
 }
 
-.litedocs-video {
+.boltdocs-video {
   display: block;
   width: 100%;
   max-width: 100%;
@@ -19,14 +19,14 @@
   animation: ld-video-fade-in 0.4s ease-out;
 }
 
-.litedocs-video-placeholder {
+.boltdocs-video-placeholder {
   width: 100%;
   aspect-ratio: 16 / 9;
   background-color: var(--ld-surface);
 }
 
-/* Ensure video doesn't overflow litedocs-page container */
-.litedocs-page video {
+/* Ensure video doesn't overflow boltdocs-page container */
+.boltdocs-page video {
   max-width: 100%;
   height: auto;
 }

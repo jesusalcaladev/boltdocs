@@ -98,13 +98,13 @@ function useLocalizedTo(to: RouterLinkProps["to"]) {
 
 export interface LinkProps extends Omit<RouterLinkProps, "prefetch"> {
   /** Should prefetch the page on hover? Options: 'hover' | 'none'. Default 'hover' */
-  litedocsPrefetch?: "hover" | "none";
+  boltdocsPrefetch?: "hover" | "none";
 }
 
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (props, ref) => {
     const {
-      litedocsPrefetch = "hover",
+      boltdocsPrefetch = "hover",
       onMouseEnter,
       onFocus,
       to,
@@ -116,7 +116,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
       onMouseEnter?.(e);
       if (
-        litedocsPrefetch === "hover" &&
+        boltdocsPrefetch === "hover" &&
         typeof localizedTo === "string" &&
         localizedTo.startsWith("/")
       ) {
@@ -127,7 +127,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     const handleFocus = (e: React.FocusEvent<HTMLAnchorElement>) => {
       onFocus?.(e);
       if (
-        litedocsPrefetch === "hover" &&
+        boltdocsPrefetch === "hover" &&
         typeof localizedTo === "string" &&
         localizedTo.startsWith("/")
       ) {
@@ -150,13 +150,13 @@ Link.displayName = "Link";
 
 export interface NavLinkProps extends Omit<RouterNavLinkProps, "prefetch"> {
   /** Should prefetch the page on hover? Options: 'hover' | 'none'. Default 'hover' */
-  litedocsPrefetch?: "hover" | "none";
+  boltdocsPrefetch?: "hover" | "none";
 }
 
 export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
   (props, ref) => {
     const {
-      litedocsPrefetch = "hover",
+      boltdocsPrefetch = "hover",
       onMouseEnter,
       onFocus,
       to,
@@ -169,7 +169,7 @@ export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
     const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
       onMouseEnter?.(e);
       if (
-        litedocsPrefetch === "hover" &&
+        boltdocsPrefetch === "hover" &&
         typeof localizedTo === "string" &&
         localizedTo.startsWith("/")
       ) {
@@ -180,7 +180,7 @@ export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
     const handleFocus = (e: React.FocusEvent<HTMLAnchorElement>) => {
       onFocus?.(e);
       if (
-        litedocsPrefetch === "hover" &&
+        boltdocsPrefetch === "hover" &&
         typeof localizedTo === "string" &&
         localizedTo.startsWith("/")
       ) {

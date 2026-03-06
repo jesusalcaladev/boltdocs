@@ -1,32 +1,32 @@
 ---
 title: "CLI Reference"
-description: "Learn how to use the create-litedocs CLI."
+description: "Learn how to use the create-boltdocs CLI."
 ---
 
 # Command Line Interface (CLI)
 
-LiteDocs comes with a binary package named `create-litedocs` that helps bootstrap the framework.
+LiteDocs comes with a binary package named `create-boltdocs` that helps bootstrap the framework.
 
 ## Usage
 
 ```bash
-npx create-litedocs@latest
+npx create-boltdocs@latest
 # or
-pnpm dlx create-litedocs@latest
+pnpm dlx create-boltdocs@latest
 # or
-yarn create litedocs
+yarn create boltdocs
 ```
 
 ## What it does
 
-When you run `create-litedocs`, it performs the following tasks:
+When you run `create-boltdocs`, it performs the following tasks:
 
-1. Asks for a `projectName` (defaults to `my-litedocs-project`).
+1. Asks for a `projectName` (defaults to `my-boltdocs-project`).
 2. Creates a directory with that name.
 3. Bootstraps the necessary files:
    - `package.json` with React, Vite, and LiteDocs dependencies.
    - `vite.config.ts` pre-configured for the LiteDocs Vite plugin.
-   - `litedocs.config.js` to define your theme setup.
+   - `boltdocs.config.js` to define your theme setup.
    - `custom.css` with a full suite of CSS variables for theming.
    - `docs/index.mdx` as your entry point documentation file.
    - Example external components folder (`src/components/`) demonstrating how to use your own React code within MDX.

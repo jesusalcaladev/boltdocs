@@ -1,7 +1,7 @@
 {
-  "name": "create-litedocs",
+  "name": "create-boltdocs",
   "version": "1.0.1",
-  "description": "CLI to create litedocs projects",
+  "description": "CLI to create boltdocs projects",
   "type": "module",
   "author": "Jesus Alcala",
   "license": "ISC",
@@ -10,7 +10,7 @@
   },
   "main": "./dist/index.js",
   "bin": {
-    "create-litedocs": "./dist/index.js"
+    "create-boltdocs": "./dist/index.js"
   },
   "scripts": {
     "build": "tsup",

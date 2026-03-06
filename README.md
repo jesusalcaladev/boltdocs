@@ -17,8 +17,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/jesusalcaladev/litedocs.git
-cd litedocs
+git clone https://github.com/jesusalcaladev/boltdocs.git
+cd boltdocs
 
 # Install dependencies
 pnpm install

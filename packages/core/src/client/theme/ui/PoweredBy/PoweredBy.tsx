@@ -4,7 +4,7 @@ export function PoweredBy() {
   return (
     <div className="powered-by-container">
       <a
-        href="https://github.com/jesusalcaladev/litedocs"
+        href="https://github.com/jesusalcaladev/boltdocs"
         target="_blank"
         rel="noopener noreferrer"
         className="powered-by-link"

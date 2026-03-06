@@ -5,17 +5,17 @@ import rehypeSlug from "rehype-slug";
 import rehypePrettyCode from "rehype-pretty-code";
 import type { Plugin } from "vite";
 
-import type { LitedocsConfig } from "./config";
+import type { BoltdocsConfig } from "./config";
 
 /**
  * Configures the MDX compiler for Vite using `@mdx-js/rollup`.
  * Includes standard remark and rehype plugins for GitHub Flavored Markdown (GFM),
  * frontmatter extraction, auto-linking headers, and syntax highlighting via `rehype-pretty-code`.
  *
- * @param config - The Litedocs configuration containing custom plugins
+ * @param config - The Boltdocs configuration containing custom plugins
  * @returns A Vite plugin configured for MDX parsing
  */
-export function litedocsMdxPlugin(config?: LitedocsConfig): Plugin {
+export function boltdocsMdxPlugin(config?: BoltdocsConfig): Plugin {
   const extraRemarkPlugins =
     config?.plugins?.flatMap((p) => p.remarkPlugins || []) || [];
   const extraRehypePlugins =

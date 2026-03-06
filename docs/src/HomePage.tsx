@@ -1,6 +1,6 @@
 import "./HomePage.css";
 import { Benchmark } from "./Benchmark";
-import { Cards, Card, Badge, Button } from "litedocs/client";
+import { Cards, Card, Badge, Button } from "boltdocs/client";
 import { PixelBlast } from "./PixelBlast";
 import { Sparkles, Folder } from "lucide-react";
 import { Component } from "lucide-react";
@@ -71,13 +71,13 @@ export default function HomePage() {
       />
       <main className="hero">
         <img
-          src="/litedocs.svg"
+          src="/boltdocs.svg"
           alt="Logo"
           className="logo"
           width={100}
           height={100}
         />
-        <h1 className="title">Litedocs</h1>
+        <h1 className="title">Boltdocs</h1>
         <Badge variant="warning">v-experimental</Badge>
         <p className="subtitle">
           A minimal, fast, and highly customizable documentation framework

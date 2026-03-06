@@ -8,14 +8,15 @@ export default defineConfig({
     "src/client/ssr.tsx",
   ],
   format: ["cjs", "esm"],
-  dts: false,
+  dts: true,
+  tsconfig: "./tsconfig.json",
   clean: true,
   external: [
     "vite",
     "react",
     "react-dom",
     "react-router-dom",
-    "virtual:litedocs-routes",
-    "virtual:litedocs-config",
+    "virtual:boltdocs-routes",
+    "virtual:boltdocs-config",
   ],
 });

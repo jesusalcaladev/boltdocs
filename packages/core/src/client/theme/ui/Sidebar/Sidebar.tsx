@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "../Link";
-import { LitedocsConfig } from "../../../../node/config";
+import { BoltdocsConfig } from "../../../../node/config";
 import { PoweredBy } from "../PoweredBy";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
@@ -79,7 +79,7 @@ export function Sidebar({
   onCollapse,
 }: {
   routes: RouteItem[];
-  config: LitedocsConfig;
+  config: BoltdocsConfig;
   onCollapse?: () => void;
 }) {
   const location = useLocation();
@@ -105,7 +105,7 @@ export function Sidebar({
   const groups = Array.from(groupMap.values());
 
   return (
-    <aside className="litedocs-sidebar">
+    <aside className="boltdocs-sidebar">
       <nav aria-label="Main Navigation">
         <ul className="sidebar-list">
           {ungrouped.map((route) => (
