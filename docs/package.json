@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@mdx-js/react": "^3.0.0",
-    "boltdocs": "1.0.0",
+    "boltdocs": "1.0.1",
     "lucide-react": "^0.575.0",
     "postprocessing": "^6.38.3",
     "react": "^18.2.0",
