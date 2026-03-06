@@ -1,0 +1,16 @@
+{
+  "benchmarks": {
+    "litedocs": {
+      "timeMs": 38682.1252,
+      "timeSec": 38.68
+    },
+    "nextra+cache": {
+      "timeMs": 265678.55569999997,
+      "timeSec": 265.68
+    }
+  },
+  "comparison": {
+    "faster": "litedocs",
+    "ratio": 6.87
+  }
+}
