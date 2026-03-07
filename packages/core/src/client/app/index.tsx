@@ -179,7 +179,10 @@ export function AppShell({
           )}
 
           {/* Documentation pages WITH sidebar + TOC layout */}
-          <Route element={<DocsLayout config={config} routes={routesInfo} />}>
+          <Route
+            key="docs-layout"
+            element={<DocsLayout config={config} routes={routesInfo} />}
+          >
             {resolvedRoutes.map((route: any) => (
               <Route
                 key={route.path}
@@ -221,6 +224,8 @@ function ScrollHandler() {
   const { pathname, hash } = useLocation();
 
   useLayoutEffect(() => {
+    // Only scroll if we are not in a pending transition state (if we were using useTransition)
+    // For now, we ensure the scroll happens.
     if (hash) {
       const id = hash.replace("#", "");
       const element = document.getElementById(id);
