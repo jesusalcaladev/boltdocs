@@ -4,15 +4,15 @@
       "timeSec": 368.92
     },
     "boltdocs_cold": {
-      "timeSec": 37.34
+      "timeSec": 25.69
     },
     "boltdocs_warm": {
-      "timeSec": 18.05
+      "timeSec": 13.78
     }
   },
   "improvements": {
-    "cold_vs_nextra": 9.88,
-    "warm_vs_cold": 2.07,
-    "warm_vs_nextra": 20.44
+    "cold_vs_nextra": 14.36,
+    "warm_vs_cold": 1.86,
+    "warm_vs_nextra": 26.77
   }
 }

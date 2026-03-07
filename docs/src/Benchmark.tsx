@@ -4,21 +4,21 @@ import "./Benchmark.css";
 const BENCHMARK_DATA = [
   {
     name: "Boltdocs",
-    version: "latest",
-    time: 38.14,
-    color: "var(--ld-color-primary)", // Pink
+    version: "warm",
+    time: 13.78,
+    color: "var(--ld-color-primary)",
+  },
+  {
+    name: "Boltdocs",
+    version: "cold",
+    time: 25.69,
+    color: "var(--ld-color-primary)",
   },
   {
     name: "Nextra",
     version: "v3",
-    time: 174.64,
-    color: "var(--ld-color-primary-muted)", // Gray
-  },
-  {
-    name: "Nextra + Cache",
-    version: "v3",
-    time: 265.68,
-    color: "var(--ld-color-primary-muted)", // Gray
+    time: 368.92,
+    color: "var(--ld-color-primary-muted)",
   },
 ];
 
