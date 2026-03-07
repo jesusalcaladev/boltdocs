@@ -113,20 +113,9 @@ export function AppShell({
 }) {
   const [routesInfo, setRoutesInfo] = useState<ComponentRoute[]>(initialRoutes);
   const [config] = useState(initialConfig);
-  const [resolvedRoutes, setResolvedRoutes] = useState<any[]>([]);
 
-  // Subscribe to HMR events
-  useEffect(() => {
-    if (hot) {
-      hot.on("boltdocs:routes-update", (newRoutes: ComponentRoute[]) => {
-        setRoutesInfo(newRoutes);
-      });
-    }
-  }, [hot]);
-
-  // Resolve MDX components
-  useEffect(() => {
-    const mapped = routesInfo
+  const resolveRoutes = (infos: ComponentRoute[]) => {
+    return infos
       .filter(
         (route) => !(HomePage && (route.path === "/" || route.path === "")),
       )
@@ -145,8 +134,24 @@ export function AppShell({
           }),
         };
       });
+  };
 
-    setResolvedRoutes(mapped);
+  const [resolvedRoutes, setResolvedRoutes] = useState<any[]>(() =>
+    resolveRoutes(initialRoutes),
+  );
+
+  // Subscribe to HMR events
+  useEffect(() => {
+    if (hot) {
+      hot.on("boltdocs:routes-update", (newRoutes: ComponentRoute[]) => {
+        setRoutesInfo(newRoutes);
+      });
+    }
+  }, [hot]);
+
+  // Sync resolved routes when info or modules change
+  useEffect(() => {
+    setResolvedRoutes(resolveRoutes(routesInfo));
   }, [routesInfo, modules]);
 
   return (
