@@ -29,80 +29,47 @@
 
 /* ─── Collapsible Sidebar ────────────────────────────────── */
 .boltdocs-main-container.sidebar-collapsed .boltdocs-sidebar {
-  width: 0;
-  padding-left: 0;
-  padding-right: 0;
-  border-right-color: transparent;
-  opacity: 0;
-  pointer-events: none;
+  width: 54px;
+  padding: 1rem 0;
+  border-right: 1px solid var(--ld-border-subtle);
+  opacity: 1;
+  pointer-events: auto;
   overflow: hidden;
 }
 
-.sidebar-toggle-floating {
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  background-color: var(--ld-surface);
-  border: 1px solid var(--ld-border-strong);
-  color: var(--ld-text-muted);
+.sidebar-collapse {
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  padding: 0 0.75rem 1rem;
+  transition: justify-content 0.3s ease;
+}
+
+.boltdocs-main-container.sidebar-collapsed .sidebar-collapse {
   justify-content: center;
-  cursor: pointer;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(20px) scale(0.9);
-}
-
-.sidebar-toggle-floating:hover {
-  background-color: var(--ld-bg-soft);
-  color: var(--ld-text-main);
-  transform: translateY(0px) scale(1.05);
-  border-color: var(--ld-color-primary);
-}
-
-.sidebar-toggle-floating:active {
-  transform: translateY(0px) scale(0.95);
-}
-
-.boltdocs-main-container.sidebar-collapsed .sidebar-toggle-floating {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
-}
-
-.sidebar-footer {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--ld-border-subtle);
+  padding: 0 0 1rem;
 }
 
 .sidebar-collapse-btn {
+  color: var(--ld-text-muted);
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  background: none;
-  border: none;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   border-radius: var(--ld-radius-md);
-  color: var(--ld-text-muted);
-  font-family: var(--ld-font-sans);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sidebar-collapse-btn:hover {
-  background-color: var(--ld-bg-soft);
-  color: var(--ld-color-primary);
+  background-color: var(--ld-bg-mute);
+  color: var(--ld-text-main);
+  transform: scale(1.05);
 }
 
 .boltdocs-sidebar::-webkit-scrollbar {

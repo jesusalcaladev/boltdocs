@@ -139,20 +139,9 @@ export function ThemeLayout({
           <Sidebar
             routes={filteredRoutes}
             config={config}
-            onCollapse={() => setIsSidebarOpen(false)}
+            isCollapsed={!isSidebarOpen}
+            onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
           />
-        )}
-
-        {/* Floating Expand Button when Sidebar is Collapsed */}
-        {sidebar === undefined && (
-          <button
-            className="sidebar-toggle-floating"
-            onClick={() => setIsSidebarOpen(true)}
-            aria-label="Expand Sidebar"
-            title="Expand Sidebar"
-          >
-            <Menu size={20} />
-          </button>
         )}
 
         <main className="boltdocs-content">

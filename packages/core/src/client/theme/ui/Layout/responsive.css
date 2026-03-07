@@ -12,10 +12,6 @@
     display: none;
   }
 
-  .sidebar-toggle-floating {
-    display: none !important;
-  }
-
   .boltdocs-content {
     padding: 1.5rem 1rem 3rem;
   }

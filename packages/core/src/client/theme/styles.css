@@ -27,7 +27,6 @@
 @import "./ui/Layout/pagination.css";
 
 /* Pages */
-@import "./styles/home.css";
 @import "./ui/NotFound/not-found.css";
 @import "./ui/Loading/loading.css";
 

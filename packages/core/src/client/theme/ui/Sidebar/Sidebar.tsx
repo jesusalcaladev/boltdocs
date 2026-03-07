@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Link } from "../Link";
 import { BoltdocsConfig } from "../../../../node/config";
 import { PoweredBy } from "../PoweredBy";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronLeft, PanelLeft } from "lucide-react";
 
 interface RouteItem {
   path: string;
@@ -76,11 +76,13 @@ function renderBadge(badgeRaw: RouteItem["badge"]) {
 export function Sidebar({
   routes,
   config,
-  onCollapse,
+  isCollapsed,
+  onToggle,
 }: {
   routes: RouteItem[];
   config: BoltdocsConfig;
-  onCollapse?: () => void;
+  isCollapsed?: boolean;
+  onToggle?: () => void;
 }) {
   const location = useLocation();
 
@@ -106,50 +108,52 @@ export function Sidebar({
 
   return (
     <aside className="boltdocs-sidebar">
-      <nav aria-label="Main Navigation">
-        <ul className="sidebar-list">
-          {ungrouped.map((route) => (
-            <li key={route.path}>
-              <Link
-                to={route.path === "" ? "/" : route.path}
-                className={`sidebar-link ${location.pathname === route.path ? "active" : ""}`}
-                aria-current={
-                  location.pathname === route.path ? "page" : undefined
-                }
-              >
-                <div className="sidebar-link-content">
-                  <span>{route.title}</span>
-                  {renderBadge(route.badge)}
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        {groups.map((group) => (
-          <SidebarGroupSection
-            key={group.slug}
-            group={group}
-            currentPath={location.pathname}
-          />
-        ))}
-      </nav>
-
-      {onCollapse && (
-        <div className="sidebar-footer">
+      {onToggle && (
+        <div className="sidebar-collapse">
           <button
             className="sidebar-collapse-btn"
-            onClick={onCollapse}
-            aria-label="Collapse Sidebar"
-            title="Collapse Sidebar"
+            onClick={onToggle}
+            aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            <ChevronLeft size={16} />
-            <span>Collapse Sidebar</span>
+            <PanelLeft size={18} />
           </button>
         </div>
       )}
 
-      {config.themeConfig?.poweredBy !== false && <PoweredBy />}
+      {!isCollapsed && (
+        <>
+          <nav aria-label="Main Navigation">
+            <ul className="sidebar-list">
+              {ungrouped.map((route) => (
+                <li key={route.path}>
+                  <Link
+                    to={route.path === "" ? "/" : route.path}
+                    className={`sidebar-link ${location.pathname === route.path ? "active" : ""}`}
+                    aria-current={
+                      location.pathname === route.path ? "page" : undefined
+                    }
+                  >
+                    <div className="sidebar-link-content">
+                      <span>{route.title}</span>
+                      {renderBadge(route.badge)}
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {groups.map((group) => (
+              <SidebarGroupSection
+                key={group.slug}
+                group={group}
+                currentPath={location.pathname}
+              />
+            ))}
+          </nav>
+          {config.themeConfig?.poweredBy !== false && <PoweredBy />}
+        </>
+      )}
     </aside>
   );
 }
