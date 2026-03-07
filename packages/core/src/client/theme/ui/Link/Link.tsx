@@ -5,6 +5,7 @@ import {
   LinkProps as RouterLinkProps,
   NavLinkProps as RouterNavLinkProps,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { usePreload } from "../../../app/preload";
 import { useConfig } from "../../../app";
@@ -107,11 +108,13 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       boltdocsPrefetch = "hover",
       onMouseEnter,
       onFocus,
+      onClick,
       to,
       ...rest
     } = props;
     const localizedTo = useLocalizedTo(to);
     const { preload } = usePreload();
+    const navigate = useNavigate();
 
     const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
       onMouseEnter?.(e);
@@ -135,12 +138,38 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       }
     };
 
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      // Allow user onClick to handle defaults or custom logic
+      onClick?.(e);
+
+      // If default prevented or not a simple left click, don't handle
+      if (
+        e.defaultPrevented ||
+        e.button !== 0 ||
+        e.metaKey ||
+        e.ctrlKey ||
+        e.shiftKey ||
+        e.altKey
+      ) {
+        return;
+      }
+
+      // Intercept navigation to wrap in startTransition
+      if (typeof localizedTo === "string" && !localizedTo.startsWith("http")) {
+        e.preventDefault();
+        React.startTransition(() => {
+          navigate(localizedTo);
+        });
+      }
+    };
+
     return (
       <RouterLink
         ref={ref}
         to={localizedTo}
         onMouseEnter={handleMouseEnter}
         onFocus={handleFocus}
+        onClick={handleClick}
         {...rest}
       />
     );
@@ -159,12 +188,14 @@ export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
       boltdocsPrefetch = "hover",
       onMouseEnter,
       onFocus,
+      onClick,
       to,
       ...rest
     } = props;
 
     const localizedTo = useLocalizedTo(to);
     const { preload } = usePreload();
+    const navigate = useNavigate();
 
     const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
       onMouseEnter?.(e);
@@ -188,12 +219,33 @@ export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
       }
     };
 
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      onClick?.(e);
+      if (
+        e.defaultPrevented ||
+        e.button !== 0 ||
+        e.metaKey ||
+        e.ctrlKey ||
+        e.shiftKey ||
+        e.altKey
+      ) {
+        return;
+      }
+      if (typeof localizedTo === "string" && !localizedTo.startsWith("http")) {
+        e.preventDefault();
+        React.startTransition(() => {
+          navigate(localizedTo);
+        });
+      }
+    };
+
     return (
       <RouterNavLink
         ref={ref}
         to={localizedTo}
         onMouseEnter={handleMouseEnter}
         onFocus={handleFocus}
+        onClick={handleClick}
         {...rest}
       />
     );
