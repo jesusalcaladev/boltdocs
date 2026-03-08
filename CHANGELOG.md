@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/jesusalcaladev/boltdocs/compare/v1.3.1...v1.3.2) (2026-03-08)
+
+
+### Bug Fixes
+
+* SSG capabilities for meta tag replacement, sitemap generation, and general utility functions. ([db993d1](https://github.com/jesusalcaladev/boltdocs/commit/db993d145a2559a58fd5cdf9450cb6c06445f6af))
+
 ## [1.3.1](https://github.com/jesusalcaladev/boltdocs/compare/v1.3.0...v1.3.1) (2026-03-08)
 
 
