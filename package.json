@@ -9,7 +9,9 @@
     "build": "turbo run build",
     "release": "semantic-release",
     "audit": "pnpm audit",
-    "benchmark": "node ./benchmarks/run-benchmarks.js"
+    "benchmark": "node ./benchmarks/run-benchmarks.js",
+    "test": "vitest run --dir tests",
+    "test:internal": "vitest run --dir internal-testing"
   },
   "packageManager": "pnpm@10.30.2",
   "devDependencies": {
@@ -18,9 +20,11 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^13.1.5",
     "@semantic-release/release-notes-generator": "^14.1.0",
+    "@vitest/ui": "^4.0.18",
     "husky": "^9.0.1",
     "semantic-release": "^25.0.3",
-    "turbo": "latest"
+    "turbo": "latest",
+    "vitest": "^4.0.18"
   },
   "pnpm": {
     "overrides": {
