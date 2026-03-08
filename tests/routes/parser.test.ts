@@ -55,24 +55,60 @@ describe("parseDocFile", () => {
     expect(result.route.title).toBe("installation");
   });
 
-  it("should handle versioning if config is provided", () => {
-    const filePath = "C:\\docs\\v1\\intro.md";
-    const config = {
-      versions: {
-        versions: {
-          v1: { label: "Version 1" },
-        },
-      },
+  it("should handle i18n locales", () => {
+    const config: any = {
+      i18n: { locales: { es: { label: "Spanish" } } },
     };
+    (utils.parseFrontmatter as any).mockReturnValue({ data: {}, content: "" });
+    const result = parseDocFile(
+      "C:\\docs\\es\\guide.md",
+      "C:\\docs",
+      "/docs",
+      config,
+    );
+    expect(result.route.locale).toBe("es");
+    expect(result.route.path).toBe("/docs/es/guide");
+  });
 
+  it("should handle versioning", () => {
+    const config: any = {
+      versions: { versions: { v1: { label: "v1" } } },
+    };
+    (utils.parseFrontmatter as any).mockReturnValue({ data: {}, content: "" });
+    const result = parseDocFile(
+      "C:\\docs\\v1\\install.md",
+      "C:\\docs",
+      "/docs",
+      config,
+    );
+    expect(result.route.version).toBe("v1");
+    expect(result.route.path).toBe("/docs/v1/install");
+  });
+
+  it("should handle both version and locale", () => {
+    const config: any = {
+      versions: { versions: { v1: { label: "v1" } } },
+      i18n: { locales: { es: { label: "Spanish" } } },
+    };
+    (utils.parseFrontmatter as any).mockReturnValue({ data: {}, content: "" });
+    const result = parseDocFile(
+      "C:\\docs\\v1\\es\\guide.md",
+      "C:\\docs",
+      "/docs",
+      config,
+    );
+    expect(result.route.version).toBe("v1");
+    expect(result.route.locale).toBe("es");
+    expect(result.route.path).toBe("/docs/v1/es/guide");
+  });
+
+  it("should handle complex headings and markdown links", () => {
     (utils.parseFrontmatter as any).mockReturnValue({
       data: {},
-      content: "",
+      content: "## Heading with [Link](url)\n### Another `code` heading",
     });
-
-    const result = parseDocFile(filePath, docsDir, basePath, config as any);
-
-    expect(result.route.version).toBe("v1");
-    expect(result.route.path).toBe("/docs/v1/intro");
+    const result = parseDocFile("C:\\docs\\test.md", "C:\\docs", "/docs");
+    expect(result.route.headings![0].text).toBe("Heading with Link");
+    expect(result.route.headings![1].text).toBe("Another code heading");
   });
 });
