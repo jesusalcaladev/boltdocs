@@ -9,6 +9,7 @@ import {
   capitalize,
   stripNumberPrefix,
   extractNumberPrefix,
+  escapeHtml,
 } from "../utils";
 
 /**
@@ -26,8 +27,25 @@ export function parseDocFile(
   basePath: string,
   config?: BoltdocsConfig,
 ): ParsedDocFile {
+  // Security: Prevent path traversal
+  const decodedFile = decodeURIComponent(file);
+  const absoluteFile = path.resolve(decodedFile);
+  const absoluteDocsDir = path.resolve(docsDir);
+  const relativePath = normalizePath(
+    path.relative(absoluteDocsDir, absoluteFile),
+  );
+
+  if (
+    relativePath.startsWith("../") ||
+    relativePath === ".." ||
+    absoluteFile.includes("\0")
+  ) {
+    throw new Error(
+      `Security breach: File is outside of docs directory or contains null bytes: ${file}`,
+    );
+  }
+
   const { data, content } = parseFrontmatter(file);
-  const relativePath = normalizePath(path.relative(docsDir, file));
   let parts = relativePath.split("/");
 
   let locale: string | undefined;
@@ -90,30 +108,38 @@ export function parseDocFile(
       .replace(/[_*`]/g, "")
       .trim();
     const id = slugger.slug(text);
-    headings.push({ level, text, id });
+    // Security: Sanitize heading text for XSS
+    headings.push({ level, text: escapeHtml(text), id });
   }
+
+  const sanitizedTitle = data.title ? escapeHtml(data.title) : inferredTitle;
+  const sanitizedDescription = data.description
+    ? escapeHtml(data.description)
+    : "";
+  const sanitizedBadge = data.badge ? escapeHtml(data.badge) : undefined;
 
   return {
     route: {
       path: finalPath,
       componentPath: file,
       filePath: relativePath,
-      title: data.title || inferredTitle,
-      description: data.description || "",
+      title: sanitizedTitle,
+      description: sanitizedDescription,
       sidebarPosition,
       headings,
       locale,
       version,
-      badge: data.badge,
+      badge: sanitizedBadge,
     },
     relativeDir: cleanDirName,
     isGroupIndex,
     groupMeta: isGroupIndex
       ? {
-          title:
+          title: escapeHtml(
             data.groupTitle ||
-            data.title ||
-            (cleanDirName ? capitalize(cleanDirName) : ""),
+              data.title ||
+              (cleanDirName ? capitalize(cleanDirName) : ""),
+          ),
           position:
             data.groupPosition ??
             data.sidebarPosition ??
