@@ -34,3 +34,13 @@ LiteDocs strips the number from the final URL to keep your links clean, so `1.in
 ## Nested Sections
 
 Any folder that contains an `index.mdx` is considered a section index. Folders without an `index.mdx` simply act as grouping namespaces in the auto-generated sidebar.
+
+## Custom Permalinks
+
+You can override the file-based route completely by specifying a `permalink` in the frontmatter of your markdown file. Custom permalinks are preserved despite folder structures or numeric prefixes.
+
+```markdown
+---
+permalink: /custom/my-special-url
+---
+```
