@@ -113,7 +113,10 @@ export function fileToRoutePath(relativePath: string): string {
   // Strip number prefixes from every segment
   let cleanedPath = relativePath.split("/").map(stripNumberPrefix).join("/");
 
-  let routePath = cleanedPath.replace(/\.mdx?$/, "");
+  // Remove trailing slash if present
+  let routePath = cleanedPath.replace(/\/$/, "");
+
+  routePath = routePath.replace(/\.mdx?$/, "");
 
   // Handle index files → directory root
   if (routePath === "index" || routePath.endsWith("/index")) {

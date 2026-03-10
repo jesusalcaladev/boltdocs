@@ -122,4 +122,11 @@ describe("parseDocFile", () => {
 
     expect(result.route.path).toBe("/docs/custom/my-special-url");
   });
+
+  it("should throw an error if the file is outside the docs directory", () => {
+    const filePath = "C:\\outside\\file.md";
+    expect(() => parseDocFile(filePath, docsDir, basePath)).toThrow(
+      "Security breach: File is outside of docs directory or contains null bytes: C:\\outside\\file.md",
+    );
+  });
 });

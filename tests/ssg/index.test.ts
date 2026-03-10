@@ -128,4 +128,43 @@ describe("generateStaticPages", () => {
       false,
     );
   });
+
+  it("should return early if SSR module is missing", async () => {
+    vi.mocked(fs.existsSync).mockImplementation((p) => {
+      if (typeof p === "string" && p.includes("ssr.js")) return false;
+      return true;
+    });
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await generateStaticPages({
+      docsDir: tempDocsDir,
+      outDir: tempOutDir,
+      config: {} as any,
+    });
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      "[boltdocs] SSR module not found at",
+      expect.any(String),
+      "- Did you build the core package?",
+    );
+  });
+
+  it("should return early if template index.html is missing", async () => {
+    vi.mocked(fs.existsSync).mockImplementation((p) => {
+      if (typeof p === "string" && p.endsWith("index.html")) return false;
+      if (typeof p === "string" && p.includes("ssr.js")) return true;
+      return true;
+    });
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    await generateStaticPages({
+      docsDir: tempDocsDir,
+      outDir: tempOutDir,
+      config: {} as any,
+    });
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      "[boltdocs] No index.html found in outDir, skipping SSG.",
+    );
+  });
 });

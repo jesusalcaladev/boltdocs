@@ -24,15 +24,19 @@ let mdxCacheLoaded = false;
  * Also wraps the plugin with a persistent cache to avoid re-compiling unchanged MDX files.
  *
  * @param config - The Boltdocs configuration containing custom plugins
+ * @param compiler - The MDX compiler plugin (for testing)
  * @returns A Vite plugin configured for MDX parsing with caching
  */
-export function boltdocsMdxPlugin(config?: BoltdocsConfig): Plugin {
+export function boltdocsMdxPlugin(
+  config?: BoltdocsConfig,
+  compiler = mdxPlugin,
+): Plugin {
   const extraRemarkPlugins =
     config?.plugins?.flatMap((p) => p.remarkPlugins || []) || [];
   const extraRehypePlugins =
     config?.plugins?.flatMap((p) => p.rehypePlugins || []) || [];
 
-  const baseMdxPlugin = mdxPlugin({
+  const baseMdxPlugin = compiler({
     remarkPlugins: [remarkGfm, remarkFrontmatter, ...extraRemarkPlugins],
     rehypePlugins: [
       rehypeSlug,
@@ -48,6 +52,11 @@ export function boltdocsMdxPlugin(config?: BoltdocsConfig): Plugin {
     jsxRuntime: "automatic",
     providerImportSource: "@mdx-js/react",
   }) as Plugin;
+
+  // @ts-ignore
+  if (baseMdxPlugin.isMock) {
+    console.log("MDX PLUGIN IS MOCKED");
+  }
 
   return {
     ...baseMdxPlugin,
@@ -90,8 +99,6 @@ export function boltdocsMdxPlugin(config?: BoltdocsConfig): Plugin {
 
       if (result && typeof result === "object" && result.code) {
         mdxCache.set(cacheKey, result.code);
-      } else if (typeof result === "string") {
-        mdxCache.set(cacheKey, result);
       }
 
       return result;

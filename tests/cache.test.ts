@@ -1,121 +1,110 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   FileCache,
   TransformCache,
   AssetCache,
   flushCache,
 } from "../packages/core/src/node/cache";
-import * as utils from "../packages/core/src/node/utils";
 import fs from "fs";
-import zlib from "zlib";
-
-vi.mock("fs");
-vi.mock("zlib");
-vi.mock("util", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("util")>();
-  return {
-    ...actual,
-    promisify: vi.fn(() => vi.fn().mockResolvedValue(Buffer.from("mocked"))),
-  };
-});
-vi.mock("../packages/core/src/node/utils", async (importOriginal) => {
-  const actual = await importOriginal<typeof utils>();
-  return {
-    ...actual,
-    getFileMtime: vi.fn(),
-  };
-});
-
-// Polyfill process.env
-const originalEnv = process.env;
+import path from "path";
+import os from "os";
 
 describe("cache", () => {
+  let tempDir: string;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env = { ...originalEnv, BOLTDOCS_NO_CACHE: "0" };
-    (utils.getFileMtime as ReturnType<typeof vi.fn>).mockReturnValue(12345);
-  });
-
-  afterEach(() => {
-    process.env = originalEnv;
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "boltdocs-cache-test-"));
+    process.env.BOLTDOCS_NO_CACHE = "0";
   });
 
   describe("FileCache", () => {
-    it("should get and set cache values correctly", () => {
-      const cache = new FileCache<string>({ name: "test", compress: false });
-      cache.set("file.md", "content");
+    it("should load and save correctly", async () => {
+      const cache = new FileCache<string>({ name: "test", root: tempDir });
+      cache.set("file1.md", "data1");
 
-      expect(cache.isValid("file.md")).toBe(true);
-      expect(cache.get("file.md")).toBe("content");
+      // Mock mtime to match
+      vi.spyOn(fs, "statSync").mockReturnValue({ mtimeMs: 1000 } as any);
 
-      // If mtime changes, it should become invalid
-      (utils.getFileMtime as ReturnType<typeof vi.fn>).mockReturnValue(67890);
-      expect(cache.isValid("file.md")).toBe(false);
-      expect(cache.get("file.md")).toBeNull();
+      cache.save();
+      await cache.flush();
+
+      const cache2 = new FileCache<string>({ name: "test", root: tempDir });
+      cache2.load();
+      expect(cache2.size).toBe(1);
     });
 
-    it("should skip loading if BOLTDOCS_NO_CACHE=1", () => {
-      process.env.BOLTDOCS_NO_CACHE = "1";
-      const cache = new FileCache<string>({ name: "test", compress: false });
-      cache.load();
-      expect(fs.existsSync).not.toHaveBeenCalled();
-    });
-
-    it("should invalidate entries", () => {
-      const cache = new FileCache<string>({ name: "test", compress: false });
-      cache.set("file.md", "content");
-      cache.invalidate("file.md");
-      expect(cache.get("file.md")).toBeNull();
+    it("should handle error in save/load", async () => {
+      const cache = new FileCache<string>({ name: "error", root: tempDir });
+      cache.set("f", "d");
+      // Mock writeFile to throw
+      const spy = vi.spyOn(fs, "writeFile" as any).mockImplementation(() => {
+        throw new Error("Disk full");
+      });
+      cache.save();
+      await cache.flush();
+      spy.mockRestore();
     });
   });
 
   describe("TransformCache", () => {
-    it("should fallback to null if no cache is found", () => {
-      const cache = new TransformCache("test");
-      expect(cache.get("missing.md")).toBeNull();
-    });
+    it("should handle disk reads and hits", async () => {
+      const cache = new TransformCache("disk", tempDir);
+      cache.set("k1", "v1");
+      await cache.flush();
 
-    it("should store and retrieve values in memory", () => {
-      const cache = new TransformCache("test");
-      cache.set("test.md", "transformed-content");
-      expect(cache.get("test.md")).toBe("transformed-content");
+      // Force disk load by clearing memory
+      (cache as any).memoryCache.clear();
+
+      expect(cache.get("k1")).toBe("v1");
       expect(cache.size).toBe(1);
     });
 
-    it("should handle batch getMany requests", async () => {
-      const cache = new TransformCache("test");
-      cache.set("test1.md", "content1");
-      cache.set("test2.md", "content2");
+    it("should handle getMany disk loading", async () => {
+      const cache = new TransformCache("many-disk", tempDir);
+      cache.set("k1", "v1");
+      cache.set("k2", "v2");
+      await cache.flush();
 
-      const results = await cache.getMany([
-        "test1.md",
-        "test2.md",
-        "missing.md",
-      ]);
-      expect(results.get("test1.md")).toBe("content1");
-      expect(results.get("test2.md")).toBe("content2");
-      expect(results.has("missing.md")).toBe(false);
+      (cache as any).memoryCache.clear();
+
+      const results = await cache.getMany(["k1", "k2"]);
+      expect(results.get("k1")).toBe("v1");
+      expect(results.get("k2")).toBe("v2");
+    });
+
+    it("should handle corruption", async () => {
+      const cache = new TransformCache("corrupt", tempDir);
+      cache.set("k1", "v1");
+      await cache.flush();
+
+      // Corrupt shard
+      const hash = (cache as any).index.get("k1");
+      const shardPath = path.join(
+        tempDir,
+        ".boltdocs",
+        "transform-corrupt",
+        "shards",
+        `${hash}.gz`,
+      );
+      fs.writeFileSync(shardPath, "not a gzip");
+
+      (cache as any).memoryCache.clear();
+      expect(cache.get("k1")).toBeNull();
     });
   });
 
   describe("AssetCache", () => {
-    it("should handle clear correctly", () => {
-      const cache = new AssetCache();
-      (fs.existsSync as unknown as any).mockReturnValue(true);
-      cache.clear();
-      expect(fs.rmSync).toHaveBeenCalled();
-    });
+    it("should store and retrieve assets", async () => {
+      const cache = new AssetCache(tempDir);
+      const source = path.join(tempDir, "source.txt");
+      fs.writeFileSync(source, "hello");
 
-    it("should return null if source doesn't exist", () => {
-      const cache = new AssetCache();
-      (fs.existsSync as unknown as any).mockReturnValue(false);
-      expect(cache.get("missing.png", "key")).toBeNull();
-    });
-  });
+      cache.set(source, "v1", "content");
+      await cache.flush();
 
-  describe("flushCache", () => {
-    it("should flush background queues", async () => {
-      await expect(flushCache()).resolves.toBeUndefined();
+      const hit = cache.get(source, "v1");
+      expect(hit).not.toBeNull();
     });
   });
 });

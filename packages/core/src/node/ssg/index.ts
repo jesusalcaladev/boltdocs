@@ -49,15 +49,6 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   }
   const template = fs.readFileSync(templatePath, "utf-8");
 
-  // Load user's homePage if configured
-  let homePageComp;
-  if ((config as any)?._homePagePath) {
-    try {
-      // Simplistic: if there's a custom home page compiled, we'd need it available to SSR.
-      // In a full framework this is complex, but for Boltdocs we assume it's bundled if needed.
-    } catch (e) {}
-  }
-
   // Generate an HTML file for each route concurrently
   await Promise.all(
     routes.map(async (route) => {
@@ -74,7 +65,7 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
           routes: routes,
           config: config || {},
           modules: fakeModules,
-          homePage: homePageComp,
+          homePage: undefined, // No custom home page for now
         });
 
         const html = replaceMetaTags(template, {

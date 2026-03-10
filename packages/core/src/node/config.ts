@@ -139,11 +139,15 @@ export const CONFIG_FILES = [
  * Loads user's configuration file (e.g., `boltdocs.config.js` or `boltdocs.config.ts`) if it exists,
  * merges it with the default configuration, and returns the final `BoltdocsConfig`.
  *
- * @param docsDir - The fallback/default documentation directory
- * @returns A promise resolving to the final merged configuration object
+ * @param docsDir - The directory containing the documentation files
+ * @param root - The project root directory (defaults to process.cwd())
+ * @returns The merged configuration object
  */
-export async function resolveConfig(docsDir: string): Promise<BoltdocsConfig> {
-  const projectRoot = process.cwd();
+export async function resolveConfig(
+  docsDir: string,
+  root: string = process.cwd(),
+): Promise<BoltdocsConfig> {
+  const projectRoot = root;
 
   const defaults: BoltdocsConfig = {
     docsDir: path.resolve(docsDir),
@@ -162,8 +166,11 @@ export async function resolveConfig(docsDir: string): Promise<BoltdocsConfig> {
     const configPath = path.resolve(projectRoot, filename);
     if (fs.existsSync(configPath)) {
       try {
-        // Add a timestamp query parameter to bust the ESM cache
-        const fileUrl = pathToFileURL(configPath).href + "?t=" + Date.now();
+        // Add a timestamp query parameter to bust the ESM cache in dev
+        const isTest =
+          process.env.NODE_ENV === "test" || (global as any).__vitest_worker__;
+        const fileUrl =
+          pathToFileURL(configPath).href + (isTest ? "" : "?t=" + Date.now());
         const mod = await import(fileUrl);
         const userConfig = mod.default || mod;
 

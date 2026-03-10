@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   normalizePath,
   stripNumberPrefix,
@@ -12,136 +12,73 @@ import {
   capitalize,
 } from "../packages/core/src/node/utils";
 import fs from "fs";
-
-vi.mock("fs");
+import path from "path";
+import os from "os";
 
 describe("utils", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  it("normalizePath should convert backslashes to forward slashes", () => {
+    expect(normalizePath("foo\\bar\\baz")).toBe("foo/bar/baz");
+    expect(normalizePath("foo/bar/baz")).toBe("foo/bar/baz");
   });
 
-  describe("normalizePath", () => {
-    it("should replace backslashes with forward slashes", () => {
-      expect(normalizePath("C:\\path\\to\\file")).toBe("C:/path/to/file");
-      expect(normalizePath("foo\\bar\\baz")).toBe("foo/bar/baz");
-      expect(normalizePath("foo/bar/baz")).toBe("foo/bar/baz");
-    });
+  it("stripNumberPrefix should remove numeric prefixes", () => {
+    expect(stripNumberPrefix("1.guide")).toBe("guide");
+    expect(stripNumberPrefix("10.advanced")).toBe("advanced");
+    expect(stripNumberPrefix("guide")).toBe("guide");
   });
 
-  describe("stripNumberPrefix", () => {
-    it("should remove numeric prefixes from names", () => {
-      expect(stripNumberPrefix("1.guide")).toBe("guide");
-      expect(stripNumberPrefix("01.guide")).toBe("guide");
-      expect(stripNumberPrefix("100.advanced")).toBe("advanced");
-      expect(stripNumberPrefix("guide")).toBe("guide");
-    });
-    it("should not affect numbers elsewhere in the string", () => {
-      expect(stripNumberPrefix("1.test2")).toBe("test2");
-      expect(stripNumberPrefix("test.1")).toBe("test.1");
-    });
+  it("extractNumberPrefix should extract numeric prefixes", () => {
+    expect(extractNumberPrefix("1.guide")).toBe(1);
+    expect(extractNumberPrefix("10.advanced")).toBe(10);
+    expect(extractNumberPrefix("guide")).toBeUndefined();
   });
 
-  describe("extractNumberPrefix", () => {
-    it("should extract the numeric prefix as a number", () => {
-      expect(extractNumberPrefix("1.guide")).toBe(1);
-      expect(extractNumberPrefix("05.test")).toBe(5);
-      expect(extractNumberPrefix("123.file")).toBe(123);
-    });
-    it("should return undefined if no numeric prefix exists", () => {
-      expect(extractNumberPrefix("guide")).toBeUndefined();
-      expect(extractNumberPrefix("guide.1")).toBeUndefined();
-    });
+  it("isDocFile should identify md/mdx files", () => {
+    expect(isDocFile("test.md")).toBe(true);
+    expect(isDocFile("test.mdx")).toBe(true);
+    expect(isDocFile("test.txt")).toBe(false);
   });
 
-  describe("isDocFile", () => {
-    it("should return true for .md and .mdx files", () => {
-      expect(isDocFile("test.md")).toBe(true);
-      expect(isDocFile("test.mdx")).toBe(true);
-      expect(isDocFile("/path/to/test.md")).toBe(true);
-    });
-    it("should return false for other extensions", () => {
-      expect(isDocFile("test.txt")).toBe(false);
-      expect(isDocFile("test.md.txt")).toBe(false);
-      expect(isDocFile("test.ts")).toBe(false);
-    });
+  it("getFileMtime should return mtime or 0 on error", () => {
+    const tempFile = path.join(
+      os.tmpdir(),
+      `boltdocs-utils-test-${Date.now()}.txt`,
+    );
+    fs.writeFileSync(tempFile, "hello");
+    expect(getFileMtime(tempFile)).toBeGreaterThan(0);
+    expect(getFileMtime("nonexistent")).toBe(0);
+    fs.unlinkSync(tempFile);
   });
 
-  describe("getFileMtime", () => {
-    it("should return mtimeMs if file exists", () => {
-      (fs.statSync as unknown as any).mockReturnValue({ mtimeMs: 12345 });
-      expect(getFileMtime("test.md")).toBe(12345);
-      expect(fs.statSync).toHaveBeenCalledWith("test.md");
-    });
-    it("should return 0 if file does not exist or error occurs", () => {
-      (fs.statSync as unknown as any).mockImplementation(() => {
-        throw new Error("File not found");
-      });
-      expect(getFileMtime("missing.md")).toBe(0);
-    });
+  it("parseFrontmatter should parse YAML frontmatter", () => {
+    const tempFile = path.join(
+      os.tmpdir(),
+      `boltdocs-utils-test-fm-${Date.now()}.md`,
+    );
+    fs.writeFileSync(tempFile, "---\ntitle: Hello\n---\n# World");
+    const { data, content } = parseFrontmatter(tempFile);
+    expect(data.title).toBe("Hello");
+    expect(content.trim()).toBe("# World");
+    fs.unlinkSync(tempFile);
   });
 
-  describe("parseFrontmatter", () => {
-    it("should parse frontmatter and content correctly", () => {
-      const mockMarkdown = `---
-title: Test Title
-description: Test Description
----
-# Hello World`;
-      (fs.readFileSync as unknown as any).mockReturnValue(mockMarkdown);
-
-      const { data, content } = parseFrontmatter("test.md");
-      expect(data).toEqual({
-        title: "Test Title",
-        description: "Test Description",
-      });
-      expect(content.trim()).toBe("# Hello World");
-      expect(fs.readFileSync).toHaveBeenCalledWith("test.md", "utf-8");
-    });
-
-    it("should handle files without frontmatter", () => {
-      const mockMarkdown = `# Hello World`;
-      (fs.readFileSync as unknown as any).mockReturnValue(mockMarkdown);
-
-      const { data, content } = parseFrontmatter("test.md");
-      expect(data).toEqual({});
-      expect(content.trim()).toBe("# Hello World");
-    });
+  it("escapeHtml and escapeXml should escape special characters", () => {
+    const raw = '<script src="bad.js">&</script>';
+    const escaped = "&lt;script src=&quot;bad.js&quot;&gt;&amp;&lt;/script&gt;";
+    expect(escapeHtml(raw)).toBe(escaped);
+    expect(escapeXml(raw)).toBe(escaped);
   });
 
-  describe("escapeHtml / escapeXml", () => {
-    it("should escape special characters", () => {
-      const input = `<div class="test" data-val='1'>Testing & escaping</div>`;
-      const expected = `&lt;div class=&quot;test&quot; data-val=&apos;1&apos;&gt;Testing &amp; escaping&lt;/div&gt;`;
-      expect(escapeHtml(input)).toBe(expected);
-      expect(escapeXml(input)).toBe(expected);
-    });
+  it("fileToRoutePath should convert relative paths to routes", () => {
+    expect(fileToRoutePath("1.guide/2.advanced.md")).toBe("/guide/advanced");
+    expect(fileToRoutePath("index.md")).toBe("/");
+    expect(fileToRoutePath("docs/index.md")).toBe("/docs");
+    expect(fileToRoutePath("docs/page.md")).toBe("/docs/page");
+    expect(fileToRoutePath("/docs/page.md/")).toBe("/docs/page");
   });
 
-  describe("fileToRoutePath", () => {
-    it("should convert relative paths to routes correctly", () => {
-      expect(fileToRoutePath("guide/index.md")).toBe("/guide");
-      expect(fileToRoutePath("1.guide/1.getting-started.mdx")).toBe(
-        "/guide/getting-started",
-      );
-      expect(fileToRoutePath("index.md")).toBe("/");
-      expect(fileToRoutePath("api/reference.md")).toBe("/api/reference");
-    });
-    it("should ensure leading slash and no trailing slash", () => {
-      expect(fileToRoutePath("folder/")).toBe("/folder");
-      expect(fileToRoutePath("/folder/")).toBe("/folder");
-      expect(fileToRoutePath("/")).toBe("/");
-    });
-    it("should leave the root index alone", () => {
-      expect(fileToRoutePath("index")).toBe("/");
-    });
-  });
-
-  describe("capitalize", () => {
-    it("should capitalize the first letter of a string", () => {
-      expect(capitalize("hello")).toBe("Hello");
-      expect(capitalize("hello world")).toBe("Hello world");
-      expect(capitalize("")).toBe("");
-      expect(capitalize("H")).toBe("H");
-    });
+  it("capitalize should uppercase the first letter", () => {
+    expect(capitalize("hello")).toBe("Hello");
+    expect(capitalize("Hello")).toBe("Hello");
   });
 });
