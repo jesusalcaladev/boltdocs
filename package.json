@@ -12,6 +12,7 @@
     "benchmark": "node ./benchmarks/run-benchmarks.js",
     "test": "vitest run --dir tests",
     "test:internal": "vitest run --dir internal-testing",
+    "test:coverage": "vitest run --dir tests --coverage",
     "lint:md": "markdownlint-cli2 \"**/*.{md,mdx}\"",
     "lint:md:fix": "markdownlint-cli2 --fix \"**/*.{md,mdx}\""
   },
