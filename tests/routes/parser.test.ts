@@ -111,4 +111,15 @@ describe("parseDocFile", () => {
     expect(result.route.headings![0].text).toBe("Heading with Link");
     expect(result.route.headings![1].text).toBe("Another code heading");
   });
+
+  it("should respect custom permalinks from frontmatter", () => {
+    (utils.parseFrontmatter as any).mockReturnValue({
+      data: { permalink: "/custom/my-special-url" },
+      content: "# Content",
+    });
+
+    const result = parseDocFile("C:\\docs\\test.md", "C:\\docs", "/docs");
+
+    expect(result.route.path).toBe("/docs/custom/my-special-url");
+  });
 });

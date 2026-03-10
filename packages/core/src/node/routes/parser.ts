@@ -70,7 +70,16 @@ export function parseDocFile(
   }
 
   const cleanRelativePath = parts.join("/");
-  const cleanRoutePath = fileToRoutePath(cleanRelativePath || "index.md");
+
+  let cleanRoutePath: string;
+  if (data.permalink) {
+    // If a permalink is specified, ensure it starts with a slash
+    cleanRoutePath = data.permalink.startsWith("/")
+      ? data.permalink
+      : `/${data.permalink}`;
+  } else {
+    cleanRoutePath = fileToRoutePath(cleanRelativePath || "index.md");
+  }
 
   let finalPath = basePath;
   if (version) {
