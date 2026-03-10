@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/jesusalcaladev/boltdocs/compare/v1.3.2...v1.3.3) (2026-03-10)
+
+
+### Bug Fixes
+
+* hide button copy ([368b01e](https://github.com/jesusalcaladev/boltdocs/commit/368b01ef9799919447db9e262d48e4ae36fb725b))
+
 ## [1.3.2](https://github.com/jesusalcaladev/boltdocs/compare/v1.3.1...v1.3.2) (2026-03-08)
 
 
