@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/jesusalcaladev/boltdocs/compare/v1.4.0...v1.4.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* Implement core configuration and static site generation with supporting utilities and comprehensive tests. ([2636d6d](https://github.com/jesusalcaladev/boltdocs/commit/2636d6d3ec45cfc943b95511706b113147529568))
+
 # [1.4.0](https://github.com/jesusalcaladev/boltdocs/compare/v1.3.3...v1.4.0) (2026-03-10)
 
 
