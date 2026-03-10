@@ -1,0 +1,10 @@
+.git
+**/node_modules
+node_modules
+dist
+.boltdocs
+.next
+.turbo
+coverage
+benchmarks
+pnpm-lock.yaml

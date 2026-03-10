@@ -1,0 +1,21 @@
+# Default state for all rules
+default: true
+
+# MD013/line-length - Line length
+MD013: false # Too restrictive for technical docs with long URLs and strings
+
+# MD024/no-duplicate-heading/no-duplicate-header
+MD024:
+  siblings_only: true
+
+# MD033/no-inline-html - Inline HTML
+MD033: false # Disabled because we use MDX which uses JSX and HTML extensively
+
+# MD041/first-line-heading/first-line-h1 - First line in a file should be a top-level heading
+MD041: false # Disabled since we use frontmatter for title/metadata
+
+# MD025/single-title/single-h1
+MD025: false
+
+# MD051/link-fragments
+MD051: false # Sometimes fragments aren't fully resolved locally by the linter

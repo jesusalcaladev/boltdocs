@@ -1,0 +1,38 @@
+---
+title: Markdown Linting
+description: How markdown linting works in Boltdocs projects.
+---
+
+# Markdown Linting
+
+Maintaining consistent markdown styling is essential for clean documentation. By default, every new project created with `create-boltdocs` comes fully configured with [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) right out of the box.
+
+## Configuration
+
+Your generated project includes a `.markdownlint.yaml` file at the root. We use the standard markdownlint rules but have disabled a few that conflict with MDX features or are too restrictive for documentation:
+
+- **MD013 (Line Length):** Disabled. Documentation often contains long URLs, tables, or specialized formatting that is best kept on a single line.
+- **MD033 (Inline HTML):** Disabled. MDX heavily uses HTML and JSX syntax directly in the markdown.
+- **MD041 (First line heading):** Disabled. We use frontmatter (like `title:` and `description:`) at the start of our documents instead of an `H1`.
+
+You can also ignore specific pages or directories using the `.markdownlintignore` file. Generated folders like `node_modules` and `dist` are ignored by default.
+
+## Customizing Rules
+
+Because the configuration lives directly in your project's root folder, you have full control over the rules. To enable or disable a rule, simply open `.markdownlint.yaml` and adjust the boolean flags. Reference the [markdownlint rules documentation](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md) for more details.
+
+## Running the Linter
+
+You can run the linter through `pnpm`, `npm`, or `yarn` from your project's root directory:
+
+```bash
+# Lint all markdown files (reports errors but does not fix them)
+pnpm run lint:md
+
+# Automatically fix fixable markdown linting errors
+pnpm run lint:md:fix
+```
+
+### Editor Integration
+
+Most modern editors support markdownlint through extensions, so you can see linting errors directly while you type. For VS Code, we encourage installing the `DavidAnson.vscode-markdownlint` extension for real-time feedback.
