@@ -4,6 +4,7 @@ import { NPM } from "../../icons/npm";
 import { Pnpm } from "../../icons/pnpm";
 import { Bun } from "../../icons/bun";
 import { Deno } from "../../icons/deno";
+import { copyToClipboard } from "../../../utils";
 
 interface PackageManagerTabsProps {
   command: string;
@@ -82,22 +83,9 @@ export function PackageManagerTabs({
   const activeCommand = getCommandForManager(activeTab, command, pkg);
 
   const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(activeCommand);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = activeCommand;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
+    copyToClipboard(activeCommand);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }, [activeCommand]);
 
   return (
@@ -124,25 +112,14 @@ export function PackageManagerTabs({
 
       {/* Code Block Content */}
       <div className="code-block-wrapper pkg-tabs-content">
-        <div className="code-block-header">
-          <span className="code-block-lang">bash</span>
-          <button
-            className={`code-block-copy ${copied ? "copied" : ""}`}
-            onClick={handleCopy}
-            type="button"
-            aria-label="Copy code"
-          >
-            {copied ? (
-              <>
-                <Check size={12} />
-              </>
-            ) : (
-              <>
-                <Copy size={12} />
-              </>
-            )}
-          </button>
-        </div>
+        <button
+          className={`code-block-copy ${copied ? "copied" : ""}`}
+          onClick={handleCopy}
+          type="button"
+          aria-label="Copy code"
+        >
+          {copied ? <Check size={14} /> : <Copy size={14} />}
+        </button>
         <pre>
           <code>
             <span className="line">{activeCommand}</span>

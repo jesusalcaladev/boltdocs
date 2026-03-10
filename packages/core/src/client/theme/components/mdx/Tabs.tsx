@@ -1,4 +1,10 @@
 import React, { useState, Children, isValidElement, useRef } from "react";
+import { CodeBlock } from "../CodeBlock";
+import { NPM } from "../../icons/npm";
+import { Pnpm } from "../../icons/pnpm";
+import { Bun } from "../../icons/bun";
+import { Deno } from "../../icons/deno";
+import { Yarn } from "../../icons/yarn";
 
 /* ─── Tab (individual panel) ──────────────────────────────── */
 export interface TabProps {
@@ -15,7 +21,17 @@ export interface TabProps {
  * ```
  */
 export function Tab({ children }: TabProps) {
-  return <div className="ld-tab-panel">{children}</div>;
+  // If children is a simple string, wrap it in a CodeBlock for syntax highlighting
+  const content =
+    typeof children === "string" ? (
+      <CodeBlock className="language-bash">
+        <code>{children.trim()}</code>
+      </CodeBlock>
+    ) : (
+      children
+    );
+
+  return <div className="ld-tab-panel">{content}</div>;
 }
 
 /* ─── Tabs (container) ────────────────────────────────────── */
@@ -24,6 +40,16 @@ export interface TabsProps {
   defaultIndex?: number;
   children: React.ReactNode;
 }
+
+const getIconForLabel = (label: string) => {
+  const l = label.toLowerCase();
+  if (l.includes("npm")) return <NPM />;
+  if (l.includes("pnpm")) return <Pnpm />;
+  if (l.includes("yarn")) return <Yarn />;
+  if (l.includes("bun")) return <Bun />;
+  if (l.includes("deno")) return <Deno />;
+  return null;
+};
 
 /**
  * Tab container that manages active state.
@@ -64,6 +90,7 @@ export function Tabs({ defaultIndex = 0, children }: TabsProps) {
       <div className="ld-tabs__bar" role="tablist" onKeyDown={handleKeyDown}>
         {tabs.map((child, i) => {
           const label = (child as React.ReactElement<TabProps>).props.label;
+          const Icon = getIconForLabel(label);
           return (
             <button
               key={i}
@@ -72,11 +99,16 @@ export function Tabs({ defaultIndex = 0, children }: TabsProps) {
               aria-controls={`tabpanel-${i}`}
               id={`tab-${i}`}
               tabIndex={i === active ? 0 : -1}
-              ref={(el) => { tabRefs.current[i] = el; }}
-              className={`ld-tabs__trigger ${i === active ? "ld-tabs__trigger--active" : ""}`}
+              ref={(el) => {
+                tabRefs.current[i] = el;
+              }}
+              className={`ld-tabs__trigger ${
+                i === active ? "ld-tabs__trigger--active" : ""
+              }`}
               onClick={() => setActive(i)}
             >
-              {label}
+              {Icon}
+              <span>{label}</span>
             </button>
           );
         })}
