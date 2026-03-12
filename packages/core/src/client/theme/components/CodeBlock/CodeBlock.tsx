@@ -16,17 +16,6 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const preRef = useRef<HTMLPreElement>(null);
 
-  // Extract language from the child <code> element's data-language or className
-  let language = "";
-  if (React.isValidElement(children)) {
-    const childProps = children.props as any;
-    language = childProps?.["data-language"] || "";
-    if (!language && childProps?.className) {
-      const match = childProps.className.match(/language-(\w+)/);
-      if (match) language = match[1];
-    }
-  }
-
   const handleCopy = useCallback(async () => {
     const code = preRef.current?.textContent || "";
     copyToClipboard(code);

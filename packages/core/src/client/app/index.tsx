@@ -27,11 +27,7 @@ export function useConfig() {
   return useContext(ConfigContext);
 }
 
-const CodeBlock = lazy(() =>
-  import("../theme/components/CodeBlock").then((m) => ({
-    default: m.CodeBlock,
-  })),
-);
+import { CodeBlock } from "../theme/components/CodeBlock";
 const Video = lazy(() =>
   import("../theme/components/Video").then((m) => ({ default: m.Video })),
 );
@@ -77,13 +73,7 @@ const mdxComponents = {
   h4: (props: any) => <Heading level={4} {...props} />,
   h5: (props: any) => <Heading level={5} {...props} />,
   h6: (props: any) => <Heading level={6} {...props} />,
-  pre: (props: any) => {
-    return (
-      <Suspense fallback={<div className="code-block-skeleton" />}>
-        <CodeBlock {...props}>{props.children}</CodeBlock>
-      </Suspense>
-    );
-  },
+  pre: (props: any) => <CodeBlock {...props}>{props.children}</CodeBlock>,
   video: (props: any) => (
     <Suspense fallback={<div className="video-skeleton" />}>
       <Video {...props} />
