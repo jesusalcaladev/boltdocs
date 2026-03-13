@@ -1,22 +1,13 @@
 .boltdocs-link-preview {
   position: fixed;
   z-index: 1000;
-  width: 320px;
-  padding: 1rem;
-  background-color: var(--ld-navbar-bg);
-  backdrop-filter: blur(var(--ld-navbar-blur));
-  -webkit-backdrop-filter: blur(var(--ld-navbar-blur));
-  border: 1px solid var(--ld-border-subtle);
-  border-radius: var(--ld-radius-md);
-  box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  width: 260px;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(10px) scale(0.95);
+  transform: translateY(8px) scale(0.98);
   transition:
-    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: var(--ld-font-sans);
 }
 
@@ -25,38 +16,50 @@
   transform: translateY(0) scale(1);
 }
 
+.boltdocs-link-preview-content {
+  padding: 0.85rem 1rem;
+  background-color: var(--ld-navbar-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ld-border-subtle);
+  border-radius: var(--ld-radius-lg);
+  box-shadow: 
+    0 10px 30px -10px rgba(0, 0, 0, 0.2),
+    0 4px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
 .boltdocs-link-preview-title {
   display: block;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   color: var(--ld-text-main);
-  margin-bottom: 0.5rem;
-  line-height: 1.4;
+  margin-bottom: 0.35rem;
+  line-height: 1.3;
 }
 
 .boltdocs-link-preview-summary {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.775rem;
   color: var(--ld-text-muted);
   line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
-  line-clamp: 4;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* Dark mode adjustments */
-[data-theme="dark"] .boltdocs-link-preview {
-  background-color: var(--ld-navbar-bg);
-  border-color: var(--ld-border-subtle);
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.3),
-    0 10px 10px -5px rgba(0, 0, 0, 0.2);
+/* Dark mode refinements */
+[data-theme="dark"] .boltdocs-link-preview-content {
+  background-color: rgba(15, 15, 20, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.5),
+    0 8px 16px -8px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] .boltdocs-link-preview-title {
-  color: #f8fafc;
+  color: #fff;
 }
 
 [data-theme="dark"] .boltdocs-link-preview-summary {

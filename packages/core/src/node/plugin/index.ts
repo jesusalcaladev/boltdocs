@@ -165,7 +165,8 @@ export function boltdocsPlugin(
           ? path.resolve(viteConfig.root, viteConfig.build.outDir)
           : path.resolve(process.cwd(), "dist");
 
-        await generateStaticPages({ docsDir, outDir, config });
+        const docsDirName = path.basename(docsDir || "docs");
+        await generateStaticPages({ docsDir, docsDirName, outDir, config });
 
         const { flushCache } = await import("../cache");
         await flushCache();

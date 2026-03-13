@@ -14,6 +14,8 @@ export interface RenderOptions {
   routes: ComponentRoute[];
   /** Site configuration (`virtual:boltdocs-config`) */
   config: any;
+  /** The name of the documentation directory (e.g. 'docs') */
+  docsDirName: string;
   /** Optional custom React component to render when visiting the root path ('/') */
   homePage?: React.ComponentType;
   /** Preloaded modules (since SSR cannot use dynamic imports easily) */
@@ -25,7 +27,7 @@ export interface RenderOptions {
  * This is called by the Node SSG script during the Vite build process.
  */
 export async function render(options: RenderOptions): Promise<string> {
-  const { path, routes, config, modules, homePage } = options;
+  const { path, routes, config, modules, homePage, docsDirName } = options;
 
   // For SSR, we must resolve modules synchronously. We create a mock 'loader'
   // that instantly returns the module since the SSG script already loaded it.
@@ -40,6 +42,7 @@ export async function render(options: RenderOptions): Promise<string> {
         <AppShell
           initialRoutes={routes}
           initialConfig={config}
+          docsDirName={docsDirName}
           modules={resolvedModules}
           homePage={homePage}
         />

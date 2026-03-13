@@ -24,7 +24,7 @@ const _require = createRequire(import.meta.url);
  * @param options - Configuration for paths and site metadata
  */
 export async function generateStaticPages(options: SSGOptions): Promise<void> {
-  const { docsDir, outDir, config } = options;
+  const { docsDir, docsDirName, outDir, config } = options;
   const routes = await generateRoutes(docsDir, config);
   const siteTitle = config?.themeConfig?.title || "Boltdocs";
   const siteDescription = config?.themeConfig?.description || "";
@@ -64,6 +64,7 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
           path: route.path,
           routes: routes,
           config: config || {},
+          docsDirName: docsDirName,
           modules: fakeModules,
           homePage: undefined, // No custom home page for now
         });

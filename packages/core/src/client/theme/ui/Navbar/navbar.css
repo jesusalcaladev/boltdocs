@@ -3,17 +3,23 @@
    ═══════════════════════════════════════════════════════════ */
 .boltdocs-navbar {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  height: var(--ld-navbar-height);
-  padding: 0; /* Padding moved to container */
   background-color: var(--ld-navbar-bg);
-  backdrop-filter: blur(var(--ld-navbar-blur));
-  -webkit-backdrop-filter: blur(var(--ld-navbar-blur));
   border-bottom: 1px solid var(--ld-border-subtle);
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+.boltdocs-navbar.has-tabs {
+  --ld-header-height: 102px !important;
+  height: 102px;
+}
+
+.boltdocs-navbar:not(.has-tabs) {
+  --ld-header-height: var(--ld-navbar-height);
+  height: var(--ld-navbar-height);
 }
 
 .navbar-container {
@@ -114,6 +120,16 @@
   transition:
     color 0.2s,
     background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.navbar-external-icon {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.6;
+  margin-top: 1px;
 }
 
 .navbar-links a:hover {
@@ -230,4 +246,94 @@
 .navbar-icon-btn svg {
   width: 18px;
   height: 18px;
+}
+
+/* Tabs Styles */
+.boltdocs-tabs-container {
+  border-bottom: 1px solid var(--ld-border-subtle);
+  background: var(--ld-navbar-bg);
+  padding: 0;
+  height: 46px; /* 102px total = 56px navbar + 46px tabs */
+}
+
+.boltdocs-tabs {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 1.5rem;
+}
+
+.boltdocs-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.boltdocs-tab-item {
+  padding: 0.85rem 0;
+  padding-bottom: calc(0.85rem + 1px); /* avoid clipping the indicator */
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ld-text-muted);
+  text-decoration: none;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0.7;
+}
+
+.boltdocs-tab-item:hover {
+  color: var(--ld-text-main);
+  opacity: 1;
+}
+
+.tab-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.boltdocs-tab-item:hover .tab-icon {
+  transform: translateY(-1px);
+}
+
+.tab-icon.lucide-icon,
+.tab-icon.svg-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.25px;
+}
+
+.boltdocs-tab-item.active {
+  color: var(--ld-text-main);
+  font-weight: 600;
+  opacity: 1;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.boltdocs-tab-item::after {
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ld-primary);
+  border-radius: 2px 2px 0 0;
+  box-shadow: 0 0 12px rgba(var(--ld-primary-rgb), 0.6);
+  opacity: 0;
+  transform: scaleX(0);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.boltdocs-tab-item.active::after {
+  opacity: 1;
+  transform: scaleX(1);
 }

@@ -8,7 +8,7 @@
 :root[data-theme="light"],
 :root.theme-light {
   --ld-bg-main: #ffffff;
-  --ld-bg-soft: #f9fafb;
+  --ld-bg-soft: #eeeeee;
   --ld-bg-mute: #f3f4f6;
 
   --ld-surface: #ffffff;
@@ -76,8 +76,8 @@
 
 :root {
   /* ─ Base palette ─ */
-  --ld-bg-main: #0a0a0f;
-  --ld-bg-soft: rgba(10, 10, 15, 0.2);
+  --ld-bg-main: #000;
+  --ld-bg-soft: #12121272;
   --ld-bg-mute: #141420;
   --ld-surface: #1a1a2e;
   --ld-border-subtle: rgba(255, 255, 255, 0.06);
@@ -107,17 +107,17 @@
   --ld-gradient-to: rgba(255, 255, 255, 0.7);
 
   /* ─ Code ─ */
-  --ld-code-bg: #0d0d14;
+  --ld-code-bg: #050505;
   --ld-code-header: #111119;
   --ld-code-text: #d4d4d4;
 
   /* ─ Customization ─ */
-  --ld-navbar-bg: rgba(10, 10, 15, 0.2);
+  --ld-navbar-bg: #000;
   --ld-navbar-blur: 12px;
   --ld-sidebar-bg: transparent;
   --ld-sidebar-blur: 0px;
   --ld-glow-1-bg: var(--ld-color-primary-glow);
-  --ld-glow-2-bg: rgba(59, 130, 246, 0.15);
+  --ld-glow-2-bg: rgba(246, 59, 187, 0.15);
 
   /* ─ UI Components (dark) ─ */
   --ld-ui-btn-primary-bg: var(--ld-btn-primary-bg);
@@ -152,6 +152,7 @@
 
   /* ─ Dimensions ─ */
   --ld-navbar-height: 3.5rem;
+  --ld-header-height: var(--ld-navbar-height); /* Default sync */
   --ld-sidebar-width: 14.5rem;
   --ld-toc-width: 13rem;
   --ld-content-max-width: 820px;

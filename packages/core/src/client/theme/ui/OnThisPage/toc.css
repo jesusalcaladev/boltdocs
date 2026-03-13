@@ -5,12 +5,12 @@
   width: var(--ld-toc-width);
   flex-shrink: 0;
   padding: 1.5rem 1rem;
-  position: sticky;
-  top: var(--ld-navbar-height);
-  height: calc(100vh - var(--ld-navbar-height));
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--ld-bg-mute) transparent;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .on-this-page-title {
@@ -21,11 +21,28 @@
   color: var(--ld-text-dim);
   margin: 0 0 0.75rem;
   padding-left: 0.75rem;
+  flex-shrink: 0;
 }
 
 .on-this-page-container {
   position: relative;
   padding-left: 2px;
+  flex: 0 1 auto;
+  min-height: 0; /* Important for children overflow */
+  display: flex;
+  flex-direction: column;
+}
+
+.on-this-page-list-container {
+  overflow-y: auto;
+  max-height: 50vh; /* Constrain height for large docs */
+  flex: 0 1 auto;
+  position: relative;
+  scrollbar-width: none;
+}
+
+.on-this-page-list-container::-webkit-scrollbar {
+  display: none;
 }
 
 .on-this-page-list {
@@ -67,7 +84,9 @@
   border-left: 2px solid transparent;
   margin-left: -2px;
   line-height: 1.4;
-  transition: color 0.2s;
+  transition:
+    color 0.2s,
+    font-weight 0.2s;
 }
 
 .toc-link:hover {
@@ -81,9 +100,10 @@
 
 /* ─── Need Help Section ──────────────────────────────────── */
 .toc-help {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--ld-border-subtle);
+  flex-shrink: 0;
 }
 
 .toc-help-title {
@@ -121,8 +141,8 @@
 }
 
 .toc-help-link:hover {
-  color: var(--ld-text-muted);
-  background-color: rgba(255, 255, 255, 0.03);
+  color: var(--ld-text-main);
+  background-color: var(--ld-bg-mute);
 }
 
 .toc-help-link svg {

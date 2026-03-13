@@ -89,6 +89,7 @@ const mdxComponents = {
 export function AppShell({
   initialRoutes,
   initialConfig,
+  docsDirName,
   modules,
   hot,
   homePage: HomePage,
@@ -96,6 +97,7 @@ export function AppShell({
 }: {
   initialRoutes: ComponentRoute[];
   initialConfig: any;
+  docsDirName: string;
   modules: Record<string, () => Promise<any>>;
   hot?: any;
   homePage?: React.ComponentType;
@@ -110,8 +112,8 @@ export function AppShell({
         (route) => !(HomePage && (route.path === "/" || route.path === "")),
       )
       .map((route) => {
-        const loaderKey = Object.keys(modules).find((k) =>
-          k.endsWith("/" + route.filePath),
+        const loaderKey = Object.keys(modules).find(
+          (k) => k === `/${docsDirName}/${route.filePath}`,
         );
         const loader = loaderKey ? modules[loaderKey] : null;
 
@@ -142,7 +144,7 @@ export function AppShell({
   // Sync resolved routes when info or modules change
   useEffect(() => {
     setResolvedRoutes(resolveRoutes(routesInfo));
-  }, [routesInfo, modules]);
+  }, [routesInfo, modules, docsDirName]);
 
   return (
     <ConfigContext.Provider value={config}>
@@ -302,7 +304,8 @@ function MdxPage({
  * ```
  */
 export function createBoltdocsApp(options: CreateBoltdocsAppOptions) {
-  const { target, routes, config, modules, hot, homePage } = options;
+  const { target, routes, docsDirName, config, modules, hot, homePage } =
+    options;
   const container = document.querySelector(target);
   if (!container) {
     throw new Error(
@@ -316,6 +319,7 @@ export function createBoltdocsApp(options: CreateBoltdocsAppOptions) {
         <AppShell
           initialRoutes={routes}
           initialConfig={config}
+          docsDirName={docsDirName}
           modules={modules}
           hot={hot}
           homePage={homePage}

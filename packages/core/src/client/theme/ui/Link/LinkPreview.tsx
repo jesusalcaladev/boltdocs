@@ -17,35 +17,28 @@ export function LinkPreview({
   x,
   y,
 }: LinkPreviewProps) {
-  const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (isVisible && ref.current) {
+    if (ref.current) {
       const rect = ref.current.getBoundingClientRect();
-      const padding = 15;
+      const padding = 12;
 
       let top = y + padding;
       let left = x + padding;
 
       // Keep within viewport
-      if (left + rect.width > window.innerWidth) {
+      if (left + rect.width > window.innerWidth - 20) {
         left = x - rect.width - padding;
       }
-      if (top + rect.height > window.innerHeight) {
+      if (top + rect.height > window.innerHeight - 20) {
         top = y - rect.height - padding;
       }
 
       setPosition({ top, left });
     }
-  }, [isVisible, x, y]);
-
-  if (!mounted) return null;
+  }, [x, y, isVisible]);
 
   return createPortal(
     <div
@@ -56,8 +49,10 @@ export function LinkPreview({
         left: position.left,
       }}
     >
-      <span className="boltdocs-link-preview-title">{title}</span>
-      {summary && <p className="boltdocs-link-preview-summary">{summary}</p>}
+      <div className="boltdocs-link-preview-content">
+        <span className="boltdocs-link-preview-title">{title}</span>
+        {summary && <p className="boltdocs-link-preview-summary">{summary}</p>}
+      </div>
     </div>,
     document.body,
   );

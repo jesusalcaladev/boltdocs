@@ -69,13 +69,17 @@ export async function generateRoutes(
   docCache.save();
 
   // Collect group metadata from directory names and index files
-  const groupMeta = new Map<string, { title: string; position?: number }>();
+  const groupMeta = new Map<
+    string,
+    { title: string; position?: number; icon?: string }
+  >();
   for (const p of parsed) {
     if (p.relativeDir) {
       if (!groupMeta.has(p.relativeDir)) {
         groupMeta.set(p.relativeDir, {
           title: capitalize(p.relativeDir),
           position: p.inferredGroupPosition,
+          icon: p.route.icon,
         });
       } else {
         const entry = groupMeta.get(p.relativeDir)!;
@@ -85,6 +89,9 @@ export async function generateRoutes(
         ) {
           entry.position = p.inferredGroupPosition;
         }
+        if (!entry.icon && p.route.icon) {
+          entry.icon = p.route.icon;
+        }
       }
     }
 
@@ -93,6 +100,9 @@ export async function generateRoutes(
       entry.title = p.groupMeta.title;
       if (p.groupMeta.position !== undefined) {
         entry.position = p.groupMeta.position;
+      }
+      if (p.groupMeta.icon) {
+        entry.icon = p.groupMeta.icon;
       }
     }
   }
@@ -107,6 +117,7 @@ export async function generateRoutes(
       group: dir,
       groupTitle: meta?.title || (dir ? capitalize(dir) : undefined),
       groupPosition: meta?.position,
+      groupIcon: meta?.icon,
     };
   });
 

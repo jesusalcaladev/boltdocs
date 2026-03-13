@@ -63,7 +63,6 @@ export function ThemeLayout({
   className = "",
   style,
 }: ThemeLayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const siteTitle = config.themeConfig?.title || "Boltdocs";
   const siteDescription = config.themeConfig?.description || "";
   const location = useLocation();
@@ -130,18 +129,11 @@ export function ThemeLayout({
           currentVersion={currentVersion}
         />
       )}
-      <div
-        className={`boltdocs-main-container ${!isSidebarOpen ? "sidebar-collapsed" : ""}`}
-      >
+      <div className="boltdocs-main-container">
         {sidebar !== undefined ? (
           sidebar
         ) : (
-          <Sidebar
-            routes={filteredRoutes}
-            config={config}
-            isCollapsed={!isSidebarOpen}
-            onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-          />
+          <Sidebar routes={filteredRoutes} config={config} />
         )}
 
         <main className="boltdocs-content">

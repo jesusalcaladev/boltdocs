@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "../Link";
 import { BoltdocsConfig } from "../../../../node/config";
 import { PoweredBy } from "../PoweredBy";
-import { ChevronRight, ChevronLeft, PanelLeft } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
 interface RouteItem {
   path: string;
@@ -12,12 +13,16 @@ interface RouteItem {
   groupTitle?: string;
   sidebarPosition?: number;
   badge?: string | { text: string; expires?: string };
+  icon?: string;
+  tab?: string;
+  groupIcon?: string;
 }
 
 interface SidebarGroup {
   slug: string;
   title: string;
   routes: RouteItem[];
+  icon?: string;
 }
 
 /**
@@ -50,8 +55,6 @@ function renderBadge(badgeRaw: RouteItem["badge"]) {
 
   if (!text) return null;
 
-  if (!text) return null;
-
   let typeClass = "badge-default";
   const lowerText = text.toLowerCase();
   if (lowerText === "new") {
@@ -66,6 +69,43 @@ function renderBadge(badgeRaw: RouteItem["badge"]) {
 }
 
 /**
+ * Renders an icon from a string (Lucide name or SVG).
+ */
+function renderIcon(iconName?: string, size = 16) {
+  if (!iconName) return null;
+
+  const trimmed = iconName.trim();
+
+  // Check if it's a raw SVG
+  if (trimmed.startsWith("<svg") || trimmed.includes("http")) {
+    if (trimmed.startsWith("<svg")) {
+      return (
+        <span
+          className="sidebar-icon svg-icon"
+          dangerouslySetInnerHTML={{ __html: trimmed }}
+        />
+      );
+    }
+    return (
+      <img
+        src={trimmed}
+        className="sidebar-icon"
+        style={{ width: size, height: size }}
+        alt=""
+      />
+    );
+  }
+
+  // Check if it's a Lucide icon
+  const IconComponent = (LucideIcons as any)[iconName];
+  if (IconComponent) {
+    return <IconComponent size={size} className="sidebar-icon lucide-icon" />;
+  }
+
+  return null;
+}
+
+/**
  * The sidebar navigation component.
  * Groups documentation routes logically based on the `group` property.
  * Highlights the active link based on the current URL path.
@@ -76,20 +116,28 @@ function renderBadge(badgeRaw: RouteItem["badge"]) {
 export function Sidebar({
   routes,
   config,
-  isCollapsed,
-  onToggle,
 }: {
   routes: RouteItem[];
   config: BoltdocsConfig;
-  isCollapsed?: boolean;
-  onToggle?: () => void;
 }) {
   const location = useLocation();
 
-  const ungrouped: RouteItem[] = [];
-  const groupMap = new Map<string, SidebarGroup>();
+  // Find active tab based on the current route's metadata
+  const currentRoute = routes.find((r) => r.path === location.pathname);
+  const activeTabId = currentRoute?.tab?.toLowerCase();
 
-  for (const route of routes) {
+  // Filter routes by active tab if any tab is active
+  const filteredRoutes = activeTabId
+    ? routes.filter((r) => {
+        if (!r.tab) return true; // Fallback for untabbed routes
+        return r.tab.toLowerCase() === activeTabId;
+      })
+    : routes;
+
+  const ungrouped: RouteItem[] = [];
+  const groupMap = new Map<string, SidebarGroup & { icon?: string }>();
+
+  for (const route of filteredRoutes) {
     if (!route.group) {
       ungrouped.push(route);
     } else {
@@ -98,6 +146,7 @@ export function Sidebar({
           slug: route.group,
           title: route.groupTitle || route.group,
           routes: [],
+          icon: (route as any).groupIcon,
         });
       }
       groupMap.get(route.group)!.routes.push(route);
@@ -108,52 +157,38 @@ export function Sidebar({
 
   return (
     <aside className="boltdocs-sidebar">
-      {onToggle && (
-        <div className="sidebar-collapse">
-          <button
-            className="sidebar-collapse-btn"
-            onClick={onToggle}
-            aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-          >
-            <PanelLeft size={18} />
-          </button>
-        </div>
-      )}
+      <nav aria-label="Main Navigation">
+        <ul className="sidebar-list">
+          {ungrouped.map((route) => (
+            <li key={route.path}>
+              <Link
+                to={route.path === "" ? "/" : route.path}
+                className={`sidebar-link ${location.pathname === route.path ? "active" : ""}`}
+                aria-current={
+                  location.pathname === route.path ? "page" : undefined
+                }
+              >
+                <div className="sidebar-link-content">
+                  <div className="sidebar-link-title-container">
+                    {renderIcon((route as any).icon)}
+                    <span>{route.title}</span>
+                  </div>
+                  {renderBadge(route.badge)}
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
 
-      {!isCollapsed && (
-        <>
-          <nav aria-label="Main Navigation">
-            <ul className="sidebar-list">
-              {ungrouped.map((route) => (
-                <li key={route.path}>
-                  <Link
-                    to={route.path === "" ? "/" : route.path}
-                    className={`sidebar-link ${location.pathname === route.path ? "active" : ""}`}
-                    aria-current={
-                      location.pathname === route.path ? "page" : undefined
-                    }
-                  >
-                    <div className="sidebar-link-content">
-                      <span>{route.title}</span>
-                      {renderBadge(route.badge)}
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {groups.map((group) => (
-              <SidebarGroupSection
-                key={group.slug}
-                group={group}
-                currentPath={location.pathname}
-              />
-            ))}
-          </nav>
-          {config.themeConfig?.poweredBy !== false && <PoweredBy />}
-        </>
-      )}
+        {groups.map((group) => (
+          <SidebarGroupSection
+            key={group.slug}
+            group={group}
+            currentPath={location.pathname}
+          />
+        ))}
+      </nav>
+      {config.themeConfig?.poweredBy !== false && <PoweredBy />}
     </aside>
   );
 }
@@ -176,7 +211,9 @@ function SidebarGroupSection({
         aria-expanded={open}
         aria-controls={`sidebar-group-${group.slug}`}
       >
-        <span className="sidebar-group-title">{group.title}</span>
+        <div className="sidebar-group-header-content">
+          <span className="sidebar-group-title">{group.title}</span>
+        </div>
         <span className={`sidebar-group-chevron ${open ? "open" : ""}`}>
           <ChevronRight size={16} />
         </span>
@@ -191,7 +228,10 @@ function SidebarGroupSection({
                 aria-current={currentPath === route.path ? "page" : undefined}
               >
                 <div className="sidebar-link-content">
-                  <span>{route.title}</span>
+                  <div className="sidebar-link-title-container">
+                    {renderIcon((route as any).icon)}
+                    <span>{route.title}</span>
+                  </div>
                   {renderBadge(route.badge)}
                 </div>
               </Link>

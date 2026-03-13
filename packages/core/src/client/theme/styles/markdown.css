@@ -3,18 +3,23 @@
    ═══════════════════════════════════════════════════════════ */
 .boltdocs-content {
   flex: 1;
-  padding: 2rem 2.5rem 2.5rem;
+  padding: 2rem 2.5rem 6rem; /* Extra padding bottom for fixed layout */
   max-width: var(--ld-content-max-width);
   margin: 0 auto;
   min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
   transition:
     max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     padding 0.3s ease;
 }
 
-.boltdocs-main-container.sidebar-collapsed .boltdocs-content {
-  max-width: 100%;
+.boltdocs-content::-webkit-scrollbar {
+  display: none;
 }
+
 
 /* ─── Breadcrumbs ────────────────────────────────────────── */
 .boltdocs-breadcrumbs {

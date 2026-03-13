@@ -8,72 +8,44 @@
   backdrop-filter: blur(var(--ld-sidebar-blur));
   -webkit-backdrop-filter: blur(var(--ld-sidebar-blur));
   border-right: 1px solid var(--ld-border-subtle);
-  padding: 1rem 0.6rem;
+  padding: 1.5rem 0.6rem;
   overflow-y: auto;
-  position: sticky;
-  top: var(--ld-navbar-height);
-  height: calc(100vh - var(--ld-navbar-height));
-  scrollbar-width: thin;
-  scrollbar-color: var(--ld-bg-mute) transparent;
+  height: 100%;
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
-  transition:
-    width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.2s ease;
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+.sidebar-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-icon.lucide-icon,
+.sidebar-icon.svg-icon svg {
+  color: var(--ld-text-muted);
+  width: 18px;
+  height: 18px;
+  stroke-width: 2px;
+  transition: color 0.2s ease;
+}
+
+.sidebar-link:hover .sidebar-icon.lucide-icon,
+.sidebar-link.active .sidebar-icon.lucide-icon {
+  color: var(--ld-color-primary);
 }
 
 .boltdocs-sidebar > nav {
   flex: 1;
 }
 
-/* ─── Collapsible Sidebar ────────────────────────────────── */
-.boltdocs-main-container.sidebar-collapsed .boltdocs-sidebar {
-  width: 54px;
-  padding: 1rem 0;
-  border-right: 1px solid var(--ld-border-subtle);
-  opacity: 1;
-  pointer-events: auto;
-  overflow: hidden;
-}
-
-.sidebar-collapse {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 0.75rem 1rem;
-  transition: justify-content 0.3s ease;
-}
-
-.boltdocs-main-container.sidebar-collapsed .sidebar-collapse {
-  justify-content: center;
-  padding: 0 0 1rem;
-}
-
-.sidebar-collapse-btn {
-  color: var(--ld-text-muted);
-  border: none;
-  box-shadow: none;
-  background-color: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--ld-radius-md);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.sidebar-collapse-btn:hover {
-  background-color: var(--ld-bg-mute);
-  color: var(--ld-text-main);
-  transform: scale(1.05);
-}
-
 .boltdocs-sidebar::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
 
 .boltdocs-sidebar::-webkit-scrollbar-track {
@@ -92,21 +64,27 @@
 }
 
 .sidebar-list li {
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.45rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   color: var(--ld-text-muted);
   text-decoration: none;
-  border-radius: var(--ld-radius-md);
+  border-radius: 0.75rem; /* Large rounded corners */
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.2s ease;
   margin: 0.15rem 0;
+}
+
+.sidebar-link-title-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .sidebar-link-content {
@@ -117,7 +95,7 @@
   gap: 0.5rem;
 }
 
-.sidebar-link-content > span:first-child {
+.sidebar-link-content > span:last-child {
   flex: 1;
   word-wrap: break-word;
 }
@@ -162,11 +140,13 @@
 
 .sidebar-link:hover {
   color: var(--ld-color-primary-hover);
+  background-color: var(--ld-bg-soft);
 }
 
 .sidebar-link.active {
   color: var(--ld-color-primary);
   font-weight: 600;
+  background-color: var(--ld-bg-soft);
 }
 
 /* ─── Sidebar Groups ─────────────────────────────────────── */
@@ -183,29 +163,32 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0.35rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   background: none;
   border: none;
   border-radius: var(--ld-radius-md);
-  color: var(--ld-text-dim);
+  color: var(--ld-text-muted);
   font-family: var(--ld-font-sans);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-size: 0.8125rem;
+  font-weight: 600;
   cursor: pointer;
   transition:
     color 0.2s,
     background-color 0.2s;
 }
 
+.sidebar-group-header-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .sidebar-group-header:hover {
-  color: var(--ld-text-muted);
-  background-color: rgba(255, 255, 255, 0.03);
+  color: var(--ld-text-main);
 }
 
 .sidebar-group-header.active {
-  color: var(--ld-color-primary);
+  color: var(--ld-text-main);
 }
 
 .sidebar-group-chevron {
@@ -223,14 +206,25 @@
 .sidebar-group-list {
   list-style: none;
   padding: 0;
-  margin: 0.35rem 0 0;
-  overflow: hidden;
+  margin: 0.35rem 0 0.5rem 0;
+  position: relative;
 }
 
 .sidebar-group-list li {
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 
 .sidebar-link-nested {
-  padding-left: 1.25rem;
+  padding-left: 0.75rem;
+}
+
+.sidebar-group-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.35rem 0 0.5rem 0;
+  position: relative;
+}
+
+.sidebar-group-list li {
+  margin-bottom: 2px;
 }

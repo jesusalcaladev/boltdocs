@@ -1,0 +1,54 @@
+---
+title: "Tabs"
+description: "Organize content with horizontal tabs."
+icon: PanelsTopLeft
+---
+
+# Top Tabs
+
+Tabs allow you to split your documentation into high-level categories (e.g., "Guides", "API", "Components"). They appear as a second row in the navigation bar.
+
+## 1. Configuration
+
+Add the `tabs` array to your `themeConfig` in `boltdocs.config.ts`. Each tab requires an `id` (used for routing), `text` (for display), and an optional `icon`.
+
+```js
+export default {
+  themeConfig: {
+    tabs: [
+      { id: 'guides', text: 'Guides', icon: 'Book' },
+      { id: 'api', text: 'API Reference', icon: 'Code' }
+    ]
+  }
+}
+```
+
+### Icon Support
+
+The `icon` property supports:
+- **Lucide Icon names** (e.g., `Rocket`, `Book`, `Settings`)
+- **Raw SVG strings**
+- **URL to an image**
+
+## 2. Directory Structure
+
+To associate a directory with a tab, wrap the directory name in parentheses `(id)`. The `id` must match one of the IDs defined in your configuration.
+
+```text
+docs/
+├── (guides)/
+│   ├── index.md
+│   └── installation.md
+└── (api)/
+    ├── reference.md
+    └── types.md
+```
+
+## 3. Filtering Logic
+
+When tabs are enabled, the sidebar only displays routes that belong to the currently active tab. Routes that are not inside any `(id)` folder will be visible across all tabs as "fallback" content.
+
+---
+
+> [!NOTE]
+> Tab IDs are case-insensitive and are used to build the URL structure. For example, `(guides)` maps to `/docs/guides/...`.

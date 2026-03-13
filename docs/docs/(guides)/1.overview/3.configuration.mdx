@@ -1,6 +1,7 @@
 ---
-title: "Configuration Reference"
-description: "Detailed documentation of all available options in boltdocs.config.js."
+title: "Configuration"
+description: "Understand the configuration options for Boltdocs."
+icon: Settings
 ---
 
 # Configuration (`boltdocs.config.js`)
@@ -79,9 +80,12 @@ The \`themeConfig\` object controls almost all visual aspects of the default the
 - **Description**: Relative URL path or endpoint to the site logo displayed in the Navbar.
 
 ### `navbar`
-- **Type**: \`Array&lt;&#123; text: string; link: string &#125;&gt;\`
+- **Type**: \`NavbarItem[]\`
 - **Default**: \`[&#123; text: "Home", link: "/" &#125;, &#123; text: "Documentation", link: "/docs" &#125;]\`
-- **Description**: Items to display in the top navigation bar.
+- **Description**: Items to display in the top navigation bar. Each item can have the following properties:
+  - \`text\` / \`label\` (\`string\`): The display text for the link.
+  - \`link\` / \`to\` / \`href\` (\`string\`): The destination URL. External links (starting with \`http\`) automatically include an external link icon and open in a new tab.
+  - \`position\` (\`"left" | "right"\`): Where to align the item. Default is \`"left"\`.
 
 ### `sidebar`
 - **Type**: \`Record&lt;string, Array&lt;&#123; text: string; link: string &#125;&gt;&gt;\`
@@ -158,6 +162,10 @@ export default defineConfig({
     title: "Awesome Docs",
     description: "The official guide for Awesome App",
     logo: "/logo.png",
+    navbar: [
+      { text: "Docs", link: "/docs" },
+      { label: "Community", href: "https://discord.gg/custom-link", position: "right" },
+    ],
     customCss: "./custom.css",
     githubRepo: "boltdocs/boltdocs",
     editLink: "https://github.com/boltdocs/boltdocs/edit/main/docs/:path",

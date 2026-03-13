@@ -1,6 +1,7 @@
 import { normalizePath } from "../utils";
 import type { BoltdocsConfig } from "../config";
 import type { BoltdocsPluginOptions } from "./types";
+import path from "path";
 
 /**
  * Generates the raw source code for the virtual entry file (`\0virtual:boltdocs-entry`).
@@ -36,6 +37,8 @@ const ${name} = _comp_${name}.default || _comp_${name}['${name}'] || _comp_${nam
     .join("\n");
   const componentMap = pluginComponents.map(([name]) => name).join(", ");
 
+  const docsDirName = path.basename(options.docsDir || "docs");
+
   return `
 import { createBoltdocsApp as _createApp } from 'boltdocs/client';
 import 'boltdocs/style.css';
@@ -48,8 +51,9 @@ ${componentImports}
 _createApp({
   target: '#root',
   routes: _routes,
+  docsDirName: '${docsDirName}',
   config: _config,
-  modules: import.meta.glob('/docs/**/*.{md,mdx}'),
+  modules: import.meta.glob('/${docsDirName}/**/*.{md,mdx}'),
   hot: import.meta.hot,
   ${homeOption}
   components: { ${componentMap} },

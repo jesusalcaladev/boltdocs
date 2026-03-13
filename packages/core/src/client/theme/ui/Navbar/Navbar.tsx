@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "../Link";
-import { Book, ChevronDown } from "lucide-react";
+import React, { Suspense, lazy } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import { BoltdocsConfig } from "../../../../node/config";
 import { ComponentRoute } from "../../../types";
 import { LanguageSwitcher } from "../LanguageSwitcher";
 import { VersionSwitcher } from "../VersionSwitcher";
 import { ThemeToggle } from "../ThemeToggle";
-import { getStarsRepo } from "../../../utils";
 import { Discord } from "../../icons/discord";
 import { XformerlyTwitter } from "../../icons/twitter";
 import { GithubStars } from "./GithubStars";
+import { Tabs } from "./Tabs";
 
-const SearchDialog = React.lazy(() =>
+const SearchDialog = lazy(() =>
   import("../SearchDialog").then((m) => ({ default: m.SearchDialog })),
 );
 
@@ -43,13 +43,56 @@ export function Navbar({
   currentLocale?: string;
   currentVersion?: string;
 }) {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
   const title = config.themeConfig?.title || "Boltdocs";
   const navItems = config.themeConfig?.navbar || [];
   const socialLinks = config.themeConfig?.socialLinks || [];
+  const hasTabs =
+    !isHomePage &&
+    config.themeConfig?.tabs &&
+    config.themeConfig.tabs.length > 0;
+
+  const leftItems = navItems.filter((item) => item.position !== "right");
+  const rightItems = navItems.filter((item) => item.position === "right");
+
+  const renderNavItem = (item: any, i: number) => {
+    const text = item.label || item.text || "";
+    const href = item.to || item.href || item.link || "";
+    const isExternal =
+      href.startsWith("http") || href.startsWith("//") || href.includes("://");
+
+    return (
+      <Link key={i} to={href} target={isExternal ? "_blank" : undefined}>
+        {text}
+        {isExternal && (
+          <span className="navbar-external-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </span>
+        )}
+      </Link>
+    );
+  };
 
   return (
-    <header className="boltdocs-navbar">
-      <div className="navbar-container">
+    <header className={`boltdocs-navbar ${hasTabs ? "has-tabs" : ""}`}>
+      <div
+        className="navbar-container"
+        style={{ height: "var(--ld-navbar-height)" }}
+      >
         {/* LEFT SECTION */}
         <div className="navbar-left">
           <div className="navbar-logo">
@@ -87,22 +130,20 @@ export function Navbar({
             </div>
           ) : null}
 
-          <nav className="navbar-links" aria-label="Top Navigation">
-            {navItems.map((item, i) => (
-              <Link key={i} to={item.link}>
-                {item.text}
-              </Link>
-            ))}
+          <nav className="navbar-links" aria-label="Top Navigation Left">
+            {leftItems.map(renderNavItem)}
           </nav>
         </div>
 
         {/* RIGHT SECTION */}
         <div className="navbar-right">
-          <React.Suspense
-            fallback={<div className="navbar-search-placeholder" />}
-          >
+          <nav className="navbar-links" aria-label="Top Navigation Right">
+            {rightItems.map(renderNavItem)}
+          </nav>
+
+          <Suspense fallback={<div className="navbar-search-placeholder" />}>
             <SearchDialog routes={routes || []} />
-          </React.Suspense>
+          </Suspense>
 
           {config.i18n && currentLocale && allRoutes && (
             <LanguageSwitcher
@@ -140,6 +181,13 @@ export function Navbar({
           </div>
         </div>
       </div>
+
+      {hasTabs && config.themeConfig?.tabs && (
+        <Tabs
+          tabs={config.themeConfig.tabs}
+          routes={allRoutes || routes || []}
+        />
+      )}
     </header>
   );
 }

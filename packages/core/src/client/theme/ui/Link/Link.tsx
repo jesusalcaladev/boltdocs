@@ -232,7 +232,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
           onClick={handleClick}
           {...rest}
         />
-        {shouldShowPreview && (
+        {preview.visible && shouldShowPreview && (
           <LinkPreview
             isVisible={preview.visible}
             title={preview.title}
@@ -376,7 +376,7 @@ export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
           onClick={handleClick}
           {...rest}
         />
-        {shouldShowPreview && (
+        {preview.visible && shouldShowPreview && (
           <LinkPreview
             isVisible={preview.visible}
             title={preview.title}

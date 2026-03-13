@@ -32,7 +32,20 @@ export interface BoltdocsThemeConfig {
   /** URL path to the site logo */
   logo?: string;
   /** Items to display in the top navigation bar */
-  navbar?: Array<{ text: string; link: string }>;
+  navbar?: Array<{
+    /** Text to display (alias for text) */
+    label?: string;
+    /** Text to display */
+    text?: string;
+    /** URL path or external link (alias for link) */
+    to?: string;
+    /** URL path or external link (alias for link) */
+    href?: string;
+    /** URL path or external link */
+    link?: string;
+    /** Alignment of the item in the navbar */
+    position?: "left" | "right";
+  }>;
   /** Items to display in the sidebar, organized optionally by group URLs */
   sidebar?: Record<string, Array<{ text: string; link: string }>>;
   /** Social links to display in the navigation bar */
@@ -66,6 +79,11 @@ export interface BoltdocsThemeConfig {
     className?: string;
     style?: any;
   };
+  /**
+   * Top-level tabs for organizing documentation groups.
+   * Tab discovery uses the (tab-id) directory syntax.
+   */
+  tabs?: Array<{ id: string; text: string; icon?: string }>;
   /**
    * The syntax highlighting theme for code blocks.
    * Supports any Shiki theme name (e.g., 'github-dark', 'one-dark-pro', 'aurora-x').

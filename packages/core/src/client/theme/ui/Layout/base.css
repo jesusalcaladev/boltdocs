@@ -5,8 +5,15 @@
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Lock the window scroll */
+}
+
+body {
   font-family: var(--ld-font-sans);
   background-color: var(--ld-bg-main);
   color: var(--ld-text-main);
@@ -27,7 +34,9 @@ a {
 .boltdocs-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
 .boltdocs-main-container {
@@ -36,8 +45,11 @@ a {
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 1.5rem;
-  /* aligns with navbar */
+  padding: 0 0.5rem;
+  /* Fixed height layout */
+  height: calc(100vh - var(--ld-header-height));
+  overflow: hidden;
+  align-items: stretch; /* Sidebars fill height naturally */
 }
 
 /* ─── Background Glow ────────────────────────────────────── */

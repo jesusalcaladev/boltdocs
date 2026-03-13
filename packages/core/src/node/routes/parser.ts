@@ -69,6 +69,16 @@ export function parseDocFile(
     }
   }
 
+  // Level 3: Check for Tab hierarchy (name)
+  let inferredTab: string | undefined;
+  if (parts.length > 0) {
+    const tabMatch = parts[0].match(/^\((.+)\)$/);
+    if (tabMatch) {
+      inferredTab = tabMatch[1].toLowerCase();
+      parts = parts.slice(1);
+    }
+  }
+
   const cleanRelativePath = parts.join("/");
 
   let cleanRoutePath: string;
@@ -118,12 +128,12 @@ export function parseDocFile(
       .trim();
     const id = slugger.slug(text);
     // Security: Sanitize heading text for XSS
-    headings.push({ level, text: escapeHtml(text), id });
+    headings.push({ level, text, id });
   }
 
-  const sanitizedTitle = data.title ? escapeHtml(data.title) : inferredTitle;
+  const sanitizedTitle = data.title ? data.title : inferredTitle;
   let sanitizedDescription = data.description
-    ? escapeHtml(data.description)
+    ? data.description
     : "";
 
   // If no description is provided, extract a summary from the content
@@ -135,10 +145,11 @@ export function parseDocFile(
       .replace(/\n+/g, " ") // Normalize whitespace
       .trim()
       .slice(0, 160);
-    sanitizedDescription = escapeHtml(summary);
+    sanitizedDescription = summary;
   }
 
-  const sanitizedBadge = data.badge ? escapeHtml(data.badge) : undefined;
+  const sanitizedBadge = data.badge ? data.badge : undefined;
+  const icon = data.icon ? String(data.icon) : undefined;
 
   return {
     route: {
@@ -152,20 +163,23 @@ export function parseDocFile(
       locale,
       version,
       badge: sanitizedBadge,
+      icon,
+      tab: inferredTab,
     },
     relativeDir: cleanDirName,
     isGroupIndex,
+    inferredTab,
     groupMeta: isGroupIndex
       ? {
-          title: escapeHtml(
+          title: 
             data.groupTitle ||
               data.title ||
               (cleanDirName ? capitalize(cleanDirName) : ""),
-          ),
           position:
             data.groupPosition ??
             data.sidebarPosition ??
             (rawDirName ? extractNumberPrefix(rawDirName) : undefined),
+          icon,
         }
       : undefined,
     inferredGroupPosition: rawDirName
