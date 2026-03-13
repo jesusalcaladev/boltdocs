@@ -1,3 +1,17 @@
+# [1.5.0](https://github.com/jesusalcaladev/boltdocs/compare/v1.4.1...v1.5.0) (2026-03-12)
+
+
+### Bug Fixes
+
+* added routes [] ([13b2bd0](https://github.com/jesusalcaladev/boltdocs/commit/13b2bd0ab85871558829dc0b72766c9c5a1b0e01))
+* button hide copy ([c0a23ec](https://github.com/jesusalcaladev/boltdocs/commit/c0a23ecf977efbd5077e86b3245a5170c562b53f))
+
+
+### Features
+
+* added link-previews ([8dd17a1](https://github.com/jesusalcaladev/boltdocs/commit/8dd17a103128e219dd9338f36f640691f0101f6b))
+* support description formatter ([9136c91](https://github.com/jesusalcaladev/boltdocs/commit/9136c912731bf6b28380ff1244ff4647023b7403))
+
 ## [1.4.1](https://github.com/jesusalcaladev/boltdocs/compare/v1.4.0...v1.4.1) (2026-03-10)
 
 
