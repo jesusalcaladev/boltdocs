@@ -29,6 +29,7 @@ export async function generateRoutes(
 ): Promise<RouteMeta[]> {
   // Load persistent cache on first call
   docCache.load();
+  docCache.invalidateAll(); // FORCE RE-PARSE to pick up new _content field
 
   const files = await fastGlob(["**/*.md", "**/*.mdx"], {
     cwd: docsDir,

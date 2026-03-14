@@ -169,14 +169,7 @@ export function OnThisPage({
       e.preventDefault();
       const el = document.getElementById(id);
       if (el) {
-        const offset = 80;
-        const bodyRect = document.body.getBoundingClientRect().top;
-        const elementRect = el.getBoundingClientRect().top;
-        const elementPosition = elementRect - bodyRect;
-        const offsetPosition = elementPosition - offset;
-
-        window.scrollTo({
-          top: offsetPosition,
+        el.scrollIntoView({
           behavior: "smooth",
         });
 

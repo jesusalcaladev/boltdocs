@@ -18,6 +18,8 @@ import { OnThisPage } from "../OnThisPage";
 import { Head } from "../Head";
 import { Breadcrumbs } from "../Breadcrumbs";
 import { BackgroundGradient } from "../BackgroundGradient";
+import { ProgressBar } from "../ProgressBar";
+import { ErrorBoundary } from "../ErrorBoundary";
 import "../../styles.css";
 
 export interface ThemeLayoutProps {
@@ -108,6 +110,7 @@ export function ThemeLayout({
 
   return (
     <div className={`boltdocs-layout ${className}`} style={style}>
+      <ProgressBar />
       {background !== undefined ? background : <BackgroundGradient />}
       {head !== undefined ? (
         head
@@ -142,7 +145,11 @@ export function ThemeLayout({
           ) : (
             <Breadcrumbs routes={filteredRoutes} config={config} />
           )}
-          <div className="boltdocs-page">{children}</div>
+          <div className="boltdocs-page">
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
+          </div>
 
           {/* Prev / Next Navigation */}
           {(prevPage || nextPage) && (

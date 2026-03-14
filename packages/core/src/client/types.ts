@@ -37,6 +37,8 @@ export interface ComponentRoute {
   badge?: string | { text: string; expires?: string };
   /** Optional icon for the route's group */
   groupIcon?: string;
+  /** The extracted plain-text content of the page for search indexing */
+  _content?: string;
 }
 
 /**

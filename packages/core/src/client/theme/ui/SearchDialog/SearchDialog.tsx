@@ -49,7 +49,7 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
 
     const results: SearchResult[] = [];
     const lowerQuery = query.toLowerCase();
-
+    
     for (const route of routes) {
       if (route.title && route.title.toLowerCase().includes(lowerQuery)) {
         results.push({
@@ -70,6 +70,16 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
             });
           }
         }
+      }
+
+      if (route._content && route._content.toLowerCase().includes(lowerQuery)) {
+        // If it's a content match but not a title/heading match, add it
+        // We only add the page itself for now
+        results.push({
+          title: route.title,
+          path: route.path,
+          groupTitle: route.groupTitle,
+        });
       }
     }
 

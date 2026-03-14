@@ -151,6 +151,16 @@ export function parseDocFile(
   const sanitizedBadge = data.badge ? data.badge : undefined;
   const icon = data.icon ? String(data.icon) : undefined;
 
+  // Extract full content as plain text for search indexing
+  const plainText = content
+    .replace(/^#+.*$/gm, "") // Remove headers
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // Simplify links
+    .replace(/<[^>]+>/g, "") // Remove HTML/JSX tags
+    .replace(/\{[^\}]+\}/g, "") // Remove JS expressions/curly braces
+    .replace(/[_*`]/g, "") // Remove formatting
+    .replace(/\n+/g, " ") // Normalize whitespace
+    .trim();
+
   return {
     route: {
       path: finalPath,
@@ -165,6 +175,7 @@ export function parseDocFile(
       badge: sanitizedBadge,
       icon,
       tab: inferredTab,
+      _content: plainText,
     },
     relativeDir: cleanDirName,
     isGroupIndex,

@@ -216,26 +216,27 @@ function ScrollHandler() {
   const { pathname, hash } = useLocation();
 
   useLayoutEffect(() => {
-    // Only scroll if we are not in a pending transition state (if we were using useTransition)
-    // For now, we ensure the scroll happens.
+    const container = document.querySelector(".boltdocs-content");
+    if (!container) return;
+
     if (hash) {
       const id = hash.replace("#", "");
       const element = document.getElementById(id);
       if (element) {
         const offset = 80;
-        const bodyRect = document.body.getBoundingClientRect().top;
+        const containerRect = container.getBoundingClientRect().top;
         const elementRect = element.getBoundingClientRect().top;
-        const elementPosition = elementRect - bodyRect;
-        const offsetPosition = elementPosition - offset;
+        const elementPosition = elementRect - containerRect;
+        const offsetPosition = elementPosition - offset + container.scrollTop;
 
-        window.scrollTo({
+        container.scrollTo({
           top: offsetPosition,
           behavior: "smooth",
         });
         return;
       }
     }
-    window.scrollTo(0, 0);
+    container.scrollTo(0, 0);
   }, [pathname, hash]);
 
   return null;

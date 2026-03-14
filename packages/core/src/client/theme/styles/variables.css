@@ -160,4 +160,28 @@
   --ld-radius-md: 8px;
   --ld-radius-lg: 12px;
   --ld-radius-full: 9999px;
+
+  /* ─ Custom Scrollbar ─ */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ld-border-strong) transparent;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--ld-border-strong);
+  border-radius: 20px;
+  border: transparent;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ld-text-dim);
 }

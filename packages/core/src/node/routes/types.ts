@@ -35,6 +35,8 @@ export interface RouteMeta {
   icon?: string;
   /** The tab this route belongs to, if tabs are configured */
   tab?: string;
+  /** The extracted plain-text content of the page for search indexing */
+  _content?: string;
 }
 
 /**

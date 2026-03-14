@@ -85,7 +85,7 @@ export default function HomePage() {
         </p>
 
         <div className="actions">
-          <Button href="/docs">Get Started</Button>
+          <Button href="/docs/overview/introduction">Get Started</Button>
         </div>
       </main>
 
