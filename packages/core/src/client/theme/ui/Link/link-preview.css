@@ -19,11 +19,9 @@
 .boltdocs-link-preview-content {
   padding: 0.85rem 1rem;
   background-color: var(--ld-navbar-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--ld-border-subtle);
   border-radius: var(--ld-radius-lg);
-  box-shadow: 
+  box-shadow:
     0 10px 30px -10px rgba(0, 0, 0, 0.2),
     0 4px 10px -5px rgba(0, 0, 0, 0.1);
 }
@@ -47,21 +45,4 @@
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* Dark mode refinements */
-[data-theme="dark"] .boltdocs-link-preview-content {
-  background-color: rgba(15, 15, 20, 0.8);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 
-    0 20px 40px -15px rgba(0, 0, 0, 0.5),
-    0 8px 16px -8px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .boltdocs-link-preview-title {
-  color: #fff;
-}
-
-[data-theme="dark"] .boltdocs-link-preview-summary {
-  color: #94a3b8;
 }
