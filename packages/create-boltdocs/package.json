@@ -4,7 +4,7 @@
   "description": "CLI to create boltdocs projects",
   "type": "module",
   "author": "Jesus Alcala",
-  "license": "ISC",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },

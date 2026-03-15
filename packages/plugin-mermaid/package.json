@@ -1,5 +1,5 @@
 {
-  "name": "@boltdocs/plugin-mermaid",
+  "name": "boltdocs-plugin-mermaid",
   "version": "1.0.0",
   "description": "Mermaid diagram plugin for Boltdocs",
   "main": "dist/node/index.js",
@@ -24,7 +24,7 @@
   },
   "packageManager": "pnpm@10.30.2",
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "mermaid": "^11.12.3",
