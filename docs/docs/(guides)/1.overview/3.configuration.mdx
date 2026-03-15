@@ -73,7 +73,7 @@ Determines the appearance, navigation, and structure of the theme. _See [Theme C
 
 ## Theme Configuration
 
-The \`themeConfig\` object controls almost all visual aspects of the default theme.
+The `themeConfig` object controls almost all visual aspects of the default theme.
 
 ### `title`
 <Field name="title" type="string" defaultValue='"Boltdocs"'>
@@ -155,6 +155,15 @@ The \`themeConfig\` object controls almost all visual aspects of the default the
 ### `codeTheme`
 <Field name="codeTheme" type="string | Record<string, string>" defaultValue='"one-dark-pro"'>
   The syntax highlighting theme for code blocks. Supports any Shiki theme (e.g., `"github-dark"`, `"nord"`, `"vsc-dark-plus"`). You can also provide an object for dual-theme support, for example: `{ light: "github-light", dark: "github-dark" }`.
+</Field>
+
+### `copyMarkdown`
+<Field name="copyMarkdown" type="boolean | { text?: string, icon?: string }" defaultValue="true">
+  Configuration for the "Copy Markdown" button.
+  - `boolean`: Enable or disable the button globally.
+  - `object`: Customize the button text and icon.
+    - `text` (`string`): The text to display on the button.
+    - `icon` (`string`): The name of the Lucide icon to use.
 </Field>
 
 ### `layoutProps`
