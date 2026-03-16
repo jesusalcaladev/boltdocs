@@ -12,7 +12,7 @@ import {
   gitignoreContent,
   markdownlintContent,
   markdownlintignoreContent,
-  viteConfigContent,
+  getViteConfig,
 } from "./templates/shared.js";
 import { generateEmptyTemplate } from "./templates/empty.js";
 import { generateBaseTemplate } from "./templates/base.js";
@@ -31,6 +31,20 @@ async function run() {
     },
     {
       type: "select",
+      name: "framework",
+      message: "Choose a framework:",
+      choices: [
+        { title: "React", value: "react" },
+        { title: "Preact", value: "preact" },
+        { title: "Svelte", value: "svelte" },
+        { title: "Vue", value: "vue" },
+        { title: "Solid", value: "solid" },
+        { title: "Lit", value: "lit" },
+      ],
+      initial: 0,
+    },
+    {
+      type: "select",
       name: "template",
       message: "Choose a template:",
       choices: [
@@ -44,7 +58,7 @@ async function run() {
     },
   ]);
 
-  if (!response.projectName || !response.template) {
+  if (!response.projectName || !response.template || !response.framework) {
     console.log(yellow("Canceled."));
     return;
   }
@@ -61,7 +75,7 @@ async function run() {
   // 1. Write shared files
   fs.writeFileSync(
     path.join(projectDir, "package.json"),
-    JSON.stringify(getPackageJson(response.projectName), null, 2),
+    JSON.stringify(getPackageJson(response.projectName, response.framework), null, 2),
   );
 
   fs.writeFileSync(path.join(projectDir, ".gitignore"), gitignoreContent);
@@ -77,9 +91,9 @@ async function run() {
   fs.writeFileSync(path.join(projectDir, "custom.css"), customCssContent);
   fs.writeFileSync(
     path.join(projectDir, "boltdocs.config.js"),
-    getBoltdocsConfig(response.projectName),
+    getBoltdocsConfig(response.projectName, response.framework),
   );
-  fs.writeFileSync(path.join(projectDir, "vite.config.ts"), viteConfigContent);
+  fs.writeFileSync(path.join(projectDir, "vite.config.ts"), getViteConfig(response.framework));
   fs.writeFileSync(
     path.join(projectDir, "index.html"),
     getIndexHtml(response.projectName),
@@ -87,9 +101,9 @@ async function run() {
 
   // 2. Generate specific template
   if (response.template === "empty") {
-    generateEmptyTemplate(projectDir, response.projectName);
+    generateEmptyTemplate(projectDir, response.projectName, response.framework);
   } else {
-    generateBaseTemplate(projectDir, response.projectName);
+    generateBaseTemplate(projectDir, response.projectName, response.framework);
   }
 
   console.log(

@@ -1,5 +1,5 @@
-export function getPackageJson(projectName: string) {
-  return {
+export function getPackageJson(projectName: string, framework: string = 'react') {
+  const base = {
     name: projectName,
     version: "1.0.0",
     private: true,
@@ -22,11 +22,28 @@ export function getPackageJson(projectName: string) {
       typescript: "^5.0.0",
       "@types/react": "^18.2.0",
       "@types/react-dom": "^18.2.0",
-      "@vitejs/plugin-react": "^4.2.1",
       vite: "^5.2.0",
       "markdownlint-cli2": "^0.21.0",
     },
   };
+
+  if (framework === 'svelte') {
+    Object.assign(base.dependencies, { svelte: "^4.2.0" });
+    Object.assign(base.devDependencies, { "@sveltejs/vite-plugin-svelte": "^3.0.0" });
+  } else if (framework === 'vue') {
+    Object.assign(base.dependencies, { vue: "^3.4.0" });
+    Object.assign(base.devDependencies, { "@vitejs/plugin-vue": "^5.0.0" });
+  } else if (framework === 'solid') {
+    Object.assign(base.dependencies, { "solid-js": "^1.8.0" });
+    Object.assign(base.devDependencies, { "vite-plugin-solid": "^2.8.0" });
+  } else if (framework === 'preact') {
+    Object.assign(base.dependencies, { preact: "^10.19.0" });
+    Object.assign(base.devDependencies, { "@preact/preset-vite": "^2.7.0" });
+  } else if (framework === 'lit') {
+    Object.assign(base.dependencies, { lit: "^3.1.0" });
+  }
+
+  return base;
 }
 
 export const gitignoreContent = `node_modules
@@ -63,12 +80,13 @@ node_modules
 dist
 `;
 
-export function getBoltdocsConfig(projectName: string) {
+export function getBoltdocsConfig(projectName: string, framework: string = 'react') {
   return `/**
  * @type {import('boltdocs').BoltdocsConfig}
  */
 export default {
   title: '${projectName}',
+  framework: '${framework}',
   themeConfig: {
     customCss: './custom.css'
   }
@@ -76,13 +94,32 @@ export default {
 `;
 }
 
-export const viteConfigContent = `import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import boltdocs from 'boltdocs';
+export function getViteConfig(framework: string = 'react') {
+  let plugins = '';
+  let imports = "import react from '@vitejs/plugin-react';\nimport boltdocs from 'boltdocs';";
+
+  if (framework === 'svelte') {
+    imports = "import { svelte } from '@sveltejs/vite-plugin-svelte';\nimport boltdocs from 'boltdocs';";
+    plugins = "svelte(),";
+  } else if (framework === 'vue') {
+    imports = "import vue from '@vitejs/plugin-vue';\nimport boltdocs from 'boltdocs';";
+    plugins = "vue(),";
+  } else if (framework === 'solid') {
+    imports = "import solid from 'vite-plugin-solid';\nimport boltdocs from 'boltdocs';";
+    plugins = "solid(),";
+  } else if (framework === 'preact') {
+    imports = "import preact from '@preact/preset-vite';\nimport boltdocs from 'boltdocs';";
+    plugins = "preact(),";
+  } else {
+    plugins = "react(),";
+  }
+
+  return `import { defineConfig } from 'vite';
+${imports}
 
 export default defineConfig({
   plugins: [
-    react(),
+    ${plugins}
     boltdocs({
       docsDir: "./docs",
       homePage: "./src/HomePage.tsx",
@@ -90,6 +127,7 @@ export default defineConfig({
   ],
 });
 `;
+}
 
 export function getIndexHtml(projectName: string) {
   return `<!doctype html>
