@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/jesusalcaladev/boltdocs/compare/v1.9.0...v1.10.0) (2026-03-16)
+
+
+### Features
+
+* support multi-framework and project creation templates. ([bd5028d](https://github.com/jesusalcaladev/boltdocs/commit/bd5028d9f5054a5ab65855465a19743fd8bdd581))
+
 # [1.9.0](https://github.com/jesusalcaladev/boltdocs/compare/v1.8.0...v1.9.0) (2026-03-15)
 
 
