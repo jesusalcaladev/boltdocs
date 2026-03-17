@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/jesusalcaladev/boltdocs/compare/v1.10.0...v1.10.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* **create-boltdocs:** updated create-boltdocs package ([67a6191](https://github.com/jesusalcaladev/boltdocs/commit/67a6191769e6f211d4898017446e97d5975a1176))
+
 # [1.10.0](https://github.com/jesusalcaladev/boltdocs/compare/v1.9.0...v1.10.0) (2026-03-16)
 
 
