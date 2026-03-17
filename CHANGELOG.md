@@ -1,3 +1,15 @@
+## [1.10.2](https://github.com/jesusalcaladev/boltdocs/compare/v1.10.1...v1.10.2) (2026-03-17)
+
+
+### Bug Fixes
+
+* **core:** error-boundary implement styles ([db7faff](https://github.com/jesusalcaladev/boltdocs/commit/db7faffe7b8ee9d2bee79f678781f4c76fb4d781))
+* **core:** remove bg-gradient ([092fe05](https://github.com/jesusalcaladev/boltdocs/commit/092fe0528ec6a41fdc727e5e097ee0bb713d5389))
+* Implement new CopyMarkdown and Layout UI styles and the create-boltdocs CLI tool. ([8a01035](https://github.com/jesusalcaladev/boltdocs/commit/8a010354c642ccbc364ff3b8c7ea1919423ec92a))
+* remove export BackgroundGradient & added error-boundary ([48cc1e1](https://github.com/jesusalcaladev/boltdocs/commit/48cc1e1c5175097c34b1994c51df397cdbc15c5a))
+* support expand-button ([0e8342d](https://github.com/jesusalcaladev/boltdocs/commit/0e8342de8f2f4150de5886e1f95bc609237890aa))
+* support static mode & button-expand ([dd82c51](https://github.com/jesusalcaladev/boltdocs/commit/dd82c51fb92590facbc172e717dc4e8b78f86826))
+
 ## [1.10.1](https://github.com/jesusalcaladev/boltdocs/compare/v1.10.0...v1.10.1) (2026-03-17)
 
 
