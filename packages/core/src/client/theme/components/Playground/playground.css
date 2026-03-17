@@ -19,14 +19,6 @@
   width: 100%;
 }
 
-@media (min-width: 1024px) {
-  .playground-split-container {
-    flex-direction: row;
-    min-height: 350px;
-    align-items: stretch;
-  }
-}
-
 .playground-panel {
   display: flex;
   flex-direction: column;
@@ -35,15 +27,62 @@
 }
 
 .playground-editor-panel {
-  border-bottom: 1px solid var(--ld-border-subtle);
+  border-top: 1px solid var(--ld-border-subtle);
   background: var(--ld-code-bg);
+  position: relative;
 }
 
-@media (min-width: 1024px) {
-  .playground-editor-panel {
-    border-bottom: none;
-    border-right: 1px solid var(--ld-border-subtle);
-  }
+.boltdocs-playground.is-truncated .playground-editor {
+  max-height: 250px;
+  overflow: hidden;
+}
+
+.boltdocs-playground[data-readonly="true"]:not(.is-truncated) .playground-editor {
+  max-height: 600px; /* Limit height even if not truncated manually */
+}
+
+.playground-expand-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, var(--ld-code-bg) 20%, transparent);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 1rem;
+  z-index: 10;
+}
+
+.playground-expand-btn {
+  background-color: var(--ld-surface);
+  border: 1px solid var(--ld-border-subtle);
+  border-radius: 20px;
+  color: var(--ld-text-main);
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.playground-expand-btn:hover {
+  background-color: var(--ld-border-subtle);
+  transform: translateY(-1px);
+}
+
+/* When expanded, maybe show the button at the bottom without overlay */
+.boltdocs-playground:not(.is-truncated) .playground-expand-wrapper {
+  position: relative;
+  height: auto;
+  background: none;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+  border-top: 1px solid var(--ld-border-subtle);
 }
 
 .playground-preview-panel {
@@ -130,18 +169,18 @@
 
 /* Preview Specifics */
 .playground-preview {
-  padding: 2rem;
+  padding: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--ld-bg-mute);
+  background-color: #000; /* Dark background as in the image */
   background-image: radial-gradient(
-    var(--ld-border-subtle) 1.5px,
+    rgba(255, 255, 255, 0.05) 1.5px,
     transparent 1.5px
   );
   background-size: 24px 24px;
   color: var(--ld-text-main);
-  min-height: 200px;
+  min-height: 300px;
 }
 
 /* Error Specifics */
@@ -165,4 +204,35 @@
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   margin: 2rem 0;
   border: 1px solid var(--ld-border-subtle);
+}
+/* Copy Button - Inner */
+.playground-copy-btn-inner {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--ld-border-subtle);
+  background: var(--ld-surface);
+  color: var(--ld-text-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.playground-copy-btn-inner:hover {
+  background: var(--ld-border-subtle);
+  color: var(--ld-text-main);
+  transform: translateY(-1px);
+}
+
+/* Obsolete Static Code Integration - Cleaning up since we use LiveEditor now */
+.playground-static-code {
+  display: none;
 }
