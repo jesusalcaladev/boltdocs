@@ -30,6 +30,7 @@
 /* Pages */
 @import "./ui/NotFound/not-found.css";
 @import "./ui/Loading/loading.css";
+@import "./ui/ErrorBoundary/error-boundary.css";
 
 /* Playground */
 @import "./components/Playground/playground.css";

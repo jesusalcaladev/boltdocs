@@ -8,7 +8,6 @@ export { Sidebar } from "./theme/ui/Sidebar";
 export { OnThisPage } from "./theme/ui/OnThisPage";
 export { Head } from "./theme/ui/Head";
 export { Breadcrumbs } from "./theme/ui/Breadcrumbs";
-export { BackgroundGradient } from "./theme/ui/BackgroundGradient";
 export { Playground } from "./theme/components/Playground";
 export { NotFound } from "./theme/ui/NotFound";
 export { Loading } from "./theme/ui/Loading";
