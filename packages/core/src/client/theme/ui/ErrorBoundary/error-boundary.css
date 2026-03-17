@@ -1,0 +1,55 @@
+.boltdocs-error-boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  margin: 2rem 0;
+  background-color: var(--ld-bg-soft);
+  border: 1px solid var(--ld-ui-danger-border);
+  border-radius: var(--ld-radius-lg);
+  text-align: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.boltdocs-error-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ld-ui-danger-text);
+  margin-bottom: 0.75rem;
+  font-family: var(--ld-font-sans);
+}
+
+.boltdocs-error-message {
+  font-size: 1rem;
+  color: var(--ld-text-muted);
+  max-width: 100%;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.boltdocs-error-retry {
+  padding: 0.6rem 1.25rem;
+  background-color: var(--ld-ui-btn-primary-bg);
+  color: var(--ld-ui-btn-primary-text);
+  border: none;
+  border-radius: var(--ld-radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px var(--ld-color-primary-glow);
+}
+
+.boltdocs-error-retry:hover {
+  background-color: var(--ld-color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px var(--ld-color-primary-glow);
+}
+
+.boltdocs-error-retry:active {
+  transform: translateY(0);
+}
