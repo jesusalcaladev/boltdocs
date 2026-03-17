@@ -1,55 +1,111 @@
 ---
 title: "Interactive Playground"
-description: "Add live React playgrounds to your documentation."
+description: "Add live React playgrounds and component previews to your documentation."
 ---
 
 import { Playground } from 'boltdocs/client'
+import { Button } from "boltdocs/client"
 
 # Playground Component
 
 A cornerstone of good developer documentation is the ability to interact with the code right in the browser. LiteDocs includes a native **Playground** component that creates a live sandbox environment for React code directly within your page.
 
-## Usage
+## Interactive Mode
 
-Simply use the built-in `Playground` component:
+Use this mode when you want users to be able to edit the code and see reflected changes in real-time.
 
 ```tsx
-import { Playground } from 'boltdocs/components';
+import { Playground } from 'boltdocs/client';
 
-## Try it out
+const code = `
+export default function App() {
+  return (
+    <div style={{ padding: '20px', background: '#3b82f6', color: 'white', borderRadius: '8px' }}>
+      Hello from Live Editor!
+    </div>
+  );
+}
+`;
 
-<Playground code={\`
-  export default function App() {
-    return (
-      <div style={{ padding: '20px', background: 'blue', color: 'white' }}>
-        Live React Output!
-      </div>
-    );
-  }
-\`} />
+<Playground code={code} />
 ```
+
+## Static Mode
+
+Use this mode when you want to show a pre-rendered component alongside its source code. In this mode, the code editor is read-only.
+
+```tsx
+import { Playground } from 'boltdocs/client';
+import { Button } from './Button';
+
+const code = `
+import { Button } from './Button';
+
+export default function Example() {
+  return <Button variant="primary">Click me</Button>;
+}
+`;
+
+<Playground 
+  preview={<Button variant="primary">Click me</Button>} 
+  code={code} 
+/>
+```
+
+<Playground 
+  preview={<Button variant="primary">Click me</Button>} 
+  code={`import { Button } from 'boltdocs/client';
+
+export default function Example() {
+  return <Button variant="primary">Click me</Button>;
+}`} 
+/>
 
 ## Features
 
-- **Live Preview**: The code snippet updates the visual output in real-time as the user types.
-- **Syntax Highlighting**: Built-in, theme-aware code highlighting based on our customized system.
-- **Isolated Context**: The React tree executed inside the playground won't break your documentation site if the user writes invalid code.
-- **Reset State**: Quick button to restart the code environment to the initial state.
-
-With the Playground, you can offer instant "Try it out" environments for components, hooks, or standard SDK functions.
+- **Stacked Layout**: A premium vertical design with the preview on top and the code editor on bottom.
+- **Expandable Code**: Automatically truncates long code blocks (default 800 chars) with an "Expand code" button and an elegant gradient fade.
+- **Live Preview**: Real-time visual output updates as you type (Interactive mode).
+- **Static Previews**: Perfect for copy-paste examples where live editing isn't required.
+- **Copy to Clipboard**: One-click copy for the entire source code snippet.
 
 ---
 
 ## Active Demonstration
 
-Below is a live environment where you can interact with **all** the built-in LiteDocs MDX components at once. Try editing the code on the left!
+Below is a live environment showing the new stacked layout and premium aesthetics. Try editing the code!
 
 <Playground code={`
-  export default function App() {
-    return (
-      <div style={{ padding: '20px', background: 'blue', color: 'white' }}>
-        Live React Output!
-      </div>
-    );
-  }
+export default function App() {
+  const [count, setCount] = React.useState(0);
+  
+  return (
+    <div style={{ 
+      padding: '40px', 
+      background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', 
+      color: 'white', 
+      borderRadius: '16px',
+      textAlign: 'center',
+      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
+    }}>
+      <h2 style={{ margin: '0 0 20px 0', fontSize: '24px' }}>Counter Challenge</h2>
+      <p style={{ fontSize: '48px', fontWeight: 'bold', margin: '20px 0' }}>{count}</p>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        style={{
+          background: 'white',
+          color: '#6366f1',
+          border: 'none',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          transition: 'transform 0.2s'
+        }}
+      >
+        Increment
+      </button>
+    </div>
+  );
+}
 `} />
