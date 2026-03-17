@@ -14,6 +14,8 @@ interface CodeBlockProps {
  */
 export function CodeBlock({ children, ...props }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpandable, setIsExpandable] = useState(false);
   const preRef = useRef<HTMLPreElement>(null);
 
   const handleCopy = useCallback(async () => {
@@ -23,8 +25,17 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
     setTimeout(() => setCopied(false), 2000);
   }, []);
 
+  React.useEffect(() => {
+    if (preRef.current) {
+      const codeLength = preRef.current.textContent?.length || 0;
+      setIsExpandable(codeLength > 500);
+    }
+  }, [children]);
+
+  const shouldTruncate = isExpandable && !isExpanded;
+
   return (
-    <div className="code-block-wrapper">
+    <div className={`code-block-wrapper ${shouldTruncate ? "is-truncated" : ""}`}>
       <button
         className={`code-block-copy ${copied ? "copied" : ""}`}
         onClick={handleCopy}
@@ -35,6 +46,16 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
       <pre ref={preRef} {...props}>
         {children}
       </pre>
+      {isExpandable && (
+        <div className="code-block-expand-wrapper">
+          <button
+            className="code-block-expand-btn"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? "Show less" : "Expand code"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
