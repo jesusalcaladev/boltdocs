@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 
-export function generateEmptyTemplate(projectDir: string, projectName: string, framework: string = 'react') {
+export function generateEmptyTemplate(projectDir: string, projectName: string) {
   const srcDir = path.join(projectDir, "src");
   fs.mkdirSync(srcDir, { recursive: true });
 

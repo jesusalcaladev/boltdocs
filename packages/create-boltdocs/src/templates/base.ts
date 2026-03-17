@@ -1,82 +1,14 @@
 import path from "node:path";
 import fs from "node:fs";
 
-export function generateBaseTemplate(projectDir: string, projectName: string, framework: string = 'react') {
+export function generateBaseTemplate(projectDir: string, projectName: string) {
   const srcDir = path.join(projectDir, "src");
   fs.mkdirSync(srcDir, { recursive: true });
 
   const componentsDir = path.join(srcDir, "components");
   fs.mkdirSync(componentsDir, { recursive: true });
 
-  let buttonContent = '';
-  let buttonFile = 'Button.tsx';
-  let mainContent = '';
-
-  if (framework === 'svelte') {
-    buttonContent = `<script>
-  export let children;
-</script>
-
-<button
-  {...$$restProps}
-  style="padding: 0.5rem 1rem; border-radius: 0.25rem; border: none; background-color: var(--ld-color-primary); color: var(--ld-color-primary-text); cursor: pointer; font-weight: bold;"
-  on:click
->
-  <slot />
-</button>`;
-    buttonFile = 'Button.svelte';
-    mainContent = `export { default as Button } from './components/Button.svelte';\n`;
-  } else if (framework === 'vue') {
-    buttonContent = `<template>
-  <button
-    class="custom-button"
-    v-bind="$attrs"
-  >
-    <slot />
-  </button>
-</template>
-
-<style scoped>
-.custom-button {
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  border: none;
-  background-color: var(--ld-color-primary);
-  color: var(--ld-color-primary-text);
-  cursor: pointer;
-  font-weight: bold;
-}
-</style>`;
-    buttonFile = 'Button.vue';
-    mainContent = `export { default as Button } from './components/Button.vue';\n`;
-  } else if (framework === 'solid') {
-    buttonContent = `import { splitProps } from "solid-js";
-
-export function Button(props) {
-  const [local, others] = splitProps(props, ["children"]);
-  return (
-    <button
-      {...others}
-      style={{
-        padding: '0.5rem 1rem',
-        "border-radius": '0.25rem',
-        border: 'none',
-        "background-color": 'var(--ld-color-primary)',
-        color: 'var(--ld-color-primary-text)',
-        cursor: 'pointer',
-        "font-weight": 'bold',
-      }}
-    >
-      {local.children}
-    </button>
-  );
-}
-`;
-    buttonFile = 'Button.tsx';
-    mainContent = `export { Button } from './components/Button';\n`;
-  } else if (framework === 'preact') {
-    buttonContent = `/** @jsx h */
-import { h } from 'preact';
+  const buttonContent = `import React from 'react';
 
 export function Button({ children, ...props }) {
   return (
@@ -97,33 +29,8 @@ export function Button({ children, ...props }) {
   );
 }
 `;
-    buttonFile = 'Button.tsx';
-    mainContent = `export { Button } from './components/Button';\n`;
-  } else {
-    buttonContent = `import React from 'react';
-
-export function Button({ children, ...props }) {
-  return (
-    <button
-      {...props}
-      style={{
-        padding: '0.5rem 1rem',
-        borderRadius: '0.25rem',
-        border: 'none',
-        backgroundColor: 'var(--ld-color-primary)',
-        color: 'var(--ld-color-primary-text)',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-`;
-    buttonFile = 'Button.tsx';
-    mainContent = `export { Button } from './components/Button';\n`;
-  }
+  const buttonFile = 'Button.tsx';
+  const mainContent = `export { Button } from './components/Button';\n`;
 
   fs.writeFileSync(path.join(componentsDir, buttonFile), buttonContent);
   fs.writeFileSync(path.join(srcDir, "main.ts"), mainContent);

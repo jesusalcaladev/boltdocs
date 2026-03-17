@@ -6,7 +6,6 @@ import prompts from "prompts";
 import picocolors from "picocolors";
 import {
   getPackageJson,
-  customCssContent,
   getBoltdocsConfig,
   getIndexHtml,
   gitignoreContent,
@@ -31,20 +30,6 @@ async function run() {
     },
     {
       type: "select",
-      name: "framework",
-      message: "Choose a framework:",
-      choices: [
-        { title: "React", value: "react" },
-        { title: "Preact", value: "preact" },
-        { title: "Svelte", value: "svelte" },
-        { title: "Vue", value: "vue" },
-        { title: "Solid", value: "solid" },
-        { title: "Lit", value: "lit" },
-      ],
-      initial: 0,
-    },
-    {
-      type: "select",
       name: "template",
       message: "Choose a template:",
       choices: [
@@ -58,7 +43,7 @@ async function run() {
     },
   ]);
 
-  if (!response.projectName || !response.template || !response.framework) {
+  if (!response.projectName || !response.template) {
     console.log(yellow("Canceled."));
     return;
   }
@@ -75,7 +60,7 @@ async function run() {
   // 1. Write shared files
   fs.writeFileSync(
     path.join(projectDir, "package.json"),
-    JSON.stringify(getPackageJson(response.projectName, response.framework), null, 2),
+    JSON.stringify(getPackageJson(response.projectName), null, 2),
   );
 
   fs.writeFileSync(path.join(projectDir, ".gitignore"), gitignoreContent);
@@ -88,12 +73,11 @@ async function run() {
     path.join(projectDir, ".markdownlintignore"),
     markdownlintignoreContent,
   );
-  fs.writeFileSync(path.join(projectDir, "custom.css"), customCssContent);
   fs.writeFileSync(
     path.join(projectDir, "boltdocs.config.js"),
-    getBoltdocsConfig(response.projectName, response.framework),
+    getBoltdocsConfig(response.projectName),
   );
-  fs.writeFileSync(path.join(projectDir, "vite.config.ts"), getViteConfig(response.framework));
+  fs.writeFileSync(path.join(projectDir, "vite.config.ts"), getViteConfig());
   fs.writeFileSync(
     path.join(projectDir, "index.html"),
     getIndexHtml(response.projectName),
@@ -101,9 +85,9 @@ async function run() {
 
   // 2. Generate specific template
   if (response.template === "empty") {
-    generateEmptyTemplate(projectDir, response.projectName, response.framework);
+    generateEmptyTemplate(projectDir, response.projectName);
   } else {
-    generateBaseTemplate(projectDir, response.projectName, response.framework);
+    generateBaseTemplate(projectDir, response.projectName);
   }
 
   console.log(
