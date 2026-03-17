@@ -32,10 +32,6 @@
   --ld-btn-secondary-bg: #ffffff;
   --ld-btn-secondary-text: #111827;
 
-  /* ─ Gradients ─ */
-  --ld-gradient-from: var(--ld-color-primary);
-  --ld-gradient-to: #a855f7;
-
   --ld-code-bg: #f3f4f6;
   --ld-code-header: #e5e7eb;
   --ld-code-text: #1f2937;
@@ -45,8 +41,6 @@
   --ld-navbar-blur: 12px;
   --ld-sidebar-bg: transparent;
   --ld-sidebar-blur: 0px;
-  --ld-glow-1-bg: var(--ld-color-primary-glow);
-  --ld-glow-2-bg: rgba(215, 59, 246, 0.15);
 
   /* ─ UI Components (overridable independently from layout) ─ */
   --ld-ui-btn-primary-bg: var(--ld-btn-primary-bg);
@@ -102,10 +96,6 @@
   --ld-btn-secondary-bg: #1a1a2e;
   --ld-btn-secondary-text: #e4e4ed;
 
-  /* ─ Gradients ─ */
-  --ld-gradient-from: #ffffff;
-  --ld-gradient-to: rgba(255, 255, 255, 0.7);
-
   /* ─ Code ─ */
   --ld-code-bg: #050505;
   --ld-code-header: #111119;
@@ -116,8 +106,6 @@
   --ld-navbar-blur: 12px;
   --ld-sidebar-bg: transparent;
   --ld-sidebar-blur: 0px;
-  --ld-glow-1-bg: var(--ld-color-primary-glow);
-  --ld-glow-2-bg: rgba(246, 59, 187, 0.15);
 
   /* ─ UI Components (dark) ─ */
   --ld-ui-btn-primary-bg: var(--ld-btn-primary-bg);
