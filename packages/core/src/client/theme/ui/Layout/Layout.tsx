@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "../Link";
-import { ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { usePreload } from "../../../app/preload";
 import { BoltdocsConfig } from "../../../../node/config";
 import { ComponentRoute } from "../../../types";
@@ -10,14 +10,12 @@ export { Sidebar } from "../Sidebar";
 export { OnThisPage } from "../OnThisPage";
 export { Head } from "../Head";
 export { Breadcrumbs } from "../Breadcrumbs";
-export { BackgroundGradient } from "../BackgroundGradient";
 
 import { Navbar } from "../Navbar";
 import { Sidebar } from "../Sidebar";
 import { OnThisPage } from "../OnThisPage";
 import { Head } from "../Head";
 import { Breadcrumbs } from "../Breadcrumbs";
-import { BackgroundGradient } from "../BackgroundGradient";
 import { ProgressBar } from "../ProgressBar";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { CopyMarkdown } from "../CopyMarkdown";
@@ -112,7 +110,6 @@ export function ThemeLayout({
   return (
     <div className={`boltdocs-layout ${className}`} style={style}>
       <ProgressBar />
-      {background !== undefined ? background : <BackgroundGradient />}
       {head !== undefined ? (
         head
       ) : (
@@ -148,14 +145,12 @@ export function ThemeLayout({
           )}
           <div className="boltdocs-page">
             <div className="boltdocs-page-header">
-              <CopyMarkdown 
-                content={routes[currentIndex]?._rawContent} 
+              <CopyMarkdown
+                content={routes[currentIndex]?._rawContent}
                 config={config.themeConfig?.copyMarkdown}
               />
             </div>
-            <ErrorBoundary>
-              {children}
-            </ErrorBoundary>
+            <ErrorBoundary>{children}</ErrorBoundary>
           </div>
 
           {/* Prev / Next Navigation */}
