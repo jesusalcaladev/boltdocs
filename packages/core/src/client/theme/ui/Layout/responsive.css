@@ -20,6 +20,17 @@
     font-size: 2.25rem;
   }
 
+  .boltdocs-page h1 {
+    padding-right: 0;
+  }
+
+  .boltdocs-page-header {
+    position: static;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+    padding: 0;
+  }
+
   .ld-cards--2,
   .ld-cards--3,
   .ld-cards--4 {

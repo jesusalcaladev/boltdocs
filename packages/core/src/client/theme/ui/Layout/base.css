@@ -92,12 +92,13 @@ a {
 
 .boltdocs-page-header {
   position: absolute;
-  top: 0;
+  top: -0.5rem; /* Move up slightly to overlap less with title body */
   right: 0;
   display: flex;
   justify-content: flex-end;
   padding: 1rem 0;
   pointer-events: none;
+  z-index: 101; /* Ensure it stays above everything */
 }
 
 .boltdocs-page-header > * {

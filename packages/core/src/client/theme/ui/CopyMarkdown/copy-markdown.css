@@ -12,12 +12,10 @@
   border-radius: var(--ld-radius-full);
   overflow: hidden;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .copy-btn-group:hover {
   border-color: var(--ld-color-primary-hover);
-  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
 }
 
 .copy-btn {
