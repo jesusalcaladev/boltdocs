@@ -8,7 +8,7 @@ import { Field } from 'boltdocs/client'
 
 # Frontmatter Reference
 
-LiteDocs uses frontmatter to allow you to customize the metadata and sidebar appearance of your pages. Frontmatter is a block of YAML at the very top of your `.md` or `.mdx` files, delimited by `---`.
+Boltdocs uses frontmatter to allow you to customize the metadata and sidebar appearance of your pages. Frontmatter is a block of YAML at the very top of your `.md` or `.mdx` files, delimited by `---`.
 
 ```markdown
 ---
@@ -21,7 +21,7 @@ badge: "New"
 
 ### `title`
 <Field name="title" type="string">
-  Overrides the title of the page. By default, LiteDocs infers the title from the filename (stripping numeric prefixes and extensions).
+  Overrides the title of the page. By default, Boltdocs infers the title from the filename (stripping numeric prefixes and extensions).
 </Field>
 
 ### `description`
@@ -75,7 +75,7 @@ When used in an `index.mdx` file, these fields control the behavior of the entir
 ```markdown
 ---
 title: "Advanced Configuration"
-description: "Learn how to deep-dive into LiteDocs settings."
+description: "Learn how to deep-dive into Boltdocs settings."
 badge: New
 sidebarPosition: 10
 ---

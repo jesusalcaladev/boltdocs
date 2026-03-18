@@ -1,22 +1,22 @@
 ---
 title: "Plugins"
-description: "Extend LiteDocs using our plugin architecture."
+description: "Extend Boltdocs using our plugin architecture."
 ---
 
 # Plugin System
 
-Because LiteDocs is architected as a thin wrapper around **Vite**, its plugin system is incredibly powerful. You hook directly into the Vite build lifecycle to transform Markdown into compiled React components and file-routing definitions.
+Boltdocs is designed to be lean and fast, but it doesn't sacrifice power. Because it's built directly on **Vite**, you have access to a world-class plugin ecosystem. You can easily extend the build process to transform content, inject custom logic, or integrate with third-party tools.
 
-## Existing Architecture 
+## How it Works
 
-LiteDocs internally runs several sub-plugins that manage core features:
-- **Routing Plugin**: Crawls your `docs/` folder to build a manifest of pages.
-- **HTML Document Injector**: Injects necessary `index.html` structure automatically during development servers and production SSR.
-- **Entry Plugin**: Uses virtual modules to dynamically resolve client-side hydration endpoints `virtual:boltdocs-entry-client` and `virtual:boltdocs-entry-server`.
+Under the hood, Boltdocs uses a modular architecture where even core features are implemented as plugins. This means you have the power to:
+- **Transform Markdown**: Hook into the build process to change how your docs are compiled.
+- **Dynamic Routing**: Customize how files are discovered and mapped to URLs.
+- **Virtual Modules**: Inject dynamic data or code into your client-side application.
 
-## Creating Custom Plugins
+## Customizing Your Workflow
 
-To add custom behavior, you simply write a standard Vite plugin and add it to your `vite.config.ts`. If you want to interact closely with the internal router state, LiteDocs exposes context hooks.
+Adding custom behavior is straightforward. Since Boltdocs is "just Vite," any standard Vite plugin will work out of the box. If you need deeper integration, like accessing the internal router state, we provide dedicated context hooks.
 
 ```ts
 // Example: Custom Vite plugin adding a global variable
@@ -51,13 +51,13 @@ export default defineConfig({
 });
 ```
 
-Because LiteDocs is just an abstraction over Vite's configuration, any existing Vite plugin (Tailwind, Unocss, Image Minifiers) will work seamlessly alongside the framework!
+Because Boltdocs is just an abstraction over Vite's configuration, any existing Vite plugin (Tailwind, Unocss, Image Minifiers) will work seamlessly alongside the framework!
 
 ---
 
 ## Official Plugins
 
-LiteDocs maintains a set of official plugins to extend the capabilities of your documentation.
+Boltdocs maintains a set of official plugins to extend the capabilities of your documentation.
 
 ### `boltdocs-plugin-mermaid`
 

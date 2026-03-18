@@ -6,52 +6,51 @@ icon: Download
 
 # Installation
 
-The fastest way to start a new LiteDocs project is to use our scaffolding CLI tool `create-boltdocs`.
+Get up and running with Boltdocs in under a minute. Our scaffolding tool handles the heavy lifting so you can focus on writing.
 
 ### Prerequisites
 
-LiteDocs requires **Node.js 18 or newer**.
+Ensure you have **Node.js 18 or newer** installed on your machine.
 
-## Creating a new project
+## Quick Start
 
-We recommend using `pnpm` (though `npm` and `yarn` will also work). To generate the project, run:
+We recommend using `pnpm` for its speed and efficiency, but `npm` or `yarn` work perfectly too.
 
+### 1. Bootstrap your project
+
+Run the following command to kickstart your new documentation site:
 
 ```bash
 pnpm create boltdocs@latest
 ```
 
-The CLI will first prompt you for a **project name**, and then it will ask you to select a **template**:
+The CLI will guide you through a couple of quick choices:
+- **Project Name**: Choose a name for your new directory.
+- **Template**: 
+    - **Base Template (Recommended)**: A complete setup with a custom homepage and example components.
+    - **Empty Template**: A clean slate with only the bare essentials.
 
-- **Base Template (Recommended)**: Includes an interactive, custom homepage and a structured documentation setup with example React components.
-- **Empty Template**: Provides a minimal, bare-bones project containing only a simple \`HomePage.tsx\` and an \`index.mdx\` documentation file.
+### 2. Install and launch
 
-Once the template is created, navigate inside the project and install dependencies:
+Navigate to your new folder, install the dependencies, and fire up the development server:
 
 ```bash
-cd my-boltdocs-project
+cd my-boltdocs-site
 pnpm install
-```
-
-## Starting the development server
-
-Start the local Vite development server:
-
-```bash
 pnpm run dev
 ```
 
-Navigate to `http://localhost:5173` to see your documentation site up and running.
+Your site is now live at `http://localhost:5173`. Any changes you make to your Markdown files will reflect instantly!
 
-## Building for Production
+## Preparing for Production
 
-When you are ready to publish, run the build command:
+When your docs are ready for the world, generate a highly optimized static build:
 
 ```bash
 pnpm run build
 ```
 
-This will run Vite's production build pipeline generating static HTML files and optimized JS/CSS bundles in the `dist/` directory. You can preview the built site with:
+The production-ready files will be waiting in the `dist/` directory. You can preview the final result locally with:
 
 ```bash
 pnpm run preview

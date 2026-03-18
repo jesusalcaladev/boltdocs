@@ -8,7 +8,7 @@ import { Field } from 'boltdocs/client'
 
 # Configuration (`boltdocs.config.js`)
 
-The `boltdocs.config.js` (or `.ts`, `.mjs`) file at the root of your project controls how LiteDocs functions, builds routes, and renders the UI.
+The `boltdocs.config.js` (or `.ts`, `.mjs`) file at the root of your project controls how Boltdocs functions, builds routes, and renders the UI.
 We strongly recommend adding a JSDoc type annotation to your JavaScript configuration for auto-complete and type safety:
 
 ```js
@@ -100,7 +100,7 @@ The `themeConfig` object controls almost all visual aspects of the default theme
 
 ### `sidebar`
 <Field name="sidebar" type="Record<string, Array<{ text: string; link: string }>>">
-  Custom sidebar groups. Although LiteDocs generates the sidebar automatically based on file-routing, providing this option overrides the automatic generation for specific paths.
+  Custom sidebar groups. Although Boltdocs generates the sidebar automatically based on file-routing, providing this option overrides the automatic generation for specific paths.
 </Field>
 
 ### `socialLinks`
@@ -149,7 +149,7 @@ The `themeConfig` object controls almost all visual aspects of the default theme
 
 ### `poweredBy`
 <Field name="poweredBy" type="boolean" defaultValue="true">
-  Toggle the 'Powered by LiteDocs' badge rendered at the bottom of the sidebar.
+  Toggle the 'Powered by Boltdocs' badge rendered at the bottom of the sidebar.
 </Field>
 
 ### `codeTheme`
@@ -243,7 +243,7 @@ export default defineConfig({
 
 ### `homePage`
 <Field name="homePage" type="string">
-  Path to a custom React component (relative to project root) to render at the base route `/`. If not provided, LiteDocs will fall back to using `docs/index.mdx`.
+  Path to a custom React component (relative to project root) to render at the base route `/`. If not provided, Boltdocs will fall back to using `docs/index.mdx`.
 </Field>
 
 ### `customCss`

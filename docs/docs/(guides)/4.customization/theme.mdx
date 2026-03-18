@@ -1,18 +1,18 @@
 ---
 title: "Theming Reference"
-description: "A complete list of CSS variables to customize the LiteDocs theme."
+description: "A complete list of CSS variables to customize the Boltdocs theme."
 icon: Palette
 ---
 
 # Theme Customization
 
-LiteDocs gives you incredible control over the look and feel of your docs without requiring you to "eject" or completely rewrite the UI.
+Boltdocs gives you incredible control over the look and feel of your docs without requiring you to "eject" or completely rewrite the UI.
 
 The system uses highly structured **CSS Variables** defined in standard `@media` or `[data-theme]` selectors to allow perfect customizability and native light/dark mode support.
 
 ## The Global `custom.css` file
 
-When you scaffold a new LiteDocs app, a `custom.css` file is placed in the root of the project. This file overrides our default theme definitions. For it to work, it must be linked in your Vite Plugin options or `boltdocs.config.js`:
+When you scaffold a new Boltdocs app, a `custom.css` file is placed in the root of the project. This file overrides our default theme definitions. For it to work, it must be linked in your Vite Plugin options or `boltdocs.config.js`:
 
 ```js
 // vite.config.ts
@@ -32,7 +32,7 @@ export default defineConfig({
 
 Inside your `custom.css`, you can override properties. The `theme-light` or `[data-theme="light"]` selectors handle light mode, while `:root` defaults to dark mode. 
 
-By default, LiteDocs Dark Theme uses a deep `#0a0a0f` background with white (`#ffffff`) accents, while the Light Theme uses `#ffffff` background with purple (`#7f13ec`) primary accents.
+By default, Boltdocs Dark Theme uses a deep `#0a0a0f` background with white (`#ffffff`) accents, while the Light Theme uses `#ffffff` background with purple (`#7f13ec`) primary accents.
 
 ### Example: Changing the Primary Color
 
@@ -113,7 +113,7 @@ You can change the physical size and spacing of the layout using these variables
 
 ### Typography & Fonts
 
-LiteDocs uses `Inter` for Sans-Serif and `JetBrains Mono` for code blocks by default.
+Boltdocs uses `Inter` for Sans-Serif and `JetBrains Mono` for code blocks by default.
 
 | Variable | Description |
 | -------- | ----------- |
@@ -147,4 +147,4 @@ Beyond CSS variables, you can customize functional features of the theme in your
 
 ## Extending Layout Components
 
-If changing CSS variables isn't enough, LiteDocs allows full Component overriding via our Custom UI API (documented soon).
+If changing CSS variables isn't enough, Boltdocs allows full Component overriding via our Custom UI API (documented soon).

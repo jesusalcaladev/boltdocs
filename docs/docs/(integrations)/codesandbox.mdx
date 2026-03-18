@@ -1,0 +1,120 @@
+---
+title: "CodeSandbox"
+description: "Learn how to use our project-agnostic API to create custom sandbox integrations for any project."
+icon: Code
+---
+
+# Interactive Sandboxes
+
+Boltdocs features a high-performance, project-agnostic CodeSandbox API. This allows you to create immersive, live-coding experiences that aren't tied to the framework itself—perfect for showcasing design systems, complex libraries, or interactive demos.
+
+## The Core API
+
+The `@boltdocs/client` package handles the heavy lifting of parameter generation and cross-origin communication.
+
+### `openSandbox`
+
+The most direct way to launch a sandbox. It automatically handles URL generation and navigation.
+
+```tsx
+import { openSandbox } from 'boltdocs/client';
+
+const handleTryItOut = () => {
+  openSandbox({
+    title: "Motion Animation Demo",
+    template: "node", // Use 'node' for full control or 'vite' for quick starts
+    dependencies: {
+      "framer-motion": "latest",
+      "lucide-react": "latest"
+    },
+    files: {
+      "App.tsx": {
+        content: `import { motion } from "framer-motion";
+export default function App() {
+  return (
+    <motion.div animate={{ scale: 1.2 }} transition={{ duration: 0.5 }}>
+      Hello Boltdocs!
+    </motion.div>
+  );
+}`
+      }
+    }
+  });
+};
+```
+
+### `defineSandbox`
+
+If you need to generate parameters for a custom form or a specialized export button, use `defineSandbox`. It returns the encoded parameters and the target URL.
+
+```tsx
+import { defineSandbox } from 'boltdocs/client';
+
+const { parameters, url } = defineSandbox({
+  files: {
+    "index.js": { content: "console.log('Generic demo');" }
+  },
+  template: "vite"
+});
+```
+
+---
+
+## Advanced Usage: Design System Presets
+
+The real power comes from creating "Presets"—reusable configurations that simulate your actual production environment. 
+
+### Building a Custom Preset
+
+Instead of manually defining files every time, create a helper that injects your global styles and configuration.
+
+```tsx
+// src/utils/sandbox.ts
+import { openSandbox, SandboxOptions } from 'boltdocs/client';
+
+/**
+ * Launches a sandbox pre-configured with our Design System
+ */
+export function openBrandSandbox(componentCode: string, options: SandboxOptions = {}) {
+  openSandbox({
+    ...options,
+    files: {
+      "styles.css": { content: ":root { --brand-primary: #7f13ec; }" },
+      "App.tsx": { content: componentCode },
+      ...options.files
+    },
+    dependencies: {
+      "my-ui-library": "workspace:*",
+      "react": "^18.2.0",
+      ...options.dependencies
+    }
+  });
+}
+```
+
+---
+
+## Playground Integration
+
+The built-in `<Playground />` component leverages this API under the hood. You can customize its behavior by passing `sandboxOptions`.
+
+### custom `sandboxOptions` example
+
+```tsx
+<Playground 
+  code={code}
+  sandboxOptions={{
+    title: "Brand Component Preview",
+    dependencies: { 
+      "canvas-confetti": "latest" 
+    }
+  }}
+/>
+```
+
+> [!TIP]
+> Use `workspace:*` for dependencies if you are building a monorepo documentation site. Boltdocs will handle the resolution logic during the export.
+
+## Why this matters
+
+Generic sandboxes mean your documentation isn't just a manual—it's an IDE for your users. By providing pre-configured environments, you lower the barrier to entry and let them experiment with your code instantly, without leaving the browser.

@@ -6,11 +6,11 @@ icon: GitBranch
 
 # Documentation Versioning
 
-LiteDocs allows you to easily maintain multiple versions of your documentation concurrently. A version switcher will automatically appear in your Navigation bar if you configure it correctly.
+Boltdocs makes it easy to maintain multiple versions of your documentation simultaneously. Whether you're supporting legacy users or preparing a major release, the version switcher stays in sync with your content automatically.
 
 ## Setting Up Versions
 
-Versioning in LiteDocs is folder-based. Instead of having unstructured Markdown files in the `docs` directory, you place them under their respective version folders:
+Versioning in Boltdocs is folder-based. Instead of having unstructured Markdown files in the `docs` directory, you place them under their respective version folders:
 
 import { FileTree } from "boltdocs/client";
 
@@ -29,4 +29,4 @@ import { FileTree } from "boltdocs/client";
 
 ## The Version Dropdown
 
-When LiteDocs detects top-level directories resembling versions (e.g. `v1`, `v2`, `v3.0`), it automatically groups them and generates a dropdown in the Navbar. This allows readers to seamlessly transition between API documentation versions without breaking their current reading path (if the path exists in both versions).
+When Boltdocs detects top-level directories resembling versions (e.g. `v1`, `v2`, `v3.0`), it automatically groups them and generates a dropdown in the Navbar. This allows readers to seamlessly transition between API documentation versions without breaking their current reading path (if the path exists in both versions).
