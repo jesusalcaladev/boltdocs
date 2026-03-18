@@ -1,0 +1,55 @@
+---
+title: "Admonitions"
+description: "Highlight important information with callouts."
+icon: Info
+---
+
+import { Admonition, Note, Tip, Warning, Danger, InfoBox, Important, Caution, Table, Field } from 'boltdocs/client'
+
+# Admonitions (Callouts)
+
+Admonitions highlight important information. Using them is as simple as adding an `<Admonition>` tag. Our callouts feature a modern, premium design with accent borders and glassmorphism.
+
+**Using `<Admonition>`**
+
+<Admonition type="info" title="Hey there!">
+  This is a helpful note for the reader.
+</Admonition>
+
+<Admonition type="warning" title="Warning">
+  Pay attention to this warning block.
+</Admonition>
+
+<Admonition type="important" title="Important Notice">
+  This is an important piece of information that stands out.
+</Admonition>
+
+<Admonition type="caution" title="Caution">
+  Be careful when performing this action.
+</Admonition>
+
+<Admonition type="danger" title="Danger">
+  This is a destructive action notice.
+</Admonition>
+
+```tsx
+<Admonition type="note">A basic note.</Admonition>
+<Admonition type="tip">A helpful tip.</Admonition>
+<Admonition type="info">General information.</Admonition>
+<Admonition type="warning">A warning message.</Admonition>
+<Admonition type="important">Extremely important info.</Admonition>
+<Admonition type="caution">Exercise caution.</Admonition>
+<Admonition type="danger">Danger / Critical error.</Admonition>
+```
+
+**Props (`AdmonitionProps`)**
+
+<Field name="type" type='"note" | "tip" | "info" | "warning" | "important" | "caution" | "danger"' defaultValue='"note"'>
+  The visual variant of the callout.
+</Field>
+
+<Field name="title" type="string">
+  Optional. The title displayed at the top of the admonition.
+</Field>
+
+> **Note**: You can also use explicit tags like `<Note>`, `<Tip>`, `<Warning>`, `<Danger>`, `<InfoBox>`, `<Important>`, or `<Caution>` as shorthands.

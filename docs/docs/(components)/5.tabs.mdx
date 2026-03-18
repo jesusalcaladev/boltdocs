@@ -1,0 +1,140 @@
+---
+title: "Tabs"
+description: "A component used to categorize content and let the user conditionally render different views."
+icon: PanelsTopLeft
+---
+
+import { PanelsTopLeft, Shield, Terminal, Zap, Package, Layers } from 'lucide-react'
+import { Tabs, Tab, Field } from 'boltdocs/client'
+
+# Tabs
+
+A component used to categorize content and let the user conditionally render different views. It supports icons, disabled states, and smooth sliding indicators.
+
+## Basic Usage
+
+<Tabs>
+  <Tab label="Tab One">
+    This is the first tab content.
+  </Tab>
+  <Tab label="Tab Two">
+    This is the second tab content.
+  </Tab>
+</Tabs>
+
+````tsx
+<Tabs>
+  <Tab label="Tab One">
+    This is the first tab content.
+  </Tab>
+  <Tab label="Tab Two">
+    This is the second tab content.
+  </Tab>
+</Tabs>
+````
+
+## With Icons
+
+You can add icons to your tabs using any React component.
+
+<Tabs>
+  <Tab label="Performance" icon={<Zap />}>
+    Information about performance optimization.
+  </Tab>
+  <Tab label="Security" icon={<Shield />}>
+    Security best practices and configurations.
+  </Tab>
+  <Tab label="CLI" icon={<Terminal />}>
+    Command line interface reference.
+  </Tab>
+</Tabs>
+
+````tsx
+import { Zap, Shield, Terminal } from 'lucide-react'
+
+<Tabs>
+  <Tab label="Performance" icon={<Zap />}>
+    Information about performance optimization.
+  </Tab>
+  <Tab label="Security" icon={<Shield />}>
+    Security best practices and configurations.
+  </Tab>
+  <Tab label="CLI" icon={<Terminal />}>
+    Command line interface reference.
+  </Tab>
+</Tabs>
+````
+
+## Package Managers
+
+Although Boltdocs no longer has hardcoded package manager support in Tabs, you can easily create beautiful package manager Switchers manually with icons.
+
+<Tabs>
+  <Tab label="npm">
+    ```bash
+    npm install boltdocs
+    ```
+  </Tab>
+  <Tab label="pnpm">
+    ```bash
+    pnpm add boltdocs
+    ```
+  </Tab>
+  <Tab label="bun">
+    ```bash
+    bun add boltdocs
+    ```
+  </Tab>
+  <Tab label="deno" disabled>
+    Deno support coming soon!
+  </Tab>
+</Tabs>
+
+## Disabled State
+
+Use the `disabled` prop on a `Tab` to make it unselectable. Keyboard navigation will automatically skip disabled tabs.
+
+<Tabs>
+  <Tab label="Active Tab">
+    Visible and interactive.
+  </Tab>
+  <Tab label="Disabled Tab" disabled>
+    You cannot click this one.
+  </Tab>
+  <Tab label="Another Active">
+    Still reachable.
+  </Tab>
+</Tabs>
+
+````tsx
+<Tabs>
+  <Tab label="Active Tab">
+    Visible and interactive.
+  </Tab>
+  <Tab label="Disabled Tab" disabled>
+    You cannot click this one.
+  </Tab>
+</Tabs>
+````
+
+## Props
+
+### `<Tabs />`
+
+<Field name="defaultIndex" type="number" defaultValue="0">
+  The index (0-based) of the tab that is open by default.
+</Field>
+
+### `<Tab />`
+
+<Field name="label" type="string" required>
+  The text shown in the tab bar trigger.
+</Field>
+
+<Field name="icon" type="ReactNode">
+  An optional icon to display next to the label.
+</Field>
+
+<Field name="disabled" type="boolean" defaultValue="false">
+  When true, the tab cannot be selected.
+</Field>
