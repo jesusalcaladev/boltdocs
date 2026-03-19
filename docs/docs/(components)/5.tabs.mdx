@@ -138,3 +138,17 @@ Use the `disabled` prop on a `Tab` to make it unselectable. Keyboard navigation 
 <Field name="disabled" type="boolean" defaultValue="false">
   When true, the tab cannot be selected.
 </Field>
+
+## Personalization (CSS)
+
+Customize the tabs container, active indicator, and triggers via CSS variables:
+
+```css
+:root {
+  --ld-tabs-bg: var(--ld-bg-soft);
+  --ld-tabs-border: var(--ld-border-subtle);
+  --ld-tabs-indicator: var(--ld-color-primary);
+  --ld-tabs-text: var(--ld-text-muted);
+  --ld-tabs-active-text: var(--ld-text-main);
+}
+```

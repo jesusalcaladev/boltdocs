@@ -8,7 +8,9 @@ icon: Puzzle
 
 Because you have Vite and React, you can import **your own** application's components straight into MDX to showcase them.
 
-For example, say you have a `<MyButton>` component defined in `src/components/MyButton.tsx`. You can import it in your MDX like this:
+## Basic Import
+
+Say you have a `<MyButton>` component defined in `src/components/MyButton.tsx`. You can import it in your MDX like this:
 
 ```tsx
 import { MyButton } from '../src/components/MyButton';
@@ -19,3 +21,23 @@ Here is our primary button:
 ```
 
 Boltdocs will render the button right alongside your textual documentation. This makes building Live Design Systems incredibly easy.
+
+## Using with Playground
+
+You can combine custom components with the `<Playground />` component for interactive demonstrations. Pass your component into the `scope` prop:
+
+```tsx
+import { Playground } from 'boltdocs/client';
+import { MyButton } from '../src/components/MyButton';
+
+<Playground
+  code={`<MyButton variant="primary">Try it!</MyButton>`}
+  scope={{ MyButton }}
+/>
+```
+
+## Best Practices
+
+- **Co-locate with docs**: Keep demo-only components in `docs/src/components/` alongside your documentation.
+- **Use aliases**: Configure Vite aliases in `vite.config.ts` to avoid long relative import paths.
+- **Export from a barrel**: Create an `index.ts` re-exporting common components for cleaner imports in MDX files.

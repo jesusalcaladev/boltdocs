@@ -10,9 +10,11 @@ import { Badge, Table, Field } from 'boltdocs/client'
 
 An inline badge / pill component used for labels, statuses, or tags.
 
-**Example:**
+**Example:
 
 This feature is <Badge variant="success">Stable</Badge>
+
+This is an <Badge variant="info">Informative</Badge>
 
 Coming in the next version: <Badge variant="warning">Beta</Badge>
 
@@ -28,4 +30,32 @@ Coming in the next version: <Badge variant="warning">Beta</Badge>
   The color variant of the badge.
 </Field>
 
+**Variants:**
+
+<Badge variant="default">Default</Badge>
+<Badge variant="primary">Primary</Badge>
+<Badge variant="success">Success</Badge>
+<Badge variant="warning">Warning</Badge>
+<Badge variant="danger">Danger</Badge>
+<Badge variant="info">Info</Badge>
+
 _(Standard span HTML attributes are also supported)_
+
+## Personalization (CSS)
+
+Customize badge colors for each variant through CSS variables:
+
+```css
+:root {
+  --ld-badge-primary-bg: rgba(127, 19, 236, 0.15);
+  --ld-badge-primary-text: #a855f7;
+  --ld-badge-success-bg: rgba(34, 197, 94, 0.15);
+  --ld-badge-success-text: #4ade80;
+  --ld-badge-warning-bg: rgba(234, 179, 8, 0.15);
+  --ld-badge-warning-text: #facc15;
+  --ld-badge-danger-bg: rgba(239, 68, 68, 0.15);
+  --ld-badge-danger-text: #f87171;
+  --ld-badge-info-bg: rgba(59, 130, 246, 0.15);
+  --ld-badge-info-text: #60a5fa;
+}
+```

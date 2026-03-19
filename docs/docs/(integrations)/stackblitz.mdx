@@ -1,0 +1,146 @@
+---
+title: "StackBlitz"
+description: "Learn how to use Boltdocs' generic StackBlitz API to create interactive coding environments directly from your documentation."
+icon: Zap
+---
+
+import { Playground, Field } from 'boltdocs/client'
+
+# Interactive StackBlitz Sandboxes
+
+Boltdocs provides a first-class integration with StackBlitz, allowing you to turn any code snippet into a live, editable project. Unlike traditional static documentation, this enables users to experiment with your code in a full-featured IDE environment with a single click.
+
+## The Core API
+
+The `@boltdocs/client` package exports a high-level API to interact with StackBlitz without needing to install their SDK manually.
+
+### `openStackBlitz`
+
+The primary way to launch a new StackBlitz project. It handles all the POST form logic and project initialization for you.
+
+<Playground 
+  code={`import React from "react";\n\nexport default function App() {\n  return <h1>Hello StackBlitz!</h1>;\n}`}
+  title="StackBlitz Live Demo"
+  hideSandbox={true}
+/>
+
+```tsx
+import { openStackBlitz } from 'boltdocs/client';
+
+const handleOpenProject = () => {
+  openStackBlitz({
+    title: "Boltdocs React Demo",
+    description: "An interactive demo generated from documentation",
+    template: "react-ts", // Options: 'node', 'javascript', 'typescript', 'react', 'angular', 'vue', 'svelte', 'react-ts'
+    dependencies: {
+      "lucide-react": "latest",
+      "framer-motion": "latest"
+    },
+    files: {
+      "src/App.tsx": `import React from 'react';
+export default function App() {
+  return <h1>Hello from StackBlitz!</h1>;
+}`
+    }
+  });
+};
+```
+
+---
+
+## `StackBlitzOptions` Reference
+
+The configuration object accepted by `openStackBlitz`:
+
+<Field name="files" type="Record<string, string>">
+  A map of file paths to their string content. Unlike CodeSandbox, StackBlitz files are always plain text strings.
+</Field>
+
+<Field name="title" type="string">
+  The title of the StackBlitz project, shown in the browser tab and project listing.
+</Field>
+
+<Field name="description" type="string">
+  A short description for the StackBlitz project metadata.
+</Field>
+
+<Field name="template" type='"node" | "javascript" | "typescript" | "react" | "angular" | "vue" | "svelte" | "react-ts"'>
+  The StackBlitz project template. Determines the build tooling and initial configuration.
+</Field>
+
+<Field name="dependencies" type="Record<string, string>">
+  NPM packages to include in the project. Keys are package names and values are semver ranges.
+</Field>
+
+<Field name="devDependencies" type="Record<string, string>">
+  NPM dev dependencies to include in the project.
+</Field>
+
+<Field name="settings" type="any">
+  Optional StackBlitz project settings object for advanced configuration.
+</Field>
+
+---
+
+## Playground Integration
+
+The `<Playground />` component includes built-in support for StackBlitz. By default, it is enabled alongside CodeSandbox.
+
+### Enabling/Disabling StackBlitz
+
+You can control the visibility of the StackBlitz button using the `hideStackBlitz` prop.
+
+```tsx
+<Playground 
+  code={myCode}
+  hideStackBlitz={false} // Force show (default depends on global config)
+  hideSandbox={true}     // Optionally hide CodeSandbox
+/>
+```
+
+### Custom StackBlitz Options
+
+If you need to provide specific versions of dependencies or additional files to the StackBlitz project, use the `stackblitzOptions` prop.
+
+```tsx
+<Playground 
+  code={code}
+  stackblitzOptions={{
+    title: "Custom Component Demo",
+    dependencies: {
+      "lodash": "^4.17.21"
+    },
+    files: {
+      "src/utils.ts": "export const add = (a, b) => a + b;"
+    }
+  }}
+/>
+```
+
+---
+
+## Code Block Integration
+
+Standard Markdown code blocks can also be transformed into StackBlitz projects. You can enable the StackBlitz button via MDX metadata.
+
+```mdx
+```tsx {hideStackBlitz: false, title: "My Custom Project"}
+import React from 'react';
+
+export default function Demo() {
+  return <div>Interactive Code Block</div>;
+}
+```
+```
+
+---
+
+## Why use StackBlitz?
+
+StackBlitz provides a unique "WebContainers" technology that allows Node.js to run natively in the browser. This makes it ideal for:
+
+1. **Full-stack Demos**: Showcase server-side logic alongside the frontend.
+2. **Instant Boot Times**: Large projects load significantly faster than traditional cloud containers.
+3. **Offline Support**: Once loaded, many projects can continue to work offline.
+
+By integrating StackBlitz into your Boltdocs site, you provide a seamless transition from reading documentation to writing code.

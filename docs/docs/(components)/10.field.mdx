@@ -76,3 +76,18 @@ While standard Markdown lists are easy to write, they often lack the visual hier
 2. **Metadata at a Glance**: Default values and "required" status are immediately visible.
 3. **Professional Aesthetic**: Gives your documentation a "Developer Portal" feel out of the box.
 4. **Consistency**: Ensures all property definitions follow the same structure across your site.
+
+## Personalization (CSS)
+
+Customize the Field component appearance with these variables:
+
+```css
+:root {
+  --ld-field-bg: var(--ld-bg-soft);
+  --ld-field-border: var(--ld-border-subtle);
+  --ld-field-name-color: var(--ld-color-primary);
+  --ld-field-type-color: var(--ld-text-muted);
+  --ld-field-required-bg: rgba(239, 68, 68, 0.15);
+  --ld-field-required-text: #f87171;
+}
+```

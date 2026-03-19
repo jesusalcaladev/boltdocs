@@ -57,3 +57,16 @@ Cards are used to display features, directories, or distinct pieces of informati
 <Field name="href" type="string">
   If provided, the entire card becomes a clickable link.
 </Field>
+
+## Personalization (CSS)
+
+Cards inherit their surface and border styles from the global theme. Override these to change the look of all cards:
+
+```css
+:root {
+  --ld-surface: rgba(255, 255, 255, 0.03);
+  --ld-border-subtle: rgba(255, 255, 255, 0.06);
+  --ld-border-strong: rgba(255, 255, 255, 0.12);
+  --ld-color-primary: #7f13ec;
+}
+```

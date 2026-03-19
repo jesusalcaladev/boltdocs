@@ -53,3 +53,31 @@ Admonitions highlight important information. Using them is as simple as adding a
 </Field>
 
 > **Note**: You can also use explicit tags like `<Note>`, `<Tip>`, `<Warning>`, `<Danger>`, `<InfoBox>`, `<Important>`, or `<Caution>` as shorthands.
+
+## Personalization (CSS)
+
+You can customize the look of each admonition type by overriding these CSS variables in your `custom.css`:
+
+```css
+:root {
+  /* Info / Note */
+  --ld-ui-info-bg: rgba(59, 130, 246, 0.08);
+  --ld-ui-info-text: #60a5fa;
+  --ld-ui-info-border: #3b82f6;
+
+  /* Success / Tip */
+  --ld-ui-success-bg: rgba(34, 197, 94, 0.08);
+  --ld-ui-success-text: #4ade80;
+  --ld-ui-success-border: #22c55e;
+
+  /* Warning / Caution */
+  --ld-ui-warning-bg: rgba(234, 179, 8, 0.08);
+  --ld-ui-warning-text: #facc15;
+  --ld-ui-warning-border: #eab308;
+
+  /* Danger */
+  --ld-ui-danger-bg: rgba(239, 68, 68, 0.08);
+  --ld-ui-danger-text: #f87171;
+  --ld-ui-danger-border: #ef4444;
+}
+```

@@ -4,7 +4,7 @@ description: "A consistent, themed table component for documentation."
 icon: Table
 ---
 
-import { Table } from 'boltdocs/client'
+import { Table, Field } from 'boltdocs/client'
 
 # Table
 
@@ -166,3 +166,17 @@ For large datasets, use the `paginated` prop. You can also customize the number 
 <Field name="className" type="string">
   Additional CSS classes for custom styling of the table container.
 </Field>
+
+## Personalization (CSS)
+
+Fine-tune the table appearance with these CSS variables:
+
+```css
+:root {
+  --ld-table-header-bg: var(--ld-bg-soft);
+  --ld-table-header-text: var(--ld-text-main);
+  --ld-table-border: var(--ld-border-subtle);
+  --ld-table-row-hover: rgba(255, 255, 255, 0.03);
+  --ld-table-stripe-bg: rgba(255, 255, 255, 0.015);
+}
+```

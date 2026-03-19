@@ -3,7 +3,7 @@ title: "Interactive Playground"
 description: "Add live React playgrounds and component previews to your documentation."
 ---
 
-import { Playground } from 'boltdocs/client'
+import { Playground, Field } from 'boltdocs/client'
 import { Button } from "boltdocs/client"
 
 # Playground Component
@@ -68,7 +68,7 @@ export default function Example() {
 - **Live Preview**: Real-time visual output updates as you type (Interactive mode).
 - **Static Previews**: Perfect for copy-paste examples where live editing isn't required.
 - **Copy to Clipboard**: One-click copy for the entire source code snippet.
-- **CodeSandbox Export**: Robust integration to open any playground example in a full online IDE.
+- **CodeSandbox & StackBlitz Export**: Robust integration to open any playground example in a full online IDE.
 
 ---
 
@@ -110,3 +110,65 @@ export default function App() {
   );
 }
 `} />
+
+---
+
+## Props (`PlaygroundProps`)
+
+<Field name="code" type="string">
+  The source code string to display in the editor. If the code contains an `export default function`, it will be automatically transformed for live rendering.
+</Field>
+
+<Field name="children" type="string | ReactNode">
+  Alternative to `code`. If `code` is not provided, the component will attempt to extract text from `children`.
+</Field>
+
+<Field name="preview" type="ReactNode">
+  A pre-rendered React element to display in the preview pane. When provided, the Playground enters **Static Mode** — the editor becomes read-only and the preview shows this element instead of live output.
+</Field>
+
+<Field name="scope" type="Record<string, any>" defaultValue="{}">
+  Additional variables and components to make available inside the live editor. Useful for providing custom components (e.g., `scope={{ MyButton }}`).
+</Field>
+
+<Field name="readonly" type="boolean" defaultValue="false">
+  When `true`, the code editor is disabled and users cannot modify the code.
+</Field>
+
+<Field name="noInline" type="boolean">
+  Force `react-live` into `noInline` mode. By default, the Playground auto-detects this if your code uses `export default`.
+</Field>
+
+<Field name="sandboxOptions" type="SandboxOptions" defaultValue="{}">
+  Custom options forwarded to the CodeSandbox export. See the [CodeSandbox integration](/docs/integrations/codesandbox) for the full type reference.
+</Field>
+
+<Field name="stackblitzOptions" type="StackBlitzOptions" defaultValue="{}">
+  Custom options forwarded to the StackBlitz export. See the [StackBlitz integration](/docs/integrations/stackblitz) for the full type reference.
+</Field>
+
+<Field name="hideSandbox" type="boolean" defaultValue="false">
+  Hides the "Open in CodeSandbox" toolbar button.
+</Field>
+
+<Field name="hideStackBlitz" type="boolean" defaultValue="false">
+  Hides the "Open in StackBlitz" toolbar button.
+</Field>
+
+<Field name="hideCopy" type="boolean" defaultValue="false">
+  Hides the "Copy code" toolbar button.
+</Field>
+
+## Personalization (CSS)
+
+Customize the playground container, panels, and toolbar:
+
+```css
+:root {
+  --ld-playground-bg: var(--ld-bg-soft);
+  --ld-playground-border: var(--ld-border-subtle);
+  --ld-playground-header-bg: var(--ld-bg-mute);
+  --ld-playground-toolbar-bg: var(--ld-bg-mute);
+  --ld-playground-preview-bg: var(--ld-bg-main);
+}
+```

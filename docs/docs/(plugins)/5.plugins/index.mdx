@@ -3,6 +3,8 @@ title: "Plugins"
 description: "Extend Boltdocs using our plugin architecture."
 ---
 
+import { Field } from 'boltdocs/client'
+
 # Plugin System
 
 Boltdocs is designed to be lean and fast, but it doesn't sacrifice power. Because it's built directly on **Vite**, you have access to a world-class plugin ecosystem. You can easily extend the build process to transform content, inject custom logic, or integrate with third-party tools.
@@ -52,6 +54,36 @@ export default defineConfig({
 ```
 
 Because Boltdocs is just an abstraction over Vite's configuration, any existing Vite plugin (Tailwind, Unocss, Image Minifiers) will work seamlessly alongside the framework!
+
+---
+
+## `BoltdocsPlugin` Interface
+
+Each plugin in the `plugins` array conforms to the `BoltdocsPlugin` interface:
+
+<Field name="name" type="string" required>
+  A unique identifier for the plugin. Used for debugging and deduplication.
+</Field>
+
+<Field name="enforce" type='"pre" | "post"'>
+  Controls execution order. `"pre"` plugins run before the core pipeline, `"post"` plugins run after.
+</Field>
+
+<Field name="remarkPlugins" type="any[]">
+  An array of Remark plugins to inject into the MDX parsing pipeline. Operates on the Markdown AST before it becomes HTML.
+</Field>
+
+<Field name="rehypePlugins" type="any[]">
+  An array of Rehype plugins to inject into the MDX pipeline. Operates on the HTML AST after Markdown has been parsed.
+</Field>
+
+<Field name="vitePlugins" type="VitePlugin[]">
+  Standard Vite plugins to inject into the build. This allows deep integration with Vite's build pipeline.
+</Field>
+
+<Field name="components" type="Record<string, string>">
+  A map of component `Name` → `Module Path` to globally inject React components into all MDX files without manual imports.
+</Field>
 
 ---
 

@@ -55,3 +55,20 @@ A versatile button/link component for use in MDX pages and the home page.
 </Field>
 
 _(Standard anchor and button HTML attributes are also supported)_
+
+## Personalization (CSS)
+
+Override these variables in your `custom.css` to restyle all buttons globally:
+
+```css
+:root {
+  --ld-btn-primary-bg: #7f13ec;
+  --ld-btn-primary-text: #ffffff;
+  --ld-btn-primary-hover: #6b0fcc;
+  --ld-btn-secondary-bg: rgba(255, 255, 255, 0.06);
+  --ld-btn-secondary-text: #e0e0e0;
+  --ld-btn-secondary-hover: rgba(255, 255, 255, 0.12);
+  --ld-btn-outline-border: var(--ld-border-strong);
+  --ld-btn-outline-text: var(--ld-text-main);
+}
+```

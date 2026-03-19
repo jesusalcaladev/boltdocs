@@ -39,3 +39,16 @@ A component to display folder and file structures using standard Markdown lists.
 <Field name="children" type="ReactNode" required>
   The markdown list representing the file tree.
 </Field>
+
+## Personalization (CSS)
+
+Adjust the visual appearance of the file tree with these variables:
+
+```css
+:root {
+  --ld-file-tree-bg: var(--ld-bg-soft);
+  --ld-file-tree-border: var(--ld-border-subtle);
+  --ld-file-tree-icon-color: var(--ld-text-muted);
+  --ld-file-tree-line-color: var(--ld-border-subtle);
+}
+```

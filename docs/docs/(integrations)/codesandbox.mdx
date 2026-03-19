@@ -4,6 +4,8 @@ description: "Learn how to use our project-agnostic API to create custom sandbox
 icon: Code
 ---
 
+import { Field } from 'boltdocs/client'
+
 # Interactive Sandboxes
 
 Boltdocs features a high-performance, project-agnostic CodeSandbox API. This allows you to create immersive, live-coding experiences that aren't tied to the framework itself—perfect for showcasing design systems, complex libraries, or interactive demos.
@@ -57,6 +59,36 @@ const { parameters, url } = defineSandbox({
   template: "vite"
 });
 ```
+
+---
+
+## `SandboxOptions` Reference
+
+The configuration object accepted by `openSandbox` and `defineSandbox`:
+
+<Field name="files" type="Record<string, SandboxFile>">
+  A map of file paths to their content. Each value is an object with a `content` property (string or object) and an optional `isBinary` boolean flag.
+</Field>
+
+<Field name="dependencies" type="Record<string, string>">
+  NPM packages to include in the sandbox `package.json`. Keys are package names and values are semver ranges (e.g., `"latest"`, `"^18.2.0"`).
+</Field>
+
+<Field name="devDependencies" type="Record<string, string>">
+  NPM dev dependencies to include in the sandbox.
+</Field>
+
+<Field name="title" type="string">
+  The title of the CodeSandbox project, shown in the browser tab.
+</Field>
+
+<Field name="description" type="string">
+  A short description for the CodeSandbox project metadata.
+</Field>
+
+<Field name="template" type="string">
+  The CodeSandbox template to use (e.g., `"node"`, `"vite"`, `"static"`).
+</Field>
 
 ---
 
@@ -114,6 +146,9 @@ The built-in `<Playground />` component leverages this API under the hood. You c
 
 > [!TIP]
 > Use `workspace:*` for dependencies if you are building a monorepo documentation site. Boltdocs will handle the resolution logic during the export.
+
+> [!NOTE]
+> Boltdocs also supports **StackBlitz**. Check out the [StackBlitz documentation](/docs/integrations/stackblitz) for more information on how to use it as an alternative.
 
 ## Why this matters
 
