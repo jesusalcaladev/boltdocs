@@ -66,6 +66,12 @@
   --ld-ui-tip-bg: rgba(34, 197, 94, 0.06);
   --ld-ui-tip-text: #16a34a;
   --ld-ui-tip-border: rgba(34, 197, 94, 0.3);
+  --ld-ui-important-bg: rgba(127, 19, 236, 0.08);
+  --ld-ui-important-text: #7f13ec;
+  --ld-ui-important-border: rgba(127, 19, 236, 0.25);
+  --ld-ui-caution-bg: rgba(249, 115, 22, 0.08);
+  --ld-ui-caution-text: #ea580c;
+  --ld-ui-caution-border: rgba(249, 115, 22, 0.25);
 }
 
 :root {
@@ -131,6 +137,12 @@
   --ld-ui-tip-bg: rgba(34, 197, 94, 0.06);
   --ld-ui-tip-text: #22c55e;
   --ld-ui-tip-border: rgba(34, 197, 94, 0.3);
+  --ld-ui-important-bg: rgba(168, 85, 247, 0.1);
+  --ld-ui-important-text: #c084fc;
+  --ld-ui-important-border: rgba(168, 85, 247, 0.3);
+  --ld-ui-caution-bg: rgba(249, 115, 22, 0.1);
+  --ld-ui-caution-text: #fb923c;
+  --ld-ui-caution-border: rgba(249, 115, 22, 0.3);
 
   /* ─ Typography ─ */
   --ld-font-sans: "Inter", system-ui, -apple-system, sans-serif;

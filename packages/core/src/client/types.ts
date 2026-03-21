@@ -64,3 +64,37 @@ export interface CreateBoltdocsAppOptions {
   /** Optional custom MDX components provided by plugins */
   components?: Record<string, React.ComponentType<any>>;
 }
+
+/**
+ * Types for CodeSandbox integration.
+ */
+export interface SandboxFile {
+  content: string | object;
+  isBinary?: boolean;
+}
+
+export type SandboxFiles = Record<string, SandboxFile>;
+
+export interface SandboxOptions {
+  files?: SandboxFiles;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  title?: string;
+  description?: string;
+  template?: string;
+  /** The file path to open by default in the editor (e.g. `"src/App.tsx"`). */
+  entry?: string;
+  /** Options for the embedded iframe view, used by `embedSandbox()`. */
+  embed?: SandboxEmbedOptions;
+}
+
+export interface SandboxEmbedOptions {
+  /** Which panel to display: `"editor"`, `"preview"`, or `"split"`. */
+  view?: "editor" | "preview" | "split";
+  /** Color theme: `"dark"` or `"light"`. */
+  theme?: "dark" | "light";
+  /** Whether to hide the navigation bar in the embed. */
+  hideNavigation?: boolean;
+}
+
+

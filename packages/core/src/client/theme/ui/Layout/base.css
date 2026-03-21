@@ -90,17 +90,9 @@ a {
   position: relative;
 }
 
-.boltdocs-page-header {
-  position: absolute;
-  top: -0.5rem; /* Move up slightly to overlap less with title body */
-  right: 0;
+.boltdocs-content-header {
   display: flex;
-  justify-content: flex-end;
-  padding: 1rem 0;
-  pointer-events: none;
-  z-index: 101; /* Ensure it stays above everything */
-}
-
-.boltdocs-page-header > * {
-  pointer-events: auto;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
 }

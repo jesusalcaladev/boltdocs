@@ -21,7 +21,6 @@
 
 /* UI Components (MDX) */
 @import "./components/mdx/mdx-components.css";
-@import "./components/PackageManagerTabs/pkg-tabs.css";
 
 /* Interactive Elements */
 @import "./ui/SearchDialog/search.css";

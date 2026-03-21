@@ -27,6 +27,8 @@ function formatStars(stars: number) {
   return stars.toString();
 }
 
+import { useTheme } from "../../ThemeContext";
+
 /**
  * The top navigation bar of the documentation site.
  */
@@ -43,6 +45,7 @@ export function Navbar({
   currentLocale?: string;
   currentVersion?: string;
 }) {
+  const { theme } = useTheme();
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const title = config.themeConfig?.title || "Boltdocs";
@@ -55,6 +58,20 @@ export function Navbar({
 
   const leftItems = navItems.filter((item) => item.position !== "right");
   const rightItems = navItems.filter((item) => item.position === "right");
+
+  const logo = config.themeConfig?.logo;
+  const isLogoObject = typeof logo === "object" && logo !== null && !Array.isArray(logo);
+
+  const getLogoSrc = () => {
+    if (!logo) return null;
+    if (typeof logo === "string") return logo;
+    return theme === "dark" ? logo.dark : logo.light;
+  };
+
+  const logoSrc = getLogoSrc();
+  const logoAlt = isLogoObject ? (logo as any).alt || title : title;
+  const logoWidth = isLogoObject ? (logo as any).width || 24 : 24;
+  const logoHeight = isLogoObject ? (logo as any).height || 24 : 24;
 
   const renderNavItem = (item: any, i: number) => {
     const text = item.label || item.text || "";
@@ -97,18 +114,20 @@ export function Navbar({
         <div className="navbar-left">
           <div className="navbar-logo">
             <Link to="/">
-              {config.themeConfig?.logo ? (
-                config.themeConfig.logo.trim().startsWith("<svg") ? (
+              {logoSrc ? (
+                logoSrc.trim().startsWith("<svg") ? (
                   <span
                     className="navbar-logo-svg"
                     dangerouslySetInnerHTML={{
-                      __html: config.themeConfig.logo,
+                      __html: logoSrc,
                     }}
                   />
                 ) : (
                   <img
-                    src={config.themeConfig.logo}
-                    alt={title}
+                    src={logoSrc}
+                    alt={logoAlt}
+                    width={logoWidth}
+                    height={logoHeight}
                     className="navbar-logo-img"
                   />
                 )

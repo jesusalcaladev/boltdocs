@@ -5,6 +5,8 @@ import {
   AlertTriangle,
   ShieldAlert,
   Bookmark,
+  Zap,
+  Flame,
 } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -13,6 +15,8 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   info: <Info size={18} />,
   warning: <AlertTriangle size={18} />,
   danger: <ShieldAlert size={18} />,
+  important: <Flame size={18} />,
+  caution: <Zap size={18} />,
 };
 
 const LABEL_MAP: Record<string, string> = {
@@ -21,11 +25,13 @@ const LABEL_MAP: Record<string, string> = {
   info: "Info",
   warning: "Warning",
   danger: "Danger",
+  important: "Important",
+  caution: "Caution",
 };
 
 export interface AdmonitionProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Admonition type — controls color and icon */
-  type?: "note" | "tip" | "info" | "warning" | "danger";
+  type?: "note" | "tip" | "info" | "warning" | "danger" | "important" | "caution";
   /** Override the default title */
   title?: string;
   children: React.ReactNode;
@@ -77,4 +83,10 @@ export const Danger = (props: Omit<AdmonitionProps, "type">) => (
 );
 export const InfoBox = (props: Omit<AdmonitionProps, "type">) => (
   <Admonition type="info" {...props} />
+);
+export const Important = (props: Omit<AdmonitionProps, "type">) => (
+  <Admonition type="important" {...props} />
+);
+export const Caution = (props: Omit<AdmonitionProps, "type">) => (
+  <Admonition type="caution" {...props} />
 );

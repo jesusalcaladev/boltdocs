@@ -21,14 +21,12 @@
   }
 
   .boltdocs-page h1 {
-    padding-right: 0;
+    font-size: 1.75rem;
   }
 
-  .boltdocs-page-header {
-    position: static;
-    justify-content: flex-start;
-    margin-bottom: 1rem;
-    padding: 0;
+  .boltdocs-content-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .ld-cards--2,

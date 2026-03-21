@@ -1,1 +1,0 @@
-export { PackageManagerTabs } from "./PackageManagerTabs";

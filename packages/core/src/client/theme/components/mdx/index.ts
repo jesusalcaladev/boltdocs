@@ -11,7 +11,7 @@ export type { CardProps, CardsProps } from "./Card";
 export { Tabs, Tab } from "./Tabs";
 export type { TabsProps, TabProps } from "./Tabs";
 
-export { Admonition, Note, Tip, Warning, Danger, InfoBox } from "./Admonition";
+export { Admonition, Note, Tip, Warning, Danger, InfoBox, Important, Caution } from "./Admonition";
 export type { AdmonitionProps } from "./Admonition";
 
 export { List } from "./List";
@@ -25,3 +25,9 @@ export type { TableProps } from "./Table";
 
 export { Field } from "./Field";
 export type { FieldProps } from "./Field";
+
+export { Link } from "./Link";
+export type { LinkProps } from "./Link";
+
+export { Image } from "./Image";
+export type { ImageProps } from "./Image";

@@ -138,18 +138,18 @@ export function ThemeLayout({
         )}
 
         <main className="boltdocs-content">
-          {breadcrumbs !== undefined ? (
-            breadcrumbs
-          ) : (
-            <Breadcrumbs routes={filteredRoutes} config={config} />
-          )}
+          <div className="boltdocs-content-header">
+            {breadcrumbs !== undefined ? (
+              breadcrumbs
+            ) : (
+              <Breadcrumbs routes={filteredRoutes} config={config} />
+            )}
+            <CopyMarkdown
+              content={routes[currentIndex]?._rawContent}
+              config={config.themeConfig?.copyMarkdown}
+            />
+          </div>
           <div className="boltdocs-page">
-            <div className="boltdocs-page-header">
-              <CopyMarkdown
-                content={routes[currentIndex]?._rawContent}
-                config={config.themeConfig?.copyMarkdown}
-              />
-            </div>
             <ErrorBoundary>{children}</ErrorBoundary>
           </div>
 

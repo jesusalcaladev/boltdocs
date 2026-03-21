@@ -1,14 +1,14 @@
-import React, { useState, Children, isValidElement, useRef } from "react";
+import React, { useState, Children, isValidElement, useRef, useEffect, useMemo } from "react";
 import { CodeBlock } from "../CodeBlock";
-import { NPM } from "../../icons/npm";
-import { Pnpm } from "../../icons/pnpm";
-import { Bun } from "../../icons/bun";
-import { Deno } from "../../icons/deno";
 
 /* ─── Tab (individual panel) ──────────────────────────────── */
 export interface TabProps {
   /** The label shown in the tab bar */
   label: string;
+  /** Optional icon to show next to the label */
+  icon?: React.ReactNode;
+  /** Whether the tab is disabled */
+  disabled?: boolean;
   children: React.ReactNode;
 }
 
@@ -40,15 +40,6 @@ export interface TabsProps {
   children: React.ReactNode;
 }
 
-const getIconForLabel = (label: string) => {
-  const l = label.toLowerCase();
-  if (l.includes("pnpm")) return <Pnpm />;
-  if (l.includes("npm")) return <NPM />;
-  if (l.includes("bun")) return <Bun />;
-  if (l.includes("deno")) return <Deno />;
-  return null;
-};
-
 /**
  * Tab container that manages active state.
  *
@@ -60,25 +51,54 @@ const getIconForLabel = (label: string) => {
  * ```
  */
 export function Tabs({ defaultIndex = 0, children }: TabsProps) {
-  const [active, setActive] = useState(defaultIndex);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
   // Extract Tab children
-  const tabs = Children.toArray(children).filter(
-    (child) => isValidElement(child) && (child as any).props?.label,
-  );
+  const tabs = useMemo(() => {
+    return Children.toArray(children).filter(
+      (child) => isValidElement(child) && (child as any).props?.label,
+    ) as React.ReactElement<TabProps>[];
+  }, [children]);
+
+  // Ensure defaultIndex doesn't point to a disabled tab
+  const initialIndex = useMemo(() => {
+    return tabs[defaultIndex]?.props.disabled ? 
+      tabs.findIndex(t => !t.props.disabled) : defaultIndex;
+  }, [tabs, defaultIndex]);
+  
+  const [active, setActive] = useState(initialIndex === -1 ? 0 : initialIndex);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [indicatorStyle, setIndicatorStyle] = useState<React.CSSProperties>({
+    opacity: 0,
+    transform: "translateX(0)",
+    width: 0,
+  });
+
+  useEffect(() => {
+    const activeTab = tabRefs.current[active];
+    if (activeTab) {
+      setIndicatorStyle({
+        opacity: 1,
+        width: activeTab.offsetWidth,
+        transform: `translateX(${activeTab.offsetLeft}px)`,
+      });
+    }
+  }, [active, tabs]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    let newIndex = active;
-    if (e.key === "ArrowRight") {
-      newIndex = (active + 1) % tabs.length;
-    } else if (e.key === "ArrowLeft") {
-      newIndex = (active - 1 + tabs.length) % tabs.length;
-    }
+    let direction = 0;
+    if (e.key === "ArrowRight") direction = 1;
+    else if (e.key === "ArrowLeft") direction = -1;
 
-    if (newIndex !== active) {
-      setActive(newIndex);
-      tabRefs.current[newIndex]?.focus();
+    if (direction !== 0) {
+      let nextIndex = (active + direction + tabs.length) % tabs.length;
+      // Skip disabled tabs
+      while (tabs[nextIndex].props.disabled && nextIndex !== active) {
+        nextIndex = (nextIndex + direction + tabs.length) % tabs.length;
+      }
+
+      if (nextIndex !== active && !tabs[nextIndex].props.disabled) {
+        setActive(nextIndex);
+        tabRefs.current[nextIndex]?.focus();
+      }
     }
   };
 
@@ -86,29 +106,32 @@ export function Tabs({ defaultIndex = 0, children }: TabsProps) {
     <div className="ld-tabs">
       <div className="ld-tabs__bar" role="tablist" onKeyDown={handleKeyDown}>
         {tabs.map((child, i) => {
-          const label = (child as React.ReactElement<TabProps>).props.label;
-          const Icon = getIconForLabel(label);
+          const { label, icon, disabled } = child.props;
+          const isActive = i === active;
           return (
             <button
               key={i}
               role="tab"
-              aria-selected={i === active}
+              aria-selected={isActive}
+              aria-disabled={disabled}
               aria-controls={`tabpanel-${i}`}
               id={`tab-${i}`}
-              tabIndex={i === active ? 0 : -1}
+              tabIndex={isActive ? 0 : -1}
               ref={(el) => {
                 tabRefs.current[i] = el;
               }}
               className={`ld-tabs__trigger ${
-                i === active ? "ld-tabs__trigger--active" : ""
-              }`}
-              onClick={() => setActive(i)}
+                isActive ? "ld-tabs__trigger--active" : ""
+              } ${disabled ? "ld-tabs__trigger--disabled" : ""}`}
+              onClick={() => !disabled && setActive(i)}
             >
-              {Icon}
+              {icon && <span className="ld-tabs__icon">{icon}</span>}
               <span>{label}</span>
             </button>
           );
         })}
+        {/* Sliding Indicator */}
+        <div className="ld-tabs__indicator" style={indicatorStyle} />
       </div>
       <div
         className="ld-tabs__content"

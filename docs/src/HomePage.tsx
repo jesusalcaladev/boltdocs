@@ -71,7 +71,7 @@ export default function HomePage() {
       />
       <main className="hero">
         <img
-          src="/boltdocs.svg"
+          src="/light.svg"
           alt="Logo"
           className="logo"
           width={100}

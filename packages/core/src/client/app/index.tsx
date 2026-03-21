@@ -11,6 +11,7 @@ import { ThemeLayout } from "../theme/ui/Layout";
 import { NotFound } from "../theme/ui/NotFound";
 import { Loading } from "../theme/ui/Loading";
 import { MDXProvider } from "@mdx-js/react";
+import { ThemeProvider } from "../theme/ThemeContext";
 import { ComponentRoute, CreateBoltdocsAppOptions } from "../types";
 import {
   createContext,
@@ -31,17 +32,6 @@ import { CodeBlock } from "../theme/components/CodeBlock";
 const Video = lazy(() =>
   import("../theme/components/Video").then((m) => ({ default: m.Video })),
 );
-const PackageManagerTabs = lazy(() =>
-  import("../theme/components/PackageManagerTabs").then((m) => ({
-    default: m.PackageManagerTabs,
-  })),
-);
-declare global {
-  interface ImportMeta {
-    env: Record<string, any>;
-  }
-}
-
 import { PreloadProvider } from "./preload";
 
 const Heading = ({
@@ -77,11 +67,6 @@ const mdxComponents = {
   video: (props: any) => (
     <Suspense fallback={<div className="video-skeleton" />}>
       <Video {...props} />
-    </Suspense>
-  ),
-  PackageManagerTabs: (props: any) => (
-    <Suspense fallback={<div className="pkg-tabs-skeleton" />}>
-      <PackageManagerTabs {...props} />
     </Suspense>
   ),
 };
@@ -147,7 +132,8 @@ export function AppShell({
   }, [routesInfo, modules, docsDirName]);
 
   return (
-    <ConfigContext.Provider value={config}>
+    <ThemeProvider>
+      <ConfigContext.Provider value={config}>
       <PreloadProvider routes={routesInfo} modules={modules}>
         <ScrollHandler />
         <Routes>
@@ -206,6 +192,7 @@ export function AppShell({
         </Routes>
       </PreloadProvider>
     </ConfigContext.Provider>
+    </ThemeProvider>
   );
 }
 

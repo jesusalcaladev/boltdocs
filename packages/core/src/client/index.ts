@@ -1,6 +1,5 @@
 export type { BoltdocsConfig, BoltdocsThemeConfig } from "../node/config";
 export type { ComponentRoute, CreateBoltdocsAppOptions } from "./types";
-import { PackageManagerTabs } from "./theme/components/PackageManagerTabs";
 export { createBoltdocsApp } from "./app";
 export { ThemeLayout } from "./theme/ui/Layout";
 export { Navbar } from "./theme/ui/Navbar";
@@ -14,6 +13,18 @@ export { Loading } from "./theme/ui/Loading";
 export { CodeBlock } from "./theme/components/CodeBlock";
 export { Video } from "./theme/components/Video";
 export {
+  defineSandbox,
+  openSandbox,
+  embedSandbox,
+} from "./integrations/codesandbox";
+
+export type {
+  SandboxOptions,
+  SandboxFile,
+  SandboxFiles,
+  SandboxEmbedOptions,
+} from "./types";
+export {
   Button,
   Badge,
   Card,
@@ -26,10 +37,14 @@ export {
   Warning,
   Danger,
   InfoBox,
+  Important,
+  Caution,
   List,
   FileTree,
   Table,
   Field,
+  Link,
+  Image,
 } from "./theme/components/mdx";
 export type {
   ButtonProps,
@@ -43,4 +58,6 @@ export type {
   FileTreeProps,
   TableProps,
   FieldProps,
+  LinkProps,
+  ImageProps,
 } from "./theme/components/mdx";

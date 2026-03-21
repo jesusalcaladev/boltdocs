@@ -1,15 +1,19 @@
 import React, { useState, useMemo } from "react";
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
-import { Copy, Check, Terminal, Play } from "lucide-react";
-import { CodeBlock } from "../CodeBlock";
+import { Copy, Check, Terminal, Play, Box } from "lucide-react";
+import { openSandbox } from "../../../integrations/codesandbox";
+import { type SandboxOptions } from "../../../types";
 
-interface PlaygroundProps {
+export interface PlaygroundProps {
   code?: string;
   children?: string | React.ReactNode;
   preview?: React.ReactNode;
   scope?: Record<string, any>;
   readonly?: boolean;
   noInline?: boolean;
+  sandboxOptions?: SandboxOptions;
+  hideSandbox?: boolean;
+  hideCopy?: boolean;
 }
 
 /**
@@ -50,6 +54,9 @@ export function Playground({
   scope = {},
   readonly = false,
   noInline: forceNoInline,
+  sandboxOptions = {},
+  hideSandbox = false,
+  hideCopy = false,
 }: PlaygroundProps) {
   // Extract code from either `code` prop or `children`
   const initialCode = useMemo(() => {
@@ -79,6 +86,34 @@ export function Playground({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const openInCodeSandbox = () => {
+    const codeToExport = !!preview ? initialCode : activeCode;
+
+    // Check if it's already a full component or just a snippet
+    let finalCode = codeToExport;
+    if (
+      !codeToExport.includes("import React") &&
+      !codeToExport.includes("export default")
+    ) {
+      finalCode = `import React from "react";\n\nexport default function App() {\n  return (\n    ${codeToExport
+        .split("\n")
+        .join("\n    ")}\n  );\n}`;
+    } else if (!codeToExport.includes("import React")) {
+      finalCode = `import React from "react";\n\n${codeToExport}`;
+    }
+
+    openSandbox({
+      title: "Code Example",
+      ...sandboxOptions,
+      files: {
+        "src/App.tsx": { content: finalCode },
+        ...sandboxOptions.files,
+      },
+    });
+  };
+
+
+
   // Provide React generically
   const extendedScope = { React, ...scope };
 
@@ -96,7 +131,10 @@ export function Playground({
   };
 
   return (
-    <div className={`boltdocs-playground ${shouldTruncate ? "is-truncated" : ""}`} data-readonly={readonly || isStatic}>
+    <div
+      className={`boltdocs-playground ${shouldTruncate ? "is-truncated" : ""}`}
+      data-readonly={readonly || isStatic}
+    >
       <div className="playground-split-container">
         {/* Preview Side - Now on top */}
         <div className="playground-panel playground-preview-panel">
@@ -134,14 +172,27 @@ export function Playground({
             </div>
           )}
           <div className="playground-panel-content playground-editor">
-            {/* Copy button moved inside code area */}
-            <button
-              className="playground-copy-btn-inner"
-              onClick={handleCopy}
-              title="Copy code"
-            >
-              {copied ? <Check size={14} /> : <Copy size={14} />}
-            </button>
+            <div className="playground-toolbar">
+              {!hideSandbox && (
+                <button
+                  className="playground-toolbar-btn sandbox-btn"
+                  onClick={openInCodeSandbox}
+                  title="Open in CodeSandbox"
+                >
+                  <Box size={16} />
+                </button>
+              )}
+
+              {!hideCopy && (
+                <button
+                  className="playground-toolbar-btn copy-btn"
+                  onClick={handleCopy}
+                  title="Copy code"
+                >
+                  {copied ? <Check size={16} /> : <Copy size={16} />}
+                </button>
+              )}
+            </div>
 
             {isStatic ? (
               <LiveProvider
@@ -162,7 +213,7 @@ export function Playground({
               </LiveProvider>
             )}
           </div>
-          
+
           {isExpandable && (
             <div className="playground-expand-wrapper">
               <button

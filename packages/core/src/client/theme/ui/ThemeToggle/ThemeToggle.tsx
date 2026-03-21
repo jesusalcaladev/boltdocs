@@ -1,51 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { useTheme } from "../../ThemeContext";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState("dark");
+  const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // On mount, read from localStorage or matchMedia
-    const stored = localStorage.getItem("boltdocs-theme");
-    if (stored === "light" || stored === "dark") {
-      setTheme(stored);
-    } else {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
-      setTheme(prefersDark ? "dark" : "light");
-    }
-
-    // Listen to system changes if no localStorage is set
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem("boltdocs-theme")) {
-        setTheme(e.matches ? "dark" : "light");
-      }
-    };
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const root = document.documentElement;
-    if (theme === "light") {
-      root.classList.add("theme-light");
-      root.dataset.theme = "light";
-    } else {
-      root.classList.remove("theme-light");
-      root.dataset.theme = "dark";
-    }
-  }, [theme, mounted]);
-
-  const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("boltdocs-theme", newTheme);
-  };
 
   // Prevent hydration mismatch by rendering a placeholder with same layout
   if (!mounted) {

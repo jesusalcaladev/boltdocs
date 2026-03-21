@@ -29,8 +29,16 @@ export interface BoltdocsThemeConfig {
   title?: string;
   /** The global description of the site (used for SEO) */
   description?: string;
-  /** URL path to the site logo */
-  logo?: string;
+  /** URL path to the site logo or an object for light/dark versions */
+  logo?:
+    | string
+    | {
+        dark: string;
+        light: string;
+        alt?: string;
+        width?: number;
+        height?: number;
+      };
   /** Items to display in the top navigation bar */
   navbar?: Array<{
     /** Text to display (alias for text) */
