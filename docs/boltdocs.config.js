@@ -2,9 +2,14 @@
  * @type {import('boltdocs').BoltdocsConfig}
  */
 export default {
-  title: 'Boltdocs',
+  title: 'boltdocs',
   siteUrl: "https://boltdocs.vercel.app/",
   themeConfig: {
+    logo: {
+      dark: '/light.svg',
+      light: '/dark.svg',
+      alt: 'Boltdocs Logo',
+    },
     navbar:[
       {
         href: "/",
@@ -18,7 +23,7 @@ export default {
         href: "/docs/overview/introduction",
       },
     ],
-    customCss: './src/custom.css',
+    linkPreview: true,
     editLink: "https://github.com/jesusalcaladev/boltdocs/edit/main/docs/docs/:path",
     githubRepo: "jesusalcaladev/boltdocs",
     description: "Documentation for Boltdocs - The best documentation generator for React",
