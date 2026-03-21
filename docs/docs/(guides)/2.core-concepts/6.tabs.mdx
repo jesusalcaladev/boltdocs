@@ -1,18 +1,21 @@
 ---
 title: "Tabs"
-description: "Organize content with horizontal tabs."
+description: "Organize content with horizontal navigation tabs."
 icon: PanelsTopLeft
 ---
 
-# Top Tabs
+import { FileTree, Note, Field } from 'boltdocs/client'
 
-Tabs allow you to split your documentation into high-level categories (e.g., "Guides", "API", "Components"). They appear as a second row in the navigation bar.
+# Navigation Tabs
+
+Tabs allow you to split your documentation into high-level categories (e.g., "Guides", "API", "Components"). They appear as a premium second row in the navigation bar.
 
 ## 1. Configuration
 
 Add the `tabs` array to your `themeConfig` in `boltdocs.config.ts`. Each tab requires an `id` (used for routing), `text` (for display), and an optional `icon`.
 
 ```js
+// boltdocs.config.ts
 export default {
   themeConfig: {
     tabs: [
@@ -23,32 +26,48 @@ export default {
 }
 ```
 
-### Icon Support
-
-The `icon` property supports:
-- **Lucide Icon names** (e.g., `Rocket`, `Book`, `Settings`)
-- **Raw SVG strings**
-- **URL to an image**
-
-## 2. Directory Structure
-
-To associate a directory with a tab, wrap the directory name in parentheses `(id)`. The `id` must match one of the IDs defined in your configuration.
-
-```text
-docs/
-├── (guides)/
-│   ├── index.md
-│   └── installation.md
-└── (api)/
-    ├── reference.md
-    └── types.md
-```
-
-## 3. Filtering Logic
-
-When tabs are enabled, the sidebar only displays routes that belong to the currently active tab. Routes that are not inside any `(id)` folder will be visible across all tabs as "fallback" content.
+<Field name="icon" type="string">
+  Supports Lucide Icon names (e.g., `Rocket`), raw SVG strings, or image URLs.
+</Field>
 
 ---
 
-> [!NOTE]
-> Tab IDs are case-insensitive and are used to build the URL structure. For example, `(guides)` maps to `/docs/guides/...`.
+## 2. Directory Structure
+
+To associate a directory with a tab, wrap the directory name in parentheses `(id)`. This indicates to Boltdocs that the content belongs to that specific navigation context.
+
+<FileTree>
+- docs/
+  - (guides)/            # Maps to /docs/guides
+    - index.mdx
+    - installation.mdx
+  - (api)/               # Maps to /docs/api
+    - reference.mdx
+    - types.mdx
+</FileTree>
+
+---
+
+## 3. Filtering Logic
+
+When tabs are enabled, the sidebar automatically filters routes based on the active tab.
+
+- **Exclusive Content**: Routes inside `(id)` folders only appear when that tab is selected.
+- **Global Content**: Files outside of any `(id)` folder will be visible across **all tabs** (useful for global search or landing pages).
+
+<Note>
+  Tab IDs are case-insensitive. A folder named `(GUIDES)` will correctly map to the `guides` tab ID.
+</Note>
+
+## Personalization (CSS)
+
+Customize the appearance of the navigation tabs using these CSS variables in your `custom.css`:
+
+```css
+:root {
+  --ld-tabs-bg: transparent;
+  --ld-tabs-item-active-text: var(--ld-brand-primary);
+  --ld-tabs-item-hover-bg: var(--ld-bg-mute);
+  --ld-tabs-border: var(--ld-border-color);
+}
+```

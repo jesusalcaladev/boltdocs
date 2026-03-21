@@ -4,34 +4,24 @@ description: "Premium link previews for your documentation."
 icon: ExternalLink
 ---
 
+import { Playground, Link, Field, Note, Tip } from 'boltdocs/client'
+
 # Link Previews
 
 Boltdocs features a premium link preview system that provides users with a summary of the linked page when hovering over an internal link. This ensures a seamless navigation experience without needing to click through every page.
 
 ## How it Works
 
-When you hover over any internal link (either in the sidebar or within the main content), a premium glassmorphism tooltip will appear showing:
-1. The **Title** of the target page.
-2. A **Summary** or description of the page content.
+When you hover over any internal link (either in the sidebar or within the main content), a premium glassmorphism tooltip will appear showing the **Title** and a **Summary** of the target page.
 
-## Page Summaries
+### Page Summaries
 
 There are two ways the preview tooltip gets its summary:
 
-### 1. Explicit Description
+1. **Explicit Description**: Define it in the page's [Frontmatter](/docs/core-concepts/frontmatter).
+2. **Automatic Extraction**: Boltdocs automatically extracts the first 160 characters and strips Markdown formatting for a clean preview.
 
-You can define an explicit description in the page's [Frontmatter](/docs/core-concepts/frontmatter):
-
-```markdown
 ---
-title: "Advanced Guide"
-description: "A deep dive into advanced features and configuration."
----
-```
-
-### 2. Automatic Extraction
-
-If no `description` is provided in the frontmatter, Boltdocs **automatically extracts** a summary from the page's content. It takes the first 160 characters and strips all Markdown formatting (links, bold, code blocks) to ensure a clean, text-only preview.
 
 ## Configuration
 
@@ -39,26 +29,44 @@ The link preview feature is enabled by default, but you can customize it globall
 
 ### Global Toggle
 
-To disable link previews across your entire site, update your `themeConfig` in your configuration file:
+<Field name="linkPreview" type="boolean" defaultValue="true">
+  Update your `themeConfig` in `boltdocs.config.ts` to disable previews site-wide.
+</Field>
 
 ```ts
 // boltdocs.config.ts
 export default {
   themeConfig: {
-    // ... other config
-    linkPreview: false // Disable globally
+    linkPreview: false 
   }
 }
 ```
 
 ### Per-Link Customization
 
-You can also disable the preview for a specific link using the `boltdocsPreview` property if you are using the `Link` component directly in MDX:
+Use the `boltdocsPreview` property if you are using the `Link` component directly in MDX to disable it for specific links.
 
 ```tsx
-import { Link } from 'boltdocs/client'
-
-<Link to="/docs/getting-started/installation" boltdocsPreview={false}>
+<Link to="/docs/install" boltdocsPreview={false}>
   Installation Guide
 </Link>
 ```
+
+---
+
+## Personalization (CSS)
+
+Customize the look of the preview tooltip using these CSS variables:
+
+```css
+:root {
+  --ld-preview-bg: rgba(15, 15, 15, 0.8);
+  --ld-preview-blur: 12px;
+  --ld-preview-text: var(--ld-text-primary);
+  --ld-preview-border: rgba(255, 255, 255, 0.1);
+}
+```
+
+<Tip>
+  Link previews work automatically for all local paths. External links will not show a preview tooltip.
+</Tip>

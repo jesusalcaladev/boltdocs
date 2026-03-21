@@ -4,48 +4,73 @@ description: "Learn how to use our project-agnostic API to create custom sandbox
 icon: Code
 ---
 
-import { Field } from 'boltdocs/client'
+import { Playground, Field, Button, Tip, Note } from 'boltdocs/client'
+import { openSandbox } from 'boltdocs/client'
 
 # Interactive Sandboxes
 
 Boltdocs features a high-performance, project-agnostic CodeSandbox API. This allows you to create immersive, live-coding experiences that aren't tied to the framework itself—perfect for showcasing design systems, complex libraries, or interactive demos.
 
-## The Core API
+## Overview
 
-The `@boltdocs/client` package handles the heavy lifting of parameter generation and cross-origin communication.
+The `boltdocs/client` package handles the heavy lifting of parameter generation and cross-origin communication. You can use this API to create "Try it in CodeSandbox" buttons or embed full sandboxes directly in your documentation.
 
-### `openSandbox`
+<Playground 
+  code={`
+import { openSandbox, Button } from 'boltdocs/client';
 
-The most direct way to launch a sandbox. It automatically handles URL generation and navigation.
+export default function App() {
+  const handleTryItOut = () => {
+    openSandbox({
+      title: "Boltdocs Demo",
+      template: "vite",
+      dependencies: {
+        "framer-motion": "latest"
+      },
+      files: {
+        "App.tsx": {
+          content: "export default function App() { return <div>Hello from Boltdocs!</div> }"
+        }
+      }
+    });
+  };
+
+  return (
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <Button onClick={handleTryItOut} variant="primary">
+        Try it in CodeSandbox
+      </Button>
+    </div>
+  );
+}
+`} />
+
+---
+
+## Core API
+
+### `openSandbox(options: SandboxOptions)`
+
+The most direct way to launch a sandbox. It automatically handles URL generation and navigation via a hidden form POST, which avoids URL length limits.
 
 ```tsx
 import { openSandbox } from 'boltdocs/client';
 
-const handleTryItOut = () => {
-  openSandbox({
-    title: "Motion Animation Demo",
-    template: "node", // Use 'node' for full control or 'vite' for quick starts
-    dependencies: {
-      "framer-motion": "latest",
-      "lucide-react": "latest"
-    },
-    files: {
-      "App.tsx": {
-        content: `import { motion } from "framer-motion";
-export default function App() {
-  return (
-    <motion.div animate={{ scale: 1.2 }} transition={{ duration: 0.5 }}>
-      Hello Boltdocs!
-    </motion.div>
-  );
-}`
-      }
+openSandbox({
+  title: "Motion Animation Demo",
+  template: "node",
+  dependencies: {
+    "framer-motion": "latest"
+  },
+  files: {
+    "App.tsx": {
+      content: "import { motion } from 'framer-motion';\n..."
     }
-  });
-};
+  }
+});
 ```
 
-### `defineSandbox`
+### `defineSandbox(options: SandboxOptions)`
 
 If you need to generate parameters for a custom form or a specialized export button, use `defineSandbox`. It returns the encoded parameters and the target URL.
 
@@ -60,29 +85,44 @@ const { parameters, url } = defineSandbox({
 });
 ```
 
+### `embedSandbox(options: SandboxOptions)`
+
+Generates an embeddable iframe URL. This gives you more control—you can embed the sandbox inline on the page rather than opening a new tab.
+
+```tsx
+import { embedSandbox } from 'boltdocs/client';
+
+const url = embedSandbox({
+  files: { "index.js": { content: "console.log('hello')" } },
+  embed: { view: "editor", theme: "dark" },
+});
+
+// Use as <iframe src={url} />
+```
+
 ---
 
 ## `SandboxOptions` Reference
 
-The configuration object accepted by `openSandbox` and `defineSandbox`:
+The configuration object accepted by the core API functions:
 
-<Field name="files" type="Record<string, SandboxFile>">
-  A map of file paths to their content. Each value is an object with a `content` property (string or object) and an optional `isBinary` boolean flag.
+<Field name="files" type="SandboxFiles">
+  A map of file paths to their content. See [SandboxFile](#sandboxfile) for details.
 </Field>
 
 <Field name="dependencies" type="Record<string, string>">
-  NPM packages to include in the sandbox `package.json`. Keys are package names and values are semver ranges (e.g., `"latest"`, `"^18.2.0"`).
+  NPM packages to include in the sandbox `package.json`.
 </Field>
 
 <Field name="devDependencies" type="Record<string, string>">
   NPM dev dependencies to include in the sandbox.
 </Field>
 
-<Field name="title" type="string">
-  The title of the CodeSandbox project, shown in the browser tab.
+<Field name="title" type="string" defaultValue="'codesandbox-project'">
+  The title of the CodeSandbox project.
 </Field>
 
-<Field name="description" type="string">
+<Field name="description" type="string" defaultValue="'Generic Sandbox'">
   A short description for the CodeSandbox project metadata.
 </Field>
 
@@ -90,15 +130,45 @@ The configuration object accepted by `openSandbox` and `defineSandbox`:
   The CodeSandbox template to use (e.g., `"node"`, `"vite"`, `"static"`).
 </Field>
 
+<Field name="entry" type="string" defaultValue="'src/App.tsx'">
+  The file path to open by default in the editor.
+</Field>
+
+<Field name="embed" type="SandboxEmbedOptions">
+  Options for the embedded iframe view (used by `embedSandbox`).
+</Field>
+
+### `SandboxFile`
+
+<Field name="content" type="string | object">
+  The content of the file. Objects are automatically stringified.
+</Field>
+
+<Field name="isBinary" type="boolean" defaultValue="false">
+  Whether the file should be treated as binary.
+</Field>
+
+### `SandboxEmbedOptions`
+
+<Field name="view" type="'editor' | 'preview' | 'split'" defaultValue="'split'">
+  Which panel to display in the embed.
+</Field>
+
+<Field name="theme" type="'dark' | 'light'" defaultValue="'dark'">
+  Color theme for the CodeSandbox interface.
+</Field>
+
+<Field name="hideNavigation" type="boolean" defaultValue="false">
+  Whether to hide the navigation bar in the embed.
+</Field>
+
 ---
 
-## Advanced Usage: Design System Presets
+## Advanced Usage
+
+### Design System Presets
 
 The real power comes from creating "Presets"—reusable configurations that simulate your actual production environment. 
-
-### Building a Custom Preset
-
-Instead of manually defining files every time, create a helper that injects your global styles and configuration.
 
 ```tsx
 // src/utils/sandbox.ts
@@ -124,13 +194,13 @@ export function openBrandSandbox(componentCode: string, options: SandboxOptions 
 }
 ```
 
----
+<Tip>
+  Use `workspace:*` for dependencies if you are building a monorepo documentation site. Boltdocs will handle the resolution logic during the export.
+</Tip>
 
-## Playground Integration
+### Playground Integration
 
 The built-in `<Playground />` component leverages this API under the hood. You can customize its behavior by passing `sandboxOptions`.
-
-### custom `sandboxOptions` example
 
 ```tsx
 <Playground 
@@ -144,12 +214,12 @@ The built-in `<Playground />` component leverages this API under the hood. You c
 />
 ```
 
-> [!TIP]
-> Use `workspace:*` for dependencies if you are building a monorepo documentation site. Boltdocs will handle the resolution logic during the export.
+## Personalization (CSS)
 
-> [!NOTE]
-> Boltdocs also supports **StackBlitz**. Check out the [StackBlitz documentation](/docs/integrations/stackblitz) for more information on how to use it as an alternative.
+If you are using the `<Playground />` component, you can customize the export buttons and toolbar via CSS variables:
 
-## Why this matters
-
-Generic sandboxes mean your documentation isn't just a manual—it's an IDE for your users. By providing pre-configured environments, you lower the barrier to entry and let them experiment with your code instantly, without leaving the browser.
+```css
+:root {
+  --ld-playground-toolbar-bg: var(--ld-bg-mute);
+  /* Customize the sandbox button specifically if needed */
+}

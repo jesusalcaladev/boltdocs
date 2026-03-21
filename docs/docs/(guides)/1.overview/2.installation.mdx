@@ -4,17 +4,19 @@ description: "Learn how to install and set up Boltdocs in your project."
 icon: Download
 ---
 
+import { FileTree, Card, Cards, Note, Tip } from 'boltdocs/client'
+
 # Installation
 
 Get up and running with Boltdocs in under a minute. Our scaffolding tool handles the heavy lifting so you can focus on writing.
 
-### Prerequisites
-
-Ensure you have **Node.js 18 or newer** installed on your machine.
+<Note title="Requirements">
+  Boltdocs requires **Node.js 18.0.0** or newer. We recommend using **pnpm** for the best experience.
+</Note>
 
 ## Quick Start
 
-We recommend using `pnpm` for its speed and efficiency, but `npm` or `yarn` work perfectly too.
+Follow these simple steps to bootstrap your documentation project.
 
 ### 1. Bootstrap your project
 
@@ -24,15 +26,13 @@ Run the following command to kickstart your new documentation site:
 pnpm create boltdocs@latest
 ```
 
-The CLI will guide you through a couple of quick choices:
-- **Project Name**: Choose a name for your new directory.
-- **Template**: 
-    - **Base Template (Recommended)**: A complete setup with a custom homepage and example components.
-    - **Empty Template**: A clean slate with only the bare essentials.
+<Tip>
+  The CLI will ask for a **Project Name** and a **Template**. We recommend starting with the **Base Template** as it includes a custom homepage and example components.
+</Tip>
 
-### 2. Install and launch
+### 2. Launch the dev server
 
-Navigate to your new folder, install the dependencies, and fire up the development server:
+Navigate to your new folder and fire up the development environment:
 
 ```bash
 cd my-boltdocs-site
@@ -42,16 +42,38 @@ pnpm run dev
 
 Your site is now live at `http://localhost:5173`. Any changes you make to your Markdown files will reflect instantly!
 
-## Preparing for Production
+---
+
+## Project Structure
+
+After installation, your project will follow this standard structure:
+
+<FileTree>
+- docs/
+  - index.mdx
+  - (guides)/
+    - 1.overview.mdx
+- src/
+  - components/
+- boltdocs.config.js
+- package.json
+- custom.css (optional)
+- vite.config.ts
+</FileTree>
+
+---
+
+## Production Build
 
 When your docs are ready for the world, generate a highly optimized static build:
 
-```bash
-pnpm run build
-```
-
-The production-ready files will be waiting in the `dist/` directory. You can preview the final result locally with:
-
-```bash
-pnpm run preview
-```
+<Cards cols={2}>
+  <Card title="Build" icon="🚀">
+    `pnpm run build`
+    Generates production files in the `dist/` directory.
+  </Card>
+  <Card title="Preview" icon="👀">
+    `pnpm run preview`
+    Spin up a local server to test the production build.
+  </Card>
+</Cards>

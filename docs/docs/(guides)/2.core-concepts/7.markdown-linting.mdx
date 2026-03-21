@@ -4,36 +4,46 @@ description: "Keep your documentation clean and consistent with built-in linting
 icon: ShieldCheck
 ---
 
+import { Table, Note, Tip } from 'boltdocs/client'
+
 # Markdown Linting
 
 Maintaining consistent markdown styling is essential for clean documentation. By default, every new project created with `create-boltdocs` comes fully configured with [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) right out of the box.
 
 ## Configuration
 
-Your generated project includes a `.markdownlint.yaml` file at the root. We use the standard markdownlint rules but have disabled a few that conflict with MDX features or are too restrictive for documentation:
+Your generated project includes a `.markdownlint.yaml` file at the root. We've pre-configured several rules to balance consistency with MDX flexibility.
 
-- **MD013 (Line Length):** Disabled. Documentation often contains long URLs, tables, or specialized formatting that is best kept on a single line.
-- **MD033 (Inline HTML):** Disabled. MDX heavily uses HTML and JSX syntax directly in the markdown.
-- **MD041 (First line heading):** Disabled. We use frontmatter (like `title:` and `description:`) at the start of our documents instead of an `H1`.
+<Note>
+  We disabled rules like **MD013 (Line Length)** and **MD033 (Inline HTML)** because documentation often requires long URLs or JSX syntax which would otherwise trigger unnecessary errors.
+</Note>
 
-You can also ignore specific pages or directories using the `.markdownlintignore` file. Generated folders like `node_modules` and `dist` are ignored by default.
+---
+
+## Commands
+
+Use the following commands to manage your documentation quality:
+
+<Table 
+  data={[
+    { command: '`pnpm lint:md`', description: 'Scans all `.md` and `.mdx` files for style violations.' },
+    { command: '`pnpm lint:md:fix`', description: 'Automatically fixes simple issues (like extra whitespace).' }
+  ]}
+/>
+
+---
 
 ## Customizing Rules
 
-Because the configuration lives directly in your project's root folder, you have full control over the rules. To enable or disable a rule, simply open `.markdownlint.yaml` and adjust the boolean flags. Reference the [markdownlint rules documentation](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md) for more details.
+Because the configuration lives directly in your project's root folder, you have full control. To adjust a rule, open `.markdownlint.yaml` and toggle the boolean flags.
 
-## Running the Linter
-
-You can run the linter through `pnpm`, `npm`, or `yarn` from your project's root directory:
-
-```bash
-# Lint all markdown files (reports errors but does not fix them)
-pnpm run lint:md
-
-# Automatically fix fixable markdown linting errors
-pnpm run lint:md:fix
-```
+<Tip>
+  Reference the [Official Rules Documentation](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md) for a complete list of available linting options.
+</Tip>
 
 ### Editor Integration
 
-Most modern editors support markdownlint through extensions, so you can see linting errors directly while you type. For VS Code, we encourage installing the `DavidAnson.vscode-markdownlint` extension for real-time feedback.
+We highly recommend installing the **markdownlint** extension for your editor to see feedback in real-time.
+
+- **VS Code**: Install `DavidAnson.vscode-markdownlint`.
+- **IntelliJ**: Install the **Markdownlint** plugin from the marketplace.

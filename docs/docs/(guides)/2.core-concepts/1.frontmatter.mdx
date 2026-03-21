@@ -4,18 +4,35 @@ description: "How to use frontmatter to define page metadata."
 icon: FileCode
 ---
 
-import { Field } from 'boltdocs/client'
+import { Field, Tip, Playground, Badge, Note } from 'boltdocs/client'
 
 # Frontmatter Reference
 
 Boltdocs uses frontmatter to allow you to customize the metadata and sidebar appearance of your pages. Frontmatter is a block of YAML at the very top of your `.md` or `.mdx` files, delimited by `---`.
 
-```markdown
+## Overview
+
+Frontmatter is the "brain" of your document. It defines how the page is titled, sorted, and decorated in the sidebar.
+
+<Playground 
+  code={`
+import { Badge, Note } from 'boltdocs/client';
+
+export default function Demo() {
+  return (
+    <div style={{ padding: '20px' }}>
+      <Note title="Frontmatter Result">
+        The metadata below is what a page would "know" about itself based on frontmatter.
+      </Note>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px' }}>
+        <strong>Status:</strong> <Badge variant="experimental">experimental</Badge>
+      </div>
+    </div>
+  );
+}
+`} />
+
 ---
-title: "My Custom Title"
-badge: "New"
----
-```
 
 ## Available Fields
 
@@ -26,46 +43,47 @@ badge: "New"
 
 ### `description`
 <Field name="description" type="string">
-  Used for SEO meta tags and [Link Previews](/docs/core-concepts/link-previews). This is highly recommended for better search engine indexing and providing context in tooltips.
+  Used for SEO meta tags and [Link Previews](/docs/core-concepts/link-previews). This is highly recommended for better search engine indexing.
 </Field>
 
 ### `permalink`
 <Field name="permalink" type="string">
-  Overrides the generated URL path for the page. Useful for migrations or preserving SEO ranking when moving files.
+  Overrides the generated URL path. Useful for migrations or preserving SEO ranking when moving files.
 </Field>
 
 ### `sidebarPosition`
 <Field name="sidebarPosition" type="number">
-  Controls the sorting order of the page within its section in the sidebar. Lower numbers appear first.
+  Controls the sorting order within its section. Lower numbers appear first.
 </Field>
 
-> [!TIP]
-> You can also use numeric prefixes in filenames (e.g., `1.getting-started.mdx`) to control ordering automatically.
+<Tip>
+  You can also use numeric prefixes in filenames (e.g., `1.getting-started.mdx`) to control ordering automatically.
+</Tip>
 
 ### `badge`
-<Field name="badge" type="new | experimental | updated">
-  Adds a small decorative badge next to the page link in the sidebar. Useful for highlighting "New", "Stable", or "Deprecated" content.
+<Field name="badge" type="string | object">
+  Adds a small decorative badge in the sidebar. Can be a string color/label or an object like `{ text: "New", variant: "primary" }`.
 </Field>
 
 ### `icon`
 <Field name="icon" type="string">
-  Adds an icon next to the page title in the sidebar. Supports Lucide icon names (e.g., `Rocket`, `Book`), raw SVG strings, or image URLs.
+  Adds an icon next to the link. Supports Lucide icon names, raw SVG, or image URLs.
 </Field>
 
 ---
 
-## Section Metadata (in `index.mdx`)
+## Section Metadata
 
 When used in an `index.mdx` file, these fields control the behavior of the entire section/folder.
 
 ### `groupTitle`
 <Field name="groupTitle" type="string">
-  Overrides the name of the section in the sidebar. By default, the folder name is used.
+  Overrides the name of the section in the sidebar.
 </Field>
 
 ### `groupPosition`
 <Field name="groupPosition" type="number">
-  Controls the sorting order of the entire section relative to other sections in the sidebar.
+  Controls the sorting order of the entire section relative to other sections.
 </Field>
 
 ---
@@ -76,11 +94,24 @@ When used in an `index.mdx` file, these fields control the behavior of the entir
 ---
 title: "Advanced Configuration"
 description: "Learn how to deep-dive into Boltdocs settings."
-badge: New
+badge: { text: "New", variant: "primary" }
 sidebarPosition: 10
+icon: Rocket
 ---
 
 # Advanced Configuration
 
 Content goes here...
+```
+
+## Personalization (CSS)
+
+Customize the appearance of icons and badges using these variables in your `custom.css`:
+
+```css
+:root {
+  --ld-sidebar-icon-color: var(--ld-text-muted);
+  --ld-sidebar-badge-variant-new-bg: var(--ld-brand-primary);
+  /* Add more specific badge variant overrides here */
+}
 ```

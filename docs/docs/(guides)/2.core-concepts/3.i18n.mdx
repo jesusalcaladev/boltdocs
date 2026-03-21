@@ -4,35 +4,45 @@ description: "Learn how to build multilingual documentation with Boltdocs."
 icon: Languages
 ---
 
+import { FileTree, Tip, Note } from 'boltdocs/client'
+
 # Internationalization (i18n)
 
 Expanding your documentation to a global audience is effortless with Boltdocs. Instead of complex configuration files, i18n is built directly into your folder structure—making it intuitive for you and your contributors.
 
+<Tip>
+  By default, Boltdocs treats the root files as English (`en`). You can change the default locale in your `boltdocs.config.ts`.
+</Tip>
+
+---
+
 ## Folder Structure
 
-Place your primary (default) documentation at the root or under an `en/` folder. All translated docs go into their two-letter ISO 639-1 language code folders (e.g., `es`, `fr`, `jp`).
+Place your translated documents into folders named after their two-letter ISO 639-1 language codes (e.g., `es`, `fr`, `jp`). 
 
-```text
-docs/
-├── index.mdx        <- Default (English) root
-├── setup.mdx        <- Default (English) specific path
-├── es/
-│   ├── index.mdx    <- Spanish route
-│   └── setup.mdx    <- Spanish specific path
-└── fr/
-    ├── index.mdx    <- French route
-    └── setup.mdx    <- French specific path
-```
+<FileTree>
+- docs/
+  - index.mdx          # Default (English) root
+  - setup.mdx          # Default (English) specific path
+  - es/
+    - index.mdx        # Spanish route (/es)
+    - setup.mdx        # Spanish setup (/es/setup)
+  - fr/
+    - index.mdx        # French route (/fr)
+</FileTree>
 
-If you access `/es/setup`, the content from `docs/es/setup.mdx` is shown.
+---
 
 ## The Language Switcher
 
-When Boltdocs discovers multiple locales defined via folders, it injects a **Language Switcher** component into the Navbar. When a user changes their language preference, they will be automatically redirected to the equivalent page in their chosen language.
+When Boltdocs discovers multiple locales defined via folders, it injects a **Language Switcher** component into the Navbar automatically. 
+
+- **Smart Redirection**: When a user changes language, Boltdocs attempts to keep them on the same page (e.g., `/setup` to `/es/setup`) if it exists.
+- **Fallbacks**: If a page doesn't exist in the target language, it redirects to the language's root `index.mdx`.
 
 ## Combining Versioning + i18n
 
-If you need both Versioning and i18n, the convention is to wrap **Versions** inside **Languages** or vice-versa, depending on your needs. Usually it looks like this:
+If you need both Versioning and i18n, the convention is to wrap versions inside the language folders for a clean URL structure.
 
 ```text
 docs/
@@ -41,4 +51,7 @@ docs/
 └── es/
     └── v1/
 ```
-Or placing translations globally if you don't version them across all paths. Check our [Plugins](/plugins) api if you need advanced custom URL mapping.
+
+<Note>
+  Need advanced custom URL mapping? Check out our [Plugins](/plugins) API for full control over the localization logic.
+</Note>

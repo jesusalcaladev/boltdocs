@@ -4,34 +4,54 @@ description: "Learn how to use the create-boltdocs CLI."
 icon: Terminal
 ---
 
+import { FileTree, Table, Note } from 'boltdocs/client'
+
 # Command Line Interface (CLI)
 
-Boltdocs comes with a binary package named `create-boltdocs` that helps bootstrap the framework.
+Boltdocs comes with a powerfull scaffolding tool named `create-boltdocs` that helps you bootstrap a new documentation site in seconds.
 
 ## Usage
 
+Run the following command in your terminal to get started:
+
 ```bash
 npx create-boltdocs@latest
-# or
-pnpm dlx create-boltdocs@latest
-# or
-yarn create boltdocs
 ```
 
-## What it does
+## Commands & Options
 
-When you run `create-boltdocs`, it performs the following tasks:
+| Command | Description |
+| :--- | :--- |
+| `pnpm create boltdocs` | Interactive wizard to bootstrap a new project. |
+| `--template <name>` | Skip the wizard and use a specific template (`base` or `empty`). |
+| `--help` | Show all available CLI flags and options. |
 
-1. Asks for a `projectName` (defaults to `my-boltdocs-project`).
-2. Creates a directory with that name.
-3. Bootstraps the necessary files:
-   - `package.json` with React, Vite, and Boltdocs dependencies.
-   - `vite.config.ts` pre-configured for the Boltdocs Vite plugin.
-   - `boltdocs.config.js` to define your theme setup.
-   - `custom.css` with a full suite of CSS variables for theming.
-   - `docs/index.mdx` as your entry point documentation file.
-   - Example external components folder (`src/components/`) demonstrating how to use your own React code within MDX.
+---
 
-## Modifying generated code
+## What it generates
 
-Once the CLI finishes, you own the code! Feel free to modify the `package.json`, install additional Vite plugins, or configure tailwind, sass, etc. Boltdocs relies upon Vite under the hood, meaning anything you do with Vite, you can do with Boltdocs.
+When you run the CLI, it creates a fully configured documentation environment. Here is a look at the generated project structure:
+
+<FileTree>
+- my-docs/
+  - docs/
+    - index.mdx          # Your entry point
+  - src/
+    - components/       # Custom React components
+  - boltdocs.config.js  # Theme configuration
+  - custom.css          # Your design tokens
+  - package.json        # Dependencies
+  - vite.config.ts      # Vite & Plugin setup
+</FileTree>
+
+## Customization
+
+Once the CLI finishes, you own the code! Because Boltdocs is built on **Vite**, you can:
+
+- **Add Plugins**: Install any Vite, Remark, or Rehype plugins.
+- **Use Tailwind**: Configure Tailwind CSS or Sass as you would in any Vite project.
+- **Custom Components**: Import your own React components directly into MDX.
+
+<Note>
+  Boltdocs stays out of your way. Anything you can do with Vite, you can do with Boltdocs.
+</Note>

@@ -4,29 +4,41 @@ description: "How to manage multiple versions of your documentation."
 icon: GitBranch
 ---
 
+import { FileTree, Important, Tip } from 'boltdocs/client'
+
 # Documentation Versioning
 
 Boltdocs makes it easy to maintain multiple versions of your documentation simultaneously. Whether you're supporting legacy users or preparing a major release, the version switcher stays in sync with your content automatically.
 
+<Important>
+  Versioning in Boltdocs is folder-based and must occur at the **root** of your `docs/` directory for the automatic switcher to detect them.
+</Important>
+
+---
+
 ## Setting Up Versions
 
-Versioning in Boltdocs is folder-based. Instead of having unstructured Markdown files in the `docs` directory, you place them under their respective version folders:
-
-import { FileTree } from "boltdocs/client";
+To create a version, simply place your documentation files inside a folder named after the version (e.g., `v1`, `v2`, `3.0.0`).
 
 <FileTree>
- - docs/
-   - v1/
-     - index.mdx
-     - setup.mdx
-   - v2/
-     - index.mdx
-     - setup.mdx
+- docs/
+  - v1/
+    - index.mdx        # Available at /v1
+    - setup.mdx        # Available at /v1/setup
+  - v2/
+    - index.mdx        # Available at /v2
+    - setup.mdx        # Available at /v2/setup
 </FileTree>
 
-- Content inside `docs/v1/` will be available under `/v1/*`
-- Content inside `docs/v2/` will be available under `/v2/*`
+---
 
 ## The Version Dropdown
 
-When Boltdocs detects top-level directories resembling versions (e.g. `v1`, `v2`, `v3.0`), it automatically groups them and generates a dropdown in the Navbar. This allows readers to seamlessly transition between API documentation versions without breaking their current reading path (if the path exists in both versions).
+When Boltdocs detects these top-level version directories, it automatically generates a **Version Dropdown** in the Navbar.
+
+- **Intelligent Switching**: When a user switches versions, Boltdocs tries to keep them on the same relative path (e.g., from `/v1/setup` to `/v2/setup`).
+- **Path Persistence**: If the path doesn't exist in the new version, the user is redirected to that version's index page.
+
+<Tip>
+  Want to hide a specific version from the dropdown? Wrap the folder name in parentheses like `(internal-v1)` to exclude it from automatic detection.
+</Tip>
