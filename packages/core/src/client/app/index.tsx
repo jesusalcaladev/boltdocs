@@ -78,6 +78,7 @@ export function AppShell({
   modules,
   hot,
   homePage: HomePage,
+  externalPages,
   components: customComponents = {},
 }: {
   initialRoutes: ComponentRoute[];
@@ -86,15 +87,19 @@ export function AppShell({
   modules: Record<string, () => Promise<any>>;
   hot?: any;
   homePage?: React.ComponentType;
+  externalPages?: Record<string, React.ComponentType<any>>;
   components?: Record<string, React.ComponentType<any>>;
 }) {
   const [routesInfo, setRoutesInfo] = useState<ComponentRoute[]>(initialRoutes);
   const [config] = useState(initialConfig);
+  const computedExternalPages = externalPages || {};
 
   const resolveRoutes = (infos: ComponentRoute[]) => {
     return infos
       .filter(
-        (route) => !(HomePage && (route.path === "/" || route.path === "")),
+        (route) =>
+          !(HomePage && (route.path === "/" || route.path === "")) &&
+          !computedExternalPages[route.path === "" ? "/" : route.path],
       )
       .map((route) => {
         const loaderKey = Object.keys(modules).find(
@@ -155,6 +160,26 @@ export function AppShell({
               }
             />
           )}
+
+          {/* Custom External Pages WITHOUT docs layout */}
+          {Object.entries(computedExternalPages).map(([extPath, ExtComponent]: [string, React.ComponentType<any>]) => (
+            <Route
+              key={extPath}
+              path={extPath}
+              element={
+                <ThemeLayout
+                  config={config}
+                  routes={routesInfo}
+                  sidebar={null}
+                  toc={null}
+                  breadcrumbs={null}
+                  {...config.themeConfig?.layoutProps}
+                >
+                  <ExtComponent />
+                </ThemeLayout>
+              }
+            />
+          ))}
 
           {/* Documentation pages WITH sidebar + TOC layout */}
           <Route
@@ -292,7 +317,7 @@ function MdxPage({
  * ```
  */
 export function createBoltdocsApp(options: CreateBoltdocsAppOptions) {
-  const { target, routes, docsDirName, config, modules, hot, homePage } =
+  const { target, routes, docsDirName, config, modules, hot, homePage, externalPages, components } =
     options;
   const container = document.querySelector(target);
   if (!container) {
@@ -311,7 +336,8 @@ export function createBoltdocsApp(options: CreateBoltdocsAppOptions) {
           modules={modules}
           hot={hot}
           homePage={homePage}
-          components={options.components}
+          externalPages={externalPages}
+          components={components}
         />
       </BrowserRouter>
     </React.StrictMode>

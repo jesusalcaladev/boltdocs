@@ -61,6 +61,8 @@ export interface CreateBoltdocsAppOptions {
   hot?: any;
   /** Optional custom React component to render when visiting the root path ('/') */
   homePage?: React.ComponentType;
+  /** Custom external pages mapped by their route path */
+  externalPages?: Record<string, React.ComponentType<any>>;
   /** Optional custom MDX components provided by plugins */
   components?: Record<string, React.ComponentType<any>>;
 }

@@ -18,6 +18,8 @@ export interface RenderOptions {
   docsDirName: string;
   /** Optional custom React component to render when visiting the root path ('/') */
   homePage?: React.ComponentType;
+  /** Custom external pages mapped by their route path */
+  externalPages?: Record<string, React.ComponentType<any>>;
   /** Preloaded modules (since SSR cannot use dynamic imports easily) */
   modules: Record<string, any>;
 }
@@ -27,7 +29,7 @@ export interface RenderOptions {
  * This is called by the Node SSG script during the Vite build process.
  */
 export async function render(options: RenderOptions): Promise<string> {
-  const { path, routes, config, modules, homePage, docsDirName } = options;
+  const { path, routes, config, modules, homePage, externalPages, docsDirName } = options;
 
   // For SSR, we must resolve modules synchronously. We create a mock 'loader'
   // that instantly returns the module since the SSG script already loaded it.
@@ -45,6 +47,7 @@ export async function render(options: RenderOptions): Promise<string> {
           docsDirName={docsDirName}
           modules={resolvedModules}
           homePage={homePage}
+          externalPages={externalPages}
         />
       </StaticRouter>
     </React.StrictMode>,

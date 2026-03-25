@@ -161,6 +161,8 @@ export interface BoltdocsConfig {
   versions?: BoltdocsVersionsConfig;
   /** Custom plugins for extending functionality */
   plugins?: BoltdocsPlugin[];
+  /** Map of custom external route paths to component file paths */
+  external?: Record<string, string>;
 }
 
 export const CONFIG_FILES = [
@@ -222,6 +224,7 @@ export async function resolveConfig(
           versions: userConfig.versions,
           siteUrl: userConfig.siteUrl,
           plugins: userConfig.plugins || [],
+          external: userConfig.external,
         };
       } catch (e) {
         console.warn(`[boltdocs] Failed to load config from ${filename}:`, e);

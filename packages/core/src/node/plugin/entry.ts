@@ -39,6 +39,20 @@ const ${name} = _comp_${name}.default || _comp_${name}['${name}'] || _comp_${nam
 
   const docsDirName = path.basename(options.docsDir || "docs");
 
+  const externalEntries = Object.entries(config?.external || {});
+  const externalImports = externalEntries
+    .map(
+      ([_routePath, compPath], i) =>
+        `import _ext_${i} from '${normalizePath(compPath)}';`
+    )
+    .join("\n");
+  const externalOption =
+    externalEntries.length > 0
+      ? `externalPages: { ${externalEntries
+          .map(([path], i) => `"${path}": _ext_${i}`)
+          .join(", ")} },`
+      : "";
+
   return `
 import { createBoltdocsApp as _createApp } from 'boltdocs/client';
 import 'boltdocs/style.css';
@@ -47,6 +61,7 @@ import _routes from 'virtual:boltdocs-routes';
 import _config from 'virtual:boltdocs-config';
 ${homeImport}
 ${componentImports}
+${externalImports}
 
 _createApp({
   target: '#root',
@@ -56,6 +71,7 @@ _createApp({
   modules: import.meta.glob('/${docsDirName}/**/*.{md,mdx}'),
   hot: import.meta.hot,
   ${homeOption}
+  ${externalOption}
   components: { ${componentMap} },
 });
 `;
