@@ -10,7 +10,7 @@ Follow these rules and structures to maintain consistency across the Boltdocs do
 ## 1. Core Principles
 
 - **Comprehensive**: Never leave features or props undocumented.
-- **Visual-First**: Always include a `<Playground />` with a live demonstration when possible.
+- **Visual-First**: Always include a `<PrevieCode/>` or Code snippet with a live demonstration when possible.
 - **Ordered Hierarchy**: Use numerical prefixes (e.g., `1.overview.mdx`) for logical page flow in the sidebar.
 - **Action-Oriented**: Write for developers who want to _do_ something. Focus on implementation and practical usage.
 
@@ -20,11 +20,9 @@ Every component page (e.g., `(components)/button.mdx`) must include:
 
 ### Overview
 
-A high-level description followed by a live `<Playground />` that showcases the component in its most common use case.
-
 ### Props Table
 
-A detailed API reference using the `<Table />` or `<Field />` components.
+A detailed API reference using the `<Table />` or `<Field />` or `<ComponentProps />` components.
 
 | Property  | Type                                  | Default     | Description                     |
 | :-------- | :------------------------------------ | :---------- | :------------------------------ |
@@ -33,7 +31,7 @@ A detailed API reference using the `<Table />` or `<Field />` components.
 
 ### Variants & Examples
 
-- **Basic Usage**: The simplest way to implement.
+- **Basic Usage**: The simplest way to implement, no use component Playground, use the component itself.
 - **Customization**: How to use props to change appearance or behavior.
 - **Personalization (CSS)**: List all CSS variables (tokens) available for this component.
 
@@ -44,8 +42,6 @@ A detailed API reference using the `<Table />` or `<Field />` components.
 ```
 
 ## 3. Documenting Integrations
-
-For services like **CodeSandbox**, **StackBlitz**, or **Algolia**:
 
 - **Analyze the API**: Summarize the core underlying API being utilized.
 - **Generic Support**: Document exported functions (e.g., `openSandbox`) and their type signatures.
