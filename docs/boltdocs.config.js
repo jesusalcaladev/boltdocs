@@ -5,6 +5,7 @@ export default {
   title: 'boltdocs',
   siteUrl: "https://boltdocs.vercel.app/",
   themeConfig: {
+    codeTheme: "github-dark",
     logo: {
       dark: '/light.svg',
       light: '/dark.svg',
