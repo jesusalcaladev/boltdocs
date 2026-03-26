@@ -1,0 +1,97 @@
+/* ─── Field ───────────────────────────────────────────────── */
+.ld-field {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: var(--ld-radius-lg);
+  border: 1px solid var(--ld-border-subtle);
+  background: var(--ld-bg-soft);
+  position: relative;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ld-field:hover {
+  border-color: var(--ld-color-primary);
+  box-shadow: 0 4px 20px -8px rgba(127, 19, 236, 0.15);
+}
+
+.ld-field__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--ld-border-subtle);
+}
+
+.ld-field__signature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ld-field__name {
+  font-family: var(--ld-font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ld-text-main);
+  background: rgba(127, 19, 236, 0.08);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--ld-radius-sm);
+  letter-spacing: -0.01em;
+}
+
+.ld-field__type-badge {
+  font-family: var(--ld-font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--ld-color-primary);
+  background: var(--ld-color-primary-muted);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--ld-radius-full);
+  border: 1px solid rgba(127, 19, 236, 0.2);
+}
+
+.ld-field__required-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ld-ui-danger-text);
+  background: var(--ld-ui-danger-bg);
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--ld-radius-sm);
+  letter-spacing: 0.05em;
+}
+
+.ld-field__default {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.ld-field__default-label {
+  color: var(--ld-text-dim);
+  font-weight: 500;
+}
+
+.ld-field__default-value {
+  font-family: var(--ld-font-mono);
+  color: var(--ld-text-main);
+  background: var(--ld-bg-mute);
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--ld-radius-sm);
+}
+
+.ld-field__content {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ld-text-muted);
+}
+
+.ld-field__content p {
+  margin: 0;
+}

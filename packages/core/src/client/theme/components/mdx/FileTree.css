@@ -1,0 +1,123 @@
+/* ─── FileTree ────────────────────────────────────────────── */
+.ld-file-tree {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: var(--ld-radius-lg);
+  border: 1px solid var(--ld-border-subtle);
+  background: var(--ld-bg-soft);
+  font-family: var(--ld-font-mono);
+  font-size: 0.875rem;
+  overflow-x: auto;
+}
+
+.ld-file-tree__list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0;
+  position: relative;
+}
+
+.ld-file-tree__list:not(.ld-file-tree__list--root) {
+  padding-left: 1.25rem;
+  margin-top: 0.25rem !important;
+  position: relative;
+}
+
+/* Vertical line for nested folders */
+.ld-file-tree__list:not(.ld-file-tree__list--root)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0.45rem; /* align with folder icon */
+  width: 1px;
+  background-color: var(--ld-border-subtle);
+  z-index: 0;
+}
+
+.ld-file-tree__item {
+  position: relative;
+  margin: 0.2rem 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+.ld-file-tree__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ld-text-muted);
+  user-select: none;
+  border-radius: var(--ld-radius-sm);
+  padding: 0.25rem 0.6rem 0.25rem 0.4rem;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.ld-file-tree__label:hover {
+  background: var(--ld-bg-mute);
+  color: var(--ld-text-main);
+}
+
+.ld-file-tree__label--folder {
+  color: var(--ld-text-main);
+  font-weight: 500;
+}
+
+.ld-file-tree__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.ld-file-tree__icon-folder {
+  color: var(--ld-color-primary);
+}
+
+.ld-file-tree__name {
+  white-space: nowrap;
+}
+
+.ld-file-tree__icon--chevron {
+  width: 14px;
+  height: 14px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.ld-file-tree__label:hover .ld-file-tree__icon--chevron {
+  opacity: 1;
+}
+
+.ld-file-tree__chevron {
+  transition: transform 0.2s ease;
+}
+
+.ld-file-tree__chevron--open {
+  transform: rotate(90deg);
+}
+
+.ld-file-tree__icon--spacer {
+  width: 14px;
+}
+
+.ld-file-tree__comment {
+  margin-left: 0.75rem;
+  color: var(--ld-file-tree-comment-color, var(--ld-text-muted));
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.ld-file-tree__comment::before {
+  content: "—";
+  margin-right: 0.5rem;
+  opacity: 0.5;
+}

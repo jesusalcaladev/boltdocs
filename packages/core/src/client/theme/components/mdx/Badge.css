@@ -1,0 +1,43 @@
+/* ─── Badge ───────────────────────────────────────────────── */
+.ld-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--ld-radius-full);
+  line-height: 1.4;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.ld-badge--default {
+  background: var(--ld-bg-mute);
+  color: var(--ld-text-main);
+  border: 1px solid var(--ld-border-subtle);
+}
+.ld-badge--primary {
+  background: var(--ld-color-primary-muted);
+  color: var(--ld-color-primary);
+  border: 1px solid rgba(127, 19, 236, 0.2);
+}
+.ld-badge--success {
+  background: var(--ld-ui-success-bg);
+  color: var(--ld-ui-success-text);
+  border: 1px solid var(--ld-ui-success-border);
+}
+.ld-badge--warning {
+  background: var(--ld-ui-warning-bg);
+  color: var(--ld-ui-warning-text);
+  border: 1px solid var(--ld-ui-warning-border);
+}
+.ld-badge--danger {
+  background: var(--ld-ui-danger-bg);
+  color: var(--ld-ui-danger-text);
+  border: 1px solid var(--ld-ui-danger-border);
+}
+.ld-badge--info {
+  background: var(--ld-ui-info-bg);
+  color: var(--ld-ui-info-text);
+  border: 1px solid var(--ld-ui-info-border);
+}

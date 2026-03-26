@@ -1,0 +1,98 @@
+/* ─── ComponentProps (Minimalist Table) ───────────────────── */
+.ld-component-props {
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+.ld-component-props__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--ld-text-main);
+}
+
+.ld-component-props__wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--ld-radius-md);
+  border: 1px solid var(--ld-border-subtle);
+  background: var(--ld-bg-soft);
+}
+
+.ld-component-props__table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.ld-component-props__table th {
+  padding: 0.6rem 0.75rem;
+  background: var(--ld-bg-mute);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ld-text-dim);
+  border-bottom: 1px solid var(--ld-border-subtle);
+}
+
+.ld-component-props__table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--ld-border-subtle);
+  vertical-align: middle;
+}
+
+.ld-component-props__table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Specific Cells */
+.ld-prop-name-cell {
+  white-space: nowrap;
+}
+
+.ld-prop-name-cell code {
+  color: var(--ld-color-primary);
+  font-weight: 600;
+  font-family: var(--ld-font-mono);
+  background: transparent;
+  padding: 0;
+}
+
+.ld-prop-required {
+  color: var(--ld-ui-danger-text);
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+.ld-prop-type-tag {
+  font-family: var(--ld-font-mono);
+  font-size: 0.8rem;
+  color: var(--ld-text-dim);
+  opacity: 0.8;
+}
+
+.ld-prop-default-cell code {
+  font-family: var(--ld-font-mono);
+  font-size: 0.8rem;
+  color: #a855f7;
+  opacity: 0.8;
+}
+
+.ld-prop-none {
+  color: var(--ld-text-muted);
+  opacity: 0.4;
+}
+
+.ld-prop-desc-cell {
+  color: var(--ld-text-muted);
+  font-size: 0.825rem;
+  min-width: 200px;
+}
+
+@media (max-width: 640px) {
+  .ld-component-props__table {
+    display: block;
+  }
+}
