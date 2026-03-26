@@ -56,5 +56,3 @@ __pycache__/
 .venv/
 venv/
 env/
-# Internal testing
-internal-testing/
