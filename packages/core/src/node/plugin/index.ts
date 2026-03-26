@@ -13,6 +13,7 @@ import path from "path";
 import { BoltdocsPluginOptions } from "./types";
 import { generateEntryCode } from "./entry";
 import { injectHtmlMeta } from "./html";
+import fs from "fs";
 
 export * from "./types";
 
@@ -71,11 +72,16 @@ export function boltdocsPlugin(
       },
 
       configureServer(server) {
-        // Explicitly watch config files to trigger server restarts
+        // Explicitly watch config files and mdx-components to trigger server restarts or module invalidations
         const configPaths = CONFIG_FILES.map((c) =>
           path.resolve(process.cwd(), c),
         );
-        server.watcher.add(configPaths);
+        const mdxCompExtensions = ["tsx", "ts", "jsx", "js"];
+        const mdxCompPaths = mdxCompExtensions.map((ext) =>
+          path.resolve(docsDir, `mdx-components.${ext}`),
+        );
+
+        server.watcher.add([...configPaths, ...mdxCompPaths]);
 
         const handleFileEvent = async (
           file: string,
@@ -86,6 +92,20 @@ export function boltdocsPlugin(
           // Restart the Vite server if the Boltdocs config changes
           if (CONFIG_FILES.some((c) => normalized.endsWith(c))) {
             server.restart();
+            return;
+          }
+
+          // If mdx-components file changes, invalidate the virtual module
+          if (
+            mdxCompExtensions.some((ext) =>
+              normalized.endsWith(`mdx-components.${ext}`),
+            )
+          ) {
+            const mod = server.moduleGraph.getModuleById(
+              "\0virtual:boltdocs-mdx-components",
+            );
+            if (mod) server.moduleGraph.invalidateModule(mod);
+            server.ws.send({ type: "full-reload" });
             return;
           }
 
@@ -126,7 +146,8 @@ export function boltdocsPlugin(
         if (
           id === "virtual:boltdocs-routes" ||
           id === "virtual:boltdocs-config" ||
-          id === "virtual:boltdocs-entry"
+          id === "virtual:boltdocs-entry" ||
+          id === "virtual:boltdocs-mdx-components"
         ) {
           return "\0" + id;
         }
@@ -149,6 +170,28 @@ export function boltdocsPlugin(
         if (id === "\0virtual:boltdocs-entry") {
           const code = generateEntryCode(options, config);
           return code;
+        }
+        if (id === "\0virtual:boltdocs-mdx-components") {
+          const extensions = ["tsx", "ts", "jsx", "js"];
+          let userMdxPath = null;
+
+          for (const ext of extensions) {
+            const p = path.resolve(docsDir, `mdx-components.${ext}`);
+            if (fs.existsSync(p)) {
+              userMdxPath = p;
+              break;
+            }
+          }
+
+          if (userMdxPath) {
+            const normalizedPath = normalizePath(userMdxPath);
+            return `import * as components from '${normalizedPath}';
+const mdxComponents = components.default || components;
+export default mdxComponents;
+export * from '${normalizedPath}';`;
+          }
+
+          return `export default {};`;
         }
       },
 

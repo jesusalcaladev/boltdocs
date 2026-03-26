@@ -59,6 +59,7 @@ import 'boltdocs/style.css';
 ${customCssImport}
 import _routes from 'virtual:boltdocs-routes';
 import _config from 'virtual:boltdocs-config';
+import _user_mdx_components from 'virtual:boltdocs-mdx-components';
 ${homeImport}
 ${componentImports}
 ${externalImports}
@@ -72,7 +73,7 @@ _createApp({
   hot: import.meta.hot,
   ${homeOption}
   ${externalOption}
-  components: { ${componentMap} },
+  components: { ${componentMap}${componentMap ? ", " : ""} ...(_user_mdx_components || {}) },
 });
 `;
 }
