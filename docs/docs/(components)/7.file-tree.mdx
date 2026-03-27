@@ -4,51 +4,78 @@ description: "Display folder and file structures visually."
 icon: FolderTree
 ---
 
-import { FileTree, Table, Field } from 'boltdocs/client'
+# File Tree
 
-# FileTree
+The FileTree component provides a visual representation of project directory structures. It uses standard Markdown lists to define the hierarchy and automatically assigns appropriate icons for folders and common file types.
 
-A component to display folder and file structures using standard Markdown lists. It automatically assigns the correct icons based on the file extension or folder syntax.
-
-**Example:**
+## Overview
 
 <FileTree>
-- astro.config.mjs
-- package.json
-- src/
+- boltdocs.config.ts // Main configuration
+- docs/
+  - index.mdx
+  - guides/
+    - 1.introduction.mdx
   - components/
-    - Header.astro
-    - Title.astro
-  - pages/
+    - Button.tsx
+- package.json
+- public/
+  - logo.svg
 </FileTree>
 
-```tsx
+## Props Table
+
+<ComponentProps
+  props={[
+    {
+      name: "children",
+      type: "ReactNode",
+      required: true,
+      description: "A standard Markdown list representing the folder and file structure."
+    }
+  ]}
+/>
+
+---
+
+## Variants & Examples
+
+### Basic Usage
+
+Simply wrap a Markdown list with the `<FileTree>` component. To indicate a folder, add a trailing slash `/` to the name.
+
 <FileTree>
-- astro.config.mjs
-- package.json
 - src/
-  - components/
-    - Header.astro
-    - Title.astro
-  - pages/
+  - index.ts
+  - utils.js
 </FileTree>
-```
 
-**Props (`FileTreeProps`)**
+### Inline Comments
 
-<Field name="children" type="ReactNode" required>
-  The markdown list representing the file tree.
-</Field>
+You can add descriptive annotations to any file or folder by using `//` or `#` after the name.
 
-## Personalization (CSS)
+<FileTree>
+- src/ // Application source code
+  - components/ # UI elements
+  - hooks/ // Custom React hooks
+- vite.config.ts # Build configuration
+</FileTree>
 
-Adjust the visual appearance of the file tree with these variables:
+### Personalization (CSS)
+
+Customize the colors and indentation of the file tree using these CSS variables in your `custom.css`.
 
 ```css
 :root {
+  /* Background & Border */
   --ld-file-tree-bg: var(--ld-bg-soft);
   --ld-file-tree-border: var(--ld-border-subtle);
+  
+  /* Icons & Lines */
   --ld-file-tree-icon-color: var(--ld-text-muted);
   --ld-file-tree-line-color: var(--ld-border-subtle);
+  
+  /* Annotations */
+  --ld-file-tree-comment-color: var(--ld-text-dim);
 }
 ```

@@ -4,80 +4,91 @@ description: "Highlight important information with callouts."
 icon: Info
 ---
 
-import { Admonition, Note, Tip, Warning, Danger, InfoBox, Important, Caution, Table, Field } from 'boltdocs/client'
+# Admonitions
 
-# Admonitions (Callouts)
+Admonitions (also known as callouts) are high-visibility blocks used to highlight important information, tips, warnings, or errors. They feature a modern, glassmorphic design with accent borders and context-aware icons.
 
-Admonitions highlight important information. Using them is as simple as adding an `<Admonition>` tag. Our callouts feature a modern, premium design with accent borders and glassmorphism.
+## Overview
 
-**Using `<Admonition>`**
+<div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+  <Admonition type="info" title="Pro Tip">
+    Use admonitions sparingly to maintain their visual impact on the reader.
+  </Admonition>
 
-<Admonition type="info" title="Hey there!">
-  This is a helpful note for the reader.
+  <Warning title="System Update">
+    Please ensure you have backed up your configuration before proceeding.
+  </Warning>
+</div>
+
+## Props Table
+
+<ComponentProps
+  props={[
+    {
+      name: "type",
+      type: '"note" | "tip" | "info" | "warning" | "important" | "caution" | "danger"',
+      defaultValue: '"note"',
+      description: "The visual variant and semantic meaning of the callout."
+    },
+    {
+      name: "title",
+      type: "string",
+      description: "Optional. The header text displayed at the top of the block."
+    }
+  ]}
+/>
+
+---
+
+## Variants & Examples
+
+### Basic Usage
+
+The simplest way to use an admonition is with the `<Admonition>` component. It defaults to the `note` type.
+
+<Admonition>
+  This is a default note admonition.
 </Admonition>
 
-<Admonition type="warning" title="Warning">
-  Pay attention to this warning block.
-</Admonition>
+### Shorthand Tags
 
-<Admonition type="important" title="Important Notice">
-  This is an important piece of information that stands out.
-</Admonition>
+Boltdocs provides several shorthand tags for the most common admonition types. These are equivalent to setting the `type` prop on the base `<Admonition>` component.
 
-<Admonition type="caution" title="Caution">
-  Be careful when performing this action.
-</Admonition>
+<Cards>
+  <Note>Informational note.</Note>
+  <Tip>Helpful tip or best practice.</Tip>
+  <Warning>Potential issue to watch out for.</Warning>
+  <Danger>Critical error or dangerous action.</Danger>
+</Cards>
 
-<Admonition type="danger" title="Danger">
-  This is a destructive action notice.
-</Admonition>
+### Personalization (CSS)
 
-```tsx
-<Admonition type="note">A basic note.</Admonition>
-<Admonition type="tip">A helpful tip.</Admonition>
-<Admonition type="info">General information.</Admonition>
-<Admonition type="warning">A warning message.</Admonition>
-<Admonition type="important">Extremely important info.</Admonition>
-<Admonition type="caution">Exercise caution.</Admonition>
-<Admonition type="danger">Danger / Critical error.</Admonition>
+You can globally customize the theme of your callouts by overriding the following CSS variables in your `custom.css`.
+
+#### Info & Notes
+```css
+--ld-ui-info-bg: rgba(59, 130, 246, 0.08);
+--ld-ui-info-text: #60a5fa;
+--ld-ui-info-border: #3b82f6;
 ```
 
-**Props (`AdmonitionProps`)**
-
-<Field name="type" type='"note" | "tip" | "info" | "warning" | "important" | "caution" | "danger"' defaultValue='"note"'>
-  The visual variant of the callout.
-</Field>
-
-<Field name="title" type="string">
-  Optional. The title displayed at the top of the admonition.
-</Field>
-
-> **Note**: You can also use explicit tags like `<Note>`, `<Tip>`, `<Warning>`, `<Danger>`, `<InfoBox>`, `<Important>`, or `<Caution>` as shorthands.
-
-## Personalization (CSS)
-
-You can customize the look of each admonition type by overriding these CSS variables in your `custom.css`:
-
+#### Success & Tips
 ```css
-:root {
-  /* Info / Note */
-  --ld-ui-info-bg: rgba(59, 130, 246, 0.08);
-  --ld-ui-info-text: #60a5fa;
-  --ld-ui-info-border: #3b82f6;
+--ld-ui-success-bg: rgba(34, 197, 94, 0.08);
+--ld-ui-success-text: #4ade80;
+--ld-ui-success-border: #22c55e;
+```
 
-  /* Success / Tip */
-  --ld-ui-success-bg: rgba(34, 197, 94, 0.08);
-  --ld-ui-success-text: #4ade80;
-  --ld-ui-success-border: #22c55e;
+#### Warning & Caution
+```css
+--ld-ui-warning-bg: rgba(234, 179, 8, 0.08);
+--ld-ui-warning-text: #facc15;
+--ld-ui-warning-border: #eab308;
+```
 
-  /* Warning / Caution */
-  --ld-ui-warning-bg: rgba(234, 179, 8, 0.08);
-  --ld-ui-warning-text: #facc15;
-  --ld-ui-warning-border: #eab308;
-
-  /* Danger */
-  --ld-ui-danger-bg: rgba(239, 68, 68, 0.08);
-  --ld-ui-danger-text: #f87171;
-  --ld-ui-danger-border: #ef4444;
-}
+#### Danger
+```css
+--ld-ui-danger-bg: rgba(239, 68, 68, 0.08);
+--ld-ui-danger-text: #f87171;
+--ld-ui-danger-border: #ef4444;
 ```

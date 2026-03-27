@@ -4,11 +4,20 @@ description: "Import your own React components into MDX."
 icon: Puzzle
 ---
 
+import { Note } from 'boltdocs/client'
+
 # Custom External Components
 
-Because you have Vite and React, you can import **your own** application's components straight into MDX to showcase them.
+## Overview
 
-## Basic Import
+Because you have Vite and React, you can import **your own** application's components straight into MDX to showcase them. 
+This behaves differently from internal components, and thus does not follow the typical component page structure.
+
+<Note>Custom components allow you to use standard React features and bring your specific app UI right into the documentation.</Note>
+
+## Variants & Examples
+
+### Basic Usage
 
 Say you have a `<MyButton>` component defined in `src/components/MyButton.tsx`. You can import it in your MDX like this:
 
@@ -22,17 +31,17 @@ Here is our primary button:
 
 Boltdocs will render the button right alongside your textual documentation. This makes building Live Design Systems incredibly easy.
 
-## Using with Playground
+### Customization
 
-You can combine custom components with the `<Playground />` component for interactive demonstrations. Pass your component into the `scope` prop:
+You can combine custom components with the `<ComponentPreview />` component for visual demonstrations. Pass your component as children or to the \`preview\` prop:
 
 ```tsx
-import { Playground } from 'boltdocs/client';
+import { ComponentPreview } from 'boltdocs/client';
 import { MyButton } from '../src/components/MyButton';
 
-<Playground
-  code={`<MyButton variant="primary">Try it!</MyButton>`}
-  scope={{ MyButton }}
+<ComponentPreview
+  preview={<MyButton variant="primary">Try it!</MyButton>}
+  code={\`<MyButton variant="primary">Try it!</MyButton>\`}
 />
 ```
 

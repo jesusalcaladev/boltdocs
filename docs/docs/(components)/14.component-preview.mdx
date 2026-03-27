@@ -1,0 +1,122 @@
+---
+title: "Component Preview"
+description: "Showcase React components beautifully alongside their source code."
+---
+
+# Component Preview
+
+The ComponentPreview component is a core feature for developer documentation. It allows you to showcase a live React component directly alongside its implementation source code, supporting one-click copying and sandbox integrations.
+
+## Overview
+
+<ComponentPreview 
+  code={`
+import { Button, Badge } from 'boltdocs/client'
+
+export default function MyComponent() {
+  return (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <Button variant="primary">Click Me</Button>
+      <Badge variant="success">Active</Badge>
+    </div>
+  );
+}
+`} 
+  preview={
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <Button variant="primary">Click Me</Button>
+      <Badge variant="success">Active</Badge>
+    </div>
+  } 
+/>
+
+## Props Table
+
+<ComponentProps
+  props={[
+    {
+      name: "code",
+      type: "string",
+      required: true,
+      description: "The source code string to display in the code block."
+    },
+    {
+      name: "preview",
+      type: "ReactNode",
+      required: true,
+      description: "The live React element to render in the preview area."
+    },
+    {
+      name: "hideCode",
+      type: "boolean",
+      defaultValue: "false",
+      description: "When true, hides the code snippet and shows only the preview."
+    },
+    {
+      name: "hideSandbox",
+      type: "boolean",
+      defaultValue: "false",
+      description: "Hides the 'Open in CodeSandbox' action button."
+    },
+    {
+      name: "hideCopy",
+      type: "boolean",
+      defaultValue: "false",
+      description: "Hides the 'Copy' code action button."
+    }
+  ]}
+/>
+
+---
+
+## Variants & Examples
+
+### Basic Usage
+
+The standard way to use `<ComponentPreview>` is to pass both the `preview` element and the `code` string.
+
+<ComponentPreview 
+  preview={<Button variant="info">Info Button</Button>}
+  code={`<Button variant="info">Info Button</Button>`}
+/>
+
+### Preview Only (Hide Code)
+
+Use `hideCode={true}` for secondary examples or where the implementation details are too lengthy or less relevant to the current guide.
+
+<ComponentPreview 
+  hideCode={true}
+  preview={<div style={{ padding: '2rem', background: 'var(--ld-bg-soft)', borderRadius: '0.5rem', textAlign: 'center' }}>Showcase Only Content</div>} 
+/>
+
+### Technical Features
+
+- **Live Rendering**: Components are rendered using the actual theme context, ensuring they look exactly as they would in production.
+- **Copy to Clipboard**: Built-in logic to copy the provided code snippet instantly.
+- **Sandbox Export**: Generates a dynamic environment with all necessary dependencies pre-configured.
+
+### Personalization (CSS)
+
+Customize the wrapper, preview container, and toolbar using these classes in your `custom.css`:
+
+```css
+/* Outer wrapper around both preview and code */
+.boltdocs-component-preview {
+  border: 1px solid var(--ld-border-subtle);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+/* The area where the component is rendered */
+.boltdocs-preview-area {
+  padding: 2.5rem;
+  background-image: radial-gradient(var(--ld-border-subtle) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Toolbar actions */
+.boltdocs-preview-toolbar {
+  background: var(--ld-bg-soft);
+  border-top: 1px solid var(--ld-border-subtle);
+}
+```

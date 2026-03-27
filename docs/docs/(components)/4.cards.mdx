@@ -4,69 +4,105 @@ description: "Display information in a clean grid layout."
 icon: LayoutGrid
 ---
 
-import { Card, Cards, Table, Field } from 'boltdocs/client'
+import { Zap, FileJson, Palette, Rocket, Settings, Star } from 'lucide-react'
 
 # Cards
 
-Cards are used to display features, directories, or distinct pieces of information in a grid. They are wrapped in a `<Cards>` container.
+Cards are versatile content blocks used to highlight features, project goals, or organized directory links. They are designed to work in a responsive grid layout using the `<Cards>` container.
 
-**Example:**
+## Overview
 
 <Cards cols={3}>
-  <Card title="Fast" icon="⚡" href="/docs/getting-started/installation">
-    Instant HMR thanks to Vite.
+  <Card title="Lightning Fast" icon={<Zap />} href="/docs/overview/introduction">
+    Built on Vite for near-instant HMR and fast builds.
   </Card>
-  <Card title="Simple" icon="📁">
-    File-system based routing.
+  <Card title="MDX Powered" icon={<FileJson />}>
+    Write documentation using the full power of React components.
   </Card>
-  <Card title="Beautiful" icon="✨">
-    Built-in modern MDX components.
+  <Card title="Modern UI" icon={<Palette />}>
+    Premium, glassmorphic design system out of the box.
   </Card>
 </Cards>
 
-```tsx
-<Cards cols={3}>
-  <Card title="Fast" icon="⚡" href="/docs/getting-started/installation">
-    Instant HMR thanks to Vite.
+## Props Table
+
+### Cards (Container)
+
+<ComponentProps
+  props={[
+    {
+      name: "cols",
+      type: "1 | 2 | 3 | 4",
+      defaultValue: "3",
+      description: "The number of columns to display in the grid layout."
+    }
+  ]}
+/>
+
+### Card (Item)
+
+<ComponentProps
+  props={[
+    {
+      name: "title",
+      type: "string",
+      description: "Required. The main heading of the card."
+    },
+    {
+      name: "icon",
+      type: "ReactNode | string",
+      description: "Optional. An icon component or emoji displayed above the title."
+    },
+    {
+      name: "href",
+      type: "string",
+      description: "Optional. If provided, the card becomes a link (internal or external)."
+    }
+  ]}
+/>
+
+---
+
+## Variants & Examples
+
+### Basic Usage
+
+Wrap your individual `<Card>` components in a `<Cards>` container to create a clean grid.
+
+<Cards cols={2}>
+  <Card title="Getting Started" icon={<Rocket />} href="/docs/overview/installation">
+    Quickly set up Boltdocs in your project.
   </Card>
-  <Card title="Simple" icon="📁">
-    File-system based routing.
-  </Card>
-  <Card title="Beautiful" icon="✨">
-    Built-in modern MDX components.
+  <Card title="Configuration" icon={<Settings />} href="/docs/overview/configuration">
+    Learn how to customize every aspect of your site.
   </Card>
 </Cards>
-```
 
-**`<Cards>` Props (`CardsProps`)**
+### Grid Layouts
 
-<Field name="cols" type="1 | 2 | 3 | 4" defaultValue="3">
-  Number of columns to display in the grid.
-</Field>
+You can adjust the `cols` prop to change how many cards appear per row on desktop screens.
 
-**`<Card>` Props (`CardProps`)**
+#### 1 Column (Full Width)
+<Cards cols={1}>
+  <Card title="Full Width Spotlight" icon={<Star />}>
+    Use a single column for high-impact feature highlights.
+  </Card>
+</Cards>
 
-<Field name="title" type="string">
-  The main heading of the card.
-</Field>
+### Personalization (CSS)
 
-<Field name="icon" type="ReactNode | string">
-  Emoji or icon displayed above the title.
-</Field>
-
-<Field name="href" type="string">
-  If provided, the entire card becomes a clickable link.
-</Field>
-
-## Personalization (CSS)
-
-Cards inherit their surface and border styles from the global theme. Override these to change the look of all cards:
+Cards follow the surface and border tokens of the Boltdocs theme. You can override these in `custom.css` for a custom look:
 
 ```css
 :root {
+  /* Surface / Background */
   --ld-surface: rgba(255, 255, 255, 0.03);
+  
+  /* Borders */
   --ld-border-subtle: rgba(255, 255, 255, 0.06);
   --ld-border-strong: rgba(255, 255, 255, 0.12);
-  --ld-color-primary: #7f13ec;
+  
+  /* Corner Radius */
+  --ld-card-radius: 0.75rem;
 }
 ```

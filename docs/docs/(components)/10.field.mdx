@@ -3,90 +3,93 @@ title: "Field"
 description: "A premium component for documenting API properties and fields."
 icon: LayoutList
 ---
-import { Field } from 'boltdocs/client'
-
 # Field
 
-The `<Field />` component is designed to provide a structured, aesthetic, and highly readable way to document API properties, configuration options, or any structured data field.
+The Field component is designed to provide a structured way to document individual API properties, configuration options, or any specific data field. 
 
-## Usage
+<Warning>
+  **Legacy Status**: While `<Field />` is fully supported, we recommend using the new, more structured `<ComponentProps /` component for documenting complete sets of props in a table format.
+</Warning>
 
-You can use the `<Field />` component in your MDX files to replace generic bulleted lists.
+## Overview
 
-```mdx
 <Field 
   name="siteUrl" 
   type="string" 
   required
   defaultValue='"https://boltdocs.dev"'
 >
-  The base URL of the site, used primarily for generating absolute paths in your sitemap or canonical URLs.
-</Field>
-```
-
-## Properties
-
-<Field name="name" type="string" required>
-  The name of the property or field. This will be displayed prominently using a monospaced font.
+  The base URL of your documentation site. It is primarily used for generating canonical URLs and absolute paths in your sitemap.
 </Field>
 
-<Field name="type" type="string">
-  The data type of the field (e.g., `string`, `number`, `boolean`, or a custom interface). It appears as a subtle badge next to the name.
+## Props Table
+
+<ComponentProps
+  props={[
+    {
+      name: "name",
+      type: "string",
+      required: true,
+      description: "The name of the property or field, displayed in monospaced font."
+    },
+    {
+      name: "type",
+      type: "string",
+      description: "The data type (e.g., 'string' or an interface), displayed as a subtle badge."
+    },
+    {
+      name: "defaultValue",
+      type: "string",
+      description: "Default value if the field is omitted, shown in a dedicated section."
+    },
+    {
+      name: "required",
+      type: "boolean",
+      defaultValue: "false",
+      description: "If true, displays a 'required' badge next to the name."
+    }
+  ]}
+/>
+
+---
+
+## Variants & Examples
+
+### Basic Usage
+
+Use `<Field>` for standalone definitions where a full table might be unnecessary.
+
+<Field name="title" type="string">
+  The title text displayed in the navigation bar.
 </Field>
 
-<Field name="defaultValue" type="string">
-  The default value for the field if it's not provided by the user. It is displayed in a dedicated "Default" section in the header.
-</Field>
+### Complex Types
 
-<Field name="required" type="boolean" defaultValue="false">
-  If set to `true`, a "required" badge will be displayed next to the property name.
-</Field>
-
-<Field name="id" type="string">
-  An optional anchor ID for linking directly to this field.
-</Field>
-
-<Field name="className" type="string">
-  Optional CSS class name for further customization.
-</Field>
-
-## Examples
-
-### Complete Example
+Fields can document complex configuration objects by using the `type` prop for interface names.
 
 <Field 
   name="themeConfig" 
   type="BoltdocsThemeConfig" 
   required
 >
-  Determines the appearance, navigation, and structure of the theme. This is the heart of your Boltdocs configuration.
+  The central configuration object defining the visual style and navigation structure of your site.
 </Field>
 
-### Simple Example
+### Personalization (CSS)
 
-<Field name="title" type="string">
-  The title of your documentation site.
-</Field>
-
-## Why use Field?
-
-While standard Markdown lists are easy to write, they often lack the visual hierarchy needed for complex API documentation. The `<Field />` component provides:
-
-1. **Visual Clarity**: Clearly separates the property name, type, and description.
-2. **Metadata at a Glance**: Default values and "required" status are immediately visible.
-3. **Professional Aesthetic**: Gives your documentation a "Developer Portal" feel out of the box.
-4. **Consistency**: Ensures all property definitions follow the same structure across your site.
-
-## Personalization (CSS)
-
-Customize the Field component appearance with these variables:
+Adjust the background, borders, and colors of the field component via these CSS variables in your `custom.css`.
 
 ```css
 :root {
+  /* Container Appearance */
   --ld-field-bg: var(--ld-bg-soft);
   --ld-field-border: var(--ld-border-subtle);
+  
+  /* Text & Labels */
   --ld-field-name-color: var(--ld-color-primary);
   --ld-field-type-color: var(--ld-text-muted);
+  
+  /* Required Badge */
   --ld-field-required-bg: rgba(239, 68, 68, 0.15);
   --ld-field-required-text: #f87171;
 }

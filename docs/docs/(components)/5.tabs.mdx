@@ -4,70 +4,85 @@ description: "A component used to categorize content and let the user conditiona
 icon: PanelsTopLeft
 ---
 
-import { PanelsTopLeft, Shield, Terminal, Zap, Package, Layers } from 'lucide-react'
-import { Tabs, Tab, Field } from 'boltdocs/client'
+import { PanelsTopLeft, Shield, Terminal, Zap, Package, Layers } from 'lucide-react';
 
 # Tabs
 
-A component used to categorize content and let the user conditionally render different views. It supports icons, disabled states, and smooth sliding indicators.
+The Tabs component is used to organize content into multiple views, allowing users to toggle between related but distinct pieces of information within the same context. It features smooth sliding indicators, keyboard accessibility, and support for icons.
 
-## Basic Usage
-
-<Tabs>
-  <Tab label="Tab One">
-    This is the first tab content.
-  </Tab>
-  <Tab label="Tab Two">
-    This is the second tab content.
-  </Tab>
-</Tabs>
-
-````tsx
-<Tabs>
-  <Tab label="Tab One">
-    This is the first tab content.
-  </Tab>
-  <Tab label="Tab Two">
-    This is the second tab content.
-  </Tab>
-</Tabs>
-````
-
-## With Icons
-
-You can add icons to your tabs using any React component.
+## Overview
 
 <Tabs>
   <Tab label="Performance" icon={<Zap />}>
-    Information about performance optimization.
+    Information about performance optimization and speed.
   </Tab>
   <Tab label="Security" icon={<Shield />}>
-    Security best practices and configurations.
+    Security best practices and system configuration.
   </Tab>
   <Tab label="CLI" icon={<Terminal />}>
-    Command line interface reference.
+    Reference for the Boltdocs command-line interface.
   </Tab>
 </Tabs>
 
-````tsx
-import { Zap, Shield, Terminal } from 'lucide-react'
+## Props Table
+
+### Tabs (Container)
+
+<ComponentProps
+  props={[
+    {
+      name: "defaultIndex",
+      type: "number",
+      defaultValue: "0",
+      description: "The index of the tab that should be open by default."
+    }
+  ]}
+/>
+
+### Tab (Item)
+
+<ComponentProps
+  props={[
+    {
+      name: "label",
+      type: "string",
+      required: true,
+      description: "The text label to display in the tab trigger."
+    },
+    {
+      name: "icon",
+      type: "ReactNode",
+      description: "Optional icon to display next to the label."
+    },
+    {
+      name: "disabled",
+      type: "boolean",
+      defaultValue: "false",
+      description: "When true, the tab cannot be selected or focused."
+    }
+  ]}
+/>
+
+---
+
+## Variants & Examples
+
+### Basic Usage
+
+Define a simple tabbed interface with just labels.
 
 <Tabs>
-  <Tab label="Performance" icon={<Zap />}>
-    Information about performance optimization.
+  <Tab label="Installation">
+    `pnpm add boltdocs`
   </Tab>
-  <Tab label="Security" icon={<Shield />}>
-    Security best practices and configurations.
-  </Tab>
-  <Tab label="CLI" icon={<Terminal />}>
-    Command line interface reference.
+  <Tab label="Usage">
+    `boltdocs dev`
   </Tab>
 </Tabs>
-````
 
-## Package Managers
+### Package Manager Example
 
-Although Boltdocs no longer has hardcoded package manager support in Tabs, you can easily create beautiful package manager Switchers manually with icons.
+Tabs are commonly used to show installation instructions for different package managers.
 
 <Tabs>
   <Tab label="npm">
@@ -90,65 +105,24 @@ Although Boltdocs no longer has hardcoded package manager support in Tabs, you c
   </Tab>
 </Tabs>
 
-## Disabled State
+### Personalization (CSS)
 
-Use the `disabled` prop on a `Tab` to make it unselectable. Keyboard navigation will automatically skip disabled tabs.
-
-<Tabs>
-  <Tab label="Active Tab">
-    Visible and interactive.
-  </Tab>
-  <Tab label="Disabled Tab" disabled>
-    You cannot click this one.
-  </Tab>
-  <Tab label="Another Active">
-    Still reachable.
-  </Tab>
-</Tabs>
-
-````tsx
-<Tabs>
-  <Tab label="Active Tab">
-    Visible and interactive.
-  </Tab>
-  <Tab label="Disabled Tab" disabled>
-    You cannot click this one.
-  </Tab>
-</Tabs>
-````
-
-## Props
-
-### `<Tabs />`
-
-<Field name="defaultIndex" type="number" defaultValue="0">
-  The index (0-based) of the tab that is open by default.
-</Field>
-
-### `<Tab />`
-
-<Field name="label" type="string" required>
-  The text shown in the tab bar trigger.
-</Field>
-
-<Field name="icon" type="ReactNode">
-  An optional icon to display next to the label.
-</Field>
-
-<Field name="disabled" type="boolean" defaultValue="false">
-  When true, the tab cannot be selected.
-</Field>
-
-## Personalization (CSS)
-
-Customize the tabs container, active indicator, and triggers via CSS variables:
+Customize the tabs container and active indicator using these CSS variables in your `custom.css`:
 
 ```css
 :root {
+  /* Container & Borders */
   --ld-tabs-bg: var(--ld-bg-soft);
   --ld-tabs-border: var(--ld-border-subtle);
+  
+  /* Active Indicator */
   --ld-tabs-indicator: var(--ld-color-primary);
+  
+  /* Text Colors */
   --ld-tabs-text: var(--ld-text-muted);
   --ld-tabs-active-text: var(--ld-text-main);
+  
+  /* Radius */
+  --ld-tabs-radius: 0.5rem;
 }
 ```

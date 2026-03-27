@@ -1,0 +1,79 @@
+---
+title: "Image"
+description: "Themed image component for documentation."
+icon: Image
+---
+
+# Image
+
+The Image component provides a theme-aware way to render images that change based on whether the user is in Light or Dark mode. This is essential for screenshots, diagrams, and illustrations that need to match the current site aesthetics.
+
+## Overview
+
+<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+  <div>
+    **Light Mode Only**
+    <Image src="https://placehold.co/400x150/F4F4F4/1e1e1e?text=Light+Diagram" theme="light" alt="Light Mode Architecture" />
+  </div>
+  <div>
+    **Dark Mode Only**
+    <Image src="https://placehold.co/400x150/1e1e1e/white?text=Dark+Diagram" theme="dark" alt="Dark Mode Architecture" />
+  </div>
+</div>
+
+## Props Table
+
+<ComponentProps
+  props={[
+    {
+      name: "src",
+      type: "string",
+      required: true,
+      description: "The source path or URL of the image."
+    },
+    {
+      name: "theme",
+      type: "'light' | 'dark'",
+      description: "If provided, the image is only rendered when the site theme matches this value."
+    },
+    {
+      name: "alt",
+      type: "string",
+      description: "Required. The alternative text for screen readers."
+    }
+  ]}
+/>
+
+---
+
+## Variants & Examples
+
+### Theme-Switching Images
+
+By placing two `<Image>` components with different `theme` values back-to-back, you can create a single "logical" image that adapts to the user's theme.
+
+<Image src="https://placehold.co/600x200/F4F4F4/1e1e1e?text=Themed+Creative" theme="light" alt="Light Asset" />
+<Image src="https://placehold.co/600x200/1e1e1e/white?text=Themed+Creative" theme="dark" alt="Dark Asset" />
+
+### Basic Usage
+
+Standard Markdown `![]()` works perfectly in Boltdocs for global images. Use the `<Image>` component specifically when you need theme-awareness or advanced React logic.
+
+<Image src="https://placehold.co/600x200?text=Global+Image" alt="Global Content" />
+
+### Personalization (CSS)
+
+Images are rendered as standard `<img>` tags within a wrapper. You can target them globally or via classes in `custom.css`:
+
+```css
+/* All documentation images */
+.boltdocs-content img {
+  border-radius: 0.5rem;
+  border: 1px solid var(--ld-border-subtle);
+  transition: transform 0.2s ease;
+}
+
+.boltdocs-content img:hover {
+  transform: scale(1.01);
+}
+```

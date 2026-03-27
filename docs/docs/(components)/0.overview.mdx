@@ -4,22 +4,68 @@ description: "An introduction to the built-in components available in Boltdocs."
 icon: Component
 ---
 
+import { MousePointer2, Tag, Layout, Columns2, List, FolderTree, Table, Code2, BookOpenCheck, Eye, Video, Image, ExternalLink, MessageSquare } from 'lucide-react'
+
 # MDX Components
 
-Because Boltdocs leverages React and MDX, standard Markdown elements are automatically enhanced with beautifully styled React components underneath the hood. 
+Boltdocs transforms standard Markdown into a rich, interactive experience by automatically enhancing elements with React components. Beyond standard Markdown, Boltdocs provides a suite of premium UI components designed for technical documentation.
 
-Moreover, Boltdocs ships with several utility UI components you can drop directly into your Markdown! 
+## Interactive UI Components
 
-Explore the individual component pages in the sidebar to learn more about how to use each one:
+Browse our built-in component library to enhance your documentation with interactive elements:
 
-- **Admonitions**: Callouts for info, warnings, and errors.
-- **Button**: Versatile button and link component.
-- **Badge**: Inline status indicators.
-- **Cards**: Grid-based content blocks.
-- **Tabs**: Tabbed content organization.
-- **List**: Enhanced feature lists with icons.
-- **FileTree**: Visual file structure representation.
-- **Table**: Responsive tables with sorting and pagination.
-- **Field**: Structured API property documentation blocks.
-- **Playground**: Live React sandboxes with CodeSandbox & StackBlitz export.
-- **Custom Components**: How to integrate your own React components.
+<Cards>
+  <Card title="Admonitions" icon={<MessageSquare />} href="/docs/admonitions">
+    Callouts for info, warnings, and error messages.
+  </Card>
+  <Card title="Button" icon={<MousePointer2 />} href="/docs/button">
+    Versatile interactive button and link component.
+  </Card>
+  <Card title="Badge" icon={<Tag />} href="/docs/badge">
+    Inline status indicators and category labels.
+  </Card>
+  <Card title="Cards" icon={<Layout />} href="/docs/cards">
+    Grid-based content blocks for featured information.
+  </Card>
+  <Card title="Tabs" icon={<Columns2 />} href="/docs/tabs">
+    Organize content into accessible tabbed views.
+  </Card>
+  <Card title="List" icon={<List />} href="/docs/list">
+    Enhanced feature lists with customizable icons.
+  </Card>
+  <Card title="FileTree" icon={<FolderTree />} href="/docs/file-tree">
+    Visual representation of project directory structures.
+  </Card>
+  <Card title="Table" icon={<Table />} href="/docs/table">
+    Powerful tables with sorting, filtering, and pagination.
+  </Card>
+  <Card title="Field" icon={<Code2 />} href="/docs/field">
+    Structured blocks for API property documentation.
+  </Card>
+  <Card title="ComponentProps" icon={<BookOpenCheck />} href="/docs/component-props">
+    Generate beautiful API specification tables.
+  </Card>
+  <Card title="ComponentPreview" icon={<Eye />} href="/docs/component-preview">
+    Live code snippets with real-time component previews.
+  </Card>
+</Cards>
+
+## Media & Navigation
+
+Optimized components for rich media and site-wide navigation:
+
+<Cards>
+  <Card title="Video" icon={<Video />} href="/docs/video">
+    Lazy-loaded, high-performance native video player.
+  </Card>
+  <Card title="Image" icon={<Image />} href="/docs/image">
+    Theme-aware images with light and dark mode support.
+  </Card>
+  <Card title="Link" icon={<ExternalLink />} href="/docs/link">
+    Enhanced navigation with built-in link previews.
+  </Card>
+</Cards>
+
+<Tip>
+  Looking to create your own components? Check out our [MDX Customization](/docs/guides/4.customization/2-mdx-components) guide to learn how to inject your own React components globally.
+</Tip>

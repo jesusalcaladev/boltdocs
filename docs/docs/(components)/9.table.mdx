@@ -4,179 +4,126 @@ description: "A consistent, themed table component for documentation."
 icon: Table
 ---
 
-import { Table, Field } from 'boltdocs/client'
-
 # Table
 
-The `Table` component provides a consistent, beautifully styled way to display tabular data in your documentation. It is used throughout Boltdocs to document component properties.
+The Table component provides a consistent, beautifully styled way to display tabular data. It features glassmorphic headers, subtle row highlighting, and built-in support for sorting and pagination.
 
-## Basic Usage
-
-You can use the `Table` component by providing `headers` and `data` props.
+## Overview
 
 <Table
-  headers={["Prop", "Type", "Default", "Description"]}
+  headers={["Feature", "Status", "Version"]}
   data={[
-    ["variant", "primary | secondary", "primary", "The visual style variant."],
-    ["size", "sm | md | lg", "md", "The sizing scale of the component."]
+    ["MDX Rendering", <Badge variant="success">Fast</Badge>, "v1.0.0"],
+    ["Hot Module Replacement", <Badge variant="info">Enabled</Badge>, "v1.0.0"],
+    ["Custom Themes", <Badge variant="warning">Beta</Badge>, "v1.1.0"]
   ]}
 />
 
-```tsx
-<Table
-  headers={["Prop", "Type", "Default", "Description"]}
-  data={[
-    ["variant", "primary | secondary", "primary", "The visual style variant."],
-    ["size", "sm | md | lg", "md", "The sizing scale of the component."]
+## Props Table
+
+<ComponentProps
+  props={[
+    {
+      name: "headers",
+      type: "string[]",
+      required: true,
+      description: "An array of strings for the table column headings."
+    },
+    {
+      name: "data",
+      type: "(string | ReactNode)[][]",
+      required: true,
+      description: "A 2D array representing rows and cells. Supports text and React components."
+    },
+    {
+      name: "sortable",
+      type: "boolean",
+      defaultValue: "false",
+      description: "Enable client-side sorting by clicking on header columns."
+    },
+    {
+      name: "paginated",
+      type: "boolean",
+      defaultValue: "false",
+      description: "Enable pagination controls."
+    },
+    {
+      name: "pageSize",
+      type: "number",
+      defaultValue: "10",
+      description: "The number of rows to show per page when paginated."
+    }
   ]}
 />
-```
 
-## Advanced Usage
+---
 
-You can also use the `Table` component as a wrapper for standard HTML table elements if you need more flexibility.
+## Variants & Examples
+
+### Basic Usage
+
+The simplest way to use a Table is by providing the `headers` and `data` props as arrays.
+
+<Table
+  headers={["ID", "User", "Role"]}
+  data={[
+    ["1", "Alice", "Admin"],
+    ["2", "Bob", "Editor"]
+  ]}
+/>
+
+### Sorting & Pagination
+
+For larger datasets, you can enable interactivity with the `sortable` and `paginated` props.
+
+<Table
+  sortable
+  paginated
+  pageSize={3}
+  headers={["Name", "Last Active"]}
+  data={[
+    ["Charlie", "2 mins ago"],
+    ["Diana", "1 hour ago"],
+    ["Eve", "Yesterday"],
+    ["Frank", "3 days ago"]
+  ]}
+/>
+
+### Manual Table Structure
+
+If you need full control over the table markup, you can pass standard HTML table elements as children.
 
 <Table>
   <thead>
     <tr>
-      <th>Feature</th>
-      <th>Status</th>
+      <th>Category</th>
+      <th>Count</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Standard Markdown</td>
-      <td>Supported</td>
-    </tr>
-    <tr>
-      <td>Custom React Components</td>
-      <td>Supported</td>
+      <td>Components</td>
+      <td>15+</td>
     </tr>
   </tbody>
 </Table>
 
-```tsx
-<Table>
-  <thead>
-    <tr>
-      <th>Feature</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Standard Markdown</td>
-      <td>Supported</td>
-    </tr>
-    <tr>
-      <td>Custom React Components</td>
-      <td>Supported</td>
-    </tr>
-  </tbody>
-</Table>
-```
+### Personalization (CSS)
 
-## Sorting
-
-Enable sorting by passing the `sortable` prop. Users can click on headers to sort the data.
-
-<Table
-  sortable
-  headers={["Name", "Role", "Join Date"]}
-  data={[
-    ["Alice", "Developer", "2023-01-15"],
-    ["Bob", "Designer", "2022-11-20"],
-    ["Charlie", "Product Manager", "2023-03-05"],
-    ["Diana", "Engineer", "2023-02-10"]
-  ]}
-/>
-
-```tsx
-<Table
-  sortable
-  headers={["Name", "Role", "Join Date"]}
-  data={[
-    ["Alice", "Developer", "2023-01-15"],
-    ["Bob", "Designer", "2022-11-20"],
-    ["Charlie", "Product Manager", "2023-03-05"]
-  ]}
-/>
-```
-
-## Pagination
-
-For large datasets, use the `paginated` prop. You can also customize the number of items per page with `pageSize`.
-
-<Table
-  paginated
-  pageSize={3}
-  headers={["ID", "Title", "Status"]}
-  data={[
-    ["101", "Initial Setup", "Completed"],
-    ["102", "Design Phase", "In Progress"],
-    ["103", "Core Logic", "Pending"],
-    ["104", "UI Components", "Pending"],
-    ["105", "User Testing", "Not Started"],
-    ["106", "Deployment", "Not Started"]
-  ]}
-/>
-
-```tsx
-<Table
-  paginated
-  pageSize={3}
-  headers={["ID", "Title", "Status"]}
-  data={[
-    ["101", "Initial Setup", "Completed"],
-    ["102", "Design Phase", "In Progress"],
-    ["103", "Core Logic", "Pending"],
-    ["104", "UI Components", "Pending"],
-    ["105", "User Testing", "Not Started"],
-    ["106", "Deployment", "Not Started"]
-  ]}
-/>
-```
-
-## Props (`TableProps`)
-
-<Field name="headers" type="string[]">
-  An array of strings for the table header columns.
-</Field>
-
-<Field name="data" type="(string | ReactNode)[][]">
-  A 2D array representing the table rows. Each element can be a string or a React node.
-</Field>
-
-<Field name="children" type="ReactNode">
-  Optional. Standard HTML table content (`thead`, `tbody`, etc) if you want to define the structure manually.
-</Field>
-
-<Field name="sortable" type="boolean" defaultValue="false">
-  Enables sorting functionality. Users can click on headers to sort the rows.
-</Field>
-
-<Field name="paginated" type="boolean" defaultValue="false">
-  Enables pagination controls at the bottom of the table.
-</Field>
-
-<Field name="pageSize" type="number" defaultValue="10">
-  Determines how many rows are displayed per page when `paginated` is `true`.
-</Field>
-
-<Field name="className" type="string">
-  Additional CSS classes for custom styling of the table container.
-</Field>
-
-## Personalization (CSS)
-
-Fine-tune the table appearance with these CSS variables:
+Customize the table's appearance globally by overriding these CSS variables in your `custom.css`.
 
 ```css
 :root {
+  /* Header Styles */
   --ld-table-header-bg: var(--ld-bg-soft);
   --ld-table-header-text: var(--ld-text-main);
+  
+  /* Borders & Rows */
   --ld-table-border: var(--ld-border-subtle);
   --ld-table-row-hover: rgba(255, 255, 255, 0.03);
-  --ld-table-stripe-bg: rgba(255, 255, 255, 0.015);
+  --ld-table-stripe-bg: rgba(255, 255, 255, 0.01);
+  
+  /* Radius */
+  --ld-table-radius: 0.5rem;
 }
 ```

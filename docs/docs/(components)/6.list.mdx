@@ -4,63 +4,79 @@ description: "Enhanced lists with custom icons."
 icon: ListChecks
 ---
 
-import { List, Table, Field } from 'boltdocs/client'
-
 # List
 
-An enhanced list component with specific icon variants, perfect for feature listings or checklists.
+The List component provides enhanced styling for bulleted lists, featuring custom icon markers like checkmarks and arrows. It is ideal for feature highlights, checklists, or step-by-step guides.
 
-**Example:**
+## Overview
 
 <div style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap' }}>
-  <div>
-    **Checked Variant:**
-    <List variant="checked">
-      <li>File-system routing</li>
-      <li>MDX support</li>
-      <li>Syntax highlighting</li>
-    </List>
-  </div>
-  <div>
-    **Arrow Variant:**
-    <List variant="arrow">
-      <li>First step</li>
-      <li>Second step</li>
-      <li>Third step</li>
-    </List>
-  </div>
+  <List variant="checked">
+    <li>Native MDX Support</li>
+    <li>Edge-optimized SSR</li>
+    <li>Customizable Design System</li>
+  </List>
+
+  <List variant="arrow">
+    <li>Install dependencies</li>
+    <li>Configure your site</li>
+    <li>Deploy to production</li>
+  </List>
 </div>
 
-```tsx
-<List variant="checked">
-  <li>File-system routing</li>
-  <li>MDX support</li>
-  <li>Syntax highlighting</li>
+## Props Table
+
+<ComponentProps
+  props={[
+    {
+      name: "variant",
+      type: '"default" | "checked" | "arrow"',
+      defaultValue: '"default"',
+      description: "The visual icon marker displayed before each list item."
+    }
+  ]}
+/>
+
+---
+
+## Variants & Examples
+
+### Basic Usage
+
+The List component wraps standard `<li>` elements. It defaults to the `default` browser list style if no variant is specified.
+
+<List>
+  <li>Item One</li>
+  <li>Item Two</li>
 </List>
 
-<List variant="arrow">
-  <li>First step</li>
-  <li>Second step</li>
-  <li>Third step</li>
-</List>
-```
+### Semantic Markers
 
-**Props (`ListProps`)**
+Use `checked` for features or completed tasks, and `arrow` for directional or sequential lists.
 
-<Field name="variant" type='"default" | "checked" | "arrow"' defaultValue='"default"'>
-  The visual icon injected before every list item.
-</Field>
+<Cards>
+  <List variant="checked">
+    <li>Everything is included</li>
+    <li>No configuration required</li>
+  </List>
+  <List variant="arrow">
+    <li>Follow the path</li>
+    <li>Reach the goal</li>
+  </List>
+</Cards>
 
-_(Standard `<ul>` HTML attributes are also supported)_
+### Personalization (CSS)
 
-## Personalization (CSS)
-
-Override the icon color and spacing of list items:
+Customize the icon color, size, and item spacing using these CSS variables in your `custom.css`.
 
 ```css
 :root {
+  /* Icon Appearance */
   --ld-list-icon-color: var(--ld-color-primary);
   --ld-list-icon-size: 1.1em;
+  
+  /* Spacing */
   --ld-list-gap: 0.5rem;
+  --ld-list-indent: 1.5rem;
 }
 ```
