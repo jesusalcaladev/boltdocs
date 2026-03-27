@@ -146,11 +146,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.35rem 0.75rem;
-  background-color: transparent; /* Cleaner flat base */
-  border: 1px solid transparent; /* Invisible border initially */
+  background-color: transparent;
+  border: 1px solid var(--ld-border-subtle);
   border-radius: var(--ld-radius-full);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   color: var(--ld-text-dim);
   font-size: 0.8125rem;
   min-width: 220px;
@@ -340,7 +338,10 @@
   background: var(--ld-color-primary);
   border-radius: 2px 2px 0 0;
   box-shadow: 0 -2px 15px var(--ld-color-primary-glow);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
   z-index: 100; /* Higher than border pseudo-element */
   pointer-events: none;
   transform-origin: left;
