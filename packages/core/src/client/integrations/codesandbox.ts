@@ -1,4 +1,4 @@
-import { getParameters } from "codesandbox/lib/api/define";
+import { getParameters } from "codesandbox/lib/api/define.js";
 import { SandboxOptions } from "../types";
 
 /**
@@ -25,12 +25,30 @@ function buildSandboxFiles(options: SandboxOptions) {
   }
 
   if (!finalFiles["package.json"]) {
+    const isVite =
+      options.template === "vite" ||
+      !!devDependencies.vite ||
+      !!devDependencies["@vitejs/plugin-react"];
+
+    const defaultScripts = isVite
+      ? {
+          dev: "vite",
+          build: "vite build",
+          preview: "vite preview",
+        }
+      : {
+          start: "node index.js",
+        };
+
     finalFiles["package.json"] = {
       content: JSON.stringify(
         {
+          private: true,
           name: title,
           description,
+          type: "module",
           version: "1.0.0",
+          scripts: options.scripts || defaultScripts,
           dependencies,
           devDependencies,
         },
@@ -52,9 +70,22 @@ export function defineSandbox(options: SandboxOptions) {
   const finalFiles = buildSandboxFiles(options);
   const parameters = getParameters({ files: finalFiles });
 
+  // FIX: Agregar query params que forzan comportamiento correcto
+  const query = new URLSearchParams({
+    parameters,
+    // FIX: Forzar instalación de dependencias
+    installDependencies: "true",
+  });
+
+  // FIX: Agregar file query para que abra el entry correcto
+  if (options.entry) {
+    query.set("file", `/${options.entry}`);
+  }
+
   return {
     parameters,
-    url: `https://codesandbox.io/api/v1/sandboxes/define?parameters=${parameters}`,
+    url: `https://codesandbox.io/api/v1/sandboxes/define?${query.toString()}`,
+    options,
   };
 }
 
@@ -66,7 +97,7 @@ export function defineSandbox(options: SandboxOptions) {
  * `getParameters` handles LZ-string compression internally.
  */
 export function openSandbox(options: SandboxOptions) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") return defineSandbox(options);
 
   const finalFiles = buildSandboxFiles(options);
   const parameters = getParameters({ files: finalFiles });
@@ -87,12 +118,29 @@ export function openSandbox(options: SandboxOptions) {
     form.appendChild(input);
   };
 
+  const queryParams = new URLSearchParams({
+    file: `/${entry}`,
+    // FIX: Forzar vista de preview (no solo editor)
+    // FIX: Deshabilitar eslint que a veces bloquea
+    eslint: "0",
+    // FIX: Habilitar codemirror
+    codemirror: "1",
+    // FIX: Forzar instalación de deps
+    installDependencies: "true",
+  });
+
+  addField("query", queryParams.toString());
   addField("parameters", parameters);
-  addField("query", `file=/${entry}`);
 
   document.body.appendChild(form);
   form.submit();
   document.body.removeChild(form);
+
+  return {
+    parameters,
+    url: `https://codesandbox.io/api/v1/sandboxes/define?parameters=${parameters}`,
+    options,
+  };
 }
 
 /**
@@ -107,11 +155,11 @@ export function openSandbox(options: SandboxOptions) {
  * const url = embedSandbox({
  *   files: { "index.js": { content: "console.log('hello')" } },
  *   embed: { view: "editor", theme: "dark" },
- * });
+ * }).url;
  * // url → "https://codesandbox.io/api/v1/sandboxes/define?parameters=…&embed=1&view=editor&theme=dark"
  * ```
  */
-export function embedSandbox(options: SandboxOptions): string {
+export function embedSandbox(options: SandboxOptions) {
   const finalFiles = buildSandboxFiles(options);
   const parameters = getParameters({ files: finalFiles });
   const embedOptions = options.embed || {};
@@ -123,5 +171,9 @@ export function embedSandbox(options: SandboxOptions): string {
   if (embedOptions.hideNavigation) query.set("hidenavigation", "1");
   if (options.entry) query.set("file", `/${options.entry}`);
 
-  return `https://codesandbox.io/api/v1/sandboxes/define?${query.toString()}`;
+  return {
+    parameters,
+    url: `https://codesandbox.io/api/v1/sandboxes/define?${query.toString()}`,
+    options,
+  };
 }
