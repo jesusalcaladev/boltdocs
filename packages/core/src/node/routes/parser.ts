@@ -9,16 +9,19 @@ import {
   capitalize,
   stripNumberPrefix,
   extractNumberPrefix,
-  escapeHtml,
 } from "../utils";
 
 /**
  * Parses a single Markdown/MDX file and extracts its metadata for routing.
  * Checks frontmatter for explicit titles, descriptions, and sidebar positions.
+ * 
+ * Also performs security validation to prevent path traversal and basic 
+ * XSS sanitization for metadata and headings.
  *
  * @param file - The absolute path to the file
  * @param docsDir - The root documentation directory (e.g., 'docs')
  * @param basePath - The base URL path for the routes (default: '/docs')
+ * @param config - The Boltdocs configuration for versions and i18n
  * @returns A parsed structure ready for route assembly and caching
  */
 export function parseDocFile(
@@ -128,38 +131,34 @@ export function parseDocFile(
       .trim();
     const id = slugger.slug(text);
     // Security: Sanitize heading text for XSS
-    headings.push({ level, text, id });
+    const sanitizedText = text.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "")
+      .replace(/<[^>]+on\w+="[^"]*"/gim, "")
+      .replace(/<img[^>]+>/gim, "")
+      .trim();
+    headings.push({ level, text: sanitizedText, id });
   }
 
-  const sanitizedTitle = data.title ? data.title : inferredTitle;
-  let sanitizedDescription = data.description
-    ? data.description
-    : "";
+  const sanitize = (str: string) => str.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "").trim();
+
+  const sanitizedTitle = data.title ? sanitize(data.title) : inferredTitle;
+  let sanitizedDescription = data.description ? sanitize(data.description) : "";
 
   // If no description is provided, extract a summary from the content
   if (!sanitizedDescription && content) {
-    const summary = content
+    sanitizedDescription = sanitize(content
       .replace(/^#+.*$/gm, "") // Remove headers
       .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // Simplify links
       .replace(/[_*`]/g, "") // Remove formatting
-      .replace(/\n+/g, " ") // Normalize whitespace
+      .replace(/\s+/g, " ") // Normalize whitespace
       .trim()
-      .slice(0, 160);
-    sanitizedDescription = summary;
+      .slice(0, 160));
   }
 
-  const sanitizedBadge = data.badge ? data.badge : undefined;
+  const sanitizedBadge = data.badge ? sanitize(data.badge) : undefined;
   const icon = data.icon ? String(data.icon) : undefined;
 
   // Extract full content as plain text for search indexing
-  const plainText = content
-    .replace(/^#+.*$/gm, "") // Remove headers
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // Simplify links
-    .replace(/<[^>]+>/g, "") // Remove HTML/JSX tags
-    .replace(/\{[^\}]+\}/g, "") // Remove JS expressions/curly braces
-    .replace(/[_*`]/g, "") // Remove formatting
-    .replace(/\n+/g, " ") // Normalize whitespace
-    .trim();
+  const plainText = parseContentToPlainText(content);
 
   return {
     route: {
@@ -183,10 +182,10 @@ export function parseDocFile(
     inferredTab,
     groupMeta: isGroupIndex
       ? {
-          title: 
+          title:
             data.groupTitle ||
-              data.title ||
-              (cleanDirName ? capitalize(cleanDirName) : ""),
+            data.title ||
+            (cleanDirName ? capitalize(cleanDirName) : ""),
           position:
             data.groupPosition ??
             data.sidebarPosition ??
@@ -198,4 +197,26 @@ export function parseDocFile(
       ? extractNumberPrefix(rawDirName)
       : undefined,
   };
+}
+
+/**
+ * Sanitizes a string by removing script tags for basic XSS protection.
+ */
+function sanitize(str: string): string {
+  return str.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "").trim();
+}
+
+/**
+ * Converts markdown content to plain text for search indexing.
+ * Strips headers, links, tags, and formatting.
+ */
+function parseContentToPlainText(content: string): string {
+  return content
+    .replace(/^#+.*$/gm, "") // Remove headers
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // Simplify links
+    .replace(/<[^>]+>/g, "") // Remove HTML/JSX tags
+    .replace(/\{[^\}]+\}/g, "") // Remove JS expressions/curly braces
+    .replace(/[_*`]/g, "") // Remove formatting
+    .replace(/\s+/g, " ") // Normalize whitespace
+    .trim();
 }
