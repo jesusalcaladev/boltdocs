@@ -88,6 +88,10 @@ export interface SandboxOptions {
   entry?: string;
   /** Options for the embedded iframe view, used by `embedSandbox()`. */
   embed?: SandboxEmbedOptions;
+  /** Custom scripts for the package.json (e.g. `{ "start": "vite" }`). */
+  scripts?: Record<string, string>;
+  /** Optional default theme configuration for the sandbox project. */
+  themeConfig?: any;
 }
 
 export interface SandboxEmbedOptions {
@@ -98,5 +102,3 @@ export interface SandboxEmbedOptions {
   /** Whether to hide the navigation bar in the embed. */
   hideNavigation?: boolean;
 }
-
-
