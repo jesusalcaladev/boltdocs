@@ -3,6 +3,7 @@
    Main Entry Point
    ═══════════════════════════════════════════════════════════ */
 
+
 @import "./styles/variables.css";
 @import "./ui/Layout/base.css";
 
@@ -20,7 +21,6 @@
 @import "./components/Video/video.css";
 
 /* UI Components (MDX) */
-@import "./components/mdx/mdx-components.css";
 
 /* Interactive Elements */
 @import "./ui/SearchDialog/search.css";
@@ -31,8 +31,8 @@
 @import "./ui/Loading/loading.css";
 @import "./ui/ErrorBoundary/error-boundary.css";
 
-/* Playground */
-@import "./components/Playground/playground.css";
+/* ComponentPreview */
+@import "./components/mdx/ComponentPreview/ComponentPreview.css";
 
 /* Media Queries */
 @import "./ui/Layout/responsive.css";
