@@ -22,6 +22,8 @@ out/
 *.pem
 *.key
 
+NEW_FEATURES.md
+
 # IDEs and Editors
 .vscode/
 .idea/
