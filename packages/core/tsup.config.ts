@@ -11,6 +11,7 @@ export default defineConfig({
   dts: true,
   tsconfig: "./tsconfig.json",
   clean: true,
+  shims: true,
   external: [
     "vite",
     "react",
