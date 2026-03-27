@@ -11,79 +11,105 @@ import { sortRoutes } from "./sorter";
 export type { RouteMeta };
 export { invalidateRouteCache, invalidateFile };
 
+// Cache for localized path computations
+const localizedPathCache = new Map<string, string>();
+
 /**
  * Generates the entire route map for the documentation site.
- * This reads all `.md` and `.mdx` files in the `docsDir`, parses them (using cache),
- * infers group hierarchies based on directory structure and `index.md` files,
- * and returns a sorted array of RouteMeta objects intended for the client.
+ * OPTIMIZED: Uses Map-based i18n lookups, chunked processing, and path caching.
  *
- * @param docsDir - The root directory containing markdown files
- * @param config - Optional configuration for i18n and versioning
- * @param basePath - The base URL path to prefix to generated routes (e.g., '/docs')
- * @returns A promise that resolves to the final list of RouteMeta objects
+ * Automatically handles versioning and i18n routing, including fallback
+ * generation for missing translations.
+ *
+ * @param docsDir - The root documentation directory
+ * @param config - The Boltdocs configuration
+ * @param basePath - The base URL path for the routes (default: '/docs')
+ * @returns A promise resolving to an array of RouteMeta objects
  */
 export async function generateRoutes(
   docsDir: string,
   config?: BoltdocsConfig,
   basePath: string = "/docs",
 ): Promise<RouteMeta[]> {
-  // Load persistent cache on first call
-  docCache.load();
-  docCache.invalidateAll(); // FORCE RE-PARSE to pick up new _content field
+  const start = performance.now();
 
+  // Load persistent cache
+  docCache.load();
+
+  // Clear path computation cache between generations
+  localizedPathCache.clear();
+
+  // Force re-parse if specifically requested (e.g. for content/config changes)
+  if (process.env.BOLTDOCS_FORCE_REPARSE === "true" || config?.i18n) {
+    docCache.invalidateAll();
+  }
+
+  // 1. FAST SCAN
   const files = await fastGlob(["**/*.md", "**/*.mdx"], {
     cwd: docsDir,
     absolute: true,
+    suppressErrors: true,
+    followSymbolicLinks: false,
   });
 
   // Prune cache entries for deleted files
   docCache.pruneStale(new Set(files));
 
-  // Invalidate all caches if config changes drastically (e.g. i18n enabled)
-  if (config?.i18n) {
-    docCache.invalidateAll();
-  }
-
-  // Parse files in parallel using Promise.all for increased efficiency
+  // 2. CHUNKED PROCESSING (prevents blocking event loop)
+  const CHUNK_SIZE = 50;
+  const parsed: ParsedDocFile[] = [];
   let cacheHits = 0;
-  const parsed: ParsedDocFile[] = await Promise.all(
-    files.map(async (file) => {
-      const cached = docCache.get(file);
-      if (cached) {
-        cacheHits++;
-        return cached;
-      }
 
-      const result = parseDocFile(file, docsDir, basePath, config);
-      docCache.set(file, result);
-      return result;
-    }),
-  );
+  for (let i = 0; i < files.length; i += CHUNK_SIZE) {
+    const chunk = files.slice(i, i + CHUNK_SIZE);
 
-  if (files.length > 0) {
-    console.log(
-      `[boltdocs] Routes generated: ${files.length} files (${cacheHits} from cache, ${files.length - cacheHits} parsed)`,
+    const chunkResults = await Promise.all(
+      chunk.map(async (file) => {
+        const cached = docCache.get(file);
+        if (cached) {
+          cacheHits++;
+          return cached;
+        }
+
+        const result = parseDocFile(file, docsDir, basePath, config);
+        docCache.set(file, result);
+        return result;
+      }),
     );
+
+    parsed.push(...chunkResults);
+
+    // Yield to event loop between chunks if there's more to process
+    if (i + CHUNK_SIZE < files.length) {
+      await new Promise((resolve) => setImmediate(resolve));
+    }
   }
 
-  // Save cache after batch processing
+  // Save cache after processing
   docCache.save();
 
-  // Collect group metadata from directory names and index files
+  // 3. OPTIMIZED METADATA COLLECTION
   const groupMeta = new Map<
     string,
     { title: string; position?: number; icon?: string }
   >();
+  const groupIndexFiles: ParsedDocFile[] = [];
+
   for (const p of parsed) {
+    if (p.isGroupIndex && p.relativeDir) {
+      groupIndexFiles.push(p);
+    }
+
     if (p.relativeDir) {
-      if (!groupMeta.has(p.relativeDir)) {
-        groupMeta.set(p.relativeDir, {
+      let entry = groupMeta.get(p.relativeDir);
+      if (!entry) {
+        entry = {
           title: capitalize(p.relativeDir),
           position: p.inferredGroupPosition,
           icon: p.route.icon,
-        });
+        };
+        groupMeta.set(p.relativeDir, entry);
       } else {
-        const entry = groupMeta.get(p.relativeDir)!;
         if (
           entry.position === undefined &&
           p.inferredGroupPosition !== undefined
@@ -95,85 +121,152 @@ export async function generateRoutes(
         }
       }
     }
+  }
 
-    if (p.isGroupIndex && p.relativeDir && p.groupMeta) {
-      const entry = groupMeta.get(p.relativeDir)!;
+  // Override with explicit group index metadata
+  for (const p of groupIndexFiles) {
+    const entry = groupMeta.get(p.relativeDir!)!;
+    if (p.groupMeta) {
       entry.title = p.groupMeta.title;
-      if (p.groupMeta.position !== undefined) {
+      if (p.groupMeta.position !== undefined)
         entry.position = p.groupMeta.position;
-      }
-      if (p.groupMeta.icon) {
-        entry.icon = p.groupMeta.icon;
-      }
+      if (p.groupMeta.icon) entry.icon = p.groupMeta.icon;
     }
   }
 
-  // Build final routes with group info
-  const routes: RouteMeta[] = parsed.map((p) => {
+  // 4. BUILD BASE ROUTES
+  const routes: RouteMeta[] = new Array(parsed.length);
+  for (let i = 0; i < parsed.length; i++) {
+    const p = parsed[i];
     const dir = p.relativeDir;
     const meta = dir ? groupMeta.get(dir) : undefined;
 
-    return {
+    routes[i] = {
       ...p.route,
       group: dir,
       groupTitle: meta?.title || (dir ? capitalize(dir) : undefined),
       groupPosition: meta?.position,
       groupIcon: meta?.icon,
     };
-  });
-
-  // Add fallbacks if i18n is enabled
-  if (config?.i18n) {
-    const defaultLocale = config.i18n.defaultLocale;
-    const allLocales = Object.keys(config.i18n.locales);
-
-    const fallbackRoutes: RouteMeta[] = [];
-    const defaultRoutes = routes.filter(
-      (r) => (r.locale || defaultLocale) === defaultLocale,
-    );
-
-    for (const locale of allLocales) {
-      if (locale === defaultLocale) continue;
-
-      const localeRoutePaths = new Set(
-        routes.filter((r) => r.locale === locale).map((r) => r.path),
-      );
-
-      for (const defRoute of defaultRoutes) {
-        let prefix = basePath;
-        if (defRoute.version) {
-          prefix += "/" + defRoute.version;
-        }
-
-        let pathAfterVersion = defRoute.path.substring(prefix.length);
-
-        if (pathAfterVersion.startsWith("/" + defaultLocale + "/")) {
-          pathAfterVersion = pathAfterVersion.substring(
-            defaultLocale.length + 1,
-          );
-        } else if (pathAfterVersion === "/" + defaultLocale) {
-          pathAfterVersion = "/";
-        }
-        const targetPath =
-          prefix +
-          "/" +
-          locale +
-          (pathAfterVersion === "/" || pathAfterVersion === ""
-            ? ""
-            : pathAfterVersion);
-
-        if (!localeRoutePaths.has(targetPath)) {
-          fallbackRoutes.push({
-            ...defRoute,
-            path: targetPath,
-            locale: locale,
-          });
-        }
-      }
-    }
-
-    return sortRoutes([...routes, ...fallbackRoutes]);
   }
 
-  return sortRoutes(routes);
+  // 5. OPTIMIZED I18N FALLBACKS
+  let finalRoutes = routes;
+  if (config?.i18n) {
+    const fallbacks = generateI18nFallbacks(routes, config, basePath);
+    finalRoutes = [...routes, ...fallbacks];
+  }
+
+  const sorted = sortRoutes(finalRoutes);
+
+  const duration = performance.now() - start;
+  console.log(
+    `[boltdocs] Route generation: ${duration.toFixed(2)}ms (${files.length} files, ${cacheHits} cache hits)`,
+  );
+
+  return sorted;
+}
+
+/**
+ * Generates fallback routes for missing translations.
+ * Optimization: Uses Map for O(1) existence checks instead of nested filters.
+ */
+function generateI18nFallbacks(
+  routes: RouteMeta[],
+  config: BoltdocsConfig,
+  basePath: string,
+): RouteMeta[] {
+  const defaultLocale = config.i18n!.defaultLocale;
+  const allLocales = Object.keys(config.i18n!.locales);
+  const fallbackRoutes: RouteMeta[] = [];
+
+  // Index existing routes by locale for O(1) lookup
+  const routesByLocale = new Map<string, Set<string>>();
+  const defaultRoutes: RouteMeta[] = [];
+
+  for (const r of routes) {
+    const locale = r.locale || defaultLocale;
+    if (!routesByLocale.has(locale)) {
+      routesByLocale.set(locale, new Set());
+    }
+    routesByLocale.get(locale)!.add(r.path);
+
+    if (locale === defaultLocale) {
+      defaultRoutes.push(r);
+    }
+  }
+
+  for (const locale of allLocales) {
+    if (locale === defaultLocale) continue;
+
+    const localePaths = routesByLocale.get(locale) || new Set<string>();
+
+    for (const defRoute of defaultRoutes) {
+      const targetPath = computeLocalizedPath(
+        defRoute.path,
+        defaultLocale,
+        locale,
+        basePath,
+      );
+
+      if (!localePaths.has(targetPath)) {
+        fallbackRoutes.push({
+          ...defRoute,
+          path: targetPath,
+          locale,
+        });
+      }
+    }
+  }
+
+  return fallbackRoutes;
+}
+
+/**
+ * Computes a localized path based on the default locale and target locale.
+ * Uses a cache to avoid redundant string manipulation.
+ */
+function computeLocalizedPath(
+  path: string,
+  defaultLocale: string,
+  targetLocale: string,
+  basePath: string,
+): string {
+  const cacheKey = `${path}:${targetLocale}`;
+  const cached = localizedPathCache.get(cacheKey);
+  if (cached) return cached;
+
+  let prefix = basePath;
+  const versionMatch = path.match(new RegExp(`^${basePath}/(v[0-9]+)`));
+  if (versionMatch) {
+    prefix += "/" + versionMatch[1];
+  }
+
+  let pathAfterVersion = path.substring(prefix.length);
+
+  // Handle case where path already has default locale
+  const defaultLocaleSegment = `/${defaultLocale}`;
+  if (pathAfterVersion.startsWith(defaultLocaleSegment + "/")) {
+    pathAfterVersion =
+      "/" +
+      targetLocale +
+      "/" +
+      pathAfterVersion.substring(defaultLocaleSegment.length + 1);
+  } else if (pathAfterVersion === defaultLocaleSegment) {
+    pathAfterVersion = "/" + targetLocale;
+  } else if (pathAfterVersion === "/" || pathAfterVersion === "") {
+    pathAfterVersion = "/" + targetLocale;
+  } else {
+    // Ensure pathAfterVersion starts with a slash if not already
+    const pathPrefix = pathAfterVersion.startsWith("/") ? "" : "/";
+    pathAfterVersion = "/" + targetLocale + pathPrefix + pathAfterVersion;
+  }
+
+  const result = prefix + pathAfterVersion;
+
+  // Simple cache eviction to prevent memory leaks in extreme cases
+  if (localizedPathCache.size > 2000) localizedPathCache.clear();
+  localizedPathCache.set(cacheKey, result);
+
+  return result;
 }
