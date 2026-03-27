@@ -290,7 +290,29 @@
   margin: 0 !important;
   border-radius: 0 !important;
   border: none !important;
+  /* Allow Shiki background to show if provided, otherwise fallback to wrapper */
+  background-color: inherit !important;
+}
+
+/* Shiki Dual Theme Support */
+.shiki-wrapper .shiki.shiki-themes {
   background-color: transparent !important;
+  color: var(--shiki-light) !important;
+}
+
+.shiki-wrapper .shiki.shiki-themes span {
+  color: var(--shiki-light);
+}
+
+/* Dark mode overrides */
+:root[data-theme="dark"] .shiki-wrapper .shiki.shiki-themes,
+:root:not(.theme-light) .shiki-wrapper .shiki.shiki-themes {
+  color: var(--shiki-dark) !important;
+}
+
+:root[data-theme="dark"] .shiki-wrapper .shiki.shiki-themes span,
+:root:not(.theme-light) .shiki-wrapper .shiki.shiki-themes span {
+  color: var(--shiki-dark) !important;
 }
 
 .code-block-wrapper pre > code {
