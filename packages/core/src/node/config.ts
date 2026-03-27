@@ -1,7 +1,7 @@
 import path from "path";
 import { pathToFileURL } from "url";
 import fs from "fs";
-import type { Plugin as VitePlugin } from "vite";
+import { loadConfigFromFile, type Plugin as VitePlugin } from "vite";
 
 /**
  * Represents a single social link in the configuration.
@@ -96,9 +96,9 @@ export interface BoltdocsThemeConfig {
    * The syntax highlighting theme for code blocks.
    * Supports any Shiki theme name (e.g., 'github-dark', 'one-dark-pro', 'aurora-x').
    * Can also be an object for multiple themes (e.g., { light: 'github-light', dark: 'github-dark' }).
-   * Default: 'one-dark-pro'
+   * Default: { light: 'github-light', dark: 'one-dark-pro' }
    */
-  codeTheme?: string | Record<string, string>;
+  codeTheme?: string | { light: string; dark: string };
   /**
    * Configuration for the 'Copy Markdown' button.
    * Can be a boolean or an object with text and icon.
@@ -146,6 +146,19 @@ export interface BoltdocsPlugin {
 }
 
 /**
+ * Configuration for external integrations (e.g., CodeSandbox).
+ */
+export interface BoltdocsIntegrationsConfig {
+  /** CodeSandbox integration settings */
+  sandbox?: {
+    /** Whether to enable the "Open in Sandbox" button in CodeBlocks */
+    enable?: boolean;
+    /** Default options for the sandbox (files, dependencies, etc.) */
+    config?: any; // Using any here because client types are not easily imported in Node, but it will be SandboxOptions on the client
+  };
+}
+
+/**
  * The root configuration object for Boltdocs.
  */
 export interface BoltdocsConfig {
@@ -163,6 +176,8 @@ export interface BoltdocsConfig {
   plugins?: BoltdocsPlugin[];
   /** Map of custom external route paths to component file paths */
   external?: Record<string, string>;
+  /** External integrations configuration */
+  integrations?: BoltdocsIntegrationsConfig;
 }
 
 export const CONFIG_FILES = [
@@ -194,43 +209,72 @@ export async function resolveConfig(
         { text: "Home", link: "/" },
         { text: "Documentation", link: "/docs" },
       ],
+      codeTheme: {
+        light: "github-light",
+        dark: "one-dark-pro",
+      },
+      poweredBy: true,
+      linkPreview: true,
+      breadcrumbs: true,
     },
   };
+
+  let userConfig: any = {};
 
   // Try to load user config
   for (const filename of CONFIG_FILES) {
     const configPath = path.resolve(projectRoot, filename);
     if (fs.existsSync(configPath)) {
       try {
-        // Add a timestamp query parameter to bust the ESM cache in dev
-        const isTest =
-          process.env.NODE_ENV === "test" || (global as any).__vitest_worker__;
-        const fileUrl =
-          pathToFileURL(configPath).href + (isTest ? "" : "?t=" + Date.now());
-        const mod = await import(fileUrl);
-        const userConfig = mod.default || mod;
-
-        // Merge user themeConfig into defaults
-        // Support new format where user exports BoltdocsConfig directly
-        const userThemeConfig = userConfig.themeConfig || userConfig;
-
-        return {
-          docsDir: path.resolve(docsDir),
-          themeConfig: {
-            ...defaults.themeConfig,
-            ...userThemeConfig,
-          },
-          i18n: userConfig.i18n,
-          versions: userConfig.versions,
-          siteUrl: userConfig.siteUrl,
-          plugins: userConfig.plugins || [],
-          external: userConfig.external,
-        };
+        const loaded = await loadConfigFromFile({ command: 'serve', mode: 'development' }, configPath, projectRoot);
+        if (loaded) {
+          userConfig = loaded.config;
+          break;
+        }
       } catch (e) {
         console.warn(`[boltdocs] Failed to load config from ${filename}:`, e);
       }
     }
   }
 
-  return defaults;
+  // Robust merging strategy
+  const themeConfigFromTop = {
+    title: userConfig.title,
+    description: userConfig.description,
+    logo: userConfig.logo,
+    navbar: userConfig.navbar,
+    sidebar: userConfig.sidebar,
+    socialLinks: userConfig.socialLinks,
+    footer: userConfig.footer,
+    githubRepo: userConfig.githubRepo,
+    tabs: userConfig.tabs,
+  };
+
+  // User can define properties at top level or inside themeConfig
+  const userThemeConfig = {
+    ...themeConfigFromTop,
+    ...(userConfig.themeConfig || {}),
+  };
+
+  // Clean undefined properties from userThemeConfig to prevent overwriting defaults with undefined
+  Object.keys(userThemeConfig).forEach(key => {
+    if ((userThemeConfig as any)[key] === undefined) {
+      delete (userThemeConfig as any)[key];
+    }
+  });
+
+  return {
+    docsDir: path.resolve(docsDir),
+    themeConfig: {
+      ...defaults.themeConfig,
+      ...userThemeConfig,
+      codeTheme: userThemeConfig.codeTheme || (userConfig.themeConfig || userConfig).codeTheme || defaults.themeConfig?.codeTheme,
+    },
+    i18n: userConfig.i18n,
+    versions: userConfig.versions,
+    siteUrl: userConfig.siteUrl,
+    plugins: userConfig.plugins || [],
+    external: userConfig.external,
+    integrations: userConfig.integrations,
+  };
 }
