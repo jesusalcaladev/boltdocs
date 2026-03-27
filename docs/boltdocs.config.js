@@ -5,7 +5,10 @@ export default {
   title: 'boltdocs',
   siteUrl: "https://boltdocs.vercel.app/",
   themeConfig: {
-    codeTheme: "github-dark",
+    codeTheme: {
+      light: "github-light",
+      dark: "github-dark",
+    },
     logo: {
       dark: '/light.svg',
       light: '/dark.svg',
@@ -21,7 +24,7 @@ export default {
       {
         text: "Docs",
         position: 'right',
-        href: "/docs/overview/introduction",
+        link: "/docs/overview/introduction",
       },
     ],
     linkPreview: true,
@@ -34,5 +37,10 @@ export default {
       { id: "plugins", text: "Plugins", icon: "Plug" },
       { id: "integrations", text: "Integrations", icon: "Code" }
     ]
-  }
+  },
+   integrations: {
+    sandbox: {
+      enable: false,
+    }
+  },
 };
