@@ -67,6 +67,10 @@ export function getBoltdocsConfig(projectName: string) {
  */
 export default {
   title: '${projectName}',
+  // Example of adding external custom pages, mapped by route path:
+  // external: {
+  //   "/pricing": "./src/Pricing.tsx"
+  // }
 };
 `;
 }

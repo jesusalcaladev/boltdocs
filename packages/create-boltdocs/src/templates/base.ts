@@ -29,7 +29,7 @@ export function Button({ children, ...props }) {
   );
 }
 `;
-  const buttonFile = 'Button.tsx';
+  const buttonFile = "Button.tsx";
   const mainContent = `export { Button } from './components/Button';\n`;
 
   fs.writeFileSync(path.join(componentsDir, buttonFile), buttonContent);
@@ -63,7 +63,7 @@ export default function HomePage() {
         }}>
           Get Started
         </a>
-        <a href="https://github.com/jesusalcaladev/litedocs" target="_blank" rel="noreferrer" style={{ 
+        <a href="https://github.com/jesusalcaladev/boltdocs" target="_blank" rel="noreferrer" style={{ 
           padding: "0.75rem 1.5rem", 
           backgroundColor: "transparent", 
           color: "var(--ld-text-main)",
