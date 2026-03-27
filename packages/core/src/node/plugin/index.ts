@@ -161,6 +161,7 @@ export function boltdocsPlugin(
         if (id === "\0virtual:boltdocs-config") {
           const clientConfig = {
             themeConfig: config?.themeConfig,
+            integrations: config?.integrations,
             i18n: config?.i18n,
             versions: config?.versions,
             siteUrl: config?.siteUrl,
