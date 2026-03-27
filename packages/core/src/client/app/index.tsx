@@ -13,63 +13,15 @@ import { Loading } from "../theme/ui/Loading";
 import { MDXProvider } from "@mdx-js/react";
 import { ThemeProvider } from "../theme/ThemeContext";
 import { ComponentRoute, CreateBoltdocsAppOptions } from "../types";
-import {
-  createContext,
-  useContext,
-  Suspense,
-  lazy,
-  useLayoutEffect,
-} from "react";
-import { Link as LucideLink } from "lucide-react";
+import { createContext, useContext, useLayoutEffect } from "react";
+import { mdxComponentsDefault } from "./mdx-component";
 
 export const ConfigContext = createContext<any>(null);
 
 export function useConfig() {
   return useContext(ConfigContext);
 }
-
-import { CodeBlock } from "../theme/components/CodeBlock";
-const Video = lazy(() =>
-  import("../theme/components/Video").then((m) => ({ default: m.Video })),
-);
 import { PreloadProvider } from "./preload";
-
-const Heading = ({
-  level,
-  id,
-  children,
-}: {
-  level: number;
-  id?: string;
-  children: React.ReactNode;
-}) => {
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-  return (
-    <Tag id={id} className="boltdocs-heading">
-      {children}
-      {id && (
-        <a href={`#${id}`} className="header-anchor" aria-label="Anchor">
-          <LucideLink size={16} />
-        </a>
-      )}
-    </Tag>
-  );
-};
-
-const mdxComponents = {
-  h1: (props: any) => <Heading level={1} {...props} />,
-  h2: (props: any) => <Heading level={2} {...props} />,
-  h3: (props: any) => <Heading level={3} {...props} />,
-  h4: (props: any) => <Heading level={4} {...props} />,
-  h5: (props: any) => <Heading level={5} {...props} />,
-  h6: (props: any) => <Heading level={6} {...props} />,
-  pre: (props: any) => <CodeBlock {...props}>{props.children}</CodeBlock>,
-  video: (props: any) => (
-    <Suspense fallback={<div className="video-skeleton" />}>
-      <Video {...props} />
-    </Suspense>
-  ),
-};
 
 export function AppShell({
   initialRoutes,
@@ -139,84 +91,86 @@ export function AppShell({
   return (
     <ThemeProvider>
       <ConfigContext.Provider value={config}>
-      <PreloadProvider routes={routesInfo} modules={modules}>
-        <ScrollHandler />
-        <Routes>
-          {/* Custom home page WITHOUT docs layout */}
-          {HomePage && (
-            <Route
-              path="/"
-              element={
-                <ThemeLayout
-                  config={config}
-                  routes={routesInfo}
-                  sidebar={null}
-                  toc={null}
-                  breadcrumbs={null}
-                  {...config.themeConfig?.layoutProps}
-                >
-                  <HomePage />
-                </ThemeLayout>
-              }
-            />
-          )}
-
-          {/* Custom External Pages WITHOUT docs layout */}
-          {Object.entries(computedExternalPages).map(([extPath, ExtComponent]: [string, React.ComponentType<any>]) => (
-            <Route
-              key={extPath}
-              path={extPath}
-              element={
-                <ThemeLayout
-                  config={config}
-                  routes={routesInfo}
-                  sidebar={null}
-                  toc={null}
-                  breadcrumbs={null}
-                  {...config.themeConfig?.layoutProps}
-                >
-                  <ExtComponent />
-                </ThemeLayout>
-              }
-            />
-          ))}
-
-          {/* Documentation pages WITH sidebar + TOC layout */}
-          <Route
-            key="docs-layout"
-            element={<DocsLayout config={config} routes={routesInfo} />}
-          >
-            {resolvedRoutes.map((route: any) => (
+        <PreloadProvider routes={routesInfo} modules={modules}>
+          <ScrollHandler />
+          <Routes>
+            {/* Custom home page WITHOUT docs layout */}
+            {HomePage && (
               <Route
-                key={route.path}
-                path={route.path === "" ? "/" : route.path}
+                path="/"
                 element={
-                  <React.Suspense fallback={<Loading />}>
-                    <MdxPage
-                      Component={route.Component}
-                      customComponents={customComponents}
-                    />
-                  </React.Suspense>
+                  <ThemeLayout
+                    config={config}
+                    routes={routesInfo}
+                    sidebar={null}
+                    toc={null}
+                    breadcrumbs={null}
+                    {...config.themeConfig?.layoutProps}
+                  >
+                    <HomePage />
+                  </ThemeLayout>
                 }
               />
-            ))}
-          </Route>
+            )}
 
-          <Route
-            path="*"
-            element={
-              <ThemeLayout
-                config={config}
-                routes={routesInfo}
-                {...config.themeConfig?.layoutProps}
-              >
-                <NotFound />
-              </ThemeLayout>
-            }
-          />
-        </Routes>
-      </PreloadProvider>
-    </ConfigContext.Provider>
+            {/* Custom External Pages WITHOUT docs layout */}
+            {Object.entries(computedExternalPages).map(
+              ([extPath, ExtComponent]: [string, React.ComponentType<any>]) => (
+                <Route
+                  key={extPath}
+                  path={extPath}
+                  element={
+                    <ThemeLayout
+                      config={config}
+                      routes={routesInfo}
+                      sidebar={null}
+                      toc={null}
+                      breadcrumbs={null}
+                      {...config.themeConfig?.layoutProps}
+                    >
+                      <ExtComponent />
+                    </ThemeLayout>
+                  }
+                />
+              ),
+            )}
+
+            {/* Documentation pages WITH sidebar + TOC layout */}
+            <Route
+              key="docs-layout"
+              element={<DocsLayout config={config} routes={routesInfo} />}
+            >
+              {resolvedRoutes.map((route: any) => (
+                <Route
+                  key={route.path}
+                  path={route.path === "" ? "/" : route.path}
+                  element={
+                    <React.Suspense fallback={<Loading />}>
+                      <MdxPage
+                        Component={route.Component}
+                        customComponents={customComponents}
+                      />
+                    </React.Suspense>
+                  }
+                />
+              ))}
+            </Route>
+
+            <Route
+              path="*"
+              element={
+                <ThemeLayout
+                  config={config}
+                  routes={routesInfo}
+                  {...config.themeConfig?.layoutProps}
+                >
+                  <NotFound />
+                </ThemeLayout>
+              }
+            />
+          </Routes>
+        </PreloadProvider>
+      </ConfigContext.Provider>
     </ThemeProvider>
   );
 }
@@ -287,7 +241,7 @@ function MdxPage({
   Component: React.LazyExoticComponent<any>;
   customComponents?: Record<string, React.ComponentType<any>>;
 }) {
-  const allComponents = { ...mdxComponents, ...customComponents };
+  const allComponents = { ...mdxComponentsDefault, ...customComponents };
   return (
     <MDXProvider components={allComponents}>
       <Component />
@@ -317,8 +271,17 @@ function MdxPage({
  * ```
  */
 export function createBoltdocsApp(options: CreateBoltdocsAppOptions) {
-  const { target, routes, docsDirName, config, modules, hot, homePage, externalPages, components } =
-    options;
+  const {
+    target,
+    routes,
+    docsDirName,
+    config,
+    modules,
+    hot,
+    homePage,
+    externalPages,
+    components,
+  } = options;
   const container = document.querySelector(target);
   if (!container) {
     throw new Error(
