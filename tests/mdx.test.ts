@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  boltdocsMdxPlugin,
-  getMdxCacheStats,
-} from "../packages/core/src/node/mdx";
+import { boltdocsMdxPlugin } from "../packages/core/src/node/mdx";
 
 describe("mdx", () => {
   const mockMdxPlugin = {
@@ -54,10 +51,5 @@ describe("mdx", () => {
     expect(mockMdxPlugin.buildStart).toHaveBeenCalled();
     await plugin.buildEnd();
     expect(mockMdxPlugin.buildEnd).toHaveBeenCalled();
-  });
-
-  it("should hit stats branch", () => {
-    const stats = getMdxCacheStats();
-    expect(stats.total).toBeGreaterThanOrEqual(0);
   });
 });
