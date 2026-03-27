@@ -1,5 +1,6 @@
 import React, { Children } from "react";
 import { Check, ChevronRight } from "lucide-react";
+import "./List.css";
 
 export interface ListProps extends React.HTMLAttributes<HTMLUListElement> {
   /** Visual variant */

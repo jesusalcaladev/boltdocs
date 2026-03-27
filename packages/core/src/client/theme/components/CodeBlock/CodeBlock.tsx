@@ -1,68 +1,126 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Copy, Check, Box } from "lucide-react";
 import { copyToClipboard } from "../../../utils";
 import { openSandbox } from "../../../integrations/codesandbox";
-
+import { useConfig } from "../../../app";
 
 interface CodeBlockProps {
   children?: React.ReactNode;
   className?: string;
-  hideSandbox?: boolean;
+  sandbox?: boolean | any;
   hideCopy?: boolean;
+  hideSandbox?: boolean;
   title?: string;
+  lang?: string;
+  highlightedHtml?: string;
   [key: string]: any;
 }
 
 /**
- * A specialized wrapper for code snippets compiled from MDX blocks.
- * Provides syntax highlighting styling scaffolding and a "Copy to Clipboard" button.
+ * Hook to handle the interactive logic for the CodeBlock component.
+ * Manages copying to clipboard, sandbox integration, and expansion states.
+ *
+ * @param props - Component properties.
+ * @returns An object containing the current states and event handlers.
  */
-export function CodeBlock({
-  children,
-  hideSandbox = true, // Default to true for static blocks unless specified
-  hideCopy = false,
-  title,
-  ...props
-}: CodeBlockProps) {
+function useCodeBlock(props: CodeBlockProps) {
+  const { title, children, highlightedHtml, sandbox: localSandbox } = props;
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isExpandable, setIsExpandable] = useState(false);
   const preRef = useRef<HTMLPreElement>(null);
+  const config = useConfig();
 
   const handleCopy = useCallback(async () => {
-    const code = preRef.current?.textContent || "";
+    const code = preRef.current?.textContent ?? "";
     copyToClipboard(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, []);
 
   const handleSandbox = useCallback(() => {
-    const code = preRef.current?.textContent || "";
+    const code = preRef.current?.textContent ?? "";
+    const globalSandbox = config?.integrations?.sandbox;
+
+    // Resolve base options: props > global config
+    const baseOptions =
+      typeof localSandbox === "object"
+        ? localSandbox
+        : globalSandbox?.config?.options || globalSandbox?.config || {};
+
+    const entry = baseOptions.entry || "src/App.tsx";
+
     openSandbox({
-      title: title || "Code Snippet",
+      title: title ?? "Code Snippet",
+      ...baseOptions,
       files: {
-        "index.js": { content: code },
+        ...baseOptions.files,
+        [entry]: { content: code },
       },
     });
-  }, [title]);
+  }, [title, config, localSandbox]);
 
+  useEffect(() => {
+    const codeLength = preRef.current?.textContent?.length ?? 0;
+    setIsExpandable(codeLength > 120);
+  }, [children, highlightedHtml]);
 
+  return {
+    copied,
+    isExpanded,
+    setIsExpanded,
+    isExpandable,
+    preRef,
+    handleCopy,
+    handleSandbox,
+    shouldTruncate: isExpandable && !isExpanded,
+  };
+}
 
-  React.useEffect(() => {
-    if (preRef.current) {
-      const codeLength = preRef.current.textContent?.length || 0;
-      setIsExpandable(codeLength > 500);
-    }
-  }, [children]);
+/**
+ * A specialized wrapper for code snippets.
+ * Provides syntax highlighting support and interactive tools like "Copy"
+ * and "Open in Sandbox".
+ *
+ * It prioritizes rendering pre-highlighted HTML from the server for performance.
+ *
+ * @param props - Component properties including the code and configuration.
+ * @returns A structured code block with a toolbar and scrollable code area.
+ */
+export function CodeBlock(props: CodeBlockProps) {
+  const {
+    children,
+    sandbox: localSandbox,
+    hideSandbox = true,
+    hideCopy = false,
+    highlightedHtml,
+    ...rest
+  } = props;
 
-  const shouldTruncate = isExpandable && !isExpanded;
+  const config = useConfig();
+  const globalSandbox = config?.integrations?.sandbox;
+
+  // Show sandbox button only if explicitly enabled via props AND globally enabled
+  // Default is false (hidden)
+  const isSandboxEnabled = !!globalSandbox?.enable && !hideSandbox;
+
+  const {
+    copied,
+    isExpanded,
+    setIsExpanded,
+    isExpandable,
+    preRef,
+    handleCopy,
+    handleSandbox,
+    shouldTruncate,
+  } = useCodeBlock(props);
 
   return (
     <div
       className={`code-block-wrapper ${shouldTruncate ? "is-truncated" : ""}`}
     >
       <div className="code-block-toolbar">
-        {!hideSandbox && (
+        {isSandboxEnabled && (
           <button
             className="code-block-toolbar-btn sandbox-btn"
             onClick={handleSandbox}
@@ -83,9 +141,19 @@ export function CodeBlock({
           </button>
         )}
       </div>
-      <pre ref={preRef} {...props}>
-        {children}
-      </pre>
+
+      {highlightedHtml ? (
+        <div
+          ref={preRef as any}
+          className="shiki-wrapper"
+          dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+        />
+      ) : (
+        <pre ref={preRef} {...rest}>
+          {children}
+        </pre>
+      )}
+
       {isExpandable && (
         <div className="code-block-expand-wrapper">
           <button

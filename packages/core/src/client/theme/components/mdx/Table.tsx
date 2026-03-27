@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React from "react";
+import { useTable } from "../../hooks/useTable";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import "./Table.css";
 
 export interface TableProps {
   headers?: string[];
@@ -20,46 +22,14 @@ export function Table({
   paginated = false,
   pageSize = 10,
 }: TableProps) {
-  const [sortConfig, setSortConfig] = useState<{ key: number; direction: 'asc' | 'desc' } | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const processedData = useMemo(() => {
-    if (!data) return [];
-    let items = [...data];
-
-    if (sortable && sortConfig !== null) {
-      items.sort((a, b) => {
-        const aVal = a[sortConfig.key];
-        const bVal = b[sortConfig.key];
-        
-        // Simple string comparison for sorting
-        const aStr = typeof aVal === 'string' ? aVal : '';
-        const bStr = typeof bVal === 'string' ? bVal : '';
-
-        if (aStr < bStr) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aStr > bStr) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-
-    return items;
-  }, [data, sortConfig, sortable]);
-
-  const totalPages = Math.ceil(processedData.length / pageSize);
-  const paginatedData = useMemo(() => {
-    if (!paginated) return processedData;
-    const start = (currentPage - 1) * pageSize;
-    return processedData.slice(start, start + pageSize);
-  }, [processedData, paginated, currentPage, pageSize]);
-
-  const requestSort = (index: number) => {
-    if (!sortable) return;
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig && sortConfig.key === index && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key: index, direction });
-  };
+  const {
+    sortConfig,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedData,
+    requestSort,
+  } = useTable({ data, sortable, paginated, pageSize });
 
   const renderSortIcon = (index: number) => {
     if (!sortable) return null;

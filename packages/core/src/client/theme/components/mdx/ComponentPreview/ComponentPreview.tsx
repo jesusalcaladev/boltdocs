@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
-import { Copy, Check, Box } from "lucide-react";
 import { type SandboxOptions } from "../../../../types";
-import { CodeBlock, useConfig, useTheme } from "../../../../index";
+import { CodeBlock } from "../../../../index";
 import "./ComponentPreview.css";
 
 export interface ComponentPreviewProps {
@@ -14,9 +13,9 @@ export interface ComponentPreviewProps {
    */
   highlightedHtml?: string;
   /**
-   * You can pass the component to preview as children, or use the `preview` prop.
+   * The code to display in the code block.
    */
-  children?: React.ReactNode;
+  children?: string;
   /**
    * The component instance to preview.
    */
@@ -39,35 +38,54 @@ export interface ComponentPreviewProps {
   sandboxOptions?: SandboxOptions;
 }
 
-export function ComponentPreview({
-  code: propsCode,
-  highlightedHtml,
-  children,
-  preview,
-  hideCode = false,
-  hideSandbox = false,
-  hideCopy = false,
-  sandboxOptions = {},
-}: ComponentPreviewProps) {
-  const config = useConfig();
-  const { theme: siteTheme } = useTheme();
+/**
+ * Hook to handle the logic for ComponentPreview.
+ * Separates data processing from the visual representation.
+ *
+ * @param props - The properties passed to the component.
+ * @returns An object containing the processed state and derived values.
+ */
+function useComponentPreview(props: ComponentPreviewProps) {
+  const { code: propsCode, children, preview } = props;
 
   const initialCode = useMemo(() => {
-    let base = propsCode || "";
-    if (!base && typeof children === "string") {
-      base = children;
-    }
+    let base = propsCode ?? (typeof children === "string" ? children : "");
     return base.trim();
   }, [propsCode, children]);
 
-  const previewElement =
-    preview || (typeof children !== "string" ? children : null);
+  const previewElement = useMemo(() => {
+    return preview ?? (typeof children !== "string" ? children : null);
+  }, [preview, children]);
+
+  return {
+    initialCode,
+    previewElement,
+  };
+}
+
+/**
+ * ComponentPreview is a wrapper that displays a live preview of a component
+ * alongside its source code.
+ *
+ * It automatically extracts code from children if no explicit code prop is provided,
+ * and handles server-side highlighted HTML for performance.
+ *
+ * @param props - Component properties including the preview element and source code.
+ * @returns A structured preview layout with showcase and code areas.
+ */
+export function ComponentPreview(props: ComponentPreviewProps) {
+  const {
+    highlightedHtml,
+    hideCode = false,
+    hideSandbox = false,
+    hideCopy = false,
+    sandboxOptions = {},
+  } = props;
+
+  const { initialCode, previewElement } = useComponentPreview(props);
 
   return (
-    <div
-      className="boltdocs-component-preview"
-      data-highlighted={!!highlightedHtml}
-    >
+    <div className="boltdocs-component-preview">
       <div className="component-preview-showcase">{previewElement}</div>
 
       {!hideCode && (

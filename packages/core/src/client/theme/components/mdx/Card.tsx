@@ -1,4 +1,5 @@
 import React from "react";
+import "./Card.css";
 
 /* ─── Cards (grid container) ─────────────────────────────── */
 export interface CardsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -54,9 +55,16 @@ export function Card({
 }: CardProps) {
   const inner = (
     <>
-      {icon && <span className="ld-card__icon">{icon}</span>}
-      {title && <h3 className="ld-card__title">{title}</h3>}
-      {children && <div className="ld-card__body">{children}</div>}
+      <div className="ld-card__glow" />
+      {icon && (
+        <div className="ld-card__icon-wrapper">
+          <span className="ld-card__icon">{icon}</span>
+        </div>
+      )}
+      <div className="ld-card__content">
+        {title && <h3 className="ld-card__title">{title}</h3>}
+        {children && <div className="ld-card__body">{children}</div>}
+      </div>
     </>
   );
 

@@ -1,4 +1,5 @@
-import React, { Children, isValidElement, useState } from "react";
+import React, { Children, isValidElement } from "react";
+import { useFileTree } from "../../hooks/useFileTree";
 import {
   Folder,
   FileText,
@@ -7,6 +8,7 @@ import {
   FileImage,
   ChevronRight,
 } from "lucide-react";
+import "./FileTree.css";
 
 export interface FileTreeProps {
   children: React.ReactNode;
@@ -85,22 +87,35 @@ function isListElement(node: any, tag: "ul" | "li"): boolean {
   return false;
 }
 
+function parseLabel(rawLabel: string): { name: string; comment?: string } {
+  const commentMatch = rawLabel.match(/\s+(\/\/|#)\s+(.*)$/);
+  if (commentMatch) {
+    return {
+      name: rawLabel.slice(0, commentMatch.index).trim(),
+      comment: commentMatch[2],
+    };
+  }
+  return { name: rawLabel.trim() };
+}
+
 function FolderNode({
   labelText,
+  comment,
   nestedNodes,
   depth,
 }: {
   labelText: string;
+  comment?: string;
   nestedNodes: React.ReactNode[];
   depth: number;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const { isOpen, toggleOpen } = useFileTree(true);
 
   return (
     <li className="ld-file-tree__item">
       <div
         className="ld-file-tree__label ld-file-tree__label--folder"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleOpen}
         style={{ cursor: "pointer" }}
       >
         <span className="ld-file-tree__icon ld-file-tree__icon--chevron">
@@ -120,6 +135,9 @@ function FolderNode({
           />
         </span>
         <span className="ld-file-tree__name">{labelText}</span>
+        {comment && (
+          <span className="ld-file-tree__comment">{comment}</span>
+        )}
       </div>
       {isOpen && nestedNodes.length > 0 && (
         <div className="ld-file-tree__nested">
@@ -168,11 +186,13 @@ function parseNode(node: React.ReactNode, depth: number = 0): React.ReactNode {
       : children;
     const nestedNodes = hasNested ? children.slice(nestedListIndex) : [];
 
-    const rawLabelContent = getTextContent(labelNodes).trim();
-    const isExplicitDir = rawLabelContent.endsWith("/");
+    const rawLabelContent = getTextContent(labelNodes);
+    const { name, comment } = parseLabel(rawLabelContent);
+    
+    const isExplicitDir = name.endsWith("/");
     const labelText = isExplicitDir
-      ? rawLabelContent.slice(0, -1)
-      : rawLabelContent;
+      ? name.slice(0, -1)
+      : name;
 
     const isFolder = hasNested || isExplicitDir;
 
@@ -180,6 +200,7 @@ function parseNode(node: React.ReactNode, depth: number = 0): React.ReactNode {
       return (
         <FolderNode
           labelText={labelText}
+          comment={comment}
           nestedNodes={nestedNodes}
           depth={depth}
         />
@@ -192,6 +213,9 @@ function parseNode(node: React.ReactNode, depth: number = 0): React.ReactNode {
           <span className="ld-file-tree__icon ld-file-tree__icon--spacer"></span>
           <span className="ld-file-tree__icon">{getFileIcon(labelText)}</span>
           <span className="ld-file-tree__name">{labelText}</span>
+          {comment && (
+            <span className="ld-file-tree__comment">{comment}</span>
+          )}
         </div>
       </li>
     );

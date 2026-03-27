@@ -31,3 +31,9 @@ export type { LinkProps } from "./Link";
 
 export { Image } from "./Image";
 export type { ImageProps } from "./Image";
+
+export { ComponentProps } from "./ComponentProps";
+export type { ComponentPropsProps, PropItem } from "./ComponentProps";
+
+export { ComponentPreview } from "./ComponentPreview";
+export type { ComponentPreviewProps } from "./ComponentPreview";

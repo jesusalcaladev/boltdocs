@@ -47,7 +47,7 @@ export function Link({
       data-boltdocs-preview={boltdocsPreview}
       {...props}
     >
-      {children}
+      {children as any}
     </RouterLink>
   );
 }

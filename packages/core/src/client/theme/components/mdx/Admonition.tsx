@@ -8,6 +8,7 @@ import {
   Zap,
   Flame,
 } from "lucide-react";
+import "./Admonition.css";
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   note: <Bookmark size={18} />,

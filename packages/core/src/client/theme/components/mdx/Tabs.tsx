@@ -1,4 +1,6 @@
-import React, { useState, Children, isValidElement, useRef, useEffect, useMemo } from "react";
+import React, { Children, isValidElement, useMemo } from "react";
+import { useTabs } from "../../hooks/useTabs";
+import "./Tabs.css";
 import { CodeBlock } from "../CodeBlock";
 
 /* ─── Tab (individual panel) ──────────────────────────────── */
@@ -58,49 +60,10 @@ export function Tabs({ defaultIndex = 0, children }: TabsProps) {
     ) as React.ReactElement<TabProps>[];
   }, [children]);
 
-  // Ensure defaultIndex doesn't point to a disabled tab
-  const initialIndex = useMemo(() => {
-    return tabs[defaultIndex]?.props.disabled ? 
-      tabs.findIndex(t => !t.props.disabled) : defaultIndex;
-  }, [tabs, defaultIndex]);
-  
-  const [active, setActive] = useState(initialIndex === -1 ? 0 : initialIndex);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [indicatorStyle, setIndicatorStyle] = useState<React.CSSProperties>({
-    opacity: 0,
-    transform: "translateX(0)",
-    width: 0,
+  const { active, setActive, tabRefs, indicatorStyle, handleKeyDown } = useTabs({
+    initialIndex: defaultIndex,
+    tabs,
   });
-
-  useEffect(() => {
-    const activeTab = tabRefs.current[active];
-    if (activeTab) {
-      setIndicatorStyle({
-        opacity: 1,
-        width: activeTab.offsetWidth,
-        transform: `translateX(${activeTab.offsetLeft}px)`,
-      });
-    }
-  }, [active, tabs]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    let direction = 0;
-    if (e.key === "ArrowRight") direction = 1;
-    else if (e.key === "ArrowLeft") direction = -1;
-
-    if (direction !== 0) {
-      let nextIndex = (active + direction + tabs.length) % tabs.length;
-      // Skip disabled tabs
-      while (tabs[nextIndex].props.disabled && nextIndex !== active) {
-        nextIndex = (nextIndex + direction + tabs.length) % tabs.length;
-      }
-
-      if (nextIndex !== active && !tabs[nextIndex].props.disabled) {
-        setActive(nextIndex);
-        tabRefs.current[nextIndex]?.focus();
-      }
-    }
-  };
 
   return (
     <div className="ld-tabs">
