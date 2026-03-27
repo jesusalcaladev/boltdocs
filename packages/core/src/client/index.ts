@@ -1,13 +1,15 @@
 export type { BoltdocsConfig, BoltdocsThemeConfig } from "../node/config";
 export type { ComponentRoute, CreateBoltdocsAppOptions } from "./types";
 export { createBoltdocsApp } from "./app";
+export { useConfig } from "./app/index";
+export { useTheme } from "./theme/ThemeContext";
 export { ThemeLayout } from "./theme/ui/Layout";
 export { Navbar } from "./theme/ui/Navbar";
 export { Sidebar } from "./theme/ui/Sidebar";
 export { OnThisPage } from "./theme/ui/OnThisPage";
 export { Head } from "./theme/ui/Head";
 export { Breadcrumbs } from "./theme/ui/Breadcrumbs";
-export { Playground } from "./theme/components/Playground";
+
 export { NotFound } from "./theme/ui/NotFound";
 export { Loading } from "./theme/ui/Loading";
 export { CodeBlock } from "./theme/components/CodeBlock";
@@ -37,6 +39,8 @@ export {
   Warning,
   Danger,
   InfoBox,
+  ComponentProps,
+  ComponentPreview,
   Important,
   Caution,
   List,
@@ -54,6 +58,8 @@ export type {
   TabsProps,
   TabProps,
   AdmonitionProps,
+  ComponentPropsProps,
+  ComponentPreviewProps,
   ListProps,
   FileTreeProps,
   TableProps,
