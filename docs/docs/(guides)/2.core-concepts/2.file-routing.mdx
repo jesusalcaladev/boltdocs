@@ -5,6 +5,7 @@ icon: Route
 ---
 
 import { FileTree, Card, Cards, Note } from 'boltdocs/client'
+import { Hash, Folder, Link } from 'lucide-react'
 
 # File-Based Routing
 
@@ -30,16 +31,16 @@ Files are mapped automatically to URL paths based on their filename and director
 Boltdocs provides several ways to control how your routes are generated and displayed.
 
 <Cards cols={2}>
-  <Card title="Numeric Prefixes" icon="🔢">
+  <Card title="Numeric Prefixes" icon={<Hash />}>
     Use numbers like `1.introduction.mdx` to force a specific sort order in the sidebar. The number is stripped from the URL.
   </Card>
-  <Card title="Nested Sections" icon="📂">
+  <Card title="Nested Sections" icon={<Folder />}>
     Folders with an `index.mdx` act as parent pages. Folders without one act as logical groups in the sidebar.
   </Card>
-  <Card title="Custom Permalinks" icon="🔗">
+  <Card title="Custom Permalinks" icon={<Link />}>
     Override any route by adding `permalink: /my-path` to the frontmatter.
   </Card>
-  <Card title="Hidden Folders" icon="🙈">
+  <Card title="Hidden Folders" icon={<Folder />}>
     Wrap folder names in parentheses like `(guides)` to associate them with **Tabs** without affecting the URL path.
   </Card>
 </Cards>

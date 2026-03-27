@@ -5,6 +5,7 @@ icon: Download
 ---
 
 import { FileTree, Card, Cards, Note, Tip } from 'boltdocs/client'
+import { Rocket, Eye } from 'lucide-react'
 
 # Installation
 
@@ -68,11 +69,11 @@ After installation, your project will follow this standard structure:
 When your docs are ready for the world, generate a highly optimized static build:
 
 <Cards cols={2}>
-  <Card title="Build" icon="🚀">
+  <Card title="Build" icon={<Rocket />}>
     `pnpm run build`
     Generates production files in the `dist/` directory.
   </Card>
-  <Card title="Preview" icon="👀">
+  <Card title="Preview" icon={<Eye />}>
     `pnpm run preview`
     Spin up a local server to test the production build.
   </Card>

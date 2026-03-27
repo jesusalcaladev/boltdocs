@@ -1,142 +1,156 @@
 ---
 title: "CodeSandbox"
-description: "Learn how to use our project-agnostic API to create custom sandbox integrations for any project."
+description: "Learn how to use our centralized API to create reusable sandbox integrations for your project."
 icon: Code
 ---
 
-import { Playground, Field, Button, Tip, Note } from 'boltdocs/client'
-import { openSandbox } from 'boltdocs/client'
+import { ComponentPreview, Field, Button, Tip, Note, Important } from 'boltdocs/client'
 
 # Interactive Sandboxes
 
-Boltdocs features a high-performance, project-agnostic CodeSandbox API. This allows you to create immersive, live-coding experiences that aren't tied to the framework itself—perfect for showcasing design systems, complex libraries, or interactive demos.
+Boltdocs features a high-performance, centralized CodeSandbox API. This allows you to create immersive, live-coding experiences once and reuse them across all your components—perfect for showcasing design systems, complex libraries, or interactive demos.
 
-## Overview
+## 1. Global Configuration
 
-The `boltdocs/client` package handles the heavy lifting of parameter generation and cross-origin communication. You can use this API to create "Try it in CodeSandbox" buttons or embed full sandboxes directly in your documentation.
+The recommended way to use sandboxes in Boltdocs is by separating your sandbox logic into a dedicated utility file. This keeps your `boltdocs.config.js` clean and allows you to reuse the sandbox configuration in other parts of your application.
 
-<Playground 
-  code={`
-import { openSandbox, Button } from 'boltdocs/client';
+### Recommended Pattern
 
-export default function App() {
-  const handleTryItOut = () => {
-    openSandbox({
-      title: "Boltdocs Demo",
-      template: "vite",
-      dependencies: {
-        "framer-motion": "latest"
-      },
-      files: {
-        "App.tsx": {
-          content: "export default function App() { return <div>Hello from Boltdocs!</div> }"
-        }
-      }
-    });
-  };
+First, create a utility file to define your standard sandbox setup:
 
-  return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      <Button onClick={handleTryItOut} variant="primary">
-        Try it in CodeSandbox
-      </Button>
-    </div>
-  );
-}
-`} />
+```ts
+// src/utils/sandbox.ts
+import { defineSandbox } from "boltdocs/client";
 
----
-
-## Core API
-
-### `openSandbox(options: SandboxOptions)`
-
-The most direct way to launch a sandbox. It automatically handles URL generation and navigation via a hidden form POST, which avoids URL length limits.
-
-```tsx
-import { openSandbox } from 'boltdocs/client';
-
-openSandbox({
-  title: "Motion Animation Demo",
-  template: "node",
+export const standardSandbox = defineSandbox({
+  template: "vite",
   dependencies: {
-    "framer-motion": "latest"
+    "framer-motion": "latest",
+    "lucide-react": "latest",
+    "boltdocs": "latest"
   },
   files: {
-    "App.tsx": {
-      content: "import { motion } from 'framer-motion';\n..."
+    "src/index.css": {
+       content: "@import 'boltdocs/client/index.css';"
     }
   }
 });
 ```
 
-### `defineSandbox(options: SandboxOptions)`
+Then, import and use it in your `boltdocs.config.js`:
 
-If you need to generate parameters for a custom form or a specialized export button, use `defineSandbox`. It returns the encoded parameters and the target URL.
+```js
+// boltdocs.config.js
+import { standardSandbox } from "./src/utils/sandbox";
+
+export default {
+  // ...
+  integrations: {
+    sandbox: {
+      enable: true,
+      config: standardSandbox
+    }
+  }
+};
+```
+
+<Important>
+  When `enable: true` is set in the global configuration, every `CodeBlock` component will automatically display an **Open Sandbox** button that merges the current code into your `standardSandbox`.
+</Important>
+
+---
+
+## 2. Core API
+
+The `boltdocs/client` package provides several functions to interact with CodeSandbox. All functions return an object containing the generated `parameters`, the target `url`, and the original `options`.
+
+### `openSandbox(options: SandboxOptions)`
+
+Launches a sandbox in a new window using a form POST.
 
 ```tsx
-import { defineSandbox } from 'boltdocs/client';
+import { openSandbox } from 'boltdocs/client';
 
-const { parameters, url } = defineSandbox({
-  files: {
-    "index.js": { content: "console.log('Generic demo');" }
-  },
-  template: "vite"
-});
+const handleOpen = () => {
+  openSandbox({
+    title: "Live Demo",
+    files: {
+      "src/App.tsx": { content: "export default () => <div>Hello World</div>" }
+    }
+  });
+};
 ```
+
+### `defineSandbox(options: SandboxOptions)`
+
+Generates the parameters and URL without performing any action. Perfect for centralized configurations.
 
 ### `embedSandbox(options: SandboxOptions)`
 
-Generates an embeddable iframe URL. This gives you more control—you can embed the sandbox inline on the page rather than opening a new tab.
+Generates an embeddable iframe URL.
 
 ```tsx
 import { embedSandbox } from 'boltdocs/client';
 
-const url = embedSandbox({
-  files: { "index.js": { content: "console.log('hello')" } },
-  embed: { view: "editor", theme: "dark" },
-});
+export function SandboxEmbed() {
+  const { url } = embedSandbox({
+    files: { "index.js": { content: "console.log('Embedded Sandbox')" } },
+    embed: { view: "preview", theme: "dark" },
+  });
 
-// Use as <iframe src={url} />
+  return (
+    <iframe 
+      src={url}
+      style={{ width: '100%', height: '500px', border: '0', borderRadius: '8px', overflow: 'hidden' }}
+      title="CodeSandbox Embed"
+    />
+  );
+}
 ```
+
+#### Embed Example
+
+<div style={{ marginBottom: '20px' }}>
+  <iframe 
+    src="https://codesandbox.io/embed/new?codemirror=1&highlights=11,12,13,14&view=preview"
+    style={{ width: '100%', height: '400px', border: '1px solid var(--ld-border)', borderRadius: '8px' }}
+  />
+</div>
 
 ---
 
-## `SandboxOptions` Reference
-
-The configuration object accepted by the core API functions:
+## 3. `SandboxOptions` Reference
 
 <Field name="files" type="SandboxFiles">
-  A map of file paths to their content. See [SandboxFile](#sandboxfile) for details.
+  A map of file paths to their content.
 </Field>
 
 <Field name="dependencies" type="Record<string, string>">
   NPM packages to include in the sandbox `package.json`.
 </Field>
 
-<Field name="devDependencies" type="Record<string, string>">
-  NPM dev dependencies to include in the sandbox.
-</Field>
-
-<Field name="title" type="string" defaultValue="'codesandbox-project'">
-  The title of the CodeSandbox project.
-</Field>
-
-<Field name="description" type="string" defaultValue="'Generic Sandbox'">
-  A short description for the CodeSandbox project metadata.
-</Field>
-
-<Field name="template" type="string">
-  The CodeSandbox template to use (e.g., `"node"`, `"vite"`, `"static"`).
-</Field>
-
 <Field name="entry" type="string" defaultValue="'src/App.tsx'">
-  The file path to open by default in the editor.
+  The file path where the documentation code snippet will be injected.
 </Field>
 
 <Field name="embed" type="SandboxEmbedOptions">
-  Options for the embedded iframe view (used by `embedSandbox`).
+  Configuration for `embedSandbox` view.
 </Field>
+
+---
+
+## 4. CodeBlock Integration
+
+Boltdocs automatically integrates the global sandbox configuration into every code block.
+
+- **Automatic Merging**: Code is injected into the `entry` file of your global config.
+- **Per-block Customization**: Override global settings easily.
+
+```mdx
+<CodeBlock sandbox={{ title: "Specific Preview" }}>
+  {/* Merges with global config but uses this title */}
+</CodeBlock>
+```
 
 ### `SandboxFile`
 
@@ -164,62 +178,26 @@ The configuration object accepted by the core API functions:
 
 ---
 
-## Advanced Usage
+## CodeBlock Integration
 
-### Design System Presets
+Boltdocs automatically integrates the global sandbox configuration into every code block.
 
-The real power comes from creating "Presets"—reusable configurations that simulate your actual production environment. 
+- **Automatic Merging**: When you click the sandbox button in a code block, Boltdocs takes the current code and injects it into the `entry` file (default: `src/App.tsx`) of your centralized configuration.
+- **Selective Activation**: If you haven't configured a sandbox globally, the button will not be shown.
+- **Manual Overrides**: You can disable or customize the sandbox per-codeblock:
 
-```tsx
-// src/utils/sandbox.ts
-import { openSandbox, SandboxOptions } from 'boltdocs/client';
+```mdx
+<CodeBlock sandbox={false}>
+  {/* No sandbox button here */}
+</CodeBlock>
 
-/**
- * Launches a sandbox pre-configured with our Design System
- */
-export function openBrandSandbox(componentCode: string, options: SandboxOptions = {}) {
-  openSandbox({
-    ...options,
-    files: {
-      "styles.css": { content: ":root { --brand-primary: #7f13ec; }" },
-      "App.tsx": { content: componentCode },
-      ...options.files
-    },
-    dependencies: {
-      "my-ui-library": "workspace:*",
-      "react": "^18.2.0",
-      ...options.dependencies
-    }
-  });
-}
+<CodeBlock sandbox={{ title: "Specific Component Preview" }}>
+  {/* Merges with global config but uses this specific title */}
+</CodeBlock>
 ```
 
 <Tip>
-  Use `workspace:*` for dependencies if you are building a monorepo documentation site. Boltdocs will handle the resolution logic during the export.
+  Use the `entry` property in your global config to specify which file should receive the code from the documentation.
 </Tip>
-
-### Playground Integration
-
-The built-in `<Playground />` component leverages this API under the hood. You can customize its behavior by passing `sandboxOptions`.
-
-```tsx
-<Playground 
-  code={code}
-  sandboxOptions={{
-    title: "Brand Component Preview",
-    dependencies: { 
-      "canvas-confetti": "latest" 
-    }
-  }}
-/>
-```
-
-## Personalization (CSS)
-
-If you are using the `<Playground />` component, you can customize the export buttons and toolbar via CSS variables:
-
-```css
-:root {
-  --ld-playground-toolbar-bg: var(--ld-bg-mute);
-  /* Customize the sandbox button specifically if needed */
+/
 }

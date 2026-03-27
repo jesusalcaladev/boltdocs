@@ -4,33 +4,11 @@ description: "How to use frontmatter to define page metadata."
 icon: FileCode
 ---
 
-import { Field, Tip, Playground, Badge, Note } from 'boltdocs/client'
+import { Field, Tip, ComponentPreview, Badge, Note } from 'boltdocs/client'
 
 # Frontmatter Reference
 
 Boltdocs uses frontmatter to allow you to customize the metadata and sidebar appearance of your pages. Frontmatter is a block of YAML at the very top of your `.md` or `.mdx` files, delimited by `---`.
-
-## Overview
-
-Frontmatter is the "brain" of your document. It defines how the page is titled, sorted, and decorated in the sidebar.
-
-<Playground 
-  code={`
-import { Badge, Note } from 'boltdocs/client';
-
-export default function Demo() {
-  return (
-    <div style={{ padding: '20px' }}>
-      <Note title="Frontmatter Result">
-        The metadata below is what a page would "know" about itself based on frontmatter.
-      </Note>
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px' }}>
-        <strong>Status:</strong> <Badge variant="experimental">experimental</Badge>
-      </div>
-    </div>
-  );
-}
-`} />
 
 ---
 

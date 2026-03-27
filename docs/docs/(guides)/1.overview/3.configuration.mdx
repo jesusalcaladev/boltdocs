@@ -4,7 +4,7 @@ description: "Understand the configuration options for Boltdocs."
 icon: Settings
 ---
 
-import { Field, Note, Important, Tip } from 'boltdocs/client'
+import { Note, Important, Tip, ComponentProps } from 'boltdocs/client'
 
 # Configuration
 
@@ -25,101 +25,92 @@ export default {
 
 ---
 
-## Root Options (`BoltdocsConfig`)
+## Configuration Options
 
-### `siteUrl`
-<Field name="siteUrl" type="string">
-The base URL of the site, used for generating absolute paths in your sitemaps and canonical URLs.
-</Field>
+### Root Options
 
-### `docsDir`
-<Field name="docsDir" type="string" defaultValue='"docs"'>
-The root directory containing your Markdown/MDX documentation files. 
-</Field>
-
-<Important title="Theme Config">
-  The `themeConfig` property is **required** and holds the majority of your site's visual and functional settings.
-</Important>
-
-### `themeConfig`
-<Field name="themeConfig" type="BoltdocsThemeConfig" required>
-  See [Theme Configuration](#theme-configuration) for a full breakdown.
-</Field>
-
-### `i18n`
-<Field name="i18n" type="BoltdocsI18nConfig">
-  Configuration for internationalization.
-  - `defaultLocale` (`string`): The fallback locale (e.g., `"en"`).
-  - `locales` (`Record<string, string>`): Available locales mapping.
-</Field>
-
-### `versions`
-<Field name="versions" type="BoltdocsVersionsConfig">
-  Configuration for documentation versioning.
-  - `defaultVersion` (`string`): The fallback version (e.g., `"v2"`).
-  - `versions` (`Record<string, string>`): Available versions mapping.
-</Field>
+<ComponentProps
+  props={[
+    {
+      name: "siteUrl",
+      type: "string",
+      description: "The base URL of the site, used for generating absolute paths in your sitemaps and canonical URLs."
+    },
+    {
+      name: "docsDir",
+      type: "string",
+      defaultValue: '"docs"',
+      description: "The root directory containing your Markdown/MDX documentation files."
+    },
+    {
+      name: "themeConfig",
+      type: "BoltdocsThemeConfig",
+      required: true,
+      description: "Holds the majority of your site's visual and functional settings."
+    },
+    {
+      name: "i18n",
+      type: "BoltdocsI18nConfig",
+      description: "Configuration for internationalization (locales, default locale, etc.)."
+    },
+    {
+      name: "versions",
+      type: "BoltdocsVersionsConfig",
+      description: "Configuration for documentation versioning."
+    },
+    {
+      name: "external",
+      type: "Record<string, string>",
+      description: "Map of custom external route paths to their corresponding React component file paths."
+    }
+  ]}
+/>
 
 ---
 
 ## Theme Configuration
 
-### `title`
-<Field name="title" type="string" defaultValue='"Boltdocs"'>
-  The global title of your documentation site, displayed in the navbar and used for SEO.
-</Field>
-
-### `description`
-<Field name="description" type="string">
-  The global site description, used for SEO meta tags.
-</Field>
-
-### `logo`
-<Field name="logo" type="string | object">
-  The URL path to your site logo. Supports a simple string path or a specialized object for light/dark versions.
-</Field>
-
-```ts
-// boltdocs.config.ts
-export default {
-  themeConfig: {
-    // Basic format
-    logo: "/logo.png",
-
-    // Advanced themed format
-    logo: {
-      dark: "/logo-dark.png",
-      light: "/logo-light.png",
-      alt: "LiteDocs",
-      width: 32,
-      height: 32
+<ComponentProps
+  props={[
+    {
+      name: "title",
+      type: "string",
+      defaultValue: '"Boltdocs"',
+      description: "The global title of your documentation site, displayed in the navbar and used for SEO."
+    },
+    {
+      name: "description",
+      type: "string",
+      description: "The global site description, used for SEO meta tags."
+    },
+    {
+      name: "logo",
+      type: "string | object",
+      description: "The URL path to your site logo. Supports a simple string path or a specialized object for light/dark versions."
+    },
+    {
+      name: "navbar",
+      type: "NavbarItem[]",
+      description: "Items to display in the top navigation bar (links, positioning, labels)."
+    },
+    {
+      name: "sidebar",
+      type: "SidebarConfig",
+      description: "Custom sidebar groups. While Boltdocs generates the sidebar automatically, you can override it here."
+    },
+    {
+      name: "githubRepo",
+      type: "string",
+      description: "Points to your GitHub repo in owner/repo format. Enables the GitHub stars badge in the navbar."
+    },
+    {
+      name: "editLink",
+      type: "string",
+      description: "URL template for the 'Edit this page' link. Use :path for the current file."
     }
-  }
-}
-```
+  ]}
+/>
 
-### `navbar`
-<Field name="navbar" type="NavbarItem[]">
-  Items to display in the top navigation bar.
-  - `text` / `label` (`string`): Display text.
-  - `link` / `href` (`string`): Destination URL.
-  - `position` (`"left" | "right"`): Alignment.
-</Field>
-
-### `sidebar`
-<Field name="sidebar" type="SidebarConfig">
-  Custom sidebar groups. While Boltdocs generates the sidebar automatically, you can override it here.
-</Field>
-
-### `githubRepo`
-<Field name="githubRepo" type="string">
-  Points to your GitHub repo in `owner/repo` format. Enables the GitHub stars badge in the navbar.
-</Field>
-
-### `editLink`
-<Field name="editLink" type="string">
-  URL template for the 'Edit this page' link. Use `:path` for the current file.
-</Field>
 
 ---
 
@@ -161,7 +152,20 @@ export default defineConfig({
 });
 ```
 
-<Field name="homePage" type="string">
-  Path to a custom React component to render at the base route `/`.
-</Field>
+<ComponentProps
+  props={[
+    {
+      name: "docsDir",
+      type: "string",
+      defaultValue: '"docs"',
+      description: "The root directory containing your Markdown/MDX documentation files."
+    },
+    {
+      name: "homePage",
+      type: "string",
+      description: "Path to a custom React component to render at the base route /."
+    }
+  ]}
+/>
+
 
