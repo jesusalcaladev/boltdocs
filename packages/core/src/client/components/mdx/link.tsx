@@ -1,11 +1,10 @@
-import React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import type { AnchorHTMLAttributes } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 
-export interface LinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  to: string;
-  boltdocsPreview?: boolean;
-  children?: React.ReactNode;
+export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  to: string
+  boltdocsPreview?: boolean
+  children?: React.ReactNode
 }
 
 /**
@@ -16,15 +15,13 @@ export function Link({
   to,
   children,
   boltdocsPreview = true,
-  className = "",
+  className = '',
   ...props
 }: LinkProps) {
   const isExternal =
-    to.startsWith("http://") ||
-    to.startsWith("https://") ||
-    to.startsWith("//");
+    to.startsWith('http://') || to.startsWith('https://') || to.startsWith('//')
 
-  const combinedClassName = `ld-link ${className}`.trim();
+  const combinedClassName = `ld-link ${className}`.trim()
 
   if (isExternal) {
     return (
@@ -37,7 +34,7 @@ export function Link({
       >
         {children}
       </a>
-    );
+    )
   }
 
   return (
@@ -49,5 +46,5 @@ export function Link({
     >
       {children as any}
     </RouterLink>
-  );
+  )
 }

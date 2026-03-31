@@ -55,3 +55,5 @@ export function useTabs({ initialIndex = 0, tabs }: UseTabsProps) {
     handleKeyDown,
   };
 }
+
+
