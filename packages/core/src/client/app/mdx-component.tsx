@@ -1,19 +1,16 @@
-import { Link as LucideLink } from "lucide-react";
-import { CodeBlock } from "../theme/components/CodeBlock";
-import { Suspense } from "react";
-import { Video } from "../theme/components/Video";
-import * as MdxComponents from "../theme/components/mdx";
+import { Link as LucideLink } from 'lucide-react'
+import * as MdxComponents from '@components/mdx'
 
 const Heading = ({
   level,
   id,
   children,
 }: {
-  level: number;
-  id?: string;
-  children: React.ReactNode;
+  level: number
+  id?: string
+  children: React.ReactNode
 }) => {
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  const Tag = `h${level}` as keyof JSX.IntrinsicElements
   return (
     <Tag id={id} className="boltdocs-heading">
       {children}
@@ -23,8 +20,8 @@ const Heading = ({
         </a>
       )}
     </Tag>
-  );
-};
+  )
+}
 
 export const mdxComponentsDefault = {
   ...MdxComponents,
@@ -34,10 +31,9 @@ export const mdxComponentsDefault = {
   h4: (props: any) => <Heading level={4} {...props} />,
   h5: (props: any) => <Heading level={5} {...props} />,
   h6: (props: any) => <Heading level={6} {...props} />,
-  pre: (props: any) => <CodeBlock {...props}>{props.children}</CodeBlock>,
-  Video: (props: any) => (
-    <Suspense fallback={<div className="video-skeleton" />}>
-      <Video {...props} />
-    </Suspense>
+  pre: (props: any) => (
+    <MdxComponents.CodeBlock {...props}>
+      {props.children}
+    </MdxComponents.CodeBlock>
   ),
-};
+}
