@@ -35,6 +35,8 @@ This project is a monorepo using [pnpm workspaces](https://pnpm.io/workspaces) a
 
 - `packages/core`: The core framework logic containing the theme, plugins, and Vite integration.
 - `packages/create-boltdocs`: The CLI to bootstrap new projects.
+- `packages/cli`: Tools for the developer experience.
+- `docs`: The example site used to test the framework.
 
 ## Making a Pull Request
 
@@ -42,6 +44,11 @@ This project is a monorepo using [pnpm workspaces](https://pnpm.io/workspaces) a
    ```bash
    git checkout -b feature/my-awesome-feature
    ```
+   name your branch with the type of change and a short description
+   - `feature/` for new features
+   - `fix/` for bug fixes
+   - `docs/` for documentation changes
+   - `chore/` for maintenance tasks
 2. Make your changes and verify that everything works locally.
 3. Commit your changes. We recommend following [Conventional Commits](https://www.conventionalcommits.org/).
 4. Push your branch to your fork.
