@@ -1,3 +1,42 @@
+# [1.11.0](https://github.com/jesusalcaladev/boltdocs/compare/v1.10.2...v1.11.0) (2026-04-01)
+
+
+### Bug Fixes
+
+* added fill with currentColor default ([b5745bb](https://github.com/jesusalcaladev/boltdocs/commit/b5745bb0452d2f2dd47bcc7f9af60da3159fa845))
+* added router-provider for navigation optimize ([f1b64b8](https://github.com/jesusalcaladev/boltdocs/commit/f1b64b8974161e067026ac11b36ba0367ba65a80))
+* better support codesandbox ([a53a9ef](https://github.com/jesusalcaladev/boltdocs/commit/a53a9ef85215433f1fc701b75268967c8e024586))
+* **docs:** remove image & link & playground ([734263d](https://github.com/jesusalcaladev/boltdocs/commit/734263d40d726ece9f1ba580c831027a8f485d08))
+* **docs:** remove stackblitz and remove custom.css ([0d5cbcc](https://github.com/jesusalcaladev/boltdocs/commit/0d5cbcc05796ab68e3e8b031c548fa600810ee38))
+* export useConfig, useTheme, ComponentProps,ComponentPreview ([4e543c3](https://github.com/jesusalcaladev/boltdocs/commit/4e543c3cdfc74e1795210b22e5f82ff60d04ca62))
+* remove getMdxCacheStats ([7120351](https://github.com/jesusalcaladev/boltdocs/commit/7120351df3e8ae49e72ce9fad8a943b60466befa))
+* remove icons not use ([d1223c9](https://github.com/jesusalcaladev/boltdocs/commit/d1223c99fb7814e7fd270ce30f3b327884694ac9))
+* remove playground component ([3d18e79](https://github.com/jesusalcaladev/boltdocs/commit/3d18e799bb7278bab8b949ac38564f8393be202c))
+* remove utils ([75d4470](https://github.com/jesusalcaladev/boltdocs/commit/75d4470013a6975c147ad57ac03b73b93fdec6b3))
+* repare bug of links ([8c6dfab](https://github.com/jesusalcaladev/boltdocs/commit/8c6dfab1652dd63551298e6f7c5d1c7b24a66163))
+* sanitize docs ([3eabf15](https://github.com/jesusalcaladev/boltdocs/commit/3eabf154745ddd5f86dcd42fb8ceaeb9afeec884))
+* support external pages ([13f10de](https://github.com/jesusalcaladev/boltdocs/commit/13f10dee287d44ccd77adc43ac951cda3934e536))
+* support light/dark of codeTheme & integrations ([8060248](https://github.com/jesusalcaladev/boltdocs/commit/8060248f3b87e190f38118e0e297b0f4eb62742b))
+* support mdx-components ([0bc3a43](https://github.com/jesusalcaladev/boltdocs/commit/0bc3a430d524bce22ca3d4fa2a78442ca9642ce8))
+* support scripts & themeConfig ([d682df7](https://github.com/jesusalcaladev/boltdocs/commit/d682df7427648c76bd1b70ab00ed71916a42274d))
+* updated components mdx ([7f9150a](https://github.com/jesusalcaladev/boltdocs/commit/7f9150ad9197af88dd1c1101ba7329eb1c01c10b))
+* updated components mdx ([43cda65](https://github.com/jesusalcaladev/boltdocs/commit/43cda6599ebcfcc308bc5fa22bd22bc26334fd52))
+* updated mdx-components ([116cac1](https://github.com/jesusalcaladev/boltdocs/commit/116cac1b57c27f68143172ef97e9a530e0be497c))
+
+
+### Features
+
+* added ComponentPreview ([6d69199](https://github.com/jesusalcaladev/boltdocs/commit/6d69199f85fcb0f49bff3563f261efc18b453627))
+* added hooks ([580bc70](https://github.com/jesusalcaladev/boltdocs/commit/580bc70ae3970d308cc73b4b53480a622a8cbf8f))
+* added hooks ([f9c176d](https://github.com/jesusalcaladev/boltdocs/commit/f9c176d5a57803c71c6220f5f24902c24cdf7a56))
+* added plugins for highlighter for CodeBlock & CodePreview ([b0308ae](https://github.com/jesusalcaladev/boltdocs/commit/b0308ae2b86e32c279abe6dcf7cbf5881653b0f2))
+* added primitives ([ac1ca88](https://github.com/jesusalcaladev/boltdocs/commit/ac1ca88dfd38c794e43900906e481c0cffba22c4))
+* created icons-dev ([fb21dda](https://github.com/jesusalcaladev/boltdocs/commit/fb21ddaece06306f93bd708d160c979704d4c5a5))
+* remove support css ([e94d370](https://github.com/jesusalcaladev/boltdocs/commit/e94d3705a2665a2c8c19cc1f6ad367e50ac4e26f))
+* support integrations ([1accf30](https://github.com/jesusalcaladev/boltdocs/commit/1accf30ca11ce5aa0e002629abbd71dddfbc90d3))
+* support link, image component & codesandbox API ([4e22ba0](https://github.com/jesusalcaladev/boltdocs/commit/4e22ba0997b876864550d04e8dcdac828ac08dca))
+* support tailwindcss ([ff88e45](https://github.com/jesusalcaladev/boltdocs/commit/ff88e4576fed0d5764737a937d03bb6446858689))
+
 ## [1.10.2](https://github.com/jesusalcaladev/boltdocs/compare/v1.10.1...v1.10.2) (2026-03-17)
 
 
