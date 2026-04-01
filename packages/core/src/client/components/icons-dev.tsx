@@ -17,6 +17,7 @@ export const Github = (props: WrapperProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
+    fill="currentColor"
     {...wrapperProps(props)}
   >
     <title>{'GitHub'}</title>
@@ -28,6 +29,7 @@ export const Discord = (props: WrapperProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
+    fill="currentColor"
     {...wrapperProps(props)}
   >
     <title>{'Discord'}</title>
@@ -35,10 +37,11 @@ export const Discord = (props: WrapperProps) => (
   </svg>
 )
 
-export const XSocia = (props: WrapperProps) => (
+export const XSocial = (props: WrapperProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
+    fill="currentColor"
     {...wrapperProps(props)}
   >
     <title>{'X'}</title>
@@ -50,6 +53,7 @@ export const CodeSandbox = (props: WrapperProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
+    fill="currentColor"
     {...wrapperProps(props)}
   >
     <title>{'CodeSandbox'}</title>
@@ -61,6 +65,7 @@ export const Bluesky = (props: WrapperProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
+    fill="currentColor"
     {...wrapperProps(props)}
   >
     <title>{'Bluesky'}</title>
