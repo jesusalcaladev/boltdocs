@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "boltdocs",
-    "build": "boltdocs build",
-    "preview": "boltdocs preview"
+    "dev": "pnpm boltdocs",
+    "build": "pnpm boltdocs build",
+    "preview": "pnpm boltdocs preview"
   },
   "dependencies": {
     "boltdocs": "workspace:*",
