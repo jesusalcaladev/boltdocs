@@ -1,65 +1,65 @@
-import fs from "fs";
-import path from "path";
-import crypto from "crypto";
-import zlib from "zlib";
-import { promisify } from "util";
-import { getFileMtime } from "./utils";
+import fs from 'fs'
+import path from 'path'
+import crypto from 'crypto'
+import zlib from 'zlib'
+import { promisify } from 'util'
+import { getFileMtime } from './utils'
 
-const writeFile = promisify(fs.writeFile);
-const readFile = promisify(fs.readFile);
-const mkdir = promisify(fs.mkdir);
-const rename = promisify(fs.rename);
-const unlink = promisify(fs.unlink);
+const writeFile = promisify(fs.writeFile)
+const readFile = promisify(fs.readFile)
+const mkdir = promisify(fs.mkdir)
+const rename = promisify(fs.rename)
+const unlink = promisify(fs.unlink)
 
 /**
  * Configuration constants for the caching system.
  */
-const CACHE_DIR = process.env.BOLTDOCS_CACHE_DIR || ".boltdocs";
-const ASSETS_DIR = "assets";
-const SHARDS_DIR = "shards";
+const CACHE_DIR = process.env.BOLTDOCS_CACHE_DIR || '.boltdocs'
+const ASSETS_DIR = 'assets'
+const SHARDS_DIR = 'shards'
 
 /**
  * Default limits for the caching system.
  */
 const DEFAULT_LRU_LIMIT = parseInt(
-  process.env.BOLTDOCS_CACHE_LRU_LIMIT || "2000",
+  process.env.BOLTDOCS_CACHE_LRU_LIMIT || '2000',
   10,
-);
-const DEFAULT_COMPRESS = process.env.BOLTDOCS_CACHE_COMPRESS !== "0";
+)
+const DEFAULT_COMPRESS = process.env.BOLTDOCS_CACHE_COMPRESS !== '0'
 
 /**
  * Simple LRU cache implementation to prevent memory leaks.
  */
 class LRUCache<K, V> {
-  private cache = new Map<K, V>();
+  private cache = new Map<K, V>()
   constructor(private limit: number) {}
 
   get(key: K): V | undefined {
-    const val = this.cache.get(key);
+    const val = this.cache.get(key)
     if (val !== undefined) {
-      this.cache.delete(key);
-      this.cache.set(key, val);
+      this.cache.delete(key)
+      this.cache.set(key, val)
     }
-    return val;
+    return val
   }
 
   set(key: K, value: V): void {
     if (this.cache.has(key)) {
-      this.cache.delete(key);
+      this.cache.delete(key)
     } else if (this.cache.size >= this.limit) {
-      const firstKey = this.cache.keys().next().value;
+      const firstKey = this.cache.keys().next().value
       if (firstKey !== undefined) {
-        this.cache.delete(firstKey);
+        this.cache.delete(firstKey)
       }
     }
-    this.cache.set(key, value);
+    this.cache.set(key, value)
   }
 
   get size() {
-    return this.cache.size;
+    return this.cache.size
   }
   clear() {
-    this.cache.clear();
+    this.cache.clear()
   }
 }
 
@@ -67,44 +67,44 @@ class LRUCache<K, V> {
  * Simple background task queue to prevent blocking the main thread during IO.
  */
 class BackgroundQueue {
-  private queue: Promise<any> = Promise.resolve();
-  private pendingCount = 0;
+  private queue: Promise<any> = Promise.resolve()
+  private pendingCount = 0
 
   add(task: () => Promise<any>) {
-    this.pendingCount++;
+    this.pendingCount++
     this.queue = this.queue.then(task).finally(() => {
-      this.pendingCount--;
-    });
+      this.pendingCount--
+    })
   }
 
   async flush() {
-    await this.queue;
+    await this.queue
   }
 
   get pending() {
-    return this.pendingCount;
+    return this.pendingCount
   }
 }
 
-const backgroundQueue = new BackgroundQueue();
+const backgroundQueue = new BackgroundQueue()
 
 /**
  * Generic file-based cache with per-file granularity and asynchronous persistence.
  */
 export class FileCache<T> {
-  private entries = new Map<string, { data: T; mtime: number }>();
-  private readonly cachePath: string | null = null;
-  private readonly compress: boolean;
+  private entries = new Map<string, { data: T; mtime: number }>()
+  private readonly cachePath: string | null = null
+  private readonly compress: boolean
 
   constructor(
     options: { name?: string; root?: string; compress?: boolean } = {},
   ) {
     this.compress =
-      options.compress !== undefined ? options.compress : DEFAULT_COMPRESS;
+      options.compress !== undefined ? options.compress : DEFAULT_COMPRESS
     if (options.name) {
-      const root = options.root || process.cwd();
-      const ext = this.compress ? "json.gz" : "json";
-      this.cachePath = path.resolve(root, CACHE_DIR, `${options.name}.${ext}`);
+      const root = options.root || process.cwd()
+      const ext = this.compress ? 'json.gz' : 'json'
+      this.cachePath = path.resolve(root, CACHE_DIR, `${options.name}.${ext}`)
     }
   }
 
@@ -112,16 +112,16 @@ export class FileCache<T> {
    * Loads the cache. Synchronous for startup simplicity but uses fast I/O.
    */
   load(): void {
-    if (process.env.BOLTDOCS_NO_CACHE === "1") return;
-    if (!this.cachePath || !fs.existsSync(this.cachePath)) return;
+    if (process.env.BOLTDOCS_NO_CACHE === '1') return
+    if (!this.cachePath || !fs.existsSync(this.cachePath)) return
 
     try {
-      let raw = fs.readFileSync(this.cachePath);
-      if (this.cachePath.endsWith(".gz")) {
-        raw = zlib.gunzipSync(raw);
+      let raw = fs.readFileSync(this.cachePath)
+      if (this.cachePath.endsWith('.gz')) {
+        raw = zlib.gunzipSync(raw)
       }
-      const data = JSON.parse(raw.toString("utf-8"));
-      this.entries = new Map(Object.entries(data));
+      const data = JSON.parse(raw.toString('utf-8'))
+      this.entries = new Map(Object.entries(data))
     } catch (e) {
       // Fallback: ignore cache errors
     }
@@ -131,72 +131,72 @@ export class FileCache<T> {
    * Saves the cache in the background.
    */
   save(): void {
-    if (process.env.BOLTDOCS_NO_CACHE === "1") return;
-    if (!this.cachePath) return;
+    if (process.env.BOLTDOCS_NO_CACHE === '1') return
+    if (!this.cachePath) return
 
-    const data = Object.fromEntries(this.entries);
-    const content = JSON.stringify(data);
-    const target = this.cachePath;
-    const useCompress = this.compress;
+    const data = Object.fromEntries(this.entries)
+    const content = JSON.stringify(data)
+    const target = this.cachePath
+    const useCompress = this.compress
 
     backgroundQueue.add(async () => {
       try {
-        await mkdir(path.dirname(target), { recursive: true });
-        let buffer = Buffer.from(content);
+        await mkdir(path.dirname(target), { recursive: true })
+        let buffer = Buffer.from(content)
         if (useCompress) {
-          buffer = zlib.gzipSync(buffer);
+          buffer = zlib.gzipSync(buffer)
         }
-        const tempPath = `${target}.${crypto.randomBytes(4).toString("hex")}.tmp`;
-        await writeFile(tempPath, buffer);
-        await rename(tempPath, target);
+        const tempPath = `${target}.${crypto.randomBytes(4).toString('hex')}.tmp`
+        await writeFile(tempPath, buffer)
+        await rename(tempPath, target)
       } catch (e) {
         // Fallback: critical error logging skipped for performance
       }
-    });
+    })
   }
 
   get(filePath: string): T | null {
-    const entry = this.entries.get(filePath);
-    if (!entry) return null;
-    if (getFileMtime(filePath) !== entry.mtime) return null;
-    return entry.data;
+    const entry = this.entries.get(filePath)
+    if (!entry) return null
+    if (getFileMtime(filePath) !== entry.mtime) return null
+    return entry.data
   }
 
   set(filePath: string, data: T): void {
     this.entries.set(filePath, {
       data,
       mtime: getFileMtime(filePath),
-    });
+    })
   }
 
   isValid(filePath: string): boolean {
-    const entry = this.entries.get(filePath);
-    if (!entry) return false;
-    return getFileMtime(filePath) === entry.mtime;
+    const entry = this.entries.get(filePath)
+    if (!entry) return false
+    return getFileMtime(filePath) === entry.mtime
   }
 
   invalidate(filePath: string): void {
-    this.entries.delete(filePath);
+    this.entries.delete(filePath)
   }
 
   invalidateAll(): void {
-    this.entries.clear();
+    this.entries.clear()
   }
 
   pruneStale(currentFiles: Set<string>): void {
     for (const key of this.entries.keys()) {
       if (!currentFiles.has(key)) {
-        this.entries.delete(key);
+        this.entries.delete(key)
       }
     }
   }
 
   get size(): number {
-    return this.entries.size;
+    return this.entries.size
   }
 
   async flush() {
-    await backgroundQueue.flush();
+    await backgroundQueue.flush()
   }
 }
 
@@ -205,28 +205,28 @@ export class FileCache<T> {
  * Uses a memory index and individual files for each entry to avoid massive JSON parsing.
  */
 export class TransformCache {
-  private index = new Map<string, string>(); // key -> hash
-  private memoryCache = new LRUCache<string, string>(DEFAULT_LRU_LIMIT);
-  private readonly baseDir: string;
-  private readonly shardsDir: string;
-  private readonly indexPath: string;
+  private index = new Map<string, string>() // key -> hash
+  private memoryCache = new LRUCache<string, string>(DEFAULT_LRU_LIMIT)
+  private readonly baseDir: string
+  private readonly shardsDir: string
+  private readonly indexPath: string
 
   constructor(name: string, root: string = process.cwd()) {
-    this.baseDir = path.resolve(root, CACHE_DIR, `transform-${name}`);
-    this.shardsDir = path.resolve(this.baseDir, SHARDS_DIR);
-    this.indexPath = path.resolve(this.baseDir, "index.json");
+    this.baseDir = path.resolve(root, CACHE_DIR, `transform-${name}`)
+    this.shardsDir = path.resolve(this.baseDir, SHARDS_DIR)
+    this.indexPath = path.resolve(this.baseDir, 'index.json')
   }
 
   /**
    * Loads the index into memory.
    */
   load(): void {
-    if (process.env.BOLTDOCS_NO_CACHE === "1") return;
-    if (!fs.existsSync(this.indexPath)) return;
+    if (process.env.BOLTDOCS_NO_CACHE === '1') return
+    if (!fs.existsSync(this.indexPath)) return
 
     try {
-      const data = fs.readFileSync(this.indexPath, "utf-8");
-      this.index = new Map(Object.entries(JSON.parse(data)));
+      const data = fs.readFileSync(this.indexPath, 'utf-8')
+      this.index = new Map(Object.entries(JSON.parse(data)))
     } catch (e) {
       // Index might be corrupt, ignore
     }
@@ -236,51 +236,51 @@ export class TransformCache {
    * Persists the index in background.
    */
   save(): void {
-    if (process.env.BOLTDOCS_NO_CACHE === "1") return;
-    const data = JSON.stringify(Object.fromEntries(this.index));
-    const target = this.indexPath;
+    if (process.env.BOLTDOCS_NO_CACHE === '1') return
+    const data = JSON.stringify(Object.fromEntries(this.index))
+    const target = this.indexPath
 
     backgroundQueue.add(async () => {
-      await mkdir(path.dirname(target), { recursive: true });
-      await writeFile(target, data);
-    });
+      await mkdir(path.dirname(target), { recursive: true })
+      await writeFile(target, data)
+    })
   }
 
   /**
    * Batch Read: Retrieves multiple transformation results concurrently.
    */
   async getMany(keys: string[]): Promise<Map<string, string>> {
-    const results = new Map<string, string>();
-    const toLoad: string[] = [];
+    const results = new Map<string, string>()
+    const toLoad: string[] = []
 
     for (const key of keys) {
-      const mem = this.memoryCache.get(key);
-      if (mem) results.set(key, mem);
-      else if (this.index.has(key)) toLoad.push(key);
+      const mem = this.memoryCache.get(key)
+      if (mem) results.set(key, mem)
+      else if (this.index.has(key)) toLoad.push(key)
     }
 
     if (toLoad.length > 0) {
       const shards = await Promise.all(
         toLoad.map(async (key) => {
-          const hash = this.index.get(key)!;
-          const shardPath = path.resolve(this.shardsDir, `${hash}.gz`);
+          const hash = this.index.get(key)!
+          const shardPath = path.resolve(this.shardsDir, `${hash}.gz`)
           try {
-            const compressed = await readFile(shardPath);
-            const decompressed = zlib.gunzipSync(compressed).toString("utf-8");
-            this.memoryCache.set(key, decompressed);
-            return { key, val: decompressed };
+            const compressed = await readFile(shardPath)
+            const decompressed = zlib.gunzipSync(compressed).toString('utf-8')
+            this.memoryCache.set(key, decompressed)
+            return { key, val: decompressed }
           } catch (e) {
-            return null;
+            return null
           }
         }),
-      );
+      )
 
       for (const s of shards) {
-        if (s) results.set(s.key, s.val);
+        if (s) results.set(s.key, s.val)
       }
     }
 
-    return results;
+    return results
   }
 
   /**
@@ -288,24 +288,24 @@ export class TransformCache {
    */
   get(key: string): string | null {
     // 1. Check memory first (LRU)
-    const mem = this.memoryCache.get(key);
-    if (mem) return mem;
+    const mem = this.memoryCache.get(key)
+    if (mem) return mem
 
     // 2. Check index
-    const hash = this.index.get(key);
-    if (!hash) return null;
+    const hash = this.index.get(key)
+    if (!hash) return null
 
     // 3. Load from shard (synchronous read for Vite's transform hook compatibility)
-    const shardPath = path.resolve(this.shardsDir, `${hash}.gz`);
-    if (!fs.existsSync(shardPath)) return null;
+    const shardPath = path.resolve(this.shardsDir, `${hash}.gz`)
+    if (!fs.existsSync(shardPath)) return null
 
     try {
-      const compressed = fs.readFileSync(shardPath);
-      const decompressed = zlib.gunzipSync(compressed).toString("utf-8");
-      this.memoryCache.set(key, decompressed);
-      return decompressed;
+      const compressed = fs.readFileSync(shardPath)
+      const decompressed = zlib.gunzipSync(compressed).toString('utf-8')
+      this.memoryCache.set(key, decompressed)
+      return decompressed
     } catch (e) {
-      return null;
+      return null
     }
   }
 
@@ -313,30 +313,30 @@ export class TransformCache {
    * Stores a transformation result.
    */
   set(key: string, result: string): void {
-    const hash = crypto.createHash("md5").update(result).digest("hex");
-    this.index.set(key, hash);
-    this.memoryCache.set(key, result);
+    const hash = crypto.createHash('md5').update(result).digest('hex')
+    this.index.set(key, hash)
+    this.memoryCache.set(key, result)
 
-    const shardPath = path.resolve(this.shardsDir, `${hash}.gz`);
+    const shardPath = path.resolve(this.shardsDir, `${hash}.gz`)
 
     // Background write shard
     backgroundQueue.add(async () => {
-      if (fs.existsSync(shardPath)) return; // Already exists
-      await mkdir(this.shardsDir, { recursive: true });
+      if (fs.existsSync(shardPath)) return // Already exists
+      await mkdir(this.shardsDir, { recursive: true })
 
-      const compressed = zlib.gzipSync(Buffer.from(result));
-      const tempPath = `${shardPath}.${crypto.randomBytes(4).toString("hex")}.tmp`;
-      await writeFile(tempPath, compressed);
-      await rename(tempPath, shardPath);
-    });
+      const compressed = zlib.gzipSync(Buffer.from(result))
+      const tempPath = `${shardPath}.${crypto.randomBytes(4).toString('hex')}.tmp`
+      await writeFile(tempPath, compressed)
+      await rename(tempPath, shardPath)
+    })
   }
 
   get size() {
-    return this.index.size;
+    return this.index.size
   }
 
   async flush() {
-    await backgroundQueue.flush();
+    await backgroundQueue.flush()
   }
 }
 
@@ -344,59 +344,59 @@ export class TransformCache {
  * Specialized cache for processed assets (e.g., optimized images).
  */
 export class AssetCache {
-  private readonly assetsDir: string;
+  private readonly assetsDir: string
 
   constructor(root: string = process.cwd()) {
-    this.assetsDir = path.resolve(root, CACHE_DIR, ASSETS_DIR);
+    this.assetsDir = path.resolve(root, CACHE_DIR, ASSETS_DIR)
   }
 
   private getFileHash(filePath: string): string {
     return crypto
-      .createHash("md5")
+      .createHash('md5')
       .update(fs.readFileSync(filePath))
-      .digest("hex");
+      .digest('hex')
   }
 
   get(sourcePath: string, cacheKey: string): string | null {
-    if (!fs.existsSync(sourcePath)) return null;
-    const sourceHash = this.getFileHash(sourcePath);
+    if (!fs.existsSync(sourcePath)) return null
+    const sourceHash = this.getFileHash(sourcePath)
     const cachedPath = this.getCachedPath(
       sourcePath,
       `${cacheKey}-${sourceHash}`,
-    );
-    return fs.existsSync(cachedPath) ? cachedPath : null;
+    )
+    return fs.existsSync(cachedPath) ? cachedPath : null
   }
 
   set(sourcePath: string, cacheKey: string, content: Buffer | string): void {
-    const sourceHash = this.getFileHash(sourcePath);
+    const sourceHash = this.getFileHash(sourcePath)
     const cachedPath = this.getCachedPath(
       sourcePath,
       `${cacheKey}-${sourceHash}`,
-    );
+    )
 
     backgroundQueue.add(async () => {
-      await mkdir(this.assetsDir, { recursive: true });
-      const tempPath = `${cachedPath}.${crypto.randomBytes(4).toString("hex")}.tmp`;
-      await writeFile(tempPath, content);
-      await rename(tempPath, cachedPath);
-    });
+      await mkdir(this.assetsDir, { recursive: true })
+      const tempPath = `${cachedPath}.${crypto.randomBytes(4).toString('hex')}.tmp`
+      await writeFile(tempPath, content)
+      await rename(tempPath, cachedPath)
+    })
   }
 
   private getCachedPath(sourcePath: string, cacheKey: string): string {
-    const ext = path.extname(sourcePath);
-    const name = path.basename(sourcePath, ext);
-    const safeKey = cacheKey.replace(/[^a-z0-9]/gi, "-").toLowerCase();
-    return path.join(this.assetsDir, `${name}.${safeKey}${ext}`);
+    const ext = path.extname(sourcePath)
+    const name = path.basename(sourcePath, ext)
+    const safeKey = cacheKey.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+    return path.join(this.assetsDir, `${name}.${safeKey}${ext}`)
   }
 
   clear(): void {
     if (fs.existsSync(this.assetsDir)) {
-      fs.rmSync(this.assetsDir, { recursive: true, force: true });
+      fs.rmSync(this.assetsDir, { recursive: true, force: true })
     }
   }
 
   async flush() {
-    await backgroundQueue.flush();
+    await backgroundQueue.flush()
   }
 }
 
@@ -404,5 +404,5 @@ export class AssetCache {
  * Flushes all pending background cache operations.
  */
 export async function flushCache() {
-  await backgroundQueue.flush();
+  await backgroundQueue.flush()
 }

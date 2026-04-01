@@ -1,5 +1,5 @@
-import fs from "fs";
-import matter from "gray-matter";
+import fs from 'fs'
+import matter from 'gray-matter'
 
 /**
  * Normalizes a file path by replacing Windows backslashes with forward slashes.
@@ -9,7 +9,7 @@ import matter from "gray-matter";
  * @returns The normalized path using forward slashes
  */
 export function normalizePath(p: string): string {
-  return p.replace(/\\/g, "/");
+  return p.replace(/\\/g, '/')
 }
 
 /**
@@ -19,7 +19,7 @@ export function normalizePath(p: string): string {
  * @returns The name without the numeric prefix
  */
 export function stripNumberPrefix(name: string): string {
-  return name.replace(/^\d+\./, "");
+  return name.replace(/^\d+\./, '')
 }
 
 /**
@@ -29,8 +29,8 @@ export function stripNumberPrefix(name: string): string {
  * @returns The extracted number, or undefined if none exists
  */
 export function extractNumberPrefix(name: string): number | undefined {
-  const match = name.match(/^(\d+)\./);
-  return match ? parseInt(match[1], 10) : undefined;
+  const match = name.match(/^(\d+)\./)
+  return match ? parseInt(match[1], 10) : undefined
 }
 
 /**
@@ -40,7 +40,7 @@ export function extractNumberPrefix(name: string): number | undefined {
  * @returns True if the file ends with .md or .mdx, false otherwise
  */
 export function isDocFile(filePath: string): boolean {
-  return /\.mdx?$/.test(filePath);
+  return /\.mdx?$/.test(filePath)
 }
 
 /**
@@ -53,9 +53,9 @@ export function isDocFile(filePath: string): boolean {
  */
 export function getFileMtime(filePath: string): number {
   try {
-    return fs.statSync(filePath).mtimeMs;
+    return fs.statSync(filePath).mtimeMs
   } catch {
-    return 0;
+    return 0
   }
 }
 
@@ -67,12 +67,12 @@ export function getFileMtime(filePath: string): number {
  * @returns An object containing the parsed metadata (`data`) and the raw markdown (`content`)
  */
 export function parseFrontmatter(filePath: string): {
-  data: Record<string, any>;
-  content: string;
+  data: Record<string, any>
+  content: string
 } {
-  const raw = fs.readFileSync(filePath, "utf-8");
-  const { data, content } = matter(raw);
-  return { data, content };
+  const raw = fs.readFileSync(filePath, 'utf-8')
+  const { data, content } = matter(raw)
+  return { data, content }
 }
 
 /**
@@ -84,11 +84,11 @@ export function parseFrontmatter(filePath: string): {
  */
 export function escapeHtml(str: string): string {
   return str
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
 }
 
 /**
@@ -98,7 +98,7 @@ export function escapeHtml(str: string): string {
  * @returns The escaped string
  */
 export function escapeXml(str: string): string {
-  return escapeHtml(str);
+  return escapeHtml(str)
 }
 
 /**
@@ -111,29 +111,29 @@ export function escapeXml(str: string): string {
  */
 export function fileToRoutePath(relativePath: string): string {
   // Strip number prefixes from every segment
-  let cleanedPath = relativePath.split("/").map(stripNumberPrefix).join("/");
+  let cleanedPath = relativePath.split('/').map(stripNumberPrefix).join('/')
 
   // Remove trailing slash if present
-  let routePath = cleanedPath.replace(/\/$/, "");
+  let routePath = cleanedPath.replace(/\/$/, '')
 
-  routePath = routePath.replace(/\.mdx?$/, "");
+  routePath = routePath.replace(/\.mdx?$/, '')
 
   // Handle index files → directory root
-  if (routePath === "index" || routePath.endsWith("/index")) {
-    routePath = routePath.replace(/index$/, "");
+  if (routePath === 'index' || routePath.endsWith('/index')) {
+    routePath = routePath.replace(/index$/, '')
   }
 
   // Ensure leading slash
-  if (!routePath.startsWith("/")) {
-    routePath = "/" + routePath;
+  if (!routePath.startsWith('/')) {
+    routePath = '/' + routePath
   }
 
   // Remove trailing slash (except for root '/')
-  if (routePath.length > 1 && routePath.endsWith("/")) {
-    routePath = routePath.slice(0, -1);
+  if (routePath.length > 1 && routePath.endsWith('/')) {
+    routePath = routePath.slice(0, -1)
   }
 
-  return routePath;
+  return routePath
 }
 
 /**
@@ -144,5 +144,5 @@ export function fileToRoutePath(relativePath: string): string {
  * @returns The capitalized string
  */
 export function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }

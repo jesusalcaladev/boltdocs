@@ -1,4 +1,4 @@
-import type { BoltdocsConfig } from "../config";
+import type { BoltdocsConfig } from '../config'
 
 /**
  * Injects OpenGraph, Twitter, and generic SEO meta tags into the final HTML output.
@@ -9,8 +9,8 @@ import type { BoltdocsConfig } from "../config";
  * @returns The modified HTML string with injected tags
  */
 export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
-  const title = config.themeConfig?.title || "Boltdocs";
-  const description = config.themeConfig?.description || "";
+  const title = config.themeConfig?.title || 'Boltdocs'
+  const description = config.themeConfig?.description || ''
 
   const seoTags = [
     `<meta name="description" content="${description}">`,
@@ -21,7 +21,7 @@ export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
     `<meta name="twitter:title" content="${title}">`,
     `<meta name="twitter:description" content="${description}">`,
     `<meta name="generator" content="Boltdocs">`,
-  ].join("\n    ");
+  ].join('\n    ')
 
   const themeScript = `
     <script>
@@ -39,17 +39,17 @@ export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
         } catch (e) {}
       })();
     </script>
-  `;
+  `
 
-  html = html.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
-  html = html.replace("</head>", `    ${seoTags}\n${themeScript}  </head>`);
+  html = html.replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
+  html = html.replace('</head>', `    ${seoTags}\n${themeScript}  </head>`)
 
-  if (!html.includes("src/main")) {
+  if (!html.includes('src/main')) {
     html = html.replace(
-      "</body>",
+      '</body>',
       '  <script type="module">import "virtual:boltdocs-entry";</script>\n  </body>',
-    );
+    )
   }
 
-  return html;
+  return html
 }

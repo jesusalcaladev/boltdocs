@@ -1,18 +1,18 @@
-import { FileCache } from "../cache";
-import { ParsedDocFile } from "./types";
+import { FileCache } from '../cache'
+import type { ParsedDocFile } from './types'
 
 /**
  * Persistent cache for parsed documentation files.
  * Saves data to `.boltdocs/routes.json`.
  */
-const docCache = new FileCache<ParsedDocFile>({ name: "routes" });
+const docCache = new FileCache<ParsedDocFile>({ name: 'routes' })
 
 /**
  * Invalidate all cached routes.
  * Typically called when a file is added or deleted, requiring a complete route rebuild.
  */
 export function invalidateRouteCache(): void {
-  docCache.invalidateAll();
+  docCache.invalidateAll()
 }
 
 /**
@@ -22,7 +22,7 @@ export function invalidateRouteCache(): void {
  * @param filePath - The absolute path of the file to invalidate
  */
 export function invalidateFile(filePath: string): void {
-  docCache.invalidate(filePath);
+  docCache.invalidate(filePath)
 }
 
-export { docCache };
+export { docCache }

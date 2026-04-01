@@ -1,21 +1,17 @@
-import { Plugin, ResolvedConfig, loadEnv } from "vite";
-import {
-  generateRoutes,
-  invalidateRouteCache,
-  invalidateFile,
-} from "../routes";
-import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
-import { resolveConfig, BoltdocsConfig, CONFIG_FILES } from "../config";
-import { generateStaticPages } from "../ssg";
-import { normalizePath, isDocFile } from "../utils";
-import path from "path";
+import { type Plugin, type ResolvedConfig, loadEnv } from 'vite'
+import { generateRoutes, invalidateRouteCache, invalidateFile } from '../routes'
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
+import { resolveConfig, type BoltdocsConfig, CONFIG_FILES } from '../config'
+import { generateStaticPages } from '../ssg'
+import { normalizePath, isDocFile } from '../utils'
+import path from 'path'
 
-import { BoltdocsPluginOptions } from "./types";
-import { generateEntryCode } from "./entry";
-import { injectHtmlMeta } from "./html";
-import fs from "fs";
+import type { BoltdocsPluginOptions } from './types'
+import { generateEntryCode } from './entry'
+import { injectHtmlMeta } from './html'
+import fs from 'fs'
 
-export * from "./types";
+export * from './types'
 
 /**
  * The core Boltdocs Vite plugin.
@@ -30,69 +26,72 @@ export function boltdocsPlugin(
   options: BoltdocsPluginOptions = {},
   passedConfig?: BoltdocsConfig,
 ): Plugin[] {
-  const docsDir = path.resolve(process.cwd(), options.docsDir || "docs");
-  const normalizedDocsDir = normalizePath(docsDir);
-  let config: BoltdocsConfig = passedConfig!;
-  let viteConfig: ResolvedConfig;
-  let isBuild = false;
+  const docsDir = path.resolve(process.cwd(), options.docsDir || 'docs')
+  const normalizedDocsDir = normalizePath(docsDir)
+  let config: BoltdocsConfig = passedConfig!
+  let viteConfig: ResolvedConfig
+  let isBuild = false
 
   const extraVitePlugins =
-    config?.plugins?.flatMap((p) => p.vitePlugins || []) || [];
+    config?.plugins?.flatMap((p) => p.vitePlugins || []) || []
 
   return [
     {
-      name: "vite-plugin-boltdocs",
-      enforce: "pre",
+      name: 'vite-plugin-boltdocs',
+      enforce: 'pre',
 
       async config(userConfig, env) {
-        isBuild = env.command === "build";
+        isBuild = env.command === 'build'
 
         // Load env variables and inject into process.env so they are available in boltdocs.config.js
-        const envDir = userConfig.envDir || process.cwd();
-        const envs = loadEnv(env.mode, envDir, "");
-        Object.assign(process.env, envs);
+        const envDir = userConfig.envDir || process.cwd()
+        const envs = loadEnv(env.mode, envDir, '')
+        Object.assign(process.env, envs)
 
         // Resolve config async if not already passed
         if (!config) {
-          config = await resolveConfig(docsDir);
-        }
-
-        // If customCss specified in user's config file, use it
-        if (!options.customCss && config.themeConfig?.customCss) {
-          options.customCss = config.themeConfig.customCss;
+          config = await resolveConfig(docsDir)
         }
 
         return {
-          optimizeDeps: { include: ["react", "react-dom"] },
-        };
+          optimizeDeps: { include: ['react', 'react-dom'] },
+        }
       },
 
       configResolved(resolved) {
-        viteConfig = resolved;
+        viteConfig = resolved
       },
 
       configureServer(server) {
         // Explicitly watch config files and mdx-components to trigger server restarts or module invalidations
         const configPaths = CONFIG_FILES.map((c) =>
           path.resolve(process.cwd(), c),
-        );
-        const mdxCompExtensions = ["tsx", "ts", "jsx", "js"];
+        )
+        const compExtensions = ['tsx', 'jsx']
+        const layoutCompPaths = compExtensions.map((ext) =>
+          path.resolve(docsDir, `layout.${ext}`),
+        )
+        const mdxCompExtensions = ['tsx', 'ts', 'jsx', 'js']
         const mdxCompPaths = mdxCompExtensions.map((ext) =>
           path.resolve(docsDir, `mdx-components.${ext}`),
-        );
+        )
 
-        server.watcher.add([...configPaths, ...mdxCompPaths]);
+        server.watcher.add([
+          ...configPaths,
+          ...mdxCompPaths,
+          ...layoutCompPaths,
+        ])
 
         const handleFileEvent = async (
           file: string,
-          type: "add" | "unlink" | "change",
+          type: 'add' | 'unlink' | 'change',
         ) => {
-          const normalized = normalizePath(file);
+          const normalized = normalizePath(file)
 
           // Restart the Vite server if the Boltdocs config changes
           if (CONFIG_FILES.some((c) => normalized.endsWith(c))) {
-            server.restart();
-            return;
+            server.restart()
+            return
           }
 
           // If mdx-components file changes, invalidate the virtual module
@@ -102,118 +101,153 @@ export function boltdocsPlugin(
             )
           ) {
             const mod = server.moduleGraph.getModuleById(
-              "\0virtual:boltdocs-mdx-components",
-            );
-            if (mod) server.moduleGraph.invalidateModule(mod);
-            server.ws.send({ type: "full-reload" });
-            return;
+              '\0virtual:boltdocs-mdx-components',
+            )
+            if (mod) server.moduleGraph.invalidateModule(mod)
+            server.ws.send({ type: 'full-reload' })
+            return
+          }
+
+          // If layout.tsx/jsx file changes, invalidate the virtual module
+          if (
+            compExtensions.some((ext) => normalized.endsWith(`layout.${ext}`))
+          ) {
+            const mod = server.moduleGraph.getModuleById(
+              '\0virtual:boltdocs-layout',
+            )
+            if (mod) server.moduleGraph.invalidateModule(mod)
+            server.ws.send({ type: 'full-reload' })
+            return
           }
 
           if (
             !normalized.startsWith(normalizedDocsDir) ||
             !isDocFile(normalized)
           )
-            return;
+            return
 
           // Invalidate appropriately
-          if (type === "add" || type === "unlink") {
-            invalidateRouteCache();
+          if (type === 'add' || type === 'unlink') {
+            invalidateRouteCache()
           } else {
-            invalidateFile(file);
+            invalidateFile(file)
           }
 
           // Regenerate and push to client
-          const newRoutes = await generateRoutes(docsDir, config);
+          const newRoutes = await generateRoutes(docsDir, config)
 
           const routesMod = server.moduleGraph.getModuleById(
-            "\0virtual:boltdocs-routes",
-          );
-          if (routesMod) server.moduleGraph.invalidateModule(routesMod);
+            '\0virtual:boltdocs-routes',
+          )
+          if (routesMod) server.moduleGraph.invalidateModule(routesMod)
 
           server.ws.send({
-            type: "custom",
-            event: "boltdocs:routes-update",
+            type: 'custom',
+            event: 'boltdocs:routes-update',
             data: newRoutes,
-          });
-        };
+          })
+        }
 
-        server.watcher.on("add", (f) => handleFileEvent(f, "add"));
-        server.watcher.on("unlink", (f) => handleFileEvent(f, "unlink"));
-        server.watcher.on("change", (f) => handleFileEvent(f, "change"));
+        server.watcher.on('add', (f) => handleFileEvent(f, 'add'))
+        server.watcher.on('unlink', (f) => handleFileEvent(f, 'unlink'))
+        server.watcher.on('change', (f) => handleFileEvent(f, 'change'))
       },
 
       resolveId(id) {
         if (
-          id === "virtual:boltdocs-routes" ||
-          id === "virtual:boltdocs-config" ||
-          id === "virtual:boltdocs-entry" ||
-          id === "virtual:boltdocs-mdx-components"
+          id === 'virtual:boltdocs-routes' ||
+          id === 'virtual:boltdocs-config' ||
+          id === 'virtual:boltdocs-entry' ||
+          id === 'virtual:boltdocs-mdx-components' ||
+          id === 'virtual:boltdocs-layout'
         ) {
-          return "\0" + id;
+          return '\0' + id
         }
       },
 
       async load(id) {
-        if (id === "\0virtual:boltdocs-routes") {
-          const routes = await generateRoutes(docsDir, config);
-          return `export default ${JSON.stringify(routes, null, 2)};`;
+        if (id === '\0virtual:boltdocs-routes') {
+          const routes = await generateRoutes(docsDir, config)
+          return `export default ${JSON.stringify(routes, null, 2)};`
         }
-        if (id === "\0virtual:boltdocs-config") {
+        if (id === '\0virtual:boltdocs-config') {
           const clientConfig = {
             themeConfig: config?.themeConfig,
             integrations: config?.integrations,
             i18n: config?.i18n,
             versions: config?.versions,
             siteUrl: config?.siteUrl,
-          };
-          return `export default ${JSON.stringify(clientConfig, null, 2)};`;
+          }
+          return `export default ${JSON.stringify(clientConfig, null, 2)};`
         }
-        if (id === "\0virtual:boltdocs-entry") {
-          const code = generateEntryCode(options, config);
-          return code;
+        if (id === '\0virtual:boltdocs-entry') {
+          const code = generateEntryCode(options, config)
+          return code
         }
-        if (id === "\0virtual:boltdocs-mdx-components") {
-          const extensions = ["tsx", "ts", "jsx", "js"];
-          let userMdxPath = null;
+        if (id === '\0virtual:boltdocs-mdx-components') {
+          const extensions = ['tsx', 'ts', 'jsx', 'js']
+          let userMdxPath = null
 
           for (const ext of extensions) {
-            const p = path.resolve(docsDir, `mdx-components.${ext}`);
+            const p = path.resolve(docsDir, `mdx-components.${ext}`)
             if (fs.existsSync(p)) {
-              userMdxPath = p;
-              break;
+              userMdxPath = p
+              break
             }
           }
 
           if (userMdxPath) {
-            const normalizedPath = normalizePath(userMdxPath);
+            const normalizedPath = normalizePath(userMdxPath)
             return `import * as components from '${normalizedPath}';
 const mdxComponents = components.default || components;
 export default mdxComponents;
-export * from '${normalizedPath}';`;
+export * from '${normalizedPath}';`
           }
 
-          return `export default {};`;
+          return `export default {};`
+        }
+        if (id === '\0virtual:boltdocs-layout') {
+          const extensions = ['tsx', 'jsx']
+          let userLayoutPath = null
+
+          for (const ext of extensions) {
+            const p = path.resolve(docsDir, `layout.${ext}`)
+            if (fs.existsSync(p)) {
+              userLayoutPath = p
+              break
+            }
+          }
+
+          if (userLayoutPath) {
+            const normalizedPath = normalizePath(userLayoutPath)
+            return `import UserLayout from '${normalizedPath}';
+export default UserLayout;`
+          }
+
+          // No user layout — return the built-in default
+          return `import { DefaultLayout } from 'boltdocs/client';
+export default DefaultLayout;`
         }
       },
 
       transformIndexHtml: {
-        order: "pre",
+        order: 'pre',
         handler(html) {
-          return injectHtmlMeta(html, config);
+          return injectHtmlMeta(html, config)
         },
       },
 
       async closeBundle() {
-        if (!isBuild) return;
+        if (!isBuild) return
         const outDir = viteConfig?.build?.outDir
           ? path.resolve(viteConfig.root, viteConfig.build.outDir)
-          : path.resolve(process.cwd(), "dist");
+          : path.resolve(process.cwd(), 'dist')
 
-        const docsDirName = path.basename(docsDir || "docs");
-        await generateStaticPages({ docsDir, docsDirName, outDir, config });
+        const docsDirName = path.basename(docsDir || 'docs')
+        await generateStaticPages({ docsDir, docsDirName, outDir, config })
 
-        const { flushCache } = await import("../cache");
-        await flushCache();
+        const { flushCache } = await import('../cache')
+        await flushCache()
       },
     },
     ViteImageOptimizer({
@@ -227,12 +261,12 @@ export * from '${normalizedPath}';`;
         multipass: true,
         plugins: [
           {
-            name: "preset-default",
+            name: 'preset-default',
             params: { overrides: { removeViewBox: false } },
           },
         ] as any,
       },
     }),
     ...extraVitePlugins.filter((p): p is Plugin => !!p),
-  ];
+  ]
 }

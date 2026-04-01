@@ -1,7 +1,7 @@
-import { normalizePath } from "../utils";
-import type { BoltdocsConfig } from "../config";
-import type { BoltdocsPluginOptions } from "./types";
-import path from "path";
+import { normalizePath } from '../utils'
+import type { BoltdocsConfig } from '../config'
+import type { BoltdocsPluginOptions } from './types'
+import path from 'path'
 
 /**
  * Generates the raw source code for the virtual entry file (`\0virtual:boltdocs-entry`).
@@ -17,14 +17,10 @@ export function generateEntryCode(
 ): string {
   const homeImport = options.homePage
     ? `import HomePage from '${normalizePath(options.homePage)}';`
-    : "";
-  const homeOption = options.homePage ? "homePage: HomePage," : "";
-  const customCssImport = options.customCss
-    ? `import '${normalizePath(options.customCss)}';`
-    : "";
-
+    : ''
+  const homeOption = options.homePage ? 'homePage: HomePage,' : ''
   const pluginComponents =
-    config?.plugins?.flatMap((p) => Object.entries(p.components || {})) || [];
+    config?.plugins?.flatMap((p) => Object.entries(p.components || {})) || []
 
   const componentImports = pluginComponents
     .map(
@@ -34,29 +30,27 @@ export function generateEntryCode(
       ]) => `import * as _comp_${name} from '${normalizePath(path)}';
 const ${name} = _comp_${name}.default || _comp_${name}['${name}'] || _comp_${name};`,
     )
-    .join("\n");
-  const componentMap = pluginComponents.map(([name]) => name).join(", ");
+    .join('\n')
+  const componentMap = pluginComponents.map(([name]) => name).join(', ')
 
-  const docsDirName = path.basename(options.docsDir || "docs");
+  const docsDirName = path.basename(options.docsDir || 'docs')
 
-  const externalEntries = Object.entries(config?.external || {});
+  const externalEntries = Object.entries(config?.external || {})
   const externalImports = externalEntries
     .map(
       ([_routePath, compPath], i) =>
-        `import _ext_${i} from '${normalizePath(compPath)}';`
+        `import _ext_${i} from '${normalizePath(compPath)}';`,
     )
-    .join("\n");
+    .join('\n')
   const externalOption =
     externalEntries.length > 0
       ? `externalPages: { ${externalEntries
           .map(([path], i) => `"${path}": _ext_${i}`)
-          .join(", ")} },`
-      : "";
+          .join(', ')} },`
+      : ''
 
   return `
 import { createBoltdocsApp as _createApp } from 'boltdocs/client';
-import 'boltdocs/style.css';
-${customCssImport}
 import _routes from 'virtual:boltdocs-routes';
 import _config from 'virtual:boltdocs-config';
 import _user_mdx_components from 'virtual:boltdocs-mdx-components';
@@ -73,7 +67,7 @@ _createApp({
   hot: import.meta.hot,
   ${homeOption}
   ${externalOption}
-  components: { ${componentMap}${componentMap ? ", " : ""} ...(_user_mdx_components || {}) },
+  components: { ${componentMap}${componentMap ? ', ' : ''} ...(_user_mdx_components || {}) },
 });
-`;
+`
 }

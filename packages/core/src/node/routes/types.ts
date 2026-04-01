@@ -4,41 +4,41 @@
  */
 export interface RouteMeta {
   /** The final URL path for the route (e.g., '/docs/guide/start') */
-  path: string;
+  path: string
   /** The absolute filesystem path to the source markdown/mdx file */
-  componentPath: string;
+  componentPath: string
   /** The title of the page, usually extracted from frontmatter or the filename */
-  title: string;
+  title: string
   /** The relative path from the docs directory, used for edit links */
-  filePath: string;
+  filePath: string
   /** Optional description of the page (for SEO/meta tags) */
-  description?: string;
+  description?: string
   /** Optional explicit position for ordering in the sidebar */
-  sidebarPosition?: number;
+  sidebarPosition?: number
   /** The group (directory) this route belongs to */
-  group?: string;
+  group?: string
   /** The display title for the route's group */
-  groupTitle?: string;
+  groupTitle?: string
   /** Optional explicit position for ordering the group itself */
-  groupPosition?: number;
+  groupPosition?: number
   /** Optional icon for the route's group */
-  groupIcon?: string;
+  groupIcon?: string
   /** Extracted markdown headings for search indexing */
-  headings?: { level: number; text: string; id: string }[];
+  headings?: { level: number; text: string; id: string }[]
   /** The locale this route belongs to, if i18n is configured */
-  locale?: string;
+  locale?: string
   /** The version this route belongs to, if versioning is configured */
-  version?: string;
+  version?: string
   /** Optional badge to display next to the sidebar item (e.g., 'New', 'Experimental') */
-  badge?: string | { text: string; expires?: string };
+  badge?: string | { text: string; expires?: string }
   /** Optional icon to display (Lucide icon name or raw SVG) */
-  icon?: string;
+  icon?: string
   /** The tab this route belongs to, if tabs are configured */
-  tab?: string;
+  tab?: string
   /** The extracted plain-text content of the page for search indexing */
-  _content?: string;
+  _content?: string
   /** The raw markdown content of the page */
-  _rawContent?: string;
+  _rawContent?: string
 }
 
 /**
@@ -47,15 +47,15 @@ export interface RouteMeta {
  */
 export interface ParsedDocFile {
   /** The core route metadata without group-level details (inferred later) */
-  route: Omit<RouteMeta, "group" | "groupTitle" | "groupPosition">;
+  route: Omit<RouteMeta, 'group' | 'groupTitle' | 'groupPosition'>
   /** The base directory of the file (used to group files together) */
-  relativeDir?: string;
+  relativeDir?: string
   /** Whether this file is the index file for its directory group */
-  isGroupIndex: boolean;
+  isGroupIndex: boolean
   /** If this is a group index, any specific frontmatter metadata dictating the group's title and position */
-  groupMeta?: { title: string; position?: number; icon?: string };
+  groupMeta?: { title: string; position?: number; icon?: string }
   /** Extracted group position from the directory name if it has a numeric prefix */
-  inferredGroupPosition?: number;
+  inferredGroupPosition?: number
   /** Extracted tab name from the directory name if it follows the (tab-name) syntax */
-  inferredTab?: string;
+  inferredTab?: string
 }
