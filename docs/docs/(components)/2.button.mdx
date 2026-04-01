@@ -4,7 +4,7 @@ description: "A versatile button component for internal and external links."
 icon: MousePointer2
 ---
 
-import {ArrowRight, Github, ArrowLeft, ExternalLink} from 'lucide-react'
+import {ArrowRight, ArrowLeft, ExternalLink} from 'lucide-react'
 
 # Button
 
@@ -102,7 +102,6 @@ Add icons for better visual recognition. You can place them on the left or right
 <div className="flex flex-wrap gap-4 mt-6">
   <Button icon={<ArrowLeft />}>Go Back</Button>
   <Button icon={<ArrowRight />} iconPosition="right">Next Step</Button>
-  <Button variant="outline" icon={<Github />}>Connect GitHub</Button>
   <Button variant="ghost" icon={<ExternalLink />} iconPosition="right">Open App</Button>
 </div>
 
@@ -118,19 +117,6 @@ Control the corner radius using the `rounded` prop.
   <Button rounded="full">Full</Button>
 </div>
 
-### Tailwind CSS v4 Support
-
-You can use Tailwind utility classes directly in your MDX for highly custom designs.
-
-<div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-white/5 backdrop-blur-sm">
-  <h4 className="text-xl font-semibold text-white mb-2">Custom Styled Card</h4>
-  <div className="text-zinc-400 mb-4">
-    This card is styled entirely with <strong>Tailwind CSS v4</strong> utility classes.
-  </div>
-  <Button className="bg-sky-500 hover:bg-sky-400 transition-all hover:scale-105 px-8">
-    Tailwind Styled Button
-  </Button>
-</div>
 
 ### Personalization (CSS)
 
