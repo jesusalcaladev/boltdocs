@@ -1,4 +1,4 @@
-import { useConfig } from '@client/app'
+import { useConfig } from '@client/app/config-context'
 import { openSandbox } from '@client/integrations/codesandbox'
 import { copyToClipboard } from '@client/utils/copy-clipboard'
 import { useCallback, useEffect, useRef, useState } from 'react'
