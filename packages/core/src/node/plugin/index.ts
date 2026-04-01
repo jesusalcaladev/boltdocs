@@ -262,7 +262,6 @@ export default DefaultLayout;`
         plugins: [
           {
             name: 'preset-default',
-            params: { overrides: { removeViewBox: false } },
           },
         ] as any,
       },

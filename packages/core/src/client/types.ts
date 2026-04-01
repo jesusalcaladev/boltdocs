@@ -62,7 +62,7 @@ export interface CreateBoltdocsAppOptions {
   /** Site configuration (`virtual:boltdocs-config`) */
   config: SiteConfig
   /** Dynamic import mapping from `import.meta.glob` for the documentation pages */
-  modules: Record<string, () => Promise<{ default: React.ComponentType }>>
+  modules: Record<string, () => Promise<{ default: React.ComponentType<any> }>>
   /** The `import.meta.hot` instance necessary for fast refresh/HMR updates */
   hot?: {
     accept: (cb?: (mod: any) => void) => void

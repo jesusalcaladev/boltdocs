@@ -31,7 +31,7 @@ export function AppShell({
   initialRoutes: ComponentRoute[]
   initialConfig: BoltdocsConfig
   docsDirName: string
-  modules: Record<string, () => Promise<{ default: React.ComponentType }>>
+  modules: Record<string, () => Promise<{ default: React.ComponentType<any> }>>
   hot?: CreateBoltdocsAppOptions['hot']
   homePage?: React.ComponentType
   externalPages?: Record<string, React.ComponentType>
@@ -50,15 +50,19 @@ export function AppShell({
       )
       .map((route) => {
         const loaderKey = Object.keys(modules).find(
-          (k) => k === `/${docsDirName}/${route.filePath}`,
+          (k) =>
+            k === `/${docsDirName}/${route.filePath}` || // Vite dev/build relative path
+            k.endsWith(`/${docsDirName}/${route.filePath}`) || // SSG absolute path fallback
+            k.endsWith(`/${docsDirName}\\${route.filePath.replace(/\\/g, '/')}`), // Windows fallback
         )
         const loader = loaderKey ? modules[loaderKey] : null
 
         return {
           ...route,
-          Component: React.lazy(() => {
-            if (!loader) return Promise.resolve({ default: NotFound })
-            return loader() as any
+          Component: React.lazy<React.ComponentType<any>>(async () => {
+            if (!loader) return { default: NotFound as React.ComponentType<any> }
+            const mod = await loader()
+            return mod
           }),
         }
       })
@@ -113,7 +117,6 @@ export function AppShell({
                   ),
                 )}
 
-                {/* Documentation pages WITH sidebar + TOC layout */}
                 <Route key="docs-layout" element={<DocsLayout />}>
                   {resolvedRoutes.map((route) => (
                     <Route

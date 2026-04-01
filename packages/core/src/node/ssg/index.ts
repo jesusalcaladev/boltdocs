@@ -39,7 +39,33 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
     )
     return
   }
+
+  // Mock require so Node doesn't choke on virtual modules compiled externally
+  const Module = _require('module')
+  const originalRequire = Module.prototype.require
+  ;(Module.prototype as any).require = function (id: string, ...args: any[]) {
+    if (id === 'virtual:boltdocs-layout') {
+      return {
+        __esModule: true,
+        default: function SSG_Virtual_Layout(props: any) {
+          try {
+            const client = originalRequire.apply(this, [path.resolve(_dirname, '../client/index.js')])
+            const Comp = client.DefaultLayout || (({ children }: any) => children)
+            const React = originalRequire.apply(this, ['react'])
+            return React.createElement(Comp, props)
+          } catch (e) {
+            return props.children
+          }
+        }
+      }
+    }
+    return originalRequire.apply(this, [id, ...args])
+  }
+
   const { render } = _require(ssrModulePath)
+
+  // Restore require after loading the module
+  ;(Module.prototype as any).require = originalRequire
 
   // Read the built index.html as template
   const templatePath = path.join(outDir, 'index.html')
@@ -57,7 +83,7 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
 
       // We mock the modules for SSR so it doesn't crash trying to dynamically import
       const fakeModules: Record<string, any> = {}
-      fakeModules[route.componentPath] = { default: () => {} } // Mock MDX component
+      fakeModules[`/${docsDirName}/${route.filePath}`] = { default: () => null } // Mock MDX component
 
       try {
         const appHtml = await render({
@@ -83,8 +109,8 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
           html,
           'utf-8',
         )
-      } catch (e) {
-        console.error(`[boltdocs] Error SSR rendering route ${route.path}:`, e)
+      } catch (e: any) {
+        console.error(`[boltdocs] Error SSR rendering route ${route.path}:`, e ? e.stack || e : e)
       }
     }),
   )
