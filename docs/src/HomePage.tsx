@@ -49,7 +49,7 @@ const FEATURES = [
 
 export default function HomePage() {
   return (
-    <div className="homeWrapper bg-amber-200">
+    <div className="homeWrapper">
       <main className="hero">
         <img
           src="/light.svg"
