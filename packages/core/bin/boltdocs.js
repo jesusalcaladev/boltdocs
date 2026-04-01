@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+"use strict";
+
+/**
+ * Stable entry point for the Boltdocs CLI.
+ * This file exists in the repository to ensure that pnpm can correctly
+ * create symlinks during initial installation on CI environments (like Vercel),
+ * even before the 'dist' folder has been built.
+ */
+
+// We use require because the core package is currently CommonJS.
+require("../dist/node/cli-entry.js");
