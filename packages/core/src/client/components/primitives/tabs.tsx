@@ -1,0 +1,90 @@
+import { cn } from '@client/utils/cn'
+import type { ComponentBase } from './types'
+
+export interface TabsItemProps extends ComponentBase {
+  id: string
+  selected?: boolean
+  onClick?: () => void
+  onKeyDown?: (event: React.KeyboardEvent) => void
+  disabled?: boolean
+}
+
+export interface TabsIndicatorProps extends ComponentBase {
+  style?: React.CSSProperties
+}
+
+export const TabsRoot = ({
+  children,
+  className = '',
+  ...props
+}: ComponentBase) => {
+  return (
+    <div className={cn('w-full', className)} {...props}>
+      {children}
+    </div>
+  )
+}
+
+export const TabsList = ({ children, className = '' }: ComponentBase) => {
+  return (
+    <div
+      role="tablist"
+      className={cn(
+        'relative flex flex-row items-center border-b border-border-subtle',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+export const TabsItem = ({
+  children,
+  id,
+  selected,
+  className = '',
+  ...props
+}: TabsItemProps) => {
+  return (
+    <button
+      role="tab"
+      aria-selected={selected}
+      className={cn(
+        'flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors outline-none cursor-pointer bg-transparent border-none',
+        selected ? 'text-primary-500' : 'text-text-muted hover:text-text-main',
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+export const TabsContent = ({ children, className = '' }: ComponentBase) => {
+  return <div className={cn('p-4 outline-none', className)}>{children}</div>
+}
+
+export const TabsIndicator = ({
+  className = '',
+  style,
+}: TabsIndicatorProps) => {
+  return (
+    <div
+      className={cn(
+        'absolute bottom-0 h-0.5 bg-primary-500 transition-all duration-300',
+        className,
+      )}
+      style={style}
+    />
+  )
+}
+
+export default {
+  TabsRoot,
+  TabsList,
+  TabsItem,
+  TabsContent,
+  TabsIndicator,
+}
