@@ -1,21 +1,26 @@
 {
-    "compilerOptions": {
-        "target": "ES2022",
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "esModuleInterop": true,
-        "strict": true,
-        "skipLibCheck": true,
-        "jsx": "react-jsx",
-        "declaration": true,
-        "outDir": "dist"
-    },
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        "src/node/cli"
-    ]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "declaration": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@client/*": ["src/client/*"],
+      "@node/*": ["src/node/*"],
+      "@theme/*": ["src/client/theme/*"],
+      "@components/*": ["src/client/components/*"],
+      "@integrations/*": ["src/client/integrations/*"],
+      "@hooks/*": ["src/client/hooks/*"],
+      "@primitives/*": ["src/client/components/primitives/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "src/node/cli"]
 }
