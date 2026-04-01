@@ -2,14 +2,14 @@ const BASE_URL = 'https://api.github.com'
 
 /**
  * Get the number of stars for a GitHub repository.
- * @param owner - The owner of the repository.
- * @param repo - The repository name.
+ * @param repo - owner/repo
  * @param token - The GitHub token.
  * @param baseUrl - The GitHub API base URL.
  * @returns The number of stars for the repository.
+ * @example
+ * getStarsRepo('owner/repo') // 100k
  */
 export async function getStarsRepo(
-  owner: string,
   repo: string,
   token?: string,
   baseUrl: string = BASE_URL,
@@ -18,7 +18,7 @@ export async function getStarsRepo(
   if (token) {
     headers.append('authorization', token)
   }
-  const response = await fetch(`${baseUrl}/repos/${owner}/${repo}`, {
+  const response = await fetch(`${baseUrl}/repos/${repo}`, {
     headers,
   })
   const data = await response.json()
