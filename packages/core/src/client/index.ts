@@ -1,31 +1,46 @@
-export type { BoltdocsConfig, BoltdocsThemeConfig } from "../node/config";
-export type { ComponentRoute, CreateBoltdocsAppOptions } from "./types";
-export { createBoltdocsApp } from "./app";
-export { useConfig } from "./app/index";
-export { useTheme } from "./theme/ThemeContext";
-export { ThemeLayout } from "./theme/ui/Layout";
-export { Navbar } from "./theme/ui/Navbar";
-export { Sidebar } from "./theme/ui/Sidebar";
-export { OnThisPage } from "./theme/ui/OnThisPage";
-export { Head } from "./theme/ui/Head";
-export { Breadcrumbs } from "./theme/ui/Breadcrumbs";
+export type { BoltdocsConfig, BoltdocsThemeConfig } from '../node/config'
+export type {
+  ComponentRoute,
+  CreateBoltdocsAppOptions,
+  LayoutProps,
+} from './types'
+export { createBoltdocsApp } from './app'
+export { useConfig } from '@client/app/config-context'
+export { useTheme } from '@client/app/theme-context'
+export { useRoutes } from '@client/hooks/use-routes'
+export { useMdxComponents } from '@client/app/mdx-components-context'
 
-export { NotFound } from "./theme/ui/NotFound";
-export { Loading } from "./theme/ui/Loading";
-export { CodeBlock } from "./theme/components/CodeBlock";
-export { Video } from "./theme/components/Video";
+// Composable layout building blocks
+export { DocsLayout } from '@components/docs-layout'
+export { DefaultLayout } from '@components/default-layout'
+
+// Default UI components (for use in custom layout.tsx)
+export { Navbar } from '@components/ui-base/navbar'
+export { Sidebar } from '@components/ui-base/sidebar'
+export { OnThisPage } from '@components/ui-base/on-this-page'
+export { Head } from '@components/ui-base/head'
+export { Breadcrumbs } from '@components/ui-base/breadcrumbs'
+export { PageNav } from '@components/ui-base/page-nav'
+export { ProgressBar } from '@components/ui-base/progress-bar'
+export { ErrorBoundary } from '@components/ui-base/error-boundary'
+export { CopyMarkdown } from '@components/ui-base/copy-markdown'
+
+export { NotFound } from '@components/ui-base/not-found'
+export { Loading } from '@components/ui-base/loading'
+export { CodeBlock } from '@components/mdx/code-block'
+export { Video } from '@components/mdx/video'
 export {
   defineSandbox,
   openSandbox,
   embedSandbox,
-} from "./integrations/codesandbox";
+} from '@integrations/codesandbox'
 
 export type {
   SandboxOptions,
   SandboxFile,
   SandboxFiles,
   SandboxEmbedOptions,
-} from "./types";
+} from './types'
 export {
   Button,
   Badge,
@@ -49,7 +64,7 @@ export {
   Field,
   Link,
   Image,
-} from "./theme/components/mdx";
+} from './components/mdx'
 export type {
   ButtonProps,
   BadgeProps,
@@ -66,4 +81,4 @@ export type {
   FieldProps,
   LinkProps,
   ImageProps,
-} from "./theme/components/mdx";
+} from './components/mdx'
