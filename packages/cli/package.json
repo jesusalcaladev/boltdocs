@@ -1,5 +1,5 @@
 {
-  "name": "@boltdocs/cli",
+  "name": "@bdocs/cli",
   "version": "1.0.0",
   "description": "CLI for Boltdocs",
   "main": "dist/index.js",
