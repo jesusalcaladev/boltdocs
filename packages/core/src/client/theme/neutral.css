@@ -7,17 +7,16 @@
 
   --breakpoint-3xl: 120rem;
 
-  /* Accent / Primary: Sleek Violet */
-  --color-primary-50: oklch(0.97 0.01 280);
-  --color-primary-100: oklch(0.94 0.03 280);
-  --color-primary-200: oklch(0.88 0.06 280);
-  --color-primary-300: oklch(0.8 0.12 280);
-  --color-primary-400: oklch(0.7 0.18 280);
-  --color-primary-500: oklch(0.6 0.22 280);
-  --color-primary-600: oklch(0.5 0.18 280);
-  --color-primary-700: oklch(0.4 0.14 280);
-  --color-primary-800: oklch(0.3 0.1 280);
-  --color-primary-900: oklch(0.2 0.06 280);
+  --color-primary-50: oklch(0.985 0.012 265.8);
+  --color-primary-100: oklch(0.92 0.045 265.8);
+  --color-primary-200: oklch(0.84 0.085 265.8);
+  --color-primary-300: oklch(0.74 0.125 265.8);
+  --color-primary-400: oklch(0.64 0.165 265.8);
+  --color-primary-500: oklch(0.54 0.195 265.8);
+  --color-primary-600: oklch(0.45 0.165 265.8);
+  --color-primary-700: oklch(0.36 0.135 265.8);
+  --color-primary-800: oklch(0.27 0.095 265.8);
+  --color-primary-900: oklch(0.15 0.045 265.8);
 
   /* Neutral Gray Palette */
   --color-neutral-50: oklch(0.98 0 0);
@@ -61,11 +60,27 @@
   --color-code-bg: var(--color-neutral-100);
   --color-code-text: var(--color-neutral-800);
 
+  /* Semantic Colors - Dark Override (handled via standard CSS overrides below the @theme block) */
+
   /* Spacing and Dimensions */
   --spacing-navbar: 3.5rem;
   --spacing-sidebar: 16rem;
   --spacing-toc: 14rem;
   --spacing-content-max: 48rem;
+}
+
+:root[data-theme="dark"],
+:root:not(.theme-light) {
+  --color-bg-main: var(--color-neutral-950);
+  --color-bg-surface: var(--color-neutral-900);
+  --color-bg-muted: var(--color-neutral-800);
+  --color-text-main: var(--color-neutral-50);
+  --color-text-muted: var(--color-neutral-400);
+  --color-text-dim: var(--color-neutral-500);
+  --color-border-subtle: var(--color-neutral-800);
+  --color-border-strong: var(--color-neutral-700);
+  --color-code-bg: var(--color-neutral-900);
+  --color-code-text: var(--color-neutral-200);
 }
 
 @layer base {
