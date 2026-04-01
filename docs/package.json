@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "boltdocs",
+    "build": "boltdocs build",
+    "preview": "boltdocs preview"
   },
   "dependencies": {
     "boltdocs": "workspace:*",
