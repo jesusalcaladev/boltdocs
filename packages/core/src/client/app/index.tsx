@@ -1,15 +1,13 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { ThemeLayout } from '@components/ui-base/layout'
 import { NotFound } from '@components/ui-base/not-found'
 import { Loading } from '@components/ui-base/loading'
 import { ThemeProvider } from './theme-context'
-import { LayoutProvider } from './layout-context'
 import type { ComponentRoute, CreateBoltdocsAppOptions } from '../types'
 import type { BoltdocsConfig } from '@node/config'
 
-import layoutConfig from 'virtual:boltdocs-layout-config'
+import UserLayout from 'virtual:boltdocs-layout'
 
 import { PreloadProvider } from './preload'
 import { BoltdocsRouterProvider } from './router'
@@ -83,68 +81,47 @@ export function AppShell({
   return (
     <ThemeProvider>
       <MdxComponentsProvider components={allComponents}>
-        <LayoutProvider config={layoutConfig}>
         <ConfigContext.Provider value={config}>
           <BoltdocsRouterProvider>
             <PreloadProvider routes={routesInfo} modules={modules}>
               <ScrollHandler />
               <Routes>
-                {/* ... existing routes ... */}
-                {/* Custom home page WITHOUT docs layout */}
+                {/* Custom home page with user layout */}
                 {HomePage && (
                   <Route
                     path="/"
                     element={
-                      <ThemeLayout
-                        config={config}
-                        routes={routesInfo}
-                        sidebar={null}
-                        toc={null}
-                        breadcrumbs={null}
-                        {...((config.themeConfig?.layoutProps as Record<string, unknown>) || {})}
-                      >
+                      <UserLayout>
                         <HomePage />
-                      </ThemeLayout>
+                      </UserLayout>
                     }
                   />
                 )}
 
-                {/* Custom External Pages WITHOUT docs layout */}
+                {/* Custom External Pages with user layout */}
                 {Object.entries(computedExternalPages).map(
                   ([extPath, ExtComponent]) => (
                     <Route
                       key={extPath}
                       path={extPath}
                       element={
-                        <ThemeLayout
-                          config={config}
-                          routes={routesInfo}
-                          sidebar={null}
-                          toc={null}
-                          breadcrumbs={null}
-                          {...((config.themeConfig?.layoutProps as Record<string, unknown>) || {})}
-                        >
+                        <UserLayout>
                           <ExtComponent />
-                        </ThemeLayout>
+                        </UserLayout>
                       }
                     />
                   ),
                 )}
 
                 {/* Documentation pages WITH sidebar + TOC layout */}
-                <Route
-                  key="docs-layout"
-                  element={<DocsLayout config={config} routes={routesInfo} />}
-                >
+                <Route key="docs-layout" element={<DocsLayout />}>
                   {resolvedRoutes.map((route) => (
                     <Route
                       key={route.path}
                       path={route.path === '' ? '/' : route.path}
                       element={
                         <React.Suspense fallback={<Loading />}>
-                          <MdxPage
-                            Component={route.Component}
-                          />
+                          <MdxPage Component={route.Component} />
                         </React.Suspense>
                       }
                     />
@@ -154,25 +131,19 @@ export function AppShell({
                 <Route
                   path="*"
                   element={
-                    <ThemeLayout
-                      config={config}
-                      routes={routesInfo}
-                      {...((config.themeConfig?.layoutProps as Record<string, unknown>) || {})}
-                    >
+                    <UserLayout>
                       <NotFound />
-                    </ThemeLayout>
+                    </UserLayout>
                   }
                 />
               </Routes>
             </PreloadProvider>
           </BoltdocsRouterProvider>
         </ConfigContext.Provider>
-      </LayoutProvider>
       </MdxComponentsProvider>
     </ThemeProvider>
   )
 }
-
 
 /**
  * Creates and mounts the Boltdocs documentation app.
