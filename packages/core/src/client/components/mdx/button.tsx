@@ -1,6 +1,11 @@
-import { ButtonPrimitive, buttonVariants } from '@components/primitives/button'
-import type { ButtonPrimitiveProps } from '@components/primitives/button'
+import {
+  Button as ButtonPrimitive,
+  buttonVariants,
+  type ButtonProps,
+} from '@components/primitives/button'
 import { cn } from '@client/utils/cn'
+
+export type { ButtonProps } from '@components/primitives/button'
 
 export const Button = ({
   className,
@@ -10,7 +15,7 @@ export const Button = ({
   iconSize,
   disabled,
   ...props
-}: ButtonPrimitiveProps) => {
+}: ButtonProps) => {
   return (
     <ButtonPrimitive
       className={cn(

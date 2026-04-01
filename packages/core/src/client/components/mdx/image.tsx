@@ -1,5 +1,5 @@
 import type { ImgHTMLAttributes } from 'react'
-import { useTheme } from '../../theme/ThemeContext'
+import { useTheme } from '@client/app/theme-context'
 
 export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   src: string

@@ -1,19 +1,14 @@
 import { Outlet } from 'react-router-dom'
-import { ThemeLayout } from '@components/ui-base/layout'
-import type { ComponentRoute } from '../types'
-import type { BoltdocsConfig } from '@node/config'
+import UserLayout from 'virtual:boltdocs-layout'
 
-export function DocsLayout({
-  config,
-  routes,
-}: {
-  config: BoltdocsConfig
-  routes: ComponentRoute[]
-}) {
-  const layoutProps = config.themeConfig?.layoutProps || {}
+/**
+ * Wraps the docs Outlet with the user's (or default) layout component.
+ * The Layout receives the routed page as `children`.
+ */
+export function DocsLayout() {
   return (
-    <ThemeLayout config={config} routes={routes} {...layoutProps}>
+    <UserLayout>
       <Outlet />
-    </ThemeLayout>
+    </UserLayout>
   )
 }

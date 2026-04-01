@@ -1,50 +1,38 @@
-import type { AnchorHTMLAttributes } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import {
+  Link as LinkPrimitive,
+  type LinkProps as LinkPrimitiveProps,
+} from '@components/primitives/link'
+import { cn } from '@client/utils/cn'
 
-export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+export type LinkProps = LinkPrimitiveProps & {
   to: string
-  boltdocsPreview?: boolean
   children?: React.ReactNode
 }
 
 /**
  * A premium Link component for Boltdocs that handles internal and external routing.
- * It also supports specialized preview capabilities via Boltdocs Preview.
  */
-export function Link({
-  to,
-  children,
-  boltdocsPreview = true,
-  className = '',
-  ...props
-}: LinkProps) {
+export function Link({ to, children, className = '', ...props }: LinkProps) {
   const isExternal =
-    to.startsWith('http://') || to.startsWith('https://') || to.startsWith('//')
+    to &&
+    (to.startsWith('http://') ||
+      to.startsWith('https://') ||
+      to.startsWith('//'))
 
-  const combinedClassName = `ld-link ${className}`.trim()
-
-  if (isExternal) {
-    return (
-      <a
-        href={to}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={combinedClassName}
-        {...props}
-      >
-        {children}
-      </a>
-    )
-  }
+  const combinedClassName = cn(
+    'text-blue-600 hover:text-blue-800 hover:underline cursor-pointer',
+    className,
+  )
 
   return (
-    <RouterLink
-      to={to}
+    <LinkPrimitive
+      href={to}
       className={combinedClassName}
-      data-boltdocs-preview={boltdocsPreview}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
       {...props}
     >
-      {children as any}
-    </RouterLink>
+      {children}
+    </LinkPrimitive>
   )
 }

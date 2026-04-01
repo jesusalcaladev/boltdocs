@@ -48,7 +48,9 @@ export function Field({
 
         {defaultValue && (
           <div className="flex items-center gap-2 text-[11px] text-text-muted bg-bg-muted/30 px-2.5 py-1 rounded-md border border-border-subtle/50">
-            <span className="font-semibold opacity-60 uppercase tracking-tighter">Default</span>
+            <span className="font-semibold opacity-60 uppercase tracking-tighter">
+              Default
+            </span>
             <code className="font-mono text-text-main font-medium">
               {defaultValue}
             </code>

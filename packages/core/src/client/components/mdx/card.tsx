@@ -110,8 +110,10 @@ export function Card({
   }
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: spotlight effect is decorative
     <div
       ref={cardRef}
+      role="presentation"
       className={cardClasses}
       onMouseMove={handleMouseMove}
       {...rest}

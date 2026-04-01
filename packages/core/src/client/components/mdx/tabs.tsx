@@ -68,7 +68,9 @@ export interface TabsProps {
 export function Tabs({ defaultIndex = 0, children }: TabsProps) {
   const tabs = useMemo(() => {
     return Children.toArray(children).filter(
-      (child) => isValidElement(child) && (child as any).props?.label,
+      (child) =>
+        isValidElement(child) &&
+        (child as React.ReactElement<TabProps>).props?.label,
     ) as React.ReactElement<TabProps>[]
   }, [children])
 
@@ -104,7 +106,7 @@ export function Tabs({ defaultIndex = 0, children }: TabsProps) {
                   cn(tabItemVariants({ isActive: isSelected, isDisabled }))
                 }
               >
-                {icon && (
+                {!!icon && (
                   <span className="shrink-0 [&>svg]:w-4 [&>svg]:h-4">
                     {icon}
                   </span>
@@ -123,7 +125,8 @@ export function Tabs({ defaultIndex = 0, children }: TabsProps) {
 
         {tabs.map((_tab, i) => (
           <RAC.TabPanel key={i} id={i.toString()}>
-            {tabs[i]}
+            {/* biome-ignore lint/suspicious/noExplicitAny: bypass version-specific ReactNode mismatch */}
+            {tabs[i] as any}
           </RAC.TabPanel>
         ))}
       </RAC.Tabs>

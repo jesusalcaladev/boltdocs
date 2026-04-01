@@ -31,7 +31,7 @@ const LABEL_MAP: Record<string, string> = {
   caution: 'Caution',
 }
 
-const admonitionVariants = cva('my-6 rounded-lg p-4', {
+const admonitionVariants = cva('py-4 px-4 rounded-lg', {
   variants: {
     type: {
       note: 'border-primary-400 bg-primary-500/5 text-primary-400',
@@ -69,7 +69,7 @@ export function Admonition({
       role={type === 'warning' || type === 'danger' ? 'alert' : 'note'}
       {...rest}
     >
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center flex-row gap-2 mb-2">
         <span className={cn('shrink-0', admonitionVariants({ type }))}>
           {ICON_MAP[type as keyof typeof ICON_MAP]}
         </span>

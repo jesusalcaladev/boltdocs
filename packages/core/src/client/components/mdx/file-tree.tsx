@@ -39,8 +39,15 @@ function getTextContent(node: React.ReactNode): string {
   if (typeof node === 'string') return node
   if (typeof node === 'number') return node.toString()
   if (Array.isArray(node)) return node.map(getTextContent).join('')
-  if (isValidElement(node) && node.props && 'children' in node.props) {
-    return getTextContent(node.props.children as React.ReactNode)
+  if (
+    isValidElement(node) &&
+    node.props &&
+    typeof node.props === 'object' &&
+    'children' in node.props
+  ) {
+    return getTextContent(
+      (node.props as { children?: React.ReactNode }).children,
+    )
   }
   return ''
 }
@@ -103,7 +110,7 @@ function getFileIcon(filename: string, isFolder: boolean) {
 function isListElement(
   node: unknown,
   tag: 'ul' | 'li',
-): node is React.ReactElement {
+): node is React.ReactElement<{ children?: React.ReactNode }> {
   if (!isValidElement(node)) return false
 
   const type = node.type
@@ -136,14 +143,19 @@ function parseMdxToData(
   const items: TreeItemData[] = []
 
   if (isListElement(node, 'ul')) {
-    Children.forEach(node.props.children, (child, index) => {
-      items.push(...parseMdxToData(child, `${path}-${index}`))
-    })
+    Children.forEach(
+      (node.props as { children?: React.ReactNode }).children,
+      (child, index) => {
+        items.push(...parseMdxToData(child, `${path}-${index}`))
+      },
+    )
     return items
   }
 
   if (isListElement(node, 'li')) {
-    const children = Children.toArray(node.props.children)
+    const children = Children.toArray(
+      (node.props as { children?: React.ReactNode }).children,
+    )
     const nestedListIndex = children.findIndex((child) =>
       isListElement(child, 'ul'),
     )
@@ -171,10 +183,17 @@ function parseMdxToData(
     return items
   }
 
-  if (node.props && 'children' in node.props) {
-    Children.forEach(node.props.children, (child, index) => {
-      items.push(...parseMdxToData(child, `${path}-${index}`))
-    })
+  if (
+    node.props &&
+    typeof node.props === 'object' &&
+    'children' in node.props
+  ) {
+    Children.forEach(
+      (node.props as { children?: React.ReactNode }).children,
+      (child, index) => {
+        items.push(...parseMdxToData(child, `${path}-${index}`))
+      },
+    )
   }
 
   return items
@@ -189,9 +208,9 @@ function FileTreeNode({ item }: { item: TreeItemData }) {
       textValue={item.name}
       className="outline-none group focus-visible:ring-2 focus-visible:ring-primary-500/30 rounded-md"
     >
-      <RAC.TreeItemContent className="flex items-center gap-2 py-1 px-1.5 rounded-md transition-colors hover:bg-primary-500/5 cursor-pointer">
+      <RAC.TreeItemContent>
         {({ isExpanded, hasChildItems }) => (
-          <>
+          <div className="flex items-center gap-2 py-1 px-1.5 rounded-md transition-colors hover:bg-primary-500/5 cursor-pointer">
             <div
               style={{ width: `calc((var(--tree-item-level) - 1) * 1rem)` }}
               className="shrink-0"
@@ -232,7 +251,7 @@ function FileTreeNode({ item }: { item: TreeItemData }) {
                 {'//'} {item.comment}
               </span>
             )}
-          </>
+          </div>
         )}
       </RAC.TreeItemContent>
 

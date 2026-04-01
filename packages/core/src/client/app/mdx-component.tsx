@@ -26,16 +26,27 @@ const Heading = ({
 
 export const mdxComponentsDefault = {
   ...MdxComponents,
-  h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Heading level={1} {...props} />,
-  h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Heading level={2} {...props} />,
-  h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Heading level={3} {...props} />,
-  h4: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Heading level={4} {...props} />,
-  h5: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Heading level={5} {...props} />,
-  h6: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Heading level={6} {...props} />,
+  h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <Heading level={1} {...props} />
+  ),
+  h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <Heading level={2} {...props} />
+  ),
+  h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <Heading level={3} {...props} />
+  ),
+  h4: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <Heading level={4} {...props} />
+  ),
+  h5: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <Heading level={5} {...props} />
+  ),
+  h6: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <Heading level={6} {...props} />
+  ),
   pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
     <MdxComponents.CodeBlock {...props}>
       {props.children}
     </MdxComponents.CodeBlock>
   ),
 }
-

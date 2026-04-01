@@ -175,11 +175,11 @@ export function List({
       {Children.map(children, (child) => {
         if (!isValidElement(child)) return child
 
-        // Extract content if Child is an MDX <li>
+        const element = child as ReactElement<{ children?: ReactNode }>
         const content =
-          (child as ReactElement).type === 'li'
-            ? (child.props as { children: ReactNode }).children
-            : (child as ReactElement).props.children || child
+          element.type === 'li'
+            ? element.props.children
+            : element.props.children || child
 
         return (
           <ListItem icon={renderIcon()} variant={variant} dense={dense}>
