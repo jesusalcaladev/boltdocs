@@ -1,27 +1,61 @@
 import type { BoltdocsConfig } from '../config'
 
 /**
+ * Provides a default HTML template if none is found in the project root.
+ */
+export function getHtmlTemplate(config: BoltdocsConfig): string {
+  const title = config.theme?.title || config.themeConfig?.title || 'Boltdocs'
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title}</title>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>`
+}
+
+/**
  * Injects OpenGraph, Twitter, and generic SEO meta tags into the final HTML output.
  * Also ensures the virtual entry file is injected if it's missing (e.g., standard Vite index.html).
  *
- * @param html - The original HTML string
- * @param config - The resolved Boltdocs configuration containing site metadata
- * @returns The modified HTML string with injected tags
+ * @param html - {string} The original HTML string
+ * @param config - {BoltdocsConfig} The resolved Boltdocs configuration containing site metadata
+ * @returns {string} The modified HTML string with injected tags
  */
 export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
-  const title = config.themeConfig?.title || 'Boltdocs'
-  const description = config.themeConfig?.description || ''
+  const theme = config.theme || config.themeConfig
+  const title = theme?.title || 'Boltdocs'
+  const description = theme?.description || ''
+
+  // Determine favicon
+  let favicon = theme?.favicon
+  if (!favicon && theme?.logo) {
+    if (typeof theme.logo === 'string') {
+      favicon = theme.logo
+    } else {
+      favicon = theme.logo.light || theme.logo.dark
+    }
+  }
 
   const seoTags = [
+    favicon ? `<link rel="icon" href="${favicon}">` : '',
     `<meta name="description" content="${description}">`,
     `<meta property="og:title" content="${title}">`,
     `<meta property="og:description" content="${description}">`,
+    theme?.ogImage ? `<meta property="og:image" content="${theme.ogImage}">` : '',
     `<meta property="og:type" content="website">`,
-    `<meta name="twitter:card" content="summary">`,
+    `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${title}">`,
     `<meta name="twitter:description" content="${description}">`,
+    theme?.ogImage ? `<meta name="twitter:image" content="${theme.ogImage}">` : '',
     `<meta name="generator" content="Boltdocs">`,
-  ].join('\n    ')
+  ]
+    .filter(Boolean)
+    .join('\n    ')
 
   const themeScript = `
     <script>
@@ -41,10 +75,16 @@ export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
     </script>
   `
 
-  html = html.replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
+  // Use regex to replace title or inject it if missing
+  if (html.includes('<title>')) {
+    html = html.replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
+  } else {
+    html = html.replace('</head>', `  <title>${title}</title>\n  </head>`)
+  }
+
   html = html.replace('</head>', `    ${seoTags}\n${themeScript}  </head>`)
 
-  if (!html.includes('src/main')) {
+  if (!html.includes('src/main') && !html.includes('virtual:boltdocs-entry')) {
     html = html.replace(
       '</body>',
       '  <script type="module">import "virtual:boltdocs-entry";</script>\n  </body>',

@@ -8,6 +8,7 @@ import { createRequire } from 'module'
 import type { SSGOptions } from './options'
 import { replaceMetaTags } from './meta'
 import { generateSitemap } from './sitemap'
+import { generateRobotsTxt } from './robots'
 
 // Re-export options for consumers
 export type { SSGOptions }
@@ -122,8 +123,12 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   )
   fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemap, 'utf-8')
 
+  // Generate robots.txt
+  const robots = generateRobotsTxt(config!)
+  fs.writeFileSync(path.join(outDir, 'robots.txt'), robots, 'utf-8')
+
   console.log(
-    `[boltdocs] Generated ${routes.length} static pages + sitemap.xml`,
+    `[boltdocs] Generated ${routes.length} static pages + sitemap.xml + robots.txt`,
   )
 
   // Ensure all cache operations (like index persistence) are finished

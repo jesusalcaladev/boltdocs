@@ -2,6 +2,7 @@ import { normalizePath } from '../utils'
 import type { BoltdocsConfig } from '../config'
 import type { BoltdocsPluginOptions } from './types'
 import path from 'path'
+import fs from 'fs'
 
 /**
  * Generates the raw source code for the virtual entry file (`\0virtual:boltdocs-entry`).
@@ -18,6 +19,11 @@ export function generateEntryCode(
   const homeImport = options.homePage
     ? `import HomePage from '${normalizePath(options.homePage)}';`
     : ''
+  
+  // Auto-import index.css if it exists
+  const cssPath = path.resolve(process.cwd(), 'index.css')
+  const cssImport = fs.existsSync(cssPath) ? "import './index.css';" : ''
+
   const homeOption = options.homePage ? 'homePage: HomePage,' : ''
   const pluginComponents =
     config?.plugins?.flatMap((p) => Object.entries(p.components || {})) || []
@@ -54,6 +60,7 @@ import { createBoltdocsApp as _createApp } from 'boltdocs/client';
 import _routes from 'virtual:boltdocs-routes';
 import _config from 'virtual:boltdocs-config';
 import _user_mdx_components from 'virtual:boltdocs-mdx-components';
+${cssImport}
 ${homeImport}
 ${componentImports}
 ${externalImports}

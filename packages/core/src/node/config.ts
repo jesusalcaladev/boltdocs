@@ -63,6 +63,15 @@ export interface BoltdocsThemeConfig {
   version?: string
   /** The GitHub repository in the format 'owner/repo' to fetch and display star count. */
   githubRepo?: string
+  /**
+   * URL path to the site favicon.
+   * If not specified, the logo will be used if available.
+   */
+  favicon?: string
+  /**
+   * The Open Graph image URL to display when the site is shared on social media.
+   */
+  ogImage?: string
   /** Whether to show the 'Powered by LiteDocs' badge in the sidebar (default: true) */
   poweredBy?: boolean
   /**
@@ -84,6 +93,24 @@ export interface BoltdocsThemeConfig {
    */
   copyMarkdown?: boolean | { text?: string; icon?: string }
 }
+
+/**
+ * Configuration for the robots.txt file.
+ */
+export type BoltdocsRobotsConfig =
+  | string
+  | {
+      /** User-agent rules */
+      rules?: Array<{
+        userAgent: string
+        /** Paths allowed to be crawled */
+        allow?: string | string[]
+        /** Paths disallowed to be crawled */
+        disallow?: string | string[]
+      }>
+      /** Sitemaps to include in the robots.txt */
+      sitemaps?: string[]
+    }
 
 /**
  * Configuration for internationalization (i18n).
@@ -142,10 +169,12 @@ export interface BoltdocsIntegrationsConfig {
 export interface BoltdocsConfig {
   /** The base URL of the site, used for generating the sitemap */
   siteUrl?: string
-  /** Configuration pertaining to the UI and appearance */
-  themeConfig?: BoltdocsThemeConfig
   /** The root directory containing markdown documentation files (default: 'docs') */
   docsDir?: string
+  /** Path to a custom HomePage component */
+  homePage?: string
+  /** Configuration pertaining to the UI and appearance */
+  theme?: BoltdocsThemeConfig
   /** Configuration for internationalization */
   i18n?: BoltdocsI18nConfig
   /** Configuration for documentation versioning */
@@ -156,6 +185,16 @@ export interface BoltdocsConfig {
   external?: Record<string, string>
   /** External integrations configuration */
   integrations?: BoltdocsIntegrationsConfig
+  /** Configuration for the robots.txt file */
+  robots?: BoltdocsRobotsConfig
+  /** Low-level Vite configuration overrides */
+  vite?: import('vite').InlineConfig
+  /** @deprecated Use theme instead */
+  themeConfig?: BoltdocsThemeConfig
+}
+
+export function defineConfig(config: BoltdocsConfig): BoltdocsConfig {
+  return config
 }
 
 export const CONFIG_FILES = [
@@ -169,7 +208,10 @@ export const CONFIG_FILES = [
  */
 interface RawUserConfig
   extends Partial<BoltdocsConfig>,
-    Partial<BoltdocsThemeConfig> {}
+    Partial<BoltdocsThemeConfig> {
+  favicon?: string
+  ogImage?: string
+}
 
 /**
  * Loads user's configuration file (e.g., `boltdocs.config.js` or `boltdocs.config.ts`) if it exists,
@@ -187,7 +229,7 @@ export async function resolveConfig(
 
   const defaults: BoltdocsConfig = {
     docsDir: path.resolve(docsDir),
-    themeConfig: {
+    theme: {
       title: 'Boltdocs',
       description: 'A Vite documentation framework',
       navbar: [
@@ -230,18 +272,28 @@ export async function resolveConfig(
     title: userConfig.title,
     description: userConfig.description,
     logo: userConfig.logo,
+    favicon: userConfig.favicon,
+    ogImage: userConfig.ogImage,
     navbar: userConfig.navbar,
     sidebar: userConfig.sidebar,
     socialLinks: userConfig.socialLinks,
     footer: userConfig.footer,
     githubRepo: userConfig.githubRepo,
     tabs: userConfig.tabs,
+    codeTheme: userConfig.codeTheme,
+    copyMarkdown: userConfig.copyMarkdown,
+    breadcrumbs: userConfig.breadcrumbs,
+    poweredBy: userConfig.poweredBy,
+    communityHelp: userConfig.communityHelp,
+    version: userConfig.version,
+    editLink: userConfig.editLink
   }
 
-  // User can define properties at top level or inside themeConfig
+  // User can define properties at top level or inside themeConfig/theme
   const userThemeConfig: BoltdocsThemeConfig = {
     ...themeConfigFromTop,
     ...(userConfig.themeConfig || {}),
+    ...(userConfig.theme || {}),
   }
 
   // Clean undefined properties
@@ -263,13 +315,10 @@ export async function resolveConfig(
 
   return {
     docsDir: path.resolve(docsDir),
-    themeConfig: {
-      ...defaults.themeConfig,
+    homePage: userConfig.homePage,
+    theme: {
+      ...defaults.theme,
       ...cleanThemeConfig,
-      codeTheme:
-        cleanThemeConfig.codeTheme ||
-        (userConfig.themeConfig || userConfig).codeTheme ||
-        defaults.themeConfig?.codeTheme,
     },
     i18n: userConfig.i18n,
     versions: userConfig.versions,
@@ -277,5 +326,8 @@ export async function resolveConfig(
     plugins: userConfig.plugins || [],
     external: userConfig.external,
     integrations: userConfig.integrations,
+    robots: userConfig.robots,
+    vite: userConfig.vite,
   }
 }
+

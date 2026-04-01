@@ -12,10 +12,11 @@ import { useConfig } from '@client/app/config-context'
 export function Breadcrumbs() {
   const { crumbs, activeRoute } = useBreadcrumbs()
   const config = useConfig()
+  const themeConfig = config.theme || config.themeConfig || {}
 
   if (crumbs.length === 0) return null
 
-  if (!config.themeConfig?.breadcrumbs) return null
+  if (!themeConfig?.breadcrumbs) return null
 
   return (
     <BreadcrumbsRoot>

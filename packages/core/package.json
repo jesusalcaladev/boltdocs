@@ -5,6 +5,9 @@
   "main": "dist/node/index.js",
   "module": "dist/node/index.mjs",
   "types": "dist/node/index.d.ts",
+  "bin": {
+    "boltdocs": "./dist/node/cli-entry.js"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -60,6 +63,9 @@
   "dependencies": {
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
+    "@tailwindcss/vite": "^4.2.2",
+    "@vitejs/plugin-react": "^4.2.1",
+    "cac": "^7.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "codesandbox": "^2.2.3",

@@ -67,6 +67,7 @@ export function Sidebar({
   config: BoltdocsConfig
 }) {
   const { groups, ungrouped, activePath } = useSidebar(routes)
+  const themeConfig = config.theme || config.themeConfig || {}
 
   return (
     <SidebarPrimitive.SidebarRoot>
@@ -94,7 +95,7 @@ export function Sidebar({
         />
       ))}
 
-      {config.themeConfig?.poweredBy && (
+      {themeConfig?.poweredBy && (
         <div className="mt-auto pt-8">
           <PoweredBy />
         </div>

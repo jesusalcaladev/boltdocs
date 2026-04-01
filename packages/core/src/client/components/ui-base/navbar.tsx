@@ -24,7 +24,7 @@ export function Navbar() {
   const { links, title, logo, logoProps, github, social, config } = useNavbar()
   const { routes, allRoutes, currentVersion, currentLocale } = useRoutes()
   const { pathname } = useLocation()
-  const { themeConfig } = useConfig()
+  const themeConfig = config.theme || config.themeConfig || {}
 
   const hasTabs = themeConfig?.tabs && themeConfig.tabs.length > 0
 
@@ -76,10 +76,10 @@ export function Navbar() {
         </NavbarPrimitive.NavbarRight>
       </NavbarPrimitive.Content>
 
-      {pathname !== '/' && hasTabs && config.themeConfig?.tabs && (
+      {pathname !== '/' && hasTabs && themeConfig?.tabs && (
         <div className="w-full border-b border-border-subtle bg-bg-main">
           <Tabs
-            tabs={config.themeConfig.tabs}
+            tabs={themeConfig.tabs}
             routes={allRoutes || routes || []}
           />
         </div>

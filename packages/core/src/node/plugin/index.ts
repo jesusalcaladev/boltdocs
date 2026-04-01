@@ -5,11 +5,12 @@ import { resolveConfig, type BoltdocsConfig, CONFIG_FILES } from '../config'
 import { generateStaticPages } from '../ssg'
 import { normalizePath, isDocFile } from '../utils'
 import path from 'path'
-
 import type { BoltdocsPluginOptions } from './types'
 import { generateEntryCode } from './entry'
-import { injectHtmlMeta } from './html'
+import { injectHtmlMeta, getHtmlTemplate } from './html'
+import { generateRobotsTxt } from '../ssg/robots'
 import fs from 'fs'
+
 
 export * from './types'
 
@@ -63,7 +64,44 @@ export function boltdocsPlugin(
       },
 
       configureServer(server) {
-        // Explicitly watch config files and mdx-components to trigger server restarts or module invalidations
+        // Serve robots.txt from config
+        server.middlewares.use((req, res, next) => {
+          if (req.url === '/robots.txt') {
+            const robots = generateRobotsTxt(config)
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'text/plain')
+            res.end(robots)
+            return
+          }
+          next()
+        })
+
+        // Serve default HTML if index.html is missing
+        server.middlewares.use(async (req, res, next) => {
+          const url = req.url?.split('?')[0] || '/'
+          const accept = req.headers.accept || ''
+
+          if (
+            accept.includes('text/html') &&
+            !url.includes('.') // Simple check for assets
+          ) {
+            const indexPath = path.resolve(process.cwd(), 'index.html')
+            if (!fs.existsSync(indexPath)) {
+              let html = getHtmlTemplate(config)
+              html = injectHtmlMeta(html, config)
+              html = await server.transformIndexHtml(req.url || '/', html)
+              res.statusCode = 200
+              res.setHeader('Content-Type', 'text/html')
+              res.end(html)
+              return
+            }
+          }
+
+          next()
+        })
+
+        // Explicitly watch config files...
+
         const configPaths = CONFIG_FILES.map((c) =>
           path.resolve(process.cwd(), c),
         )
@@ -172,6 +210,7 @@ export function boltdocsPlugin(
         }
         if (id === '\0virtual:boltdocs-config') {
           const clientConfig = {
+            theme: config?.theme,
             themeConfig: config?.themeConfig,
             integrations: config?.integrations,
             i18n: config?.i18n,
