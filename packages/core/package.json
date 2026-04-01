@@ -66,6 +66,7 @@
     "fast-glob": "^3.3.3",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
+    "isomorphic-dompurify": "^3.7.1",
     "lucide-react": "^0.575.0",
     "react-aria-components": "^1.16.0",
     "react-router-dom": "^6.30.3",

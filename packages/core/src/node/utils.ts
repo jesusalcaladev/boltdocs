@@ -1,5 +1,6 @@
 import fs from 'fs'
 import matter from 'gray-matter'
+import DOMPurify from 'isomorphic-dompurify'
 
 /**
  * Normalizes a file path by replacing Windows backslashes with forward slashes.
@@ -134,6 +135,28 @@ export function fileToRoutePath(relativePath: string): string {
   }
 
   return routePath
+}
+
+/**
+ * Sanitizes an HTML string using DOMPurify to prevent XSS.
+ * By default, it allows a safe subset of HTML tags.
+ *
+ * @param html - The raw HTML string
+ * @returns The sanitized HTML
+ */
+export function sanitizeHtml(html: string): string {
+  return DOMPurify.sanitize(html)
+}
+
+/**
+ * Strips all HTML tags from a string, returning only the text content.
+ * Uses DOMPurify for secure and complete tag removal.
+ *
+ * @param html - The string containing HTML tags
+ * @returns The plain text content
+ */
+export function stripHtmlTags(html: string): string {
+  return DOMPurify.sanitize(html, { ALLOWED_TAGS: [], KEEP_CONTENT: true })
 }
 
 /**

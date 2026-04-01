@@ -9,6 +9,8 @@ import {
   capitalize,
   stripNumberPrefix,
   extractNumberPrefix,
+  sanitizeHtml,
+  stripHtmlTags,
 } from '../utils'
 
 /**
@@ -118,47 +120,47 @@ export function parseDocFile(
 
   const isGroupIndex = parts.length >= 2 && /^index\.mdx?$/.test(cleanFileName)
 
-  const headings: { level: number; text: string; id: string }[] = []
   const slugger = new GithubSlugger()
+  const headings: { level: number; text: string; id: string }[] = []
   const headingsRegex = /^(#{2,4})\s+(.+)$/gm
+
   let match
   while ((match = headingsRegex.exec(content)) !== null) {
     const level = match[1].length
-    // Strip simple markdown formatting specifically for the plain-text search index
-    const text = match[2]
-      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-      .replace(/[_*`]/g, '')
+    const rawText = match[2]
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Strip markdown links
+      .replace(/[_*`]/g, '') // Strip markdown formatting
       .trim()
-    const id = slugger.slug(text)
-    // Security: Sanitize heading text for XSS
-    const sanitizedText = text
-      .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, '')
-      .replace(/<[^>]+on\w+="[^"]*"/gim, '')
-      .replace(/<img[^>]+>/gim, '')
-      .trim()
+
+    const sanitizedText = sanitizeHtml(rawText).trim()
+    const id = slugger.slug(sanitizedText)
+
     headings.push({ level, text: sanitizedText, id })
   }
 
-  const sanitize = (str: string) =>
-    str.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, '').trim()
-
-  const sanitizedTitle = data.title ? sanitize(data.title) : inferredTitle
-  let sanitizedDescription = data.description ? sanitize(data.description) : ''
+  const sanitizedTitle = data.title
+    ? sanitizeHtml(String(data.title))
+    : inferredTitle
+  let sanitizedDescription = data.description
+    ? sanitizeHtml(String(data.description))
+    : ''
 
   // If no description is provided, extract a summary from the content
   if (!sanitizedDescription && content) {
-    sanitizedDescription = sanitize(
+    const plainExcerpt = stripHtmlTags(
       content
         .replace(/^#+.*$/gm, '') // Remove headers
         .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Simplify links
         .replace(/[_*`]/g, '') // Remove formatting
-        .replace(/\s+/g, ' ') // Normalize whitespace
-        .trim()
-        .slice(0, 160),
+        .replace(/\s+/g, ' '), // Normalize whitespace
     )
+      .trim()
+      .slice(0, 160)
+
+    sanitizedDescription = plainExcerpt
   }
 
-  const sanitizedBadge = data.badge ? sanitize(data.badge) : undefined
+  const sanitizedBadge = data.badge ? sanitizeHtml(String(data.badge)) : undefined
   const icon = data.icon ? String(data.icon) : undefined
 
   // Extract full content as plain text for search indexing
@@ -204,23 +206,16 @@ export function parseDocFile(
 }
 
 /**
- * Sanitizes a string by removing script tags for basic XSS protection.
- */
-function sanitize(str: string): string {
-  return str.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, '').trim()
-}
-
-/**
  * Converts markdown content to plain text for search indexing.
  * Strips headers, links, tags, and formatting.
  */
 function parseContentToPlainText(content: string): string {
-  return content
+  const plainText = content
     .replace(/^#+.*$/gm, '') // Remove headers
     .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Simplify links
-    .replace(/<[^>]+>/g, '') // Remove HTML/JSX tags
     .replace(/\{[^\}]+\}/g, '') // Remove JS expressions/curly braces
     .replace(/[_*`]/g, '') // Remove formatting
     .replace(/\s+/g, ' ') // Normalize whitespace
-    .trim()
+
+  return stripHtmlTags(plainText).trim()
 }
