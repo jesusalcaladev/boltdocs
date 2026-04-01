@@ -4,7 +4,7 @@
 	"scripts": {
 		"dev": "pnpm -C docs dev",
 		"build:core": "pnpm --filter boltdocs build",
-		"build:cli": "pnpm --filter @boltdocs/cli build",
+		"build:cli": "pnpm --filter @bdocs/cli build",
 		"build": "turbo run build",
 		"release": "pnpm build && pnpm changeset publish",
 		"version-packages": "changeset version",
