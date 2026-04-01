@@ -50,6 +50,9 @@ importers:
       '@vitest/ui':
         specifier: ^4.0.18
         version: 4.0.18(vitest@4.0.18)
+      boltdocs:
+        specifier: workspace:*
+        version: link:packages/core
       husky:
         specifier: ^9.0.1
         version: 9.1.7
