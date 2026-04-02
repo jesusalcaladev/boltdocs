@@ -180,8 +180,11 @@ export const NavbarLink = ({
       href={href}
       target={to === 'external' ? '_blank' : undefined}
       className={cn(
-        'transition-colors outline-none hover:text-text-main focus-visible:ring-2 focus-visible:ring-primary-500/30 rounded-sm',
-        active ? 'text-primary-500' : 'text-text-muted',
+        'transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 rounded-sm',
+        {
+          'text-primary-500 font-bold': active,
+          'text-text-muted hover:text-text-main font-medium': !active,
+        },
         className,
       )}
     >
