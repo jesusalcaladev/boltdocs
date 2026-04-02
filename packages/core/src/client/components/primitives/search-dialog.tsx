@@ -53,13 +53,22 @@ export const SearchDialogRoot = ({
 export const SearchDialogAutocomplete = ({
   children,
   className,
+  onSelectionChange,
   ...props
-}: RAC.AutocompleteProps<object> & { className?: string }) => {
+}: RAC.AutocompleteProps<object> & {
+  className?: string
+  onSelectionChange?: (key: RAC.Key) => void
+}) => {
+  const Autocomplete = RAC.Autocomplete as any
   return (
     <div className={className}>
-      <RAC.Autocomplete {...props} className="flex flex-col min-h-0">
+      <Autocomplete
+        {...props}
+        onSelectionChange={onSelectionChange}
+        className="flex flex-col min-h-0"
+      >
         {children}
-      </RAC.Autocomplete>
+      </Autocomplete>
     </div>
   )
 }

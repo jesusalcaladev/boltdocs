@@ -22,15 +22,40 @@
       "import": "./dist/client/index.mjs",
       "require": "./dist/client/index.js"
     },
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.mjs",
+      "require": "./dist/hooks/index.js"
+    },
+    "./primitives": {
+      "types": "./dist/primitives/index.d.ts",
+      "import": "./dist/primitives/index.mjs",
+      "require": "./dist/primitives/index.js"
+    },
+    "./base-ui": {
+      "types": "./dist/base-ui/index.d.ts",
+      "import": "./dist/base-ui/index.mjs",
+      "require": "./dist/base-ui/index.js"
+    },
+    "./mdx": {
+      "types": "./dist/mdx/index.d.ts",
+      "import": "./dist/mdx/index.mjs",
+      "require": "./dist/mdx/index.js"
+    },
+    "./integrations": {
+      "types": "./dist/integrations/index.d.ts",
+      "import": "./dist/integrations/index.mjs",
+      "require": "./dist/integrations/index.js"
+    },
     "./client/hooks": {
-      "types": "./dist/client/hooks/index.d.ts",
-      "import": "./dist/client/hooks/index.mjs",
-      "require": "./dist/client/hooks/index.js"
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.mjs",
+      "require": "./dist/hooks/index.js"
     },
     "./client/primitives": {
-      "types": "./dist/client/components/primitives/index.d.ts",
-      "import": "./dist/client/components/primitives/index.mjs",
-      "require": "./dist/client/components/primitives/index.js"
+      "types": "./dist/primitives/index.d.ts",
+      "import": "./dist/primitives/index.mjs",
+      "require": "./dist/primitives/index.js"
     },
     "./client/types": {
       "types": "./dist/client/types.d.ts",

@@ -55,7 +55,20 @@ export function boltdocsPlugin(
         }
 
         return {
-          optimizeDeps: { include: ['react', 'react-dom'] },
+          optimizeDeps: {
+            include: ['react', 'react-dom'],
+            exclude: [
+              'boltdocs',
+              'boltdocs/client',
+              'boltdocs/hooks',
+              'boltdocs/primitives',
+              'boltdocs/base-ui',
+              'boltdocs/mdx',
+              'boltdocs/integrations',
+              'boltdocs/client/hooks',
+              'boltdocs/client/primitives',
+            ],
+          },
         }
       },
 

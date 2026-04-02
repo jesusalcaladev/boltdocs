@@ -6,14 +6,15 @@ const Heading = ({
   level,
   id,
   children,
+  ...props
 }: {
   level: number
   id?: string
   children?: React.ReactNode
-}) => {
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements
+} & React.HTMLAttributes<HTMLHeadingElement>) => {
+  const Tag = `h${level}` as any
   return (
-    <Tag id={id} className="boltdocs-heading">
+    <Tag id={id} {...props} className="boltdocs-heading">
       {children}
       {id && (
         <a href={`#${id}`} className="header-anchor" aria-label="Anchor">
