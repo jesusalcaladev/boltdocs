@@ -16,7 +16,7 @@ export const BreadcrumbsRoot = ({
   return (
     <BreadcrumbsRAC
       className={cn(
-        'flex items-center gap-1.5 mb-0 text-sm text-text-muted',
+        'flex items-center gap-1.5 pl-0! mb-0 text-sm text-text-muted',
         className,
       )}
       {...props}
