@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.1.1
+
+### Patch Changes
+
+- [`1ce39bb`](https://github.com/jesusalcaladev/boltdocs/commit/1ce39bbe07974f35f6a04c341c5578c337f37024) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - fix: repared error of deploy
+
 ## 2.1.0
 
 ### Minor Changes
