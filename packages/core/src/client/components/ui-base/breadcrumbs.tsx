@@ -12,7 +12,7 @@ import { useConfig } from '@client/app/config-context'
 export function Breadcrumbs() {
   const { crumbs, activeRoute } = useBreadcrumbs()
   const config = useConfig()
-  const themeConfig = config.theme || config.themeConfig || {}
+  const themeConfig = config.theme || {}
 
   if (crumbs.length === 0) return null
 

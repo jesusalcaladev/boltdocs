@@ -4,7 +4,7 @@ import type { BoltdocsConfig } from '../config'
  * Provides a default HTML template if none is found in the project root.
  */
 export function getHtmlTemplate(config: BoltdocsConfig): string {
-  const title = config.theme?.title || config.themeConfig?.title || 'Boltdocs'
+  const title = config.theme?.title || 'Boltdocs'
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -27,7 +27,7 @@ export function getHtmlTemplate(config: BoltdocsConfig): string {
  * @returns {string} The modified HTML string with injected tags
  */
 export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
-  const theme = config.theme || config.themeConfig
+  const theme = config.theme
   const title = theme?.title || 'Boltdocs'
   const description = theme?.description || ''
 
@@ -46,12 +46,16 @@ export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
     `<meta name="description" content="${description}">`,
     `<meta property="og:title" content="${title}">`,
     `<meta property="og:description" content="${description}">`,
-    theme?.ogImage ? `<meta property="og:image" content="${theme.ogImage}">` : '',
+    theme?.ogImage
+      ? `<meta property="og:image" content="${theme.ogImage}">`
+      : '',
     `<meta property="og:type" content="website">`,
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${title}">`,
     `<meta name="twitter:description" content="${description}">`,
-    theme?.ogImage ? `<meta name="twitter:image" content="${theme.ogImage}">` : '',
+    theme?.ogImage
+      ? `<meta name="twitter:image" content="${theme.ogImage}">`
+      : '',
     `<meta name="generator" content="Boltdocs">`,
   ]
     .filter(Boolean)

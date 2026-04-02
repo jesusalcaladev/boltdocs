@@ -12,6 +12,8 @@ import type { BoltdocsSocialLink } from '@node/config'
 import Menu from '@components/primitives/menu'
 import { Button } from '@components/primitives/button'
 import { ChevronDown, Languages } from 'lucide-react'
+import { useLocalizedTo } from '@hooks/use-localized-to'
+import type { NavbarLink as NavbarLinkType } from '@client/types'
 
 const SearchDialog = lazy(() =>
   import('./search-dialog').then((m) => ({
@@ -23,7 +25,7 @@ export function Navbar() {
   const { links, title, logo, logoProps, github, social, config } = useNavbar()
   const { routes, allRoutes, currentVersion, currentLocale } = useRoutes()
   const { pathname } = useLocation()
-  const themeConfig = config.theme || config.themeConfig || {}
+  const themeConfig = config.theme || {}
 
   const hasTabs = themeConfig?.tabs && themeConfig.tabs.length > 0
 
@@ -43,7 +45,7 @@ export function Navbar() {
 
           <NavbarPrimitive.Links>
             {links.map((link) => (
-              <NavbarPrimitive.Link key={link.href} {...(link as any)} />
+              <NavbarLinkItem key={link.href} link={link} />
             ))}
           </NavbarPrimitive.Links>
         </NavbarPrimitive.NavbarLeft>
@@ -77,14 +79,16 @@ export function Navbar() {
 
       {pathname !== '/' && hasTabs && themeConfig?.tabs && (
         <div className="w-full border-b border-border-subtle bg-bg-main">
-          <Tabs
-            tabs={themeConfig.tabs}
-            routes={allRoutes || routes || []}
-          />
+          <Tabs tabs={themeConfig.tabs} routes={allRoutes || routes || []} />
         </div>
       )}
     </NavbarPrimitive.NavbarRoot>
   )
+}
+
+function NavbarLinkItem({ link }: { link: NavbarLinkType }) {
+  const localizedHref = useLocalizedTo(link.href)
+  return <NavbarPrimitive.Link {...(link as any)} href={localizedHref} />
 }
 
 function NavbarVersion() {

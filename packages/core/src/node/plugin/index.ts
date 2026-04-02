@@ -11,7 +11,6 @@ import { injectHtmlMeta, getHtmlTemplate } from './html'
 import { generateRobotsTxt } from '../ssg/robots'
 import fs from 'fs'
 
-
 export * from './types'
 
 /**
@@ -89,25 +88,31 @@ export function boltdocsPlugin(
           next()
         })
 
-        // Serve default HTML if index.html is missing
+        // Serve default HTML for documentation routes or if index.html is missing
         server.middlewares.use(async (req, res, next) => {
           const url = req.url?.split('?')[0] || '/'
           const accept = req.headers.accept || ''
 
+          const isDocRoute =
+            url === '/' ||
+            url.startsWith('/docs') ||
+            (config.external &&
+              Object.keys(config.external).some((extPath) =>
+                url.startsWith(extPath),
+              ))
+
           if (
             accept.includes('text/html') &&
-            !url.includes('.') // Simple check for assets
+            !url.includes('.') && // Simple check for assets
+            isDocRoute
           ) {
-            const indexPath = path.resolve(process.cwd(), 'index.html')
-            if (!fs.existsSync(indexPath)) {
-              let html = getHtmlTemplate(config)
-              html = injectHtmlMeta(html, config)
-              html = await server.transformIndexHtml(req.url || '/', html)
-              res.statusCode = 200
-              res.setHeader('Content-Type', 'text/html')
-              res.end(html)
-              return
-            }
+            let html = getHtmlTemplate(config)
+            html = injectHtmlMeta(html, config)
+            html = await server.transformIndexHtml(req.url || '/', html)
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'text/html')
+            res.end(html)
+            return
           }
 
           next()
@@ -224,7 +229,6 @@ export function boltdocsPlugin(
         if (id === '\0virtual:boltdocs-config') {
           const clientConfig = {
             theme: config?.theme,
-            themeConfig: config?.themeConfig,
             integrations: config?.integrations,
             i18n: config?.i18n,
             versions: config?.versions,
