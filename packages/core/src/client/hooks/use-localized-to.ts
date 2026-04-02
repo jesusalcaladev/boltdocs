@@ -24,20 +24,23 @@ export function useLocalizedTo(to: RouterLinkProps['to']) {
   let currentLocale = config.i18n?.defaultLocale
 
   let cIdx = 0
-  if (
-    config.versions &&
-    curParts.length > cIdx &&
-    config.versions.versions[curParts[cIdx]]
-  ) {
-    currentVersion = curParts[cIdx]
-    cIdx++
+  if (config.versions && curParts.length > cIdx) {
+    const versionMatch = config.versions.versions.find(
+      (v) => v.path === curParts[cIdx],
+    )
+    if (versionMatch) {
+      currentVersion = versionMatch.path
+      cIdx++
+    }
   }
+
   if (
     config.i18n &&
     curParts.length > cIdx &&
     config.i18n.locales[curParts[cIdx]]
   ) {
     currentLocale = curParts[cIdx]
+    cIdx++
   }
 
   // 2. Parse the target `to` path
@@ -48,14 +51,16 @@ export function useLocalizedTo(to: RouterLinkProps['to']) {
   let hasVersion = false
   let hasLocale = false
 
-  if (
-    config.versions &&
-    toParts.length > tIdx &&
-    config.versions.versions[toParts[tIdx]]
-  ) {
-    hasVersion = true
-    tIdx++
+  if (config.versions && toParts.length > tIdx) {
+    const versionMatch = config.versions.versions.find(
+      (v) => v.path === toParts[tIdx],
+    )
+    if (versionMatch) {
+      hasVersion = true
+      tIdx++
+    }
   }
+
   if (
     config.i18n &&
     toParts.length > tIdx &&

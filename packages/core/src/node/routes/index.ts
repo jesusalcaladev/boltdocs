@@ -197,8 +197,6 @@ function generateI18nFallbacks(
   }
 
   for (const locale of allLocales) {
-    if (locale === defaultLocale) continue
-
     const localePaths = routesByLocale.get(locale) || new Set<string>()
 
     for (const defRoute of defaultRoutes) {
@@ -207,7 +205,11 @@ function generateI18nFallbacks(
         defaultLocale,
         locale,
         basePath,
+        config,
       )
+
+      // Skip if the path is already the same (e.g. for default locale unprefixed)
+      if (targetPath === defRoute.path) continue
 
       if (!localePaths.has(targetPath)) {
         fallbackRoutes.push({
@@ -231,15 +233,20 @@ function computeLocalizedPath(
   defaultLocale: string,
   targetLocale: string,
   basePath: string,
+  config?: BoltdocsConfig,
 ): string {
   const cacheKey = `${path}:${targetLocale}`
   const cached = localizedPathCache.get(cacheKey)
   if (cached) return cached
 
   let prefix = basePath
-  const versionMatch = path.match(new RegExp(`^${basePath}/(v[0-9]+)`))
-  if (versionMatch) {
-    prefix += '/' + versionMatch[1]
+  if (config?.versions) {
+    for (const vConfig of config.versions.versions) {
+      if (path.startsWith(`${basePath}/${vConfig.path}`)) {
+        prefix += '/' + vConfig.path
+        break
+      }
+    }
   }
 
   let pathAfterVersion = path.substring(prefix.length)

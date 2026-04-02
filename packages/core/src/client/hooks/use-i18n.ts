@@ -63,21 +63,46 @@ export function useI18n(): UseI18nReturn {
               : `/${locale}`
       }
     } else {
-      targetPath = locale === i18n.defaultLocale ? '/' : `/${locale}`
+      // Fallback for when we don't have a current route (e.g. 404 page)
+      // Try to find the root documentation page for the target locale
+      const targetRoute = allRoutes.find(
+        (r) =>
+          (r.filePath === 'index.mdx' || r.filePath === 'index.md') &&
+          (r.locale || i18n.defaultLocale) === locale &&
+          !r.version, // Prefer non-versioned root
+      )
+
+      if (targetRoute) {
+        targetPath = targetRoute.path
+      } else {
+        targetPath = locale === i18n.defaultLocale ? '/' : `/${locale}`
+      }
     }
 
     navigate(targetPath)
   }
 
-  const availableLocales = routeContext.availableLocales.map((l) => ({
-    ...l,
-    label: l.label as string,
-    value: l.key,
-  }))
+  const currentLocaleConfig = config.i18n?.localeConfigs?.[currentLocale as string]
+  const currentLocaleLabel =
+    currentLocaleConfig?.label ||
+    config.i18n?.locales[currentLocale as string] ||
+    currentLocale
+
+  const availableLocales = config.i18n
+    ? Object.entries(config.i18n.locales).map(([key, defaultLabel]) => {
+        const localeConfig = config.i18n?.localeConfigs?.[key]
+        return {
+          key,
+          label: localeConfig?.label || defaultLabel,
+          value: key,
+          isCurrent: key === currentLocale,
+        }
+      })
+    : []
 
   return {
     currentLocale,
-    currentLocaleLabel: routeContext.currentLocaleLabel,
+    currentLocaleLabel,
     availableLocales,
     handleLocaleChange,
   }

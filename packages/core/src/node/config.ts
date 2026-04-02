@@ -113,23 +113,49 @@ export type BoltdocsRobotsConfig =
     }
 
 /**
+ * Configuration for a specific locale.
+ */
+export interface BoltdocsLocaleConfig {
+  /** The display name of the locale */
+  label?: string
+  /** The text direction (ltr or rtl) */
+  direction?: 'ltr' | 'rtl'
+  /** The HTML lang attribute value (e.g., 'en-US') */
+  htmlLang?: string
+  /** The calendar system to use (e.g., 'gregory') */
+  calendar?: string
+}
+
+/**
  * Configuration for internationalization (i18n).
  */
 export interface BoltdocsI18nConfig {
   /** The default locale (e.g., 'en') */
   defaultLocale: string
-  /** Available locales and their display names (e.g., { en: 'English', es: 'Español' }) */
+  /** Available locales and their basic display names (e.g., { en: 'English', es: 'Español' }) */
   locales: Record<string, string>
+  /** Detailed configuration for each locale */
+  localeConfigs?: Record<string, BoltdocsLocaleConfig>
+}
+
+/**
+ * Configuration for a specific documentation version.
+ */
+export interface BoltdocsVersionConfig {
+  /** The display name of the version (e.g., 'v2.0') */
+  label: string
+  /** The URL path prefix for the version (e.g., '2.0') */
+  path: string
 }
 
 /**
  * Configuration for documentation versioning.
  */
 export interface BoltdocsVersionsConfig {
-  /** The default version (e.g., 'v2') */
+  /** The default version path (e.g., 'v2') */
   defaultVersion: string
-  /** Available versions and their display names (e.g., { v1: 'Version 1.x', v2: 'Version 2.x' }) */
-  versions: Record<string, string>
+  /** Available versions configurations */
+  versions: BoltdocsVersionConfig[]
 }
 
 /**
@@ -189,8 +215,6 @@ export interface BoltdocsConfig {
   robots?: BoltdocsRobotsConfig
   /** Low-level Vite configuration overrides */
   vite?: import('vite').InlineConfig
-  /** @deprecated Use theme instead */
-  themeConfig?: BoltdocsThemeConfig
 }
 
 export function defineConfig(config: BoltdocsConfig): BoltdocsConfig {
@@ -286,13 +310,12 @@ export async function resolveConfig(
     poweredBy: userConfig.poweredBy,
     communityHelp: userConfig.communityHelp,
     version: userConfig.version,
-    editLink: userConfig.editLink
+    editLink: userConfig.editLink,
   }
 
   // User can define properties at top level or inside themeConfig/theme
   const userThemeConfig: BoltdocsThemeConfig = {
     ...themeConfigFromTop,
-    ...(userConfig.themeConfig || {}),
     ...(userConfig.theme || {}),
   }
 
@@ -330,4 +353,3 @@ export async function resolveConfig(
     vite: userConfig.vite,
   }
 }
-
