@@ -17,6 +17,24 @@ import { DocsLayout } from './docs-layout'
 import { MdxPage } from './mdx-page'
 import { MdxComponentsProvider } from './mdx-components-context'
 import { mdxComponentsDefault } from './mdx-component'
+import { useRoutes } from '@hooks/use-routes'
+
+/**
+ * Updates the HTML lang and dir attributes based on the current locale configuration.
+ */
+function I18nUpdater() {
+  const { currentLocale, config } = useRoutes()
+
+  useEffect(() => {
+    if (!config.i18n) return
+    const localeConfig = config.i18n.localeConfigs?.[currentLocale as string]
+    document.documentElement.lang =
+      localeConfig?.htmlLang || currentLocale || 'en'
+    document.documentElement.dir = localeConfig?.direction || 'ltr'
+  }, [currentLocale, config.i18n])
+
+  return null
+}
 
 export function AppShell({
   initialRoutes,
@@ -53,14 +71,17 @@ export function AppShell({
           (k) =>
             k === `/${docsDirName}/${route.filePath}` || // Vite dev/build relative path
             k.endsWith(`/${docsDirName}/${route.filePath}`) || // SSG absolute path fallback
-            k.endsWith(`/${docsDirName}\\${route.filePath.replace(/\\/g, '/')}`), // Windows fallback
+            k.endsWith(
+              `/${docsDirName}\\${route.filePath.replace(/\\/g, '/')}`,
+            ), // Windows fallback
         )
         const loader = loaderKey ? modules[loaderKey] : null
 
         return {
           ...route,
           Component: React.lazy<React.ComponentType<any>>(async () => {
-            if (!loader) return { default: NotFound as React.ComponentType<any> }
+            if (!loader)
+              return { default: NotFound as React.ComponentType<any> }
             const mod = await loader()
             return mod
           }),
@@ -89,6 +110,7 @@ export function AppShell({
           <BoltdocsRouterProvider>
             <PreloadProvider routes={routesInfo} modules={modules}>
               <ScrollHandler />
+              <I18nUpdater />
               <Routes>
                 {/* Custom home page with user layout */}
                 {HomePage && (
