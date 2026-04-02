@@ -11,8 +11,7 @@ import { useLocation } from 'react-router-dom'
 import type { BoltdocsSocialLink } from '@node/config'
 import Menu from '@components/primitives/menu'
 import { Button } from '@components/primitives/button'
-import { ChevronDown } from 'lucide-react'
-import { useConfig } from '@client/app/config-context'
+import { ChevronDown, Languages } from 'lucide-react'
 
 const SearchDialog = lazy(() =>
   import('./search-dialog').then((m) => ({
@@ -96,43 +95,73 @@ function NavbarVersion() {
 
   return (
     <Menu.Trigger>
-      <Button variant={'outline'} iconPosition="right" icon={<ChevronDown />}>
-        {currentVersionLabel}
+      <Button
+        variant={'outline'}
+        size="sm"
+        rounded="lg"
+        iconPosition="right"
+        icon={<ChevronDown className="w-3.5 h-3.5 text-text-muted/60" />}
+        className="h-8 border-border-subtle/60 bg-bg-surface/30 backdrop-blur-sm transition-all duration-200 hover:border-primary-500/50 hover:bg-primary-500/5"
+      >
+        <span className="font-semibold text-[0.8125rem]">
+          {currentVersionLabel}
+        </span>
       </Button>
-      <Menu.Section items={availableVersions}>
-        {(version) => (
-          <Menu.Item
-            key={`${version.value ?? ''}`}
-            onPress={() => handleVersionChange(version.value)}
-          >
-            {version.label as string}
-          </Menu.Item>
-        )}
-      </Menu.Section>
+      <Menu.Root>
+        <Menu.Section items={availableVersions}>
+          {(version) => (
+            <Menu.Item
+              key={`${version.value ?? ''}`}
+              onPress={() => handleVersionChange(version.value)}
+            >
+              {version.label as string}
+            </Menu.Item>
+          )}
+        </Menu.Section>
+      </Menu.Root>
     </Menu.Trigger>
   )
 }
 
 function NavbarI18n() {
-  const { currentLocaleLabel, availableLocales, handleLocaleChange } = useI18n()
+  const { currentLocale, availableLocales, handleLocaleChange } = useI18n()
 
   if (availableLocales.length === 0) return null
 
   return (
     <Menu.Trigger>
-      <Button variant={'outline'} iconPosition="right" icon={<ChevronDown />}>
-        {currentLocaleLabel}
+      <Button
+        variant={'outline'}
+        size="sm"
+        rounded="lg"
+        iconPosition="right"
+        icon={<ChevronDown className="w-3.5 h-3.5 text-text-muted/60" />}
+        className="h-8 border-border-subtle/60 bg-bg-surface/30 backdrop-blur-sm transition-all duration-200 hover:border-primary-500/50 hover:bg-primary-500/5 px-2.5"
+      >
+        <div className="flex items-center gap-1.5">
+          <Languages className="w-3.5 h-3.5 text-primary-500" />
+          <span className="font-bold text-[0.75rem] tracking-wider uppercase opacity-90">
+            {currentLocale || 'en'}
+          </span>
+        </div>
       </Button>
-      <Menu.Section items={availableLocales}>
-        {(locale) => (
-          <Menu.Item
-            key={`${locale.value ?? ''}`}
-            onPress={() => handleLocaleChange(locale.value)}
-          >
-            {locale.label as string}
-          </Menu.Item>
-        )}
-      </Menu.Section>
+      <Menu.Root>
+        <Menu.Section items={availableLocales}>
+          {(locale) => (
+            <Menu.Item
+              key={`${locale.value ?? ''}`}
+              onPress={() => handleLocaleChange(locale.value)}
+            >
+              <div className="flex items-center justify-between w-full gap-4">
+                <span>{locale.label as string}</span>
+                <span className="text-[10px] font-bold opacity-40 uppercase tracking-tighter">
+                  {locale.value}
+                </span>
+              </div>
+            </Menu.Item>
+          )}
+        </Menu.Section>
+      </Menu.Root>
     </Menu.Trigger>
   )
 }
