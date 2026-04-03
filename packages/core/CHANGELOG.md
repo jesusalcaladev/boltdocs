@@ -1,5 +1,15 @@
 # boltdocs
 
+## 2.3.0
+
+### Minor Changes
+
+- [`5d53fd0`](https://github.com/jesusalcaladev/boltdocs/commit/5d53fd0eddbcc0e22b092f52cea82df78063376b) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - feat: added new primitives `Skeleton`
+  feat: added new loading with `Skeleton` primitives
+  feat: added new command `boltdocs doctor` for diagnostic your project
+  feat: support full-text search
+  fix: better calc in page-nav
+
 ## 2.2.0
 
 ### Minor Changes
