@@ -13,7 +13,7 @@ import {
   useConfig,
   useMdxComponents,
 } from 'boltdocs/client'
-import { useLocation } from 'boltdocs/client/hooks'
+import { useLocation } from 'boltdocs/hooks'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { routes: filteredRoutes, allRoutes, currentRoute } = useRoutes()
@@ -34,8 +34,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </div>
       <ProgressBar />
       <Head
-        siteTitle={config.themeConfig?.title || 'Boltdocs'}
-        siteDescription={config.themeConfig?.description || ''}
+        siteTitle={config.theme?.title || 'Boltdocs'}
+        siteDescription={config.theme?.description || ''}
         routes={allRoutes}
       />
       <Navbar />
@@ -50,7 +50,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <CopyMarkdownComp
                 mdxRaw={currentRoute?._rawContent}
                 route={currentRoute}
-                config={config.themeConfig?.copyMarkdown}
+                config={config.theme?.copyMarkdown}
               />
             </DocsLayout.ContentHeader>
           )}
@@ -67,8 +67,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {!isHome && (
           <OnThisPage
             headings={currentRoute?.headings}
-            editLink={config.themeConfig?.editLink}
-            communityHelp={config.themeConfig?.communityHelp}
+            editLink={config.theme?.editLink}
+            communityHelp={config.theme?.communityHelp}
             filePath={currentRoute?.filePath}
           />
         )}
