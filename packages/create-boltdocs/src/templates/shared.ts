@@ -8,6 +8,7 @@ export function getPackageJson(projectName: string) {
       dev: 'boltdocs',
       build: 'boltdocs build',
       preview: 'boltdocs preview',
+      doctor: 'boltdocs doctor',
       'lint:md': 'markdownlint-cli2 "**/*.{md,mdx}"',
       'lint:md:fix': 'markdownlint-cli2 --fix "**/*.{md,mdx}"',
     },
