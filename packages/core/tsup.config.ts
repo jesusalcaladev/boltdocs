@@ -20,6 +20,7 @@ const commonConfig: Options = {
     'virtual:boltdocs-layout',
     'virtual:boltdocs-mdx-components',
     'virtual:boltdocs-entry',
+    /^virtual:boltdocs-/, // Broad catch-all for any virtual modules
   ],
 }
 
