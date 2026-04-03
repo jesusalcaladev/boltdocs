@@ -2,7 +2,7 @@ import type { Plugin, InlineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { boltdocsPlugin } from './plugin/index'
-import { boltdocsMdxPlugin } from './mdx'
+import { boltdocsMdxPlugin } from './mdx/index'
 import type { BoltdocsPluginOptions } from './plugin/index'
 
 import { resolveConfig, type BoltdocsConfig } from './config'
