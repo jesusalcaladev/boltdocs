@@ -1,101 +1,100 @@
-import path from "node:path";
-import fs from "node:fs";
+import path from 'node:path'
+import fs from 'node:fs'
+import { getIndexCss, getLayoutPage } from './shared.js'
 
-export function generateBaseTemplate(projectDir: string, projectName: string) {
-  const srcDir = path.join(projectDir, "src");
-  fs.mkdirSync(srcDir, { recursive: true });
+export function generateBaseTemplate(projectDir: string) {
+  const srcDir = path.join(projectDir, 'src')
+  fs.mkdirSync(srcDir, { recursive: true })
 
-  const componentsDir = path.join(srcDir, "components");
-  fs.mkdirSync(componentsDir, { recursive: true });
+  const componentsDir = path.join(srcDir, 'components')
+  fs.mkdirSync(componentsDir, { recursive: true })
 
   const buttonContent = `import React from 'react';
 
-export function Button({ children, ...props }) {
+export function Button({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...props}
-      style={{
-        padding: '0.5rem 1rem',
-        borderRadius: '0.25rem',
-        border: 'none',
-        backgroundColor: 'var(--ld-color-primary)',
-        color: 'var(--ld-color-primary-text)',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-      }}
+      className={'px-6 py-3 rounded-lg bg-primary text-primary-foreground cursor-pointer font-bold transition-opacity hover:opacity-90 ' + (props.className || '')}
     >
       {children}
     </button>
   );
 }
-`;
-  const buttonFile = "Button.tsx";
-  const mainContent = `export { Button } from './components/Button';\n`;
+`
+  fs.writeFileSync(path.join(componentsDir, 'Button.tsx'), buttonContent)
 
-  fs.writeFileSync(path.join(componentsDir, buttonFile), buttonContent);
-  fs.writeFileSync(path.join(srcDir, "main.ts"), mainContent);
-
-  const homePageContent = `import React from 'react';
+  const homePageContent = `import { Button } from 'boltdocs/primitives';
+import { Cards, Card } from 'boltdocs/mdx'
 
 export default function HomePage() {
   return (
-    <main style={{ 
-      maxWidth: "800px", 
-      margin: "0 auto", 
-      padding: "6rem 2rem", 
-      textAlign: "center",
-      fontFamily: "var(--ld-font-sans)"
-    }}>
-      <h1 style={{ fontSize: "3rem", marginBottom: "1rem" }}>
-        Welcome to your <span style={{ color: "var(--ld-color-primary)" }}>${projectName}</span>
-      </h1>
-      <p style={{ fontSize: "1.25rem", color: "var(--ld-text-muted)", marginBottom: "2rem" }}>
-        This is a more complete base template for Boltdocs, featuring custom components and structure.
+    <div className="hero-section">
+      <h1 className="hero-title">my-boltdocs-app</h1>
+      <p className="hero-subtitle">
+        The modern documentation framework. Fast, efficient, and beautiful by default.
       </p>
-      <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
-        <a href="/docs" style={{ 
-          padding: "0.75rem 1.5rem", 
-          backgroundColor: "var(--ld-color-primary)", 
-          color: "var(--ld-color-primary-text)", 
-          borderRadius: "0.5rem",
-          textDecoration: "none",
-          fontWeight: "bold"
-        }}>
+      
+      <div className="flex gap-4 mb-16">
+        <Button href="/docs">
           Get Started
-        </a>
-        <a href="https://github.com/jesusalcaladev/boltdocs" target="_blank" rel="noreferrer" style={{ 
-          padding: "0.75rem 1.5rem", 
-          backgroundColor: "transparent", 
-          color: "var(--ld-text-main)",
-          border: "1px solid var(--ld-border-strong)",
-          borderRadius: "0.5rem",
-          textDecoration: "none"
-        }}>
+        </Button>
+        <Button href="https://github.com/jesusalcaladev/boltdocs" variant={'ghost'}>
           GitHub
-        </a>
+        </Button>
       </div>
-    </main>
+
+      <Cards>
+        {[
+          { 
+            title: "Performance First", 
+            desc: "Ultra-fast load times and instant HMR with Vite-powered development." 
+          },
+          { 
+            title: "MDX Support", 
+            desc: "Write documentation with React components directly in your markdown files." 
+          },
+          { 
+            title: "Fully Customizable", 
+            desc: "Custom layouts, components, and themes tailored to your project needs." 
+          }
+        ].map((feat, i) => (
+          <Card key={i} title={feat.title}>
+            {feat.desc}
+          </Card>
+        ))}
+      </Cards>
+    </div>
   );
 }
-`;
-  fs.writeFileSync(path.join(srcDir, "HomePage.tsx"), homePageContent);
 
-  const docsDir = path.join(projectDir, "docs");
-  fs.mkdirSync(docsDir, { recursive: true });
+`
+  const docsDir = path.join(projectDir, 'docs')
+  fs.mkdirSync(docsDir, { recursive: true })
 
-  const indexMdx = `# Welcome to ${projectName}
+  fs.writeFileSync(path.join(srcDir, 'HomePage.tsx'), homePageContent)
+  fs.writeFileSync(path.join(docsDir, 'layout.tsx'), getLayoutPage())
+  fs.writeFileSync(path.join(projectDir, 'index.css'), getIndexCss())
 
-This is your new Boltdocs project using the **base template**.
+  const indexMdx = `---
+title: Introduction
+---
 
-## Getting Started
+# Introduction
 
-Edit \`docs/index.mdx\` to change this page, or \`src/HomePage.tsx\` to edit the landing page.
+Welcome to your new documentation site!
 
-## Example Component
+## Features
 
-Below is an interactive custom component that we scaffolded in \`src/components/Button.tsx\`.
+- **Beautiful Design**: Modern and clean interface.
+- **Custom Components**: Use React in your markdown.
+- **Fast**: Optimized for speed and performance.
 
-<Button onClick={() => alert('Button clicked!')}>Click Me</Button>
-`;
-  fs.writeFileSync(path.join(docsDir, "index.mdx"), indexMdx);
+<Tip>
+  You can find this component in \`src/components/Button.tsx\`.
+</Tip>
+
+<Button onClick={() => alert('Hello world!')}>Try me</Button>
+`
+  fs.writeFileSync(path.join(docsDir, 'index.mdx'), indexMdx)
 }
