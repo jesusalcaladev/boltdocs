@@ -33,12 +33,14 @@ export function Navbar() {
     <NavbarPrimitive.NavbarRoot className={hasTabs ? 'border-b-0' : ''}>
       <NavbarPrimitive.Content>
         <NavbarPrimitive.NavbarLeft>
-          <NavbarPrimitive.NavbarLogo
-            src={logo ?? ''}
-            alt={logoProps?.alt || title}
-            width={logoProps?.width ?? 24}
-            height={logoProps?.height ?? 24}
-          />
+          {logo && (
+            <NavbarPrimitive.NavbarLogo
+              src={logo}
+              alt={logoProps?.alt || title}
+              width={logoProps?.width ?? 24}
+              height={logoProps?.height ?? 24}
+            />
+          )}
           <NavbarPrimitive.Title>{title}</NavbarPrimitive.Title>
 
           {config.versions && currentVersion && <NavbarVersion />}

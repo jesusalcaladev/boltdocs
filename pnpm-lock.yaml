@@ -169,6 +169,9 @@ importers:
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
+      flexsearch:
+        specifier: ^0.8.212
+        version: 0.8.212
       github-slugger:
         specifier: ^2.0.0
         version: 2.0.0
@@ -2988,6 +2991,9 @@ packages:
 
   flatted@3.4.2:
     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
+
+  flexsearch@0.8.212:
+    resolution: {integrity: sha512-wSyJr1GUWoOOIISRu+X2IXiOcVfg9qqBRyCPRUdLMIGJqPzMo+jMRlvE83t14v1j0dRMEaBbER/adQjp6Du2pw==}
 
   flush-write-stream@1.1.1:
     resolution: {integrity: sha512-3Z4XhFZ3992uIq0XOqb9AreonueSYphE6oYbpt5+3u06JWklbsPkNv3ZKkP9Bz/r+1MWCaMoSQ28P85+1Yc77w==}
@@ -8480,6 +8486,8 @@ snapshots:
       rollup: 4.59.0
 
   flatted@3.4.2: {}
+
+  flexsearch@0.8.212: {}
 
   flush-write-stream@1.1.1:
     dependencies:

@@ -12,8 +12,17 @@ import {
 } from '@components/primitives/search-dialog'
 import Navbar from '@components/primitives/navbar'
 import { useNavigate } from 'react-router-dom'
+import type { ComponentRoute } from '@client/types'
+interface SearchResult {
+  id: string
+  title: string
+  path: string
+  bio: string
+  groupTitle?: string
+  isHeading?: boolean
+}
 
-export function SearchDialog({ routes }: { routes: any[] }) {
+export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
   const { isOpen, setIsOpen, query, setQuery, list } = useSearch(routes)
   const navigate = useNavigate()
 
@@ -58,10 +67,12 @@ export function SearchDialog({ routes }: { routes: any[] }) {
         <SearchDialogAutocomplete onSelectionChange={handleSelect}>
           <SearchDialogInput
             value={query}
-            onChange={(e: any) => setQuery(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setQuery(e.target.value)
+            }
           />
-          <SearchDialogList items={list}>
-            {(item: any) => (
+          <SearchDialogList items={list as SearchResult[]}>
+            {(item: SearchResult) => (
               <SearchDialogItemRoot
                 key={item.id}
                 onPress={() => handleSelect(item.id)}
@@ -70,7 +81,7 @@ export function SearchDialog({ routes }: { routes: any[] }) {
                 <SearchDialogItemIcon isHeading={item.isHeading} />
                 <div className="flex flex-col justify-center gap-0.5">
                   <SearchDialogItemTitle>{item.title}</SearchDialogItemTitle>
-                  <SearchDialogItemBio>{item.groupTitle}</SearchDialogItemBio>
+                  <SearchDialogItemBio>{item.bio}</SearchDialogItemBio>
                 </div>
               </SearchDialogItemRoot>
             )}

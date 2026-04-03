@@ -9,6 +9,7 @@ import type { BoltdocsPluginOptions } from './types'
 import { generateEntryCode } from './entry'
 import { injectHtmlMeta, getHtmlTemplate } from './html'
 import { generateRobotsTxt } from '../ssg/robots'
+import { generateSearchData } from '../search'
 import fs from 'fs'
 
 export * from './types'
@@ -253,7 +254,8 @@ export function boltdocsPlugin(
           id === 'virtual:boltdocs-config' ||
           id === 'virtual:boltdocs-entry' ||
           id === 'virtual:boltdocs-mdx-components' ||
-          id === 'virtual:boltdocs-layout'
+          id === 'virtual:boltdocs-layout' ||
+          id === 'virtual:boltdocs-search'
         ) {
           return '\0' + id
         }
@@ -321,6 +323,12 @@ export default UserLayout;`
           // No user layout — return the built-in default
           return `import { DefaultLayout } from 'boltdocs/client';
 export default DefaultLayout;`
+        }
+
+        if (id === '\0virtual:boltdocs-search') {
+          const routes = await generateRoutes(docsDir, config)
+          const searchData = generateSearchData(routes)
+          return `export default ${JSON.stringify(searchData, null, 2)};`
         }
       },
 

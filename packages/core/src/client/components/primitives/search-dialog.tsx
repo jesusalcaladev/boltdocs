@@ -50,12 +50,12 @@ export const SearchDialogRoot = ({
   )
 }
 
-export const SearchDialogAutocomplete = ({
+export const SearchDialogAutocomplete = <T extends object>({
   children,
   className,
   onSelectionChange,
   ...props
-}: RAC.AutocompleteProps<object> & {
+}: RAC.AutocompleteProps<T> & {
   className?: string
   onSelectionChange?: (key: RAC.Key) => void
 }) => {
@@ -98,11 +98,11 @@ export const SearchDialogInput = ({
   )
 }
 
-export const SearchDialogList = ({
+export const SearchDialogList = <T extends object>({
   children,
   className,
   ...props
-}: RAC.ListBoxProps<object> & { className?: string }) => {
+}: RAC.ListBoxProps<T> & { className?: string }) => {
   return (
     <RAC.ListBox
       {...props}
