@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { NotFound } from '@components/ui-base/not-found'
-import { Loading } from '@components/ui-base/loading'
 import { ThemeProvider } from './theme-context'
 import type { ComponentRoute, CreateBoltdocsAppOptions } from '../types'
 import type { BoltdocsConfig } from '@node/config'
@@ -109,7 +108,10 @@ export function AppShell({
   initialRoutes: ComponentRoute[]
   initialConfig: BoltdocsConfig
   docsDirName: string
-  modules: Record<string, () => Promise<{ default: React.ComponentType<unknown> }>>
+  modules: Record<
+    string,
+    () => Promise<{ default: React.ComponentType<unknown> }>
+  >
   hot?: CreateBoltdocsAppOptions['hot']
   homePage?: React.ComponentType
   externalPages?: Record<string, React.ComponentType>
@@ -166,6 +168,8 @@ export function AppShell({
     [customComponents],
   )
 
+  const LoadingFallback = allComponents.Loading as React.ComponentType
+
   return (
     <ThemeProvider>
       <MdxComponentsProvider components={allComponents}>
@@ -182,7 +186,7 @@ export function AppShell({
                       key={route.path}
                       path={route.path === '' ? '/' : route.path}
                       element={
-                        <React.Suspense fallback={<Loading />}>
+                        <React.Suspense fallback={<LoadingFallback />}>
                           <MdxPage Component={route.Component} />
                         </React.Suspense>
                       }

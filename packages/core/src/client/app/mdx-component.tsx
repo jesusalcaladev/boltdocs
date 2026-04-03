@@ -25,8 +25,11 @@ const Heading = ({
   )
 }
 
+import { Loading } from '@components/ui-base/loading'
+
 export const mdxComponentsDefault = {
   ...MdxComponents,
+  Loading,
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <Heading level={1} {...props} />
   ),
