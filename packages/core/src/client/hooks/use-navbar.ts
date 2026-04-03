@@ -2,14 +2,17 @@ import { useLocation } from 'react-router-dom'
 import { useConfig } from '@client/app/config-context'
 import { useTheme } from '@client/app/theme-context'
 import type { NavbarLink } from '@client/types'
+import { getTranslated } from '@client/utils/i18n'
+import { useRoutes } from './use-routes'
 
 export function useNavbar() {
   const config = useConfig()
   const { theme } = useTheme()
   const location = useLocation()
+  const { currentLocale } = useRoutes()
 
   const themeConfig = config.theme || {}
-  const title = themeConfig.title || 'Boltdocs'
+  const title = getTranslated(themeConfig.title, currentLocale) || 'Boltdocs'
   const rawLinks = themeConfig.navbar || []
   const socialLinks = themeConfig.socialLinks || []
   const githubRepo = themeConfig.githubRepo
@@ -18,13 +21,17 @@ export function useNavbar() {
   const links: NavbarLink[] = rawLinks.map((item: any) => {
     const href = item.href || item.to || item.link || ''
     return {
-      label: item.label || item.text || '',
+      label: getTranslated(item.label || item.text, currentLocale),
       href,
       active: location.pathname === href,
       to:
         href.startsWith('http') || href.startsWith('//')
           ? 'external'
           : undefined,
+      items: item.items?.map((sub: any) => ({
+        label: getTranslated(sub.label || sub.text, currentLocale),
+        href: sub.href || sub.link || sub.to || '',
+      })),
     }
   })
 

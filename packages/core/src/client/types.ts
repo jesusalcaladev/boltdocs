@@ -119,7 +119,8 @@ export interface SandboxEmbedOptions {
  */
 export interface BoltdocsTab {
   id: string
-  text: string
+  /** Text to display (can be a string or a map of translations) */
+  text: string | Record<string, string>
   icon?: string
 }
 
@@ -160,7 +161,8 @@ export interface LayoutProps {
  * Unified type for navbar links.
  */
 export interface NavbarLink {
-  label: string
+  /** Label to display (can be a string or a map of translations) */
+  label: string | Record<string, string>
   href: string
   active: boolean
   /** Optional icon or string for external link indication */

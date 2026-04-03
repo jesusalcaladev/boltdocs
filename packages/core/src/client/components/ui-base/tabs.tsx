@@ -3,6 +3,8 @@ import T from '@components/primitives/tabs'
 import { Link } from '@components/primitives/link'
 import type { BoltdocsTab, ComponentRoute } from '@client/types'
 import * as Icons from 'lucide-react'
+import { getTranslated } from '@client/utils/i18n'
+import { useRoutes } from '@hooks/use-routes'
 
 export function Tabs({
   tabs,
@@ -11,6 +13,7 @@ export function Tabs({
   tabs: BoltdocsTab[]
   routes: ComponentRoute[]
 }) {
+  const { currentLocale } = useRoutes()
   const { indicatorStyle, tabRefs, activeIndex } = useTabsHook(tabs, routes)
 
   const renderTabIcon = (iconName?: string) => {
@@ -54,7 +57,7 @@ export function Tabs({
               }`}
             >
               {renderTabIcon(tab.icon)}
-              <span>{tab.text}</span>
+              <span>{getTranslated(tab.text, currentLocale)}</span>
             </Link>
           )
         })}

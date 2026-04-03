@@ -24,10 +24,10 @@ export interface BoltdocsFooterConfig {
  * Theme-specific configuration options governing the appearance and navigation of the site.
  */
 export interface BoltdocsThemeConfig {
-  /** The global title of the documentation site */
-  title?: string
-  /** The global description of the site (used for SEO) */
-  description?: string
+  /** The global title of the documentation site (can be translated) */
+  title?: string | Record<string, string>
+  /** The global description of the site (can be translated) */
+  description?: string | Record<string, string>
   /** URL path to the site logo or an object for light/dark versions */
   logo?:
     | string
@@ -40,12 +40,17 @@ export interface BoltdocsThemeConfig {
       }
   /** Items to display in the top navigation bar */
   navbar?: Array<{
-    /** Text to display */
-    label: string
+    /** Text to display (can be a string or a map of translations) */
+    label: string | Record<string, string>
     /** URL path or external link */
     href: string
     /** Nested items for NavigationMenu */
-    items?: Array<{ label: string; href: string }>
+    items?: Array<{
+      /** Text to display (can be a string or a map of translations) */
+      label: string | Record<string, string>
+      /** URL path or external link */
+      href: string
+    }>
   }>
   /** Items to display in the sidebar, organized optionally by group URLs */
   sidebar?: Record<string, Array<{ text: string; link: string }>>
@@ -78,7 +83,12 @@ export interface BoltdocsThemeConfig {
    * Top-level tabs for organizing documentation groups.
    * Tab discovery uses the (tab-id) directory syntax.
    */
-  tabs?: Array<{ id: string; text: string; icon?: string }>
+  tabs?: Array<{
+    id: string
+    /** Text to display (can be a string or a map of translations) */
+    text: string | Record<string, string>
+    icon?: string
+  }>
   /**
    * The syntax highlighting theme for code blocks.
    * Supports any Shiki theme name (e.g., 'github-dark', 'one-dark-pro', 'aurora-x').
