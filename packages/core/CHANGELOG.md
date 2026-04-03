@@ -1,5 +1,14 @@
 # boltdocs
 
+## 2.2.0
+
+### Minor Changes
+
+- [`766daf2`](https://github.com/jesusalcaladev/boltdocs/commit/766daf21becafaa173a65cc8bea4d31b32ce8640) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - feat: support i18n in links & tabs
+  feat: change component Loading
+  feat: dectecttheme of system
+  perf: better calc in the routes & navigation
+
 ## 2.1.1
 
 ### Patch Changes
