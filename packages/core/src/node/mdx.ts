@@ -70,7 +70,7 @@ async function getShikiHighlighter(codeTheme: any) {
  */
 export function remarkShiki(config?: BoltdocsConfig) {
   return async (tree: any) => {
-    const codeTheme = config?.themeConfig?.codeTheme ?? {
+    const codeTheme = config?.theme?.codeTheme ?? {
       light: 'github-light',
       dark: 'github-dark',
     }
@@ -127,7 +127,7 @@ export function remarkShiki(config?: BoltdocsConfig) {
  */
 export function rehypeShiki(config?: BoltdocsConfig) {
   return async (tree: any) => {
-    const codeTheme = config?.themeConfig?.codeTheme || {
+    const codeTheme = config?.theme?.codeTheme || {
       light: 'github-light',
       dark: 'github-dark',
     }
