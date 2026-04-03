@@ -2,11 +2,9 @@
   <img src="assets/banner.webp" width="100%" alt="Boltdocs Banner" />
 </p>
 
-# Boltdocs
-
 > **The next-generation, high-performance documentation framework powered by React and Vite.**
 
-Boltdocs is a lightning-fast documentation tool designed for developers who value both speed and aesthetics. It combines the power of Vite with a premium, glassmorphism-inspired UI to deliver a seamless documentation experience.
+Boltdocs is a lightning-fast documentation tool designed for developers who value both speed and aesthetics. It combines the power of Vite with a premium-focused UI to deliver a seamless documentation experience.
 
 [![Project Status: Active](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/bolt-docs/boltdocs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
