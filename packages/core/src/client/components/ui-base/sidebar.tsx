@@ -8,7 +8,8 @@ import type { BoltdocsConfig } from '@node/config'
 
 function getIcon(iconName?: string): React.ElementType | undefined {
   if (!iconName) return undefined
-  const IconComponent = (LucideIcons as Record<string, any>)[iconName]
+  const icons = LucideIcons as unknown as Record<string, React.ElementType>
+  const IconComponent = icons[iconName]
   return IconComponent || undefined
 }
 
@@ -45,16 +46,20 @@ function CollapsibleSidebarGroup({
       isOpen={isOpen}
       onToggle={() => setIsOpen(!isOpen)}
     >
-      {group.routes.map((route: ComponentRoute) => (
-        <SidebarPrimitive.SidebarLink
-          key={route.path}
-          label={route.title}
-          href={route.path}
-          active={activePath === route.path}
-          icon={getIcon(route.icon)}
-          badge={route.badge}
-        />
-      ))}
+      {group.routes.map((route: ComponentRoute) => {
+        const isCurrent =
+          activePath === (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+        return (
+          <SidebarPrimitive.SidebarLink
+            key={route.path}
+            label={route.title}
+            href={route.path}
+            active={isCurrent}
+            icon={getIcon(route.icon)}
+            badge={route.badge}
+          />
+        )
+      })}
     </SidebarPrimitive.SidebarGroup>
   )
 }
@@ -67,22 +72,26 @@ export function Sidebar({
   config: BoltdocsConfig
 }) {
   const { groups, ungrouped, activePath } = useSidebar(routes)
-  const themeConfig = config.theme || config.themeConfig || {}
+  const themeConfig = config.theme || {}
 
   return (
     <SidebarPrimitive.SidebarRoot>
       {ungrouped.length > 0 && (
         <SidebarPrimitive.SidebarGroup className="mb-6">
-          {ungrouped.map((route) => (
-            <SidebarPrimitive.SidebarLink
-              key={route.path}
-              label={route.title}
-              href={route.path}
-              active={activePath === route.path}
-              icon={getIcon(route.icon)}
-              badge={route.badge}
-            />
-          ))}
+          {ungrouped.map((route) => {
+            const isCurrent =
+              activePath === (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+            return (
+              <SidebarPrimitive.SidebarLink
+                key={route.path}
+                label={route.title}
+                href={route.path}
+                active={isCurrent}
+                icon={getIcon(route.icon)}
+                badge={route.badge}
+              />
+            )
+          })}
         </SidebarPrimitive.SidebarGroup>
       )}
 

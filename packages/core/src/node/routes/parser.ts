@@ -59,9 +59,15 @@ export function parseDocFile(
   // Level 1: Check for version
   if (config?.versions && parts.length > 0) {
     const potentialVersion = parts[0]
+    const prefix = config.versions.prefix || ''
+    
     const versionMatch = config.versions.versions.find(
-      (v) => v.path === potentialVersion,
+      (v) => {
+        const fullPath = prefix + v.path
+        return potentialVersion === fullPath || potentialVersion === v.path
+      }
     )
+    
     if (versionMatch) {
       version = versionMatch.path
       parts = parts.slice(1)

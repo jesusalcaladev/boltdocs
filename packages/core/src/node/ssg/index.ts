@@ -27,8 +27,8 @@ const _require = createRequire(import.meta.url)
 export async function generateStaticPages(options: SSGOptions): Promise<void> {
   const { docsDir, docsDirName, outDir, config } = options
   const routes = await generateRoutes(docsDir, config)
-  const siteTitle = config?.themeConfig?.title || 'Boltdocs'
-  const siteDescription = config?.themeConfig?.description || ''
+  const siteTitle = config?.theme?.title || 'Boltdocs'
+  const siteDescription = config?.theme?.description || ''
 
   // Resolve the SSR module (compiled by tsup)
   const ssrModulePath = path.resolve(_dirname, '../client/ssr.js')

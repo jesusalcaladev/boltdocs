@@ -7,7 +7,10 @@ export function useSidebar(routes: ComponentRoute[]) {
   const location = useLocation()
 
   // Find active route and tab
-  const activeRoute = routes.find((r) => r.path === location.pathname)
+  const normalize = (p: string) => (p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p)
+  const currentPath = normalize(location.pathname)
+
+  const activeRoute = routes.find((r) => normalize(r.path) === currentPath)
   const activeTabId = activeRoute?.tab?.toLowerCase()
 
   // Filter routes by active tab if any
@@ -43,7 +46,7 @@ export function useSidebar(routes: ComponentRoute[]) {
     groups,
     ungrouped,
     activeRoute,
-    activePath: location.pathname,
+    activePath: currentPath,
     config,
   }
 }

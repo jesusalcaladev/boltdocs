@@ -1,13 +1,22 @@
 import { useState, useMemo } from 'react'
+import { useRoutes } from './use-routes'
 import type { ComponentRoute } from '@client/types'
 
 export function useSearch(routes: ComponentRoute[]) {
+  const { currentLocale, currentVersion } = useRoutes()
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
 
   const list = useMemo(() => {
+    // 0. Filter routes by active context
+    const activeRoutes = routes.filter((r) => {
+      const localeMatch = !currentLocale || r.locale === currentLocale
+      const versionMatch = !currentVersion || r.version === currentVersion
+      return localeMatch && versionMatch
+    })
+
     if (!query) {
-      return routes.slice(0, 10).map((r) => ({
+      return activeRoutes.slice(0, 10).map((r) => ({
         id: r.path,
         title: r.title,
         path: r.path,
@@ -16,10 +25,17 @@ export function useSearch(routes: ComponentRoute[]) {
       }))
     }
 
-    const results: any[] = []
+    const results: {
+      id: string
+      title: string | undefined
+      path: string
+      bio: string
+      groupTitle: string | undefined
+      isHeading?: boolean
+    }[] = []
     const lowerQuery = query.toLowerCase()
 
-    for (const route of routes) {
+    for (const route of activeRoutes) {
       if (route.title?.toLowerCase().includes(lowerQuery)) {
         results.push({
           id: route.path,
@@ -55,7 +71,7 @@ export function useSearch(routes: ComponentRoute[]) {
         return true
       })
       .slice(0, 10)
-  }, [routes, query])
+  }, [routes, query, currentLocale, currentVersion])
 
   return {
     isOpen,
@@ -65,7 +81,7 @@ export function useSearch(routes: ComponentRoute[]) {
     list,
     input: {
       value: query,
-      onChange: (e: any) => setQuery(e.target.value),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
     },
   }
 }

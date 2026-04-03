@@ -72,8 +72,13 @@ export function parseFrontmatter(filePath: string): {
   content: string
 } {
   const raw = fs.readFileSync(filePath, 'utf-8')
-  const { data, content } = matter(raw)
-  return { data, content }
+  try {
+    const { data, content } = matter(raw)
+    return { data, content }
+  } catch (e) {
+    // If frontmatter is malformed (e.g. while editing), return empty data and raw content
+    return { data: {}, content: raw }
+  }
 }
 
 /**

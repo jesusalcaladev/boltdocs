@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { getBaseFilePath } from '@client/utils/get-base-file-path'
 import { useRoutes } from './use-routes'
+import { useBoltdocsStore } from '../store/use-boltdocs-store'
 
 export interface VersionOption {
   key: string
@@ -25,9 +26,13 @@ export function useVersion(): UseVersionReturn {
   const { allRoutes, currentRoute, currentVersion, currentLocale, config } =
     routeContext
   const versions = config.versions
+  const setVersion = useBoltdocsStore((s) => s.setVersion)
 
   const handleVersionChange = (version: string) => {
     if (!versions || version === currentVersion) return
+
+    // Update store
+    setVersion(version)
 
     let targetPath = `/docs/${version}`
 

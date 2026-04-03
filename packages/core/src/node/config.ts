@@ -154,6 +154,11 @@ export interface BoltdocsVersionConfig {
 export interface BoltdocsVersionsConfig {
   /** The default version path (e.g., 'v2') */
   defaultVersion: string
+  /** 
+   * Optional prefix for all version paths (e.g., 'v').
+   * If set to 'v', version '1.1' will be available at '/docs/v1.1'.
+   */
+  prefix?: string
   /** Available versions configurations */
   versions: BoltdocsVersionConfig[]
 }

@@ -11,7 +11,8 @@ import { sortRoutes } from './sorter'
 export type { RouteMeta }
 export { invalidateRouteCache, invalidateFile }
 
-// Cache for localized path computations
+// Cache for file list and localized path computations
+let cachedFileList: string[] | null = null
 const localizedPathCache = new Map<string, string>()
 
 /**
@@ -30,6 +31,7 @@ export async function generateRoutes(
   docsDir: string,
   config?: BoltdocsConfig,
   basePath: string = '/docs',
+  forceScan: boolean = true,
 ): Promise<RouteMeta[]> {
   const start = performance.now()
 
@@ -44,13 +46,19 @@ export async function generateRoutes(
     docCache.invalidateAll()
   }
 
-  // 1. FAST SCAN
-  const files = await fastGlob(['**/*.md', '**/*.mdx'], {
-    cwd: docsDir,
-    absolute: true,
-    suppressErrors: true,
-    followSymbolicLinks: false,
-  })
+  // 1. FAST SCAN (Skip if incremental and we have a cache)
+  let files: string[]
+  if (!forceScan && cachedFileList) {
+    files = cachedFileList
+  } else {
+    files = await fastGlob(['**/*.md', '**/*.mdx'], {
+      cwd: docsDir,
+      absolute: true,
+      suppressErrors: true,
+      followSymbolicLinks: false,
+    })
+    cachedFileList = files
+  }
 
   // Prune cache entries for deleted files
   docCache.pruneStale(new Set(files))
@@ -241,7 +249,13 @@ function computeLocalizedPath(
 
   let prefix = basePath
   if (config?.versions) {
+    const vPrefix = config.versions.prefix || ''
     for (const vConfig of config.versions.versions) {
+      const fullVPath = vPrefix + vConfig.path
+      if (path.startsWith(`${basePath}/${fullVPath}`)) {
+        prefix += '/' + fullVPath
+        break
+      }
       if (path.startsWith(`${basePath}/${vConfig.path}`)) {
         prefix += '/' + vConfig.path
         break

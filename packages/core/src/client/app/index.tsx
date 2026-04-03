@@ -17,7 +17,9 @@ import { DocsLayout } from './docs-layout'
 import { MdxPage } from './mdx-page'
 import { MdxComponentsProvider } from './mdx-components-context'
 import { mdxComponentsDefault } from './mdx-component'
-import { useRoutes } from '@hooks/use-routes'
+import { useRoutes } from '../hooks/use-routes'
+import { useLocation } from 'react-router-dom'
+import { useBoltdocsStore } from '../store/use-boltdocs-store'
 
 /**
  * Updates the HTML lang and dir attributes based on the current locale configuration.
@@ -36,6 +38,64 @@ function I18nUpdater() {
   return null
 }
 
+/**
+ * Synchronizes the Zustand store with the current URL pathname.
+ */
+function StoreSync() {
+  const location = useLocation()
+  const { config } = useRoutes()
+  const setLocale = useBoltdocsStore((s) => s.setLocale)
+  const setVersion = useBoltdocsStore((s) => s.setVersion)
+  const currentLocaleStore = useBoltdocsStore((s) => s.currentLocale)
+  const currentVersionStore = useBoltdocsStore((s) => s.currentVersion)
+
+  useEffect(() => {
+    const parts = location.pathname.split('/').filter(Boolean)
+    let cIdx = 0
+    let detectedVersion = config.versions?.defaultVersion
+    let detectedLocale = config.i18n?.defaultLocale
+
+    // 0. Skip docs prefix if present
+    if (parts[cIdx] === 'docs') cIdx++
+
+    // 1. Version detection
+    if (config.versions && parts.length > cIdx) {
+      const versionMatch = config.versions.versions.find(
+        (v) => v.path === parts[cIdx],
+      )
+      if (versionMatch) {
+        detectedVersion = versionMatch.path
+        cIdx++
+      }
+    }
+
+    // 2. Locale detection
+    if (
+      config.i18n &&
+      parts.length > cIdx &&
+      config.i18n.locales[parts[cIdx]]
+    ) {
+      detectedLocale = parts[cIdx]
+    } else if (config.i18n && parts.length === 0) {
+      // On root, use the stored preference if it exists, otherwise default
+      detectedLocale = currentLocaleStore || config.i18n.defaultLocale
+    }
+
+    // Only update if changed to avoid loops
+    if (detectedLocale !== currentLocaleStore) setLocale(detectedLocale)
+    if (detectedVersion !== currentVersionStore) setVersion(detectedVersion)
+  }, [
+    location.pathname,
+    config,
+    setLocale,
+    setVersion,
+    currentLocaleStore,
+    currentVersionStore,
+  ])
+
+  return null
+}
+
 export function AppShell({
   initialRoutes,
   initialConfig,
@@ -49,14 +109,14 @@ export function AppShell({
   initialRoutes: ComponentRoute[]
   initialConfig: BoltdocsConfig
   docsDirName: string
-  modules: Record<string, () => Promise<{ default: React.ComponentType<any> }>>
+  modules: Record<string, () => Promise<{ default: React.ComponentType<unknown> }>>
   hot?: CreateBoltdocsAppOptions['hot']
   homePage?: React.ComponentType
   externalPages?: Record<string, React.ComponentType>
   components?: Record<string, React.ComponentType>
 }) {
   const [routesInfo, setRoutesInfo] = useState<ComponentRoute[]>(initialRoutes)
-  const [config] = useState(initialConfig)
+  const [config, setConfig] = useState(initialConfig)
   const computedExternalPages = externalPages || {}
 
   const resolvedRoutes = useMemo(() => {
@@ -79,11 +139,11 @@ export function AppShell({
 
         return {
           ...route,
-          Component: React.lazy<React.ComponentType<any>>(async () => {
+          Component: React.lazy<React.ComponentType<unknown>>(async () => {
             if (!loader)
-              return { default: NotFound as React.ComponentType<any> }
+              return { default: NotFound as React.ComponentType<unknown> }
             const mod = await loader()
-            return mod
+            return mod as { default: React.ComponentType<unknown> }
           }),
         }
       })
@@ -94,6 +154,9 @@ export function AppShell({
     if (hot) {
       hot.on('boltdocs:routes-update', (newRoutes: ComponentRoute[]) => {
         setRoutesInfo(newRoutes)
+      })
+      hot.on('boltdocs:config-update', (newConfig: BoltdocsConfig) => {
+        setConfig(newConfig)
       })
     }
   }, [hot])
@@ -110,35 +173,9 @@ export function AppShell({
           <BoltdocsRouterProvider>
             <PreloadProvider routes={routesInfo} modules={modules}>
               <ScrollHandler />
+              <StoreSync />
               <I18nUpdater />
               <Routes>
-                {/* Custom home page with user layout */}
-                {HomePage && (
-                  <Route
-                    path="/"
-                    element={
-                      <UserLayout>
-                        <HomePage />
-                      </UserLayout>
-                    }
-                  />
-                )}
-
-                {/* Custom External Pages with user layout */}
-                {Object.entries(computedExternalPages).map(
-                  ([extPath, ExtComponent]) => (
-                    <Route
-                      key={extPath}
-                      path={extPath}
-                      element={
-                        <UserLayout>
-                          <ExtComponent />
-                        </UserLayout>
-                      }
-                    />
-                  ),
-                )}
-
                 <Route key="docs-layout" element={<DocsLayout />}>
                   {resolvedRoutes.map((route) => (
                     <Route
@@ -152,6 +189,63 @@ export function AppShell({
                     />
                   ))}
                 </Route>
+
+                {/* Custom home page with user layout */}
+                {HomePage && (
+                  <>
+                    <Route
+                      path="/"
+                      element={
+                        <UserLayout>
+                          <HomePage />
+                        </UserLayout>
+                      }
+                    />
+                    {config.i18n &&
+                      Object.keys(config.i18n.locales).map((locale) => (
+                        <Route
+                          key={`home-${locale}`}
+                          path={`/${locale}`}
+                          element={
+                            <UserLayout>
+                              <HomePage />
+                            </UserLayout>
+                          }
+                        />
+                      ))}
+                  </>
+                )}
+
+                {/* Custom External Pages with user layout */}
+                {Object.entries(computedExternalPages).map(
+                  ([extPath, ExtComponent]) => {
+                    const cleanPath = extPath === '/' ? '' : extPath
+                    return (
+                      <React.Fragment key={extPath}>
+                        <Route
+                          path={extPath}
+                          element={
+                            <UserLayout>
+                              <ExtComponent />
+                            </UserLayout>
+                          }
+                        />
+                        {config.i18n &&
+                          Object.keys(config.i18n.locales).map((locale) => (
+                            <Route
+                              key={`${extPath}-${locale}`}
+                              path={`/${locale}${cleanPath}`}
+                              element={
+                                <UserLayout>
+                                  <ExtComponent />
+                                </UserLayout>
+                              }
+                            />
+                          ))}
+                      </React.Fragment>
+                    )
+                  },
+                )}
 
                 <Route
                   path="*"

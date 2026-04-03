@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { useConfig } from '@client/app/config-context'
 import { usePreload } from '@client/app/preload'
+import { useBoltdocsStore } from '../store/use-boltdocs-store'
 
 /**
  * Hook to access the framework's routing state.
@@ -12,16 +13,26 @@ export function useRoutes() {
   const config = useConfig()
   const location = useLocation()
 
-  // Find the current route exactly matching the pathname
+  // Use Zustand store for active state
+  const currentLocaleStore = useBoltdocsStore((s) => s.currentLocale)
+  const currentVersionStore = useBoltdocsStore((s) => s.currentVersion)
+  const hasHydrated = useBoltdocsStore((s) => s.hasHydrated)
+
+  // Find the current route matching the pathname
   const currentRoute = allRoutes.find((r) => r.path === location.pathname)
 
-  // Derive current locale and version from the route or defaults
+  // Derive current locale and version
+  // Priority: URL (currentRoute) > Zustand Store (Persistence) > Config Default
   const currentLocale = config.i18n
-    ? currentRoute?.locale || config.i18n.defaultLocale
+    ? currentRoute?.locale ||
+      (hasHydrated ? currentLocaleStore : undefined) ||
+      config.i18n.defaultLocale
     : undefined
 
   const currentVersion = config.versions
-    ? currentRoute?.version || config.versions.defaultVersion
+    ? currentRoute?.version ||
+      (hasHydrated ? currentVersionStore : undefined) ||
+      config.versions.defaultVersion
     : undefined
 
   // Filter routes to those matching the current version and locale

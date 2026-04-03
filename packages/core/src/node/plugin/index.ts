@@ -96,14 +96,23 @@ export function boltdocsPlugin(
           const isDocRoute =
             url === '/' ||
             url.startsWith('/docs') ||
+            (config.i18n &&
+              Object.keys(config.i18n.locales).some(
+                (locale) =>
+                  url.startsWith(`/${locale}/docs`) || url === `/${locale}`,
+              )) ||
             (config.external &&
               Object.keys(config.external).some((extPath) =>
                 url.startsWith(extPath),
               ))
 
+          // Improved check: If it's a doc route, serve HTML even if it has a dot (e.g. version 1.1)
+          // We only skip if it has a known asset extension to prevent serving HTML for images/js/etc.
+          const isAsset = /\.(js|css|png|jpe?g|gif|svg|ico|webp|woff2?|ttf|otf|mp4|webm|ogg|mp3|wav|flac|aac|pdf|zip|gz|map|json)$/i.test(url)
+
           if (
             accept.includes('text/html') &&
-            !url.includes('.') && // Simple check for assets
+            !isAsset &&
             isDocRoute
           ) {
             let html = getHtmlTemplate(config)
@@ -142,66 +151,89 @@ export function boltdocsPlugin(
           file: string,
           type: 'add' | 'unlink' | 'change',
         ) => {
-          const normalized = normalizePath(file)
+          try {
+            const normalized = normalizePath(file)
 
-          // Restart the Vite server if the Boltdocs config changes
-          if (CONFIG_FILES.some((c) => normalized.endsWith(c))) {
-            server.restart()
-            return
-          }
+            // Restart the Vite server if the Boltdocs config changes
+            if (CONFIG_FILES.some((c) => normalized.endsWith(c))) {
+              server.restart()
+              return
+            }
 
-          // If mdx-components file changes, invalidate the virtual module
-          if (
-            mdxCompExtensions.some((ext) =>
-              normalized.endsWith(`mdx-components.${ext}`),
+            // If mdx-components file changes, invalidate the virtual module
+            if (
+              mdxCompExtensions.some((ext) =>
+                normalized.endsWith(`mdx-components.${ext}`),
+              )
+            ) {
+              const mod = server.moduleGraph.getModuleById(
+                '\0virtual:boltdocs-mdx-components',
+              )
+              if (mod) server.moduleGraph.invalidateModule(mod)
+              server.ws.send({ type: 'full-reload' })
+              return
+            }
+
+            // If layout.tsx/jsx file changes, invalidate the virtual module
+            if (
+              compExtensions.some((ext) => normalized.endsWith(`layout.${ext}`))
+            ) {
+              const mod = server.moduleGraph.getModuleById(
+                '\0virtual:boltdocs-layout',
+              )
+              if (mod) server.moduleGraph.invalidateModule(mod)
+              server.ws.send({ type: 'full-reload' })
+              return
+            }
+
+            if (
+              !normalized.startsWith(normalizedDocsDir) ||
+              !isDocFile(normalized)
             )
-          ) {
-            const mod = server.moduleGraph.getModuleById(
-              '\0virtual:boltdocs-mdx-components',
+              return
+
+            // Invalidate appropriately
+            if (type === 'add' || type === 'unlink') {
+              invalidateRouteCache()
+              // Re-resolve config as it might affect versions/routes
+              config = await resolveConfig(docsDir)
+              
+              const configMod = server.moduleGraph.getModuleById('\0virtual:boltdocs-config')
+              if (configMod) server.moduleGraph.invalidateModule(configMod)
+
+              server.ws.send({
+                type: 'custom',
+                event: 'boltdocs:config-update',
+                data: {
+                  theme: config?.theme,
+                  integrations: config?.integrations,
+                  i18n: config?.i18n,
+                  versions: config?.versions,
+                  siteUrl: config?.siteUrl,
+                },
+              })
+            } else {
+              invalidateFile(file)
+            }
+
+            // Regenerate and push to client
+            // Optimization: generateRoutes is mostly incremental thanks to docCache
+            // We only force a full disk scan on add/unlink events
+            const newRoutes = await generateRoutes(docsDir, config, '/docs', type !== 'change')
+
+            const routesMod = server.moduleGraph.getModuleById(
+              '\0virtual:boltdocs-routes',
             )
-            if (mod) server.moduleGraph.invalidateModule(mod)
-            server.ws.send({ type: 'full-reload' })
-            return
+            if (routesMod) server.moduleGraph.invalidateModule(routesMod)
+
+            server.ws.send({
+              type: 'custom',
+              event: 'boltdocs:routes-update',
+              data: newRoutes,
+            })
+          } catch (e) {
+            console.error(`[boltdocs] HMR error during ${type} event:`, e)
           }
-
-          // If layout.tsx/jsx file changes, invalidate the virtual module
-          if (
-            compExtensions.some((ext) => normalized.endsWith(`layout.${ext}`))
-          ) {
-            const mod = server.moduleGraph.getModuleById(
-              '\0virtual:boltdocs-layout',
-            )
-            if (mod) server.moduleGraph.invalidateModule(mod)
-            server.ws.send({ type: 'full-reload' })
-            return
-          }
-
-          if (
-            !normalized.startsWith(normalizedDocsDir) ||
-            !isDocFile(normalized)
-          )
-            return
-
-          // Invalidate appropriately
-          if (type === 'add' || type === 'unlink') {
-            invalidateRouteCache()
-          } else {
-            invalidateFile(file)
-          }
-
-          // Regenerate and push to client
-          const newRoutes = await generateRoutes(docsDir, config)
-
-          const routesMod = server.moduleGraph.getModuleById(
-            '\0virtual:boltdocs-routes',
-          )
-          if (routesMod) server.moduleGraph.invalidateModule(routesMod)
-
-          server.ws.send({
-            type: 'custom',
-            event: 'boltdocs:routes-update',
-            data: newRoutes,
-          })
         }
 
         server.watcher.on('add', (f) => handleFileEvent(f, 'add'))

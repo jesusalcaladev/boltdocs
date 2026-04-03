@@ -8,7 +8,7 @@ export function useNavbar() {
   const { theme } = useTheme()
   const location = useLocation()
 
-  const themeConfig = config.theme || config.themeConfig || {}
+  const themeConfig = config.theme || {}
   const title = themeConfig.title || 'Boltdocs'
   const rawLinks = themeConfig.navbar || []
   const socialLinks = themeConfig.socialLinks || []
