@@ -214,7 +214,7 @@ export const NavbarSearchTrigger = ({
       onPress={onPress}
       className={cn(
         'flex items-center gap-2 rounded-full border border-border-subtle bg-bg-surface px-3 py-2 text-sm text-text-muted outline-none cursor-pointer',
-        'transition-colors hover:border-border-strong hover:text-text-main',
+        'transition-all duration-200 hover:border-border-strong hover:text-text-main hover:bg-bg-muted hover:shadow-sm active:scale-[0.98]',
         'focus-visible:ring-2 focus-visible:ring-primary-500/30',
         'w-full max-w-[320px] justify-between',
         className,
@@ -246,8 +246,8 @@ export const NavbarTheme = ({
       isSelected={theme === 'dark'}
       onChange={onThemeChange}
       className={cn(
-        'rounded-md p-2 text-text-muted outline-none cursor-pointer transition-colors',
-        'hover:bg-bg-surface hover:text-text-main',
+        'rounded-md p-2 text-text-muted outline-none cursor-pointer',
+        'transition-all duration-300 hover:bg-bg-surface hover:text-text-main hover:rotate-12 active:scale-90',
         'focus-visible:ring-2 focus-visible:ring-primary-500/30',
         className,
       )}

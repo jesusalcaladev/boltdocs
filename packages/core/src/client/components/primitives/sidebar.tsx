@@ -122,11 +122,12 @@ export const SidebarLink = ({
     <Link
       href={href}
       className={cn(
-        'group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none transition-colors',
+        'group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none',
+        'transition-all duration-200 ease-in-out',
         'focus-visible:ring-2 focus-visible:ring-primary-500/30',
         active
           ? 'bg-primary-500/10 text-primary-500 font-medium'
-          : 'text-text-muted hover:bg-bg-surface hover:text-text-main',
+          : 'text-text-muted hover:bg-bg-surface hover:text-text-main hover:translate-x-1',
         className,
       )}
     >
