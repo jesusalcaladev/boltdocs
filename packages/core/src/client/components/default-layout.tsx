@@ -36,8 +36,8 @@ export function DefaultLayout({ children }: LayoutProps) {
     <DocsLayout>
       <ProgressBar />
       <Head
-        siteTitle={config.themeConfig?.title || 'Boltdocs'}
-        siteDescription={config.themeConfig?.description || ''}
+        siteTitle={config.theme?.title || 'Boltdocs'}
+        siteDescription={config.theme?.description || ''}
         routes={allRoutes}
       />
       <Navbar />
@@ -52,7 +52,7 @@ export function DefaultLayout({ children }: LayoutProps) {
               <CopyMarkdownComp
                 mdxRaw={currentRoute?._rawContent}
                 route={currentRoute}
-                config={config.themeConfig?.copyMarkdown}
+                config={config.theme?.copyMarkdown}
               />
             </DocsLayout.ContentHeader>
           )}
@@ -69,8 +69,8 @@ export function DefaultLayout({ children }: LayoutProps) {
         {!isHome && (
           <OnThisPage
             headings={currentRoute?.headings}
-            editLink={config.themeConfig?.editLink}
-            communityHelp={config.themeConfig?.communityHelp}
+            editLink={config.theme?.editLink}
+            communityHelp={config.theme?.communityHelp}
             filePath={currentRoute?.filePath}
           />
         )}
