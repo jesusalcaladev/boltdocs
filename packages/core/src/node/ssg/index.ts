@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { generateRoutes } from '../routes'
-import { escapeHtml } from '../utils'
+import { escapeHtml, getTranslated } from '../utils'
 import { fileURLToPath } from 'url'
 import { createRequire } from 'module'
 
@@ -27,8 +27,6 @@ const _require = createRequire(import.meta.url)
 export async function generateStaticPages(options: SSGOptions): Promise<void> {
   const { docsDir, docsDirName, outDir, config } = options
   const routes = await generateRoutes(docsDir, config)
-  const siteTitle = config?.theme?.title || 'Boltdocs'
-  const siteDescription = config?.theme?.description || ''
 
   // Resolve the SSR module (compiled by tsup)
   const ssrModulePath = path.resolve(_dirname, '../client/ssr.js')
@@ -79,6 +77,8 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   // Generate an HTML file for each route concurrently
   await Promise.all(
     routes.map(async (route) => {
+      const siteTitle = getTranslated(config?.theme?.title, route.locale) || 'Boltdocs'
+      const siteDescription = getTranslated(config?.theme?.description, route.locale) || ''
       const pageTitle = `${route.title} | ${siteTitle}`
       const pageDescription = route.description || siteDescription
 

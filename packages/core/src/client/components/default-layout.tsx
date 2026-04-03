@@ -13,6 +13,7 @@ import { useConfig } from '@client/app/config-context'
 import { useMdxComponents } from '@client/app/mdx-components-context'
 
 import { useLocation } from 'react-router-dom'
+import { getTranslated } from '@client/utils/i18n'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -24,7 +25,12 @@ export interface LayoutProps {
  * and rearrange, wrap, or replace any section.
  */
 export function DefaultLayout({ children }: LayoutProps) {
-  const { routes: filteredRoutes, allRoutes, currentRoute } = useRoutes()
+  const {
+    routes: filteredRoutes,
+    allRoutes,
+    currentRoute,
+    currentLocale,
+  } = useRoutes()
   const { pathname } = useLocation()
   const config = useConfig()
   const mdxComponents = useMdxComponents()
@@ -36,8 +42,8 @@ export function DefaultLayout({ children }: LayoutProps) {
     <DocsLayout>
       <ProgressBar />
       <Head
-        siteTitle={config.theme?.title || 'Boltdocs'}
-        siteDescription={config.theme?.description || ''}
+        siteTitle={getTranslated(config.theme?.title, currentLocale) || 'Boltdocs'}
+        siteDescription={getTranslated(config.theme?.description, currentLocale) || ''}
         routes={allRoutes}
       />
       <Navbar />
