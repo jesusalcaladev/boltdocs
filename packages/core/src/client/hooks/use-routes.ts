@@ -71,7 +71,8 @@ export function useRoutes() {
   })
 
   // Labels and lists for UI convenience
-  const currentLocaleConfig = config.i18n?.localeConfigs?.[currentLocale as string]
+  const currentLocaleConfig =
+    config.i18n?.localeConfigs?.[currentLocale as string]
   const currentLocaleLabel =
     currentLocaleConfig?.label ||
     config.i18n?.locales[currentLocale as string] ||

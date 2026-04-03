@@ -108,13 +108,12 @@ export function boltdocsPlugin(
 
           // Improved check: If it's a doc route, serve HTML even if it has a dot (e.g. version 1.1)
           // We only skip if it has a known asset extension to prevent serving HTML for images/js/etc.
-          const isAsset = /\.(js|css|png|jpe?g|gif|svg|ico|webp|woff2?|ttf|otf|mp4|webm|ogg|mp3|wav|flac|aac|pdf|zip|gz|map|json)$/i.test(url)
+          const isAsset =
+            /\.(js|css|png|jpe?g|gif|svg|ico|webp|woff2?|ttf|otf|mp4|webm|ogg|mp3|wav|flac|aac|pdf|zip|gz|map|json)$/i.test(
+              url,
+            )
 
-          if (
-            accept.includes('text/html') &&
-            !isAsset &&
-            isDocRoute
-          ) {
+          if (accept.includes('text/html') && !isAsset && isDocRoute) {
             let html = getHtmlTemplate(config)
             html = injectHtmlMeta(html, config)
             html = await server.transformIndexHtml(req.url || '/', html)
@@ -197,8 +196,10 @@ export function boltdocsPlugin(
               invalidateRouteCache()
               // Re-resolve config as it might affect versions/routes
               config = await resolveConfig(docsDir)
-              
-              const configMod = server.moduleGraph.getModuleById('\0virtual:boltdocs-config')
+
+              const configMod = server.moduleGraph.getModuleById(
+                '\0virtual:boltdocs-config',
+              )
               if (configMod) server.moduleGraph.invalidateModule(configMod)
 
               server.ws.send({
@@ -219,7 +220,12 @@ export function boltdocsPlugin(
             // Regenerate and push to client
             // Optimization: generateRoutes is mostly incremental thanks to docCache
             // We only force a full disk scan on add/unlink events
-            const newRoutes = await generateRoutes(docsDir, config, '/docs', type !== 'change')
+            const newRoutes = await generateRoutes(
+              docsDir,
+              config,
+              '/docs',
+              type !== 'change',
+            )
 
             const routesMod = server.moduleGraph.getModuleById(
               '\0virtual:boltdocs-routes',

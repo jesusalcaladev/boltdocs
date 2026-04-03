@@ -19,20 +19,23 @@ export function generateRobotsTxt(config: BoltdocsConfig): string {
       allow: '/',
     },
   ]
-  const sitemaps = (robots as any).sitemaps || (siteUrl ? [`${siteUrl}/sitemap.xml`] : [])
+  const sitemaps =
+    (robots as any).sitemaps || (siteUrl ? [`${siteUrl}/sitemap.xml`] : [])
 
   let content = ''
 
   for (const rule of rules) {
     content += `User-agent: ${rule.userAgent}\n`
-    
+
     if (rule.disallow) {
-      const disallows = Array.isArray(rule.disallow) ? rule.disallow : [rule.disallow]
+      const disallows = Array.isArray(rule.disallow)
+        ? rule.disallow
+        : [rule.disallow]
       for (const d of disallows) {
         content += `Disallow: ${d}\n`
       }
     }
-    
+
     if (rule.allow) {
       const allows = Array.isArray(rule.allow) ? rule.allow : [rule.allow]
       for (const a of allows) {

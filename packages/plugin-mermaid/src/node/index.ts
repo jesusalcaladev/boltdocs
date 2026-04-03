@@ -1,4 +1,4 @@
-import { visit } from "unist-util-visit";
+import { visit } from 'unist-util-visit'
 
 /**
  * A Remark plugin that detects mermaid code blocks and transforms them
@@ -7,30 +7,30 @@ import { visit } from "unist-util-visit";
  */
 export function remarkMermaid() {
   return (tree: any) => {
-    visit(tree, "code", (node: any, index: number | undefined, parent: any) => {
-      if (node.lang !== "mermaid") return;
+    visit(tree, 'code', (node: any, index: number | undefined, parent: any) => {
+      if (node.lang !== 'mermaid') return
 
-      const rawCode = node.value || "";
+      const rawCode = node.value || ''
 
       // Replace the code block with a JSX component
       const newNode = {
-        type: "mdxJsxFlowElement",
-        name: "Mermaid",
+        type: 'mdxJsxFlowElement',
+        name: 'Mermaid',
         attributes: [
           {
-            type: "mdxJsxAttribute",
-            name: "chart",
+            type: 'mdxJsxAttribute',
+            name: 'chart',
             value: rawCode,
           },
         ],
         children: [],
-      };
-
-      if (parent && typeof index === "number") {
-        parent.children[index] = newNode;
       }
-    });
-  };
+
+      if (parent && typeof index === 'number') {
+        parent.children[index] = newNode
+      }
+    })
+  }
 }
 
 /**
@@ -38,10 +38,10 @@ export function remarkMermaid() {
  */
 export default function mermaidPlugin() {
   return {
-    name: "boltdocs-plugin-mermaid",
+    name: 'boltdocs-plugin-mermaid',
     remarkPlugins: [remarkMermaid],
     components: {
-      Mermaid: "@boltdocs/plugin-mermaid/client",
+      Mermaid: '@boltdocs/plugin-mermaid/client',
     },
-  };
+  }
 }

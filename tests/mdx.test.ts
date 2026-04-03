@@ -1,55 +1,55 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { boltdocsMdxPlugin } from "../packages/core/src/node/mdx";
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { boltdocsMdxPlugin } from '../packages/core/src/node/mdx'
 
-describe("mdx", () => {
+describe('mdx', () => {
   const mockMdxPlugin = {
-    name: "mdx",
+    name: 'mdx',
     isMock: true,
     buildStart: vi.fn().mockResolvedValue(undefined),
     transform: vi
       .fn()
       .mockImplementation((code: string) => ({ code: `compiled: ${code}` })),
     buildEnd: vi.fn().mockResolvedValue(undefined),
-  };
+  }
 
-  const mockCompiler = vi.fn(() => mockMdxPlugin);
+  const mockCompiler = vi.fn(() => mockMdxPlugin)
 
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
-  it("should create an mdx plugin using the injected compiler", () => {
-    const plugin: any = boltdocsMdxPlugin({}, mockCompiler as any);
-    expect(mockCompiler).toHaveBeenCalled();
-    expect(plugin.isMock).toBe(true);
-    expect(plugin.name).toBe("vite-plugin-boltdocs-mdx");
-  });
+  it('should create an mdx plugin using the injected compiler', () => {
+    const plugin: any = boltdocsMdxPlugin({}, mockCompiler as any)
+    expect(mockCompiler).toHaveBeenCalled()
+    expect(plugin.isMock).toBe(true)
+    expect(plugin.name).toBe('vite-plugin-boltdocs-mdx')
+  })
 
-  it("should transform valid files and use cache", async () => {
-    const plugin: any = boltdocsMdxPlugin({}, mockCompiler as any);
+  it('should transform valid files and use cache', async () => {
+    const plugin: any = boltdocsMdxPlugin({}, mockCompiler as any)
 
     // 1. Transform (cache miss)
-    const result1 = await plugin.transform("# h1", "test.md");
-    expect(result1?.code).toBe("compiled: # h1");
-    expect(mockMdxPlugin.transform).toHaveBeenCalledTimes(1);
+    const result1 = await plugin.transform('# h1', 'test.md')
+    expect(result1?.code).toBe('compiled: # h1')
+    expect(mockMdxPlugin.transform).toHaveBeenCalledTimes(1)
 
     // 2. Transform (cache hit)
-    const result2 = await plugin.transform("# h1", "test.md");
-    expect(result2?.code).toBe("compiled: # h1");
-    expect(mockMdxPlugin.transform).toHaveBeenCalledTimes(1); // Hits cache
-  });
+    const result2 = await plugin.transform('# h1', 'test.md')
+    expect(result2?.code).toBe('compiled: # h1')
+    expect(mockMdxPlugin.transform).toHaveBeenCalledTimes(1) // Hits cache
+  })
 
-  it("should bypass non-md files but still call base transform", async () => {
-    const plugin: any = boltdocsMdxPlugin({}, mockCompiler as any);
-    const result = await plugin.transform("const x = 1", "test.ts");
-    expect(result?.code).toBe("compiled: const x = 1");
-  });
+  it('should bypass non-md files but still call base transform', async () => {
+    const plugin: any = boltdocsMdxPlugin({}, mockCompiler as any)
+    const result = await plugin.transform('const x = 1', 'test.ts')
+    expect(result?.code).toBe('compiled: const x = 1')
+  })
 
-  it("should call buildStart and buildEnd hooks", async () => {
-    const plugin: any = boltdocsMdxPlugin({}, mockCompiler as any);
-    await plugin.buildStart();
-    expect(mockMdxPlugin.buildStart).toHaveBeenCalled();
-    await plugin.buildEnd();
-    expect(mockMdxPlugin.buildEnd).toHaveBeenCalled();
-  });
-});
+  it('should call buildStart and buildEnd hooks', async () => {
+    const plugin: any = boltdocsMdxPlugin({}, mockCompiler as any)
+    await plugin.buildStart()
+    expect(mockMdxPlugin.buildStart).toHaveBeenCalled()
+    await plugin.buildEnd()
+    expect(mockMdxPlugin.buildEnd).toHaveBeenCalled()
+  })
+})

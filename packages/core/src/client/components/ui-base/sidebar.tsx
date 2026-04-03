@@ -48,7 +48,8 @@ function CollapsibleSidebarGroup({
     >
       {group.routes.map((route: ComponentRoute) => {
         const isCurrent =
-          activePath === (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+          activePath ===
+          (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
         return (
           <SidebarPrimitive.SidebarLink
             key={route.path}
@@ -80,7 +81,8 @@ export function Sidebar({
         <SidebarPrimitive.SidebarGroup className="mb-6">
           {ungrouped.map((route) => {
             const isCurrent =
-              activePath === (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+              activePath ===
+              (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
             return (
               <SidebarPrimitive.SidebarLink
                 key={route.path}

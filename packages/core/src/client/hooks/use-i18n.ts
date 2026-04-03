@@ -29,7 +29,7 @@ export function useI18n(): UseI18nReturn {
 
   const handleLocaleChange = (locale: string) => {
     if (!i18n || locale === currentLocale) return
-    
+
     // Update store
     setLocale(locale)
 
@@ -87,7 +87,8 @@ export function useI18n(): UseI18nReturn {
     navigate(targetPath)
   }
 
-  const currentLocaleConfig = config.i18n?.localeConfigs?.[currentLocale as string]
+  const currentLocaleConfig =
+    config.i18n?.localeConfigs?.[currentLocale as string]
   const currentLocaleLabel =
     currentLocaleConfig?.label ||
     config.i18n?.locales[currentLocale as string] ||

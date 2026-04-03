@@ -48,14 +48,17 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
         __esModule: true,
         default: function SSG_Virtual_Layout(props: any) {
           try {
-            const client = originalRequire.apply(this, [path.resolve(_dirname, '../client/index.js')])
-            const Comp = client.DefaultLayout || (({ children }: any) => children)
+            const client = originalRequire.apply(this, [
+              path.resolve(_dirname, '../client/index.js'),
+            ])
+            const Comp =
+              client.DefaultLayout || (({ children }: any) => children)
             const React = originalRequire.apply(this, ['react'])
             return React.createElement(Comp, props)
           } catch (e) {
             return props.children
           }
-        }
+        },
       }
     }
     return originalRequire.apply(this, [id, ...args])
@@ -77,8 +80,10 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   // Generate an HTML file for each route concurrently
   await Promise.all(
     routes.map(async (route) => {
-      const siteTitle = getTranslated(config?.theme?.title, route.locale) || 'Boltdocs'
-      const siteDescription = getTranslated(config?.theme?.description, route.locale) || ''
+      const siteTitle =
+        getTranslated(config?.theme?.title, route.locale) || 'Boltdocs'
+      const siteDescription =
+        getTranslated(config?.theme?.description, route.locale) || ''
       const pageTitle = `${route.title} | ${siteTitle}`
       const pageDescription = route.description || siteDescription
 
@@ -111,7 +116,10 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
           'utf-8',
         )
       } catch (e: any) {
-        console.error(`[boltdocs] Error SSR rendering route ${route.path}:`, e ? e.stack || e : e)
+        console.error(
+          `[boltdocs] Error SSR rendering route ${route.path}:`,
+          e ? e.stack || e : e,
+        )
       }
     }),
   )

@@ -8,10 +8,11 @@ import { useRoutes } from './use-routes'
  */
 export function useLocalizedTo(to: RouterLinkProps['to']) {
   const config = useConfig()
-  const { currentLocale: activeLocale, currentVersion: activeVersion } = useRoutes()
+  const { currentLocale: activeLocale, currentVersion: activeVersion } =
+    useRoutes()
 
   if (!config || typeof to !== 'string') return to
-  
+
   // External or absolute links don't need localization
   if (to.startsWith('http') || to.startsWith('//')) return to
 
@@ -22,7 +23,7 @@ export function useLocalizedTo(to: RouterLinkProps['to']) {
 
   // 1. Identify the input intent
   const isDocLink = to.startsWith('/docs')
-  
+
   // 3. Clean the 'to' path of ANY existing prefixes to avoid stacking
   const parts = to.split('/').filter(Boolean)
   let pIdx = 0
@@ -32,7 +33,7 @@ export function useLocalizedTo(to: RouterLinkProps['to']) {
 
   // Strip versions if present
   if (versions && parts.length > pIdx) {
-    const vMatch = versions.versions.find(v => v.path === parts[pIdx])
+    const vMatch = versions.versions.find((v) => v.path === parts[pIdx])
     if (vMatch) pIdx++
   }
 
@@ -62,7 +63,7 @@ export function useLocalizedTo(to: RouterLinkProps['to']) {
   resultParts.push(...routeContent)
 
   const finalPath = `/${resultParts.join('/')}`
-  
+
   // Cleanup trailing slashes unless it's just root
   if (finalPath.length > 1 && finalPath.endsWith('/')) {
     return finalPath.slice(0, -1)

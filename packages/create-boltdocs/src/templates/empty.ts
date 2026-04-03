@@ -1,10 +1,10 @@
-import path from "node:path";
-import fs from "node:fs";
-import { getIndexCss, getLayoutPage } from "./shared.js";
+import path from 'node:path'
+import fs from 'node:fs'
+import { getIndexCss, getLayoutPage } from './shared.js'
 
 export function generateEmptyTemplate(projectDir: string, projectName: string) {
-  const srcDir = path.join(projectDir, "src");
-  fs.mkdirSync(srcDir, { recursive: true });
+  const srcDir = path.join(projectDir, 'src')
+  fs.mkdirSync(srcDir, { recursive: true })
 
   const homePageContent = `import React from 'react';
 
@@ -23,13 +23,13 @@ export default function HomePage() {
     </div>
   );
 }
-`;
-  const docsDir = path.join(projectDir, "docs");
-  fs.mkdirSync(docsDir, { recursive: true });
+`
+  const docsDir = path.join(projectDir, 'docs')
+  fs.mkdirSync(docsDir, { recursive: true })
 
-  fs.writeFileSync(path.join(srcDir, "HomePage.tsx"), homePageContent);
-  fs.writeFileSync(path.join(projectDir, "index.css"), getIndexCss());
-  fs.writeFileSync(path.join(docsDir, "layout.tsx"), getLayoutPage());
+  fs.writeFileSync(path.join(srcDir, 'HomePage.tsx'), homePageContent)
+  fs.writeFileSync(path.join(projectDir, 'index.css'), getIndexCss())
+  fs.writeFileSync(path.join(docsDir, 'layout.tsx'), getLayoutPage())
 
   const indexMdx = `---
 title: Welcome
@@ -38,6 +38,6 @@ title: Welcome
 # Welcome to ${projectName}
 
 This is a minimal documentation setup. You can start by editing \`docs/index.mdx\`.
-`;
-  fs.writeFileSync(path.join(docsDir, "index.mdx"), indexMdx);
+`
+  fs.writeFileSync(path.join(docsDir, 'index.mdx'), indexMdx)
 }

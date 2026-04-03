@@ -19,12 +19,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true)
     const stored = localStorage.getItem('boltdocs-theme') as Theme | null
-    const initialTheme = (stored === 'light' || stored === 'dark' || stored === 'system') ? stored : 'system'
-    
+    const initialTheme =
+      stored === 'light' || stored === 'dark' || stored === 'system'
+        ? stored
+        : 'system'
+
     setThemeState(initialTheme)
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    
+
     const updateResolved = (currentTheme: Theme, isDark: boolean) => {
       if (currentTheme === 'system') {
         setResolvedTheme(isDark ? 'dark' : 'light')
@@ -37,10 +40,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const handleChange = (e: MediaQueryListEvent) => {
       // Re-read current theme state from some stable ref would be better, but we can capture it
-      // actually, the second useEffect will handle the source of truth, 
+      // actually, the second useEffect will handle the source of truth,
       // but this listener ensures 'system' updates instantly.
       setResolvedTheme((prevResolved) => {
-        const currentTheme = localStorage.getItem('boltdocs-theme') as Theme || 'system'
+        const currentTheme =
+          (localStorage.getItem('boltdocs-theme') as Theme) || 'system'
         if (currentTheme === 'system') {
           return e.matches ? 'dark' : 'light'
         }
@@ -56,8 +60,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!mounted) return
 
-    const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const nextResolved = theme === 'system' ? (isSystemDark ? 'dark' : 'light') : theme
+    const isSystemDark = window.matchMedia(
+      '(prefers-color-scheme: dark)',
+    ).matches
+    const nextResolved =
+      theme === 'system' ? (isSystemDark ? 'dark' : 'light') : theme
 
     setResolvedTheme(nextResolved as 'light' | 'dark')
 

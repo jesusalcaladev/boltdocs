@@ -7,7 +7,8 @@ export function useSidebar(routes: ComponentRoute[]) {
   const location = useLocation()
 
   // Find active route and tab
-  const normalize = (p: string) => (p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p)
+  const normalize = (p: string) =>
+    p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p
   const currentPath = normalize(location.pathname)
 
   const activeRoute = routes.find((r) => normalize(r.path) === currentPath)

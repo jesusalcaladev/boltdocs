@@ -42,8 +42,12 @@ export function DefaultLayout({ children }: LayoutProps) {
     <DocsLayout>
       <ProgressBar />
       <Head
-        siteTitle={getTranslated(config.theme?.title, currentLocale) || 'Boltdocs'}
-        siteDescription={getTranslated(config.theme?.description, currentLocale) || ''}
+        siteTitle={
+          getTranslated(config.theme?.title, currentLocale) || 'Boltdocs'
+        }
+        siteDescription={
+          getTranslated(config.theme?.description, currentLocale) || ''
+        }
         routes={allRoutes}
       />
       <Navbar />

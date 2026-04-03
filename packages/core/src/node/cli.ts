@@ -56,4 +56,3 @@ export async function previewAction(root: string = process.cwd()) {
     process.exit(1)
   }
 }
-

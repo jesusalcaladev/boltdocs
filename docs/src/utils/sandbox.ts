@@ -1,4 +1,4 @@
-import { defineSandbox, SandboxOptions, SandboxFiles } from "boltdocs/client";
+import { defineSandbox, SandboxOptions, SandboxFiles } from 'boltdocs/client'
 
 /**
  * Custom integration for Boltdocs documentation.
@@ -9,13 +9,13 @@ export function openBoltdocsSandbox(
   options: SandboxOptions = {},
 ) {
   const boltdocsFiles: SandboxFiles = {
-    "public/index.html": {
+    'public/index.html': {
       content: `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${options.title || "Boltdocs Playground"}</title>
+    <title>${options.title || 'Boltdocs Playground'}</title>
   </head>
   <body>
     <div id="root"></div>
@@ -23,7 +23,7 @@ export function openBoltdocsSandbox(
   </body>
 </html>`,
     },
-    "src/main.tsx": {
+    'src/main.tsx': {
       content: `import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
@@ -38,13 +38,13 @@ root.render(
   </StrictMode>
 );`,
     },
-    "src/App.tsx": {
+    'src/App.tsx': {
       content: code,
     },
-    "src/index.css": {
+    'src/index.css': {
       content: `@import "boltdocs/client/index.css";\n\nbody {\n  margin: 0;\n  background: #000;\n  color: #fff;\n}`,
     },
-    "vite.config.ts": {
+    'vite.config.ts': {
       content: `import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import boltdocs from "boltdocs";
@@ -58,38 +58,38 @@ export default defineConfig({
   ],
 });`,
     },
-    "boltdocs.config.js": {
+    'boltdocs.config.js': {
       content: `export default {
-  title: '${options.title || "Boltdocs Playground"}',
+  title: '${options.title || 'Boltdocs Playground'}',
   themeConfig: {
     navbar: [],
     tabs: []
   }
 };`,
     },
-  };
+  }
 
   const { url } = defineSandbox({
     ...options,
     files: { ...boltdocsFiles, ...options.files },
     dependencies: {
-      react: "^18.2.0",
-      "react-dom": "^18.2.0",
-      "lucide-react": "latest",
-      boltdocs: "latest",
+      react: '^18.2.0',
+      'react-dom': '^18.2.0',
+      'lucide-react': 'latest',
+      boltdocs: 'latest',
       ...options.dependencies,
     },
     devDependencies: {
-      "@types/react": "^18.2.0",
-      "@types/react-dom": "^18.2.0",
-      "@vitejs/plugin-react": "latest",
-      typescript: "latest",
-      vite: "latest",
+      '@types/react': '^18.2.0',
+      '@types/react-dom': '^18.2.0',
+      '@vitejs/plugin-react': 'latest',
+      typescript: 'latest',
+      vite: 'latest',
       ...options.devDependencies,
     },
-  });
+  })
 
-  if (typeof window !== "undefined") {
-    window.open(url, "_blank");
+  if (typeof window !== 'undefined') {
+    window.open(url, '_blank')
   }
 }

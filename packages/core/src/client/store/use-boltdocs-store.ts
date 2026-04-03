@@ -5,7 +5,7 @@ interface BoltdocsState {
   currentLocale: string | undefined
   currentVersion: string | undefined
   hasHydrated: boolean
-  
+
   // Actions
   setLocale: (locale: string | undefined) => void
   setVersion: (version: string | undefined) => void
@@ -22,9 +22,10 @@ export const useBoltdocsStore = create<BoltdocsState>()(
       currentLocale: undefined,
       currentVersion: undefined,
       hasHydrated: false,
-      
+
       setLocale: (locale: string | undefined) => set({ currentLocale: locale }),
-      setVersion: (version: string | undefined) => set({ currentVersion: version }),
+      setVersion: (version: string | undefined) =>
+        set({ currentVersion: version }),
       setHasHydrated: (val: boolean) => set({ hasHydrated: val }),
     }),
     {
@@ -38,6 +39,6 @@ export const useBoltdocsStore = create<BoltdocsState>()(
       onRehydrateStorage: () => (state?: BoltdocsState) => {
         state?.setHasHydrated(true)
       },
-    }
-  )
+    },
+  ),
 )

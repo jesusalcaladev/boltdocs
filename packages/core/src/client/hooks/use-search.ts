@@ -81,7 +81,8 @@ export function useSearch(routes: ComponentRoute[]) {
     list,
     input: {
       value: query,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        setQuery(e.target.value),
     },
   }
 }

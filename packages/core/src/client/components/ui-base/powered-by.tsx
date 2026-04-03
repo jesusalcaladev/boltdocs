@@ -14,7 +14,10 @@ export function PoweredBy() {
           fill="currentColor"
         />
         <span className="text-[11px] font-medium text-text-muted group-hover:text-text-main transition-colors duration-300 tracking-wide">
-          Powered by <strong className="font-bold text-text-main/80 group-hover:text-text-main">Boltdocs</strong>
+          Powered by{' '}
+          <strong className="font-bold text-text-main/80 group-hover:text-text-main">
+            Boltdocs
+          </strong>
         </span>
       </a>
     </div>

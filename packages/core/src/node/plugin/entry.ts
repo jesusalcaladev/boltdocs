@@ -19,7 +19,7 @@ export function generateEntryCode(
   const homeImport = options.homePage
     ? `import HomePage from '${normalizePath(options.homePage)}';`
     : ''
-  
+
   // Auto-import index.css if it exists
   const cssPath = path.resolve(process.cwd(), 'index.css')
   const cssImport = fs.existsSync(cssPath) ? "import './index.css';" : ''

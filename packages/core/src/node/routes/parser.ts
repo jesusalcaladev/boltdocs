@@ -60,14 +60,12 @@ export function parseDocFile(
   if (config?.versions && parts.length > 0) {
     const potentialVersion = parts[0]
     const prefix = config.versions.prefix || ''
-    
-    const versionMatch = config.versions.versions.find(
-      (v) => {
-        const fullPath = prefix + v.path
-        return potentialVersion === fullPath || potentialVersion === v.path
-      }
-    )
-    
+
+    const versionMatch = config.versions.versions.find((v) => {
+      const fullPath = prefix + v.path
+      return potentialVersion === fullPath || potentialVersion === v.path
+    })
+
     if (versionMatch) {
       version = versionMatch.path
       parts = parts.slice(1)
@@ -168,7 +166,9 @@ export function parseDocFile(
     sanitizedDescription = plainExcerpt
   }
 
-  const sanitizedBadge = data.badge ? sanitizeHtml(String(data.badge)) : undefined
+  const sanitizedBadge = data.badge
+    ? sanitizeHtml(String(data.badge))
+    : undefined
   const icon = data.icon ? String(data.icon) : undefined
 
   // Extract full content as plain text for search indexing

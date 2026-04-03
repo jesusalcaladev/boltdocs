@@ -1,51 +1,51 @@
-import "./HomePage.css";
-import { Benchmark } from "./Benchmark";
-import { Cards, Card, Badge, Button } from "boltdocs/client";
-import { PixelBlast } from "./PixelBlast";
-import { Sparkles, Folder } from "lucide-react";
-import { Component } from "lucide-react";
-import { Globe } from "lucide-react";
-import { Palette } from "lucide-react";
-import { Moon } from "lucide-react";
+import './HomePage.css'
+import { Benchmark } from './Benchmark'
+import { Cards, Card, Badge, Button } from 'boltdocs/client'
+import { PixelBlast } from './PixelBlast'
+import { Sparkles, Folder } from 'lucide-react'
+import { Component } from 'lucide-react'
+import { Globe } from 'lucide-react'
+import { Palette } from 'lucide-react'
+import { Moon } from 'lucide-react'
 
 const FEATURES = [
   {
-    title: "Extremely Fast",
+    title: 'Extremely Fast',
     description:
-      "Powered by Vite, experience instant server starts and lightning fast HOT module replacement.",
+      'Powered by Vite, experience instant server starts and lightning fast HOT module replacement.',
     icon: <Sparkles />,
   },
   {
-    title: "File-Based Routing",
+    title: 'File-Based Routing',
     description:
-      "No configuration needed. Your file structure directly maps to your URLs seamlessly.",
+      'No configuration needed. Your file structure directly maps to your URLs seamlessly.',
     icon: <Folder />,
   },
   {
-    title: "MDX & React",
+    title: 'MDX & React',
     description:
-      "Use the full power of React components directly inside your Markdown files.",
+      'Use the full power of React components directly inside your Markdown files.',
     icon: <Component />,
   },
   {
-    title: "Built-in i18n & Versioning",
+    title: 'Built-in i18n & Versioning',
     description:
-      "Translate your docs and manage multiple API versions out of the box effortlessly.",
+      'Translate your docs and manage multiple API versions out of the box effortlessly.',
     icon: <Globe />,
   },
   {
-    title: "Fully Customizable",
+    title: 'Fully Customizable',
     description:
-      "A dedicated variables system and plugin architecture means you own the UI completely.",
+      'A dedicated variables system and plugin architecture means you own the UI completely.',
     icon: <Palette />,
   },
   {
-    title: "Native Dark Mode",
+    title: 'Native Dark Mode',
     description:
-      "A beautiful, pristine aesthetic that supports system preferences intuitively.",
+      'A beautiful, pristine aesthetic that supports system preferences intuitively.',
     icon: <Moon />,
   },
-];
+]
 
 export default function HomePage() {
   return (
@@ -80,14 +80,14 @@ export default function HomePage() {
 
       <div
         style={{
-          maxWidth: "800px",
-          margin: "0 auto",
-          width: "100%",
-          padding: "0 2rem",
+          maxWidth: '800px',
+          margin: '0 auto',
+          width: '100%',
+          padding: '0 2rem',
         }}
       >
         <Benchmark />
       </div>
     </div>
-  );
+  )
 }
