@@ -133,8 +133,7 @@ export function parseDocFile(
   const headings: { level: number; text: string; id: string }[] = []
   const headingsRegex = /^(#{2,4})\s+(.+)$/gm
 
-  let match
-  while ((match = headingsRegex.exec(content)) !== null) {
+  for (const match of content.matchAll(headingsRegex)) {
     const level = match[1].length
     const rawText = match[2]
       .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Strip markdown links
