@@ -12,7 +12,7 @@ export interface SearchDocument {
 
 /**
  * Generates a flat list of searchable documents from the route metadata.
- * Each page is indexed as a primary document, and its sections (headings) 
+ * Each page is indexed as a primary document, and its sections (headings)
  * are indexed as secondary documents to provide granular search results.
  */
 export function generateSearchData(routes: RouteMeta[]): SearchDocument[] {
@@ -25,7 +25,9 @@ export function generateSearchData(routes: RouteMeta[]): SearchDocument[] {
       title: route.title,
       content: route._content || '',
       url: route.path,
-      display: route.groupTitle ? `${route.groupTitle} > ${route.title}` : route.title,
+      display: route.groupTitle
+        ? `${route.groupTitle} > ${route.title}`
+        : route.title,
       locale: route.locale,
       version: route.version,
     })
@@ -33,7 +35,7 @@ export function generateSearchData(routes: RouteMeta[]): SearchDocument[] {
     // 2. Index headings as sub-documents for deep linking
     if (route.headings) {
       for (const heading of route.headings) {
-        // We find the content belonging to this heading? 
+        // We find the content belonging to this heading?
         // For now, indexing just the heading text and a bit of context is standard.
         // Deep full-text mapping to specific headings is more complex.
         documents.push({

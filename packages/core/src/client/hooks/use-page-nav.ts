@@ -26,7 +26,7 @@ export function usePageNav() {
     : routes.filter((r) => !r.tab)
 
   const currentIndex = contextRoutes.findIndex(
-    (r) => r.path === location.pathname
+    (r) => r.path === location.pathname,
   )
 
   const prevPage = currentIndex > 0 ? contextRoutes[currentIndex - 1] : null

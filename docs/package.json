@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "boltdocs",
     "build": "boltdocs build",
-    "preview": "boltdocs preview"
+    "preview": "boltdocs preview",
+    "doctor": "boltdocs doctor"
   },
   "dependencies": {
     "lucide-react": "^1.7.0",
