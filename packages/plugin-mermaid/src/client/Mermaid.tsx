@@ -27,27 +27,50 @@ export interface MermaidProps {
 export function Mermaid({ chart }: MermaidProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [svgStr, setSvgStr] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Generate a unique ID for this mermaid diagram to avoid DOM collisions
-    const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`
+    let isMounted = true
 
-    mermaid
-      .render(id, chart)
-      .then(({ svg }) => {
-        setSvgStr(svg)
-      })
-      .catch((e) => {
-        console.error('[Boltdocs] Failed to render Mermaid diagram:', e)
-        // Display fallback errors
-        setSvgStr(`<div class="mermaid-error">Failed to render diagram</div>`)
-      })
+    // Generate a unique ID for this mermaid diagram to avoid DOM collisions
+    const id = `mermaid-${Math.random().toString(36).substring(2, 11)}`
+
+    const renderDiagram = async () => {
+      try {
+        const { svg } = await mermaid.render(id, chart)
+        if (isMounted) {
+          setSvgStr(svg)
+          setError(null)
+        }
+      } catch (e) {
+        if (isMounted) {
+          console.error('[Boltdocs] Failed to render Mermaid diagram:', e)
+          setError('Failed to render diagram. Check your syntax.')
+        }
+      }
+    }
+
+    renderDiagram()
+
+    return () => {
+      isMounted = false
+    }
   }, [chart])
+
+  if (error) {
+    return (
+      <div className="my-6 flex items-center justify-center rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
+        {error}
+      </div>
+    )
+  }
 
   return (
     <div
       ref={containerRef}
-      className="mermaid-container"
+      className={`mermaid-container my-6 flex min-h-[100px] items-center justify-center overflow-auto rounded-lg border border-border-subtle bg-white/50 p-6 backdrop-blur-sm dark:bg-bg-surface/50 ${
+        !svgStr ? 'animate-pulse bg-bg-main' : ''
+      }`}
       dangerouslySetInnerHTML={{ __html: svgStr }}
     />
   )
