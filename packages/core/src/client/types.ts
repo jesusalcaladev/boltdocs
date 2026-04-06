@@ -167,6 +167,4 @@ export interface NavbarLink {
   active: boolean
   /** Optional icon or string for external link indication */
   to?: string
-  /** Nested items for NavigationMenu */
-  items?: NavbarLink[]
 }

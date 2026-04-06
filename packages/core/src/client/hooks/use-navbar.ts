@@ -23,14 +23,12 @@ export function useNavbar() {
 
     // Robust active state calculation
     const getIsActive = (h: string) => {
-      if (location.pathname === h) return true
-      if (!h || h === '/') return location.pathname === '/'
+      const activePath = location.pathname
+      if (activePath === h) return true
+      if (!h || h === '/') return activePath === '/'
 
-      const cleanPath = (p: string) => p.split('/').filter(Boolean)
-      const hParts = cleanPath(h)
-      const pParts = cleanPath(location.pathname)
-
-      const getBaseSegment = (parts: string[]) => {
+      const cleanPathParts = (p: string) => {
+        const parts = p.split('/').filter(Boolean)
         let i = 0
         // Skip locale
         if (config.i18n?.locales && parts[i] && config.i18n.locales[parts[i]]) {
@@ -42,13 +40,19 @@ export function useNavbar() {
             i++
           }
         }
-        return parts[i]
+        return parts.slice(i)
       }
 
-      const hBase = getBaseSegment(hParts)
-      const pBase = getBaseSegment(pParts)
+      const hParts = cleanPathParts(h)
+      const pParts = cleanPathParts(activePath)
 
-      return hBase != null && hBase === pBase
+      if (hParts.length === 0) return pParts.length === 0
+
+      // Must match at least as many parts as the candidate link
+      if (pParts.length < hParts.length) return false
+
+      // Every part of hParts must match pParts at the same position
+      return hParts.every((part, i) => pParts[i] === part)
     }
 
     return {
@@ -59,18 +63,6 @@ export function useNavbar() {
         href.startsWith('http') || href.startsWith('//')
           ? 'external'
           : undefined,
-      items: (item.items as any[])?.map((sub: any) => {
-        const subHref = (sub.href || sub.link || sub.to || '') as string
-        return {
-          label: getTranslated(sub.label || sub.text, currentLocale),
-          href: subHref,
-          active: getIsActive(subHref),
-          to:
-            subHref.startsWith('http') || subHref.startsWith('//')
-              ? 'external'
-              : undefined,
-        }
-      }),
     }
   })
 

@@ -23,12 +23,16 @@ export default defineConfig({
     },
     navbar: [
       {
-        href: '/',
-        label: 'Home',
+        label: 'Docs',
+        href: '/docs/overview/introduction',
       },
       {
-        label: 'Getting Started',
-        href: '/docs/overview/introduction',
+        label: 'API',
+        href: '/docs/hooks/use-routes',
+      },
+      {
+        label: 'Components',
+        href: '/docs/components/overview',
       },
     ],
     editLink:
