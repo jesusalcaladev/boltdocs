@@ -19,19 +19,58 @@ export function useNavbar() {
 
   // Transform links to the new NavbarLink structure
   const links: NavbarLink[] = rawLinks.map((item: any) => {
-    const href = item.href || item.to || item.link || ''
+    const href = (item.href || item.to || item.link || '') as string
+
+    // Robust active state calculation
+    const getIsActive = (h: string) => {
+      if (location.pathname === h) return true
+      if (!h || h === '/') return location.pathname === '/'
+
+      const cleanPath = (p: string) => p.split('/').filter(Boolean)
+      const hParts = cleanPath(h)
+      const pParts = cleanPath(location.pathname)
+
+      const getBaseSegment = (parts: string[]) => {
+        let i = 0
+        // Skip locale
+        if (config.i18n?.locales && parts[i] && config.i18n.locales[parts[i]]) {
+          i++
+        }
+        // Skip version
+        if (config.versions?.versions && parts[i]) {
+          if (config.versions.versions.some((v) => v.path === parts[i])) {
+            i++
+          }
+        }
+        return parts[i]
+      }
+
+      const hBase = getBaseSegment(hParts)
+      const pBase = getBaseSegment(pParts)
+
+      return hBase != null && hBase === pBase
+    }
+
     return {
       label: getTranslated(item.label || item.text, currentLocale),
       href,
-      active: location.pathname === href,
+      active: getIsActive(href),
       to:
         href.startsWith('http') || href.startsWith('//')
           ? 'external'
           : undefined,
-      items: item.items?.map((sub: any) => ({
-        label: getTranslated(sub.label || sub.text, currentLocale),
-        href: sub.href || sub.link || sub.to || '',
-      })),
+      items: (item.items as any[])?.map((sub: any) => {
+        const subHref = (sub.href || sub.link || sub.to || '') as string
+        return {
+          label: getTranslated(sub.label || sub.text, currentLocale),
+          href: subHref,
+          active: getIsActive(subHref),
+          to:
+            subHref.startsWith('http') || subHref.startsWith('//')
+              ? 'external'
+              : undefined,
+        }
+      }),
     }
   })
 
