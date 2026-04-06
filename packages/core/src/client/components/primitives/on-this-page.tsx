@@ -12,7 +12,7 @@ import React, {
 import scrollIntoView from 'scroll-into-view-if-needed'
 import { cn } from '../../utils/cn'
 import { useOnChange } from '../../utils/use-on-change'
-import type { ComponentBase, CompoundComponent } from './types'
+import type { ComponentBase } from './types'
 import { getItemId } from './helpers/observer'
 
 export interface TOCItemType {
@@ -87,6 +87,7 @@ class Observer {
     this.items = this.items.map((item) => {
       const entry = entries.find((entry) => entry.target.id === item.id)
       let active = entry ? entry.isIntersecting : item.active && !item.fallback
+
       if (this.single && hasActive) active = false
 
       if (item.active !== active) {
@@ -102,28 +103,22 @@ class Observer {
       return item
     })
 
-    if (!hasActive && entries[0].rootBounds) {
-      const viewTop = entries[0].rootBounds.top
-      let min = Number.MAX_VALUE
-      let fallbackIdx = -1
-
-      for (let i = 0; i < this.items.length; i++) {
-        const element = document.getElementById(this.items[i].id)
-        if (!element) continue
-
-        const d = Math.abs(viewTop - element.getBoundingClientRect().top)
-        if (d < min) {
-          fallbackIdx = i
-          min = d
-        }
-      }
-
-      if (fallbackIdx !== -1) {
-        this.items[fallbackIdx] = {
-          ...this.items[fallbackIdx],
-          active: true,
-          fallback: true,
-          t: Date.now(),
+    // If no headings are intersecting, the active one is typically the one 
+    // above the viewport. We can determine this by checking if the first 
+    // intersecting element's bounding box is below the root.
+    if (!hasActive && entries.length > 0) {
+      const firstEntry = entries[0]
+      // If the top-most visible entry is below the top of the viewport,
+      // then the active anchor should be the one immediately preceding it.
+      if (firstEntry.boundingClientRect.top > 0) {
+        const firstIdx = this.items.findIndex(i => i.id === firstEntry.target.id)
+        if (firstIdx > 0) {
+          this.items = this.items.map((item, idx) => ({
+            ...item,
+            active: idx === firstIdx - 1,
+            fallback: idx === firstIdx - 1,
+            t: idx === firstIdx - 1 ? Date.now() : item.t
+          }))
         }
       }
     }
@@ -197,39 +192,6 @@ export function useItems() {
   return ctx
 }
 
-export function useScrollStatus(ref: RefObject<HTMLElement | null>) {
-  const [status, setStatus] = useState({
-    isOverflowing: false,
-    isAtBottom: false,
-  })
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-
-    const checkStatus = () => {
-      const isOverflowing = el.scrollHeight > el.clientHeight
-      // We use a 2px threshold for floating point math issues
-      const isAtBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 2
-      setStatus({ isOverflowing, isAtBottom })
-    }
-
-    checkStatus()
-    el.addEventListener('scroll', checkStatus, { passive: true })
-    window.addEventListener('resize', checkStatus)
-
-    const mutationObserver = new MutationObserver(checkStatus)
-    mutationObserver.observe(el, { childList: true, subtree: true })
-
-    return () => {
-      el.removeEventListener('scroll', checkStatus)
-      window.removeEventListener('resize', checkStatus)
-      mutationObserver.disconnect()
-    }
-  }, [ref])
-
-  return status
-}
 
 export function useActiveAnchor(): string | undefined {
   const items = useItems()
@@ -282,9 +244,11 @@ export function AnchorProvider({
   }, [observer, toc])
 
   useEffect(() => {
+    // We use a rootMargin that covers the top part of the screen
+    // and a smaller threshold to make it more responsive.
     observer.watch({
-      rootMargin: '0px',
-      threshold: 0.98,
+      rootMargin: '-20px 0% -80% 0%',
+      threshold: [0, 1],
     })
     observer.onChange = () => setItems([...observer.items])
 
@@ -339,16 +303,11 @@ export const OnThisPageContent = ({
 
   useImperativeHandle(ref, () => internalRef.current!)
 
-  const { isOverflowing, isAtBottom } = useScrollStatus(internalRef)
-
   return (
     <div
       ref={internalRef}
       className={cn(
         'relative overflow-y-auto boltdocs-otp-content',
-        isOverflowing &&
-          !isAtBottom &&
-          'mask-[linear-gradient(to_bottom,black_85%,transparent_100%)]',
         className,
       )}
       {...props}

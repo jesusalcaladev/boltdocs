@@ -7,7 +7,8 @@ import NavbarPrimitive from '@components/primitives/navbar'
 import { ThemeToggle } from './theme-toggle'
 import { GithubStars } from './github-stars'
 import { Tabs } from './tabs'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { cn } from '@client/utils/cn'
 import type { BoltdocsSocialLink } from '@node/config'
 import Menu from '@components/primitives/menu'
 import { Button } from '@components/primitives/button'
@@ -44,12 +45,6 @@ export function Navbar() {
           <NavbarPrimitive.Title>{title}</NavbarPrimitive.Title>
 
           {config.versions && currentVersion && <NavbarVersion />}
-
-          <NavbarPrimitive.Links>
-            {links.map((link) => (
-              <NavbarLinkItem key={link.href} link={link} />
-            ))}
-          </NavbarPrimitive.Links>
         </NavbarPrimitive.NavbarLeft>
         <NavbarPrimitive.NavbarCenter>
           <Suspense
@@ -61,6 +56,13 @@ export function Navbar() {
           </Suspense>
         </NavbarPrimitive.NavbarCenter>
         <NavbarPrimitive.NavbarRight>
+          <NavbarPrimitive.Links>
+            {links.map((link) => (
+              <>
+                <NavbarLinkItem key={link.href} link={link} />
+              </>
+            ))}
+          </NavbarPrimitive.Links>
           {config.i18n && currentLocale && <NavbarI18n />}
           <NavbarPrimitive.Split />
           <ThemeToggle />
@@ -90,6 +92,27 @@ export function Navbar() {
 
 function NavbarLinkItem({ link }: { link: NavbarLinkType }) {
   const localizedHref = useLocalizedTo(link.href)
+  const navigate = useNavigate()
+
+  if (link.items && link.items.length > 0) {
+    return (
+      <NavbarPrimitive.Menu
+        key={link.href}
+        label={link.label as string}
+        active={link.active}
+      >
+        {link.items.map((sub, idx) => (
+          <NavbarPrimitive.Item
+            key={`${sub.href}-${idx}`}
+            label={sub.label as string}
+            onPress={() => navigate(sub.href)}
+            isCurrent={sub.active}
+          />
+        ))}
+      </NavbarPrimitive.Menu>
+    )
+  }
+
   return <NavbarPrimitive.Link {...(link as any)} href={localizedHref} />
 }
 

@@ -42,6 +42,7 @@ export interface NavbarThemeProps {
 export interface NavbarMenuProps extends ComponentBase {
   label: ReactNode
   icon?: ReactNode
+  active?: boolean
 }
 
 export interface NavbarVersionProps extends ComponentBase {
@@ -68,6 +69,7 @@ export const NavbarRoot = ({
     <header
       className={cn(
         'boltdocs-navbar sticky top-0 z-50 w-full border-b border-border-subtle bg-bg-main/80 backdrop-blur-md',
+        'will-change-transform', // Optimization: layer promotion
         className,
       )}
       {...props}
@@ -180,10 +182,10 @@ export const NavbarLink = ({
       href={href}
       target={to === 'external' ? '_blank' : undefined}
       className={cn(
-        'transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 rounded-sm',
+        'transition-colors outline-none font-medium focus-visible:ring-2 focus-visible:ring-primary-500/30 rounded-sm',
         {
-          'text-primary-500 font-bold': active,
-          'text-text-muted hover:text-text-main font-medium': !active,
+          'text-primary-500': active,
+          'text-text-muted hover:text-text-main': !active,
         },
         className,
       )}
@@ -263,15 +265,19 @@ export const NavbarMenu = ({
   children,
   className,
   icon,
+  active,
 }: NavbarMenuProps) => {
   return (
-    <MenuTrigger placement="bottom end">
+    <MenuTrigger placement="bottom start">
       <Button
         variant="ghost"
         className={cn(
           'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-text-muted outline-none cursor-pointer transition-colors',
-          'hover:bg-bg-surface hover:text-text-main',
+          'hover:bg-bg-surface hover:text-text-main data-hovered:bg-bg-surface data-hovered:text-text-main',
           'focus-visible:ring-2 focus-visible:ring-primary-500/30',
+          {
+            'text-primary-500 font-semibold bg-primary-500/5': active,
+          },
           className,
         )}
       >
@@ -279,9 +285,11 @@ export const NavbarMenu = ({
         <span className="text-[13px] font-bold uppercase tracking-wide">
           {label}
         </span>
-        <ChevronDown size={14} className="ml-0.5 opacity-50" />
+        <ChevronDown size={14} className="ml-0.5 opacity-50 transition-transform duration-200" />
       </Button>
-      <Menu className="min-w-[180px]">{children as any}</Menu>
+      <Menu className="min-w-[200px] border border-border-subtle bg-bg-surface shadow-xl rounded-xl p-1.5 entering:animate-in entering:fade-in entering:zoom-in-95 exiting:animate-out exiting:fade-out exiting:zoom-out-95">
+        {children as any}
+      </Menu>
     </MenuTrigger>
   )
 }
@@ -356,6 +364,7 @@ export default {
   SearchTrigger: NavbarSearchTrigger,
   Theme: NavbarTheme,
   Item: NavbarItem,
+  Menu: NavbarMenu,
   Socials: NavbarSocials,
   Split: NavbarSplit,
   Content: NavbarContent,

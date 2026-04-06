@@ -80,6 +80,7 @@ export function CodeBlock(props: CodeBlockProps) {
     <div
       className={cn(
         'group relative overflow-hidden bg-(--color-code-bg)',
+        'contain-layout contain-paint', // Optimization: isolate code block rendering
         !plain && 'my-6 rounded-lg border border-border-subtle',
         shouldTruncate && '[&>pre]:max-h-[250px] [&>pre]:overflow-hidden',
         props.className,
