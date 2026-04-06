@@ -83,45 +83,40 @@ class Observer {
   private callback(entries: IntersectionObserverEntry[]) {
     if (entries.length === 0) return
 
-    let hasActive = false
-    this.items = this.items.map((item) => {
-      const entry = entries.find((entry) => entry.target.id === item.id)
-      let active = entry ? entry.isIntersecting : item.active && !item.fallback
-
-      if (this.single && hasActive) active = false
-
-      if (item.active !== active) {
-        item = {
-          ...item,
-          t: Date.now(),
-          active,
-          fallback: false,
-        }
-      }
-
-      if (active) hasActive = true
-      return item
-    })
-
-    // If no headings are intersecting, the active one is typically the one 
-    // above the viewport. We can determine this by checking if the first 
-    // intersecting element's bounding box is below the root.
-    if (!hasActive && entries.length > 0) {
-      const firstEntry = entries[0]
-      // If the top-most visible entry is below the top of the viewport,
-      // then the active anchor should be the one immediately preceding it.
-      if (firstEntry.boundingClientRect.top > 0) {
-        const firstIdx = this.items.findIndex(i => i.id === firstEntry.target.id)
-        if (firstIdx > 0) {
-          this.items = this.items.map((item, idx) => ({
-            ...item,
-            active: idx === firstIdx - 1,
-            fallback: idx === firstIdx - 1,
-            t: idx === firstIdx - 1 ? Date.now() : item.t
-          }))
-        }
+    // 1. Update internal state based on current intersection and position
+    for (const entry of entries) {
+      const item = this.items.find((i) => i.id === entry.target.id)
+      if (item) {
+        // item.active will track if the heading is currently "on or below" the trigger line
+        item.active = entry.isIntersecting
+        
+        // item.fallback will track if the heading has scrolled "above" the trigger line
+        // RootMargin top is -100px, so trigger line is at 100px.
+        const activationLine = 100
+        item.fallback = !entry.isIntersecting && entry.boundingClientRect.top < activationLine
       }
     }
+
+    // 2. The active heading is the LAST one in document order that has scrolled past the line.
+    let highlightIdx = -1
+    for (let i = this.items.length - 1; i >= 0; i--) {
+      if (this.items[i].fallback) {
+        highlightIdx = i
+        break
+      }
+    }
+
+    // 3. Initial state: If no headings have passed the line yet, default to the first heading.
+    if (highlightIdx === -1 && this.items.length > 0) {
+      highlightIdx = 0
+    }
+
+    // 4. Map back to UI state
+    this.items = this.items.map((item, idx) => ({
+      ...item,
+      active: idx === highlightIdx,
+      t: idx === highlightIdx ? Date.now() : item.t
+    }))
 
     this.onChange?.()
   }
@@ -244,11 +239,11 @@ export function AnchorProvider({
   }, [observer, toc])
 
   useEffect(() => {
-    // We use a rootMargin that covers the top part of the screen
-    // and a smaller threshold to make it more responsive.
+    // We use a rootMargin that acts as an activation "line" near the top.
+    // headings are "intersecting" (active=true) when they are BELOW this line.
     observer.watch({
-      rootMargin: '-20px 0% -80% 0%',
-      threshold: [0, 1],
+      rootMargin: '-100px 0% 0% 0%',
+      threshold: 0,
     })
     observer.onChange = () => setItems([...observer.items])
 
