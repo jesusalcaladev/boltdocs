@@ -24,11 +24,11 @@ export default defineConfig({
     navbar: [
       {
         label: 'Docs',
-        href: '/docs/overview/introduction',
+        href: '/docs/guides/overview/introduction',
       },
       {
         label: 'API',
-        href: '/docs/hooks/use-routes',
+        href: '/docs/api/hooks/use-routes',
       },
       {
         label: 'Components',

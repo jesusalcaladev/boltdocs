@@ -85,14 +85,14 @@ Buttons come in several semantic variants to help establish intent and hierarchy
 
 ### Custom Colors
 
-You can use the `color` prop to apply specific brand colors with neon glow effects.
+You can use the `className` prop to apply specific brand colors with neon glow effects.
 
 <div className="flex flex-wrap gap-4 mt-6">
-  <Button color="purple">Purple</Button>
-  <Button color="cyan">Cyan</Button>
-  <Button color="pink">Pink</Button>
-  <Button color="orange">Orange</Button>
-  <Button color="blue">Blue</Button>
+  <Button className="bg-purple-400">Purple</Button>
+  <Button className="bg-cyan-500">Cyan</Button>
+  <Button className="bg-pink-500">Pink</Button>
+  <Button className="bg-orange-500">Orange</Button>
+  <Button className="bg-blue-500">Blue</Button>
 </div>
 
 ### Icons
@@ -116,24 +116,3 @@ Control the corner radius using the `rounded` prop.
   <Button rounded="lg">Large</Button>
   <Button rounded="full">Full</Button>
 </div>
-
-
-### Personalization (CSS)
-
-Customize the appearance of all buttons globally using these CSS variables in your `custom.css`:
-
-```css
-:root {
-  /* Primary Button */
-  --ld-btn-primary-bg: #7f13ec;
-  --ld-btn-primary-text: #ffffff;
-  --ld-btn-primary-glow: rgba(127, 19, 236, 0.3);
-
-  /* Secondary Button */
-  --ld-btn-secondary-bg: rgba(255, 255, 255, 0.06);
-  --ld-btn-secondary-text: #e0e0e0;
-  
-  /* Global Radius */
-  --ld-radius-md: 8px;
-}
-```

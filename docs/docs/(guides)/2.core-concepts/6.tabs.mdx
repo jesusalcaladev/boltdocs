@@ -14,9 +14,7 @@ Tabs split your documentation into high-level categories — like "Guides", "API
 
 ## Configuration
 
-Define tabs in your `boltdocs.config.ts`:
-
-```ts
+```ts title="boltdocs.config.ts"
 import { defineConfig } from 'boltdocs'
 
 export default defineConfig({
@@ -115,20 +113,5 @@ function CustomTabs() {
       <div className="indicator" style={indicatorStyle} />
     </nav>
   )
-}
-```
-
----
-
-## Personalization (CSS)
-
-Customize tab appearance with these CSS variables:
-
-```css
-:root {
-  --ld-tabs-bg: transparent;
-  --ld-tabs-item-active-text: var(--ld-brand-primary);
-  --ld-tabs-item-hover-bg: var(--ld-bg-mute);
-  --ld-tabs-border: var(--ld-border-color);
 }
 ```

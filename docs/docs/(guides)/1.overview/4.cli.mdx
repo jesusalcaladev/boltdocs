@@ -5,7 +5,7 @@ icon: Terminal
 badge: Updated
 ---
 
-import { Table, Note, Tip, Field } from 'boltdocs/client'
+import { Table, Note, Tip, Field, Badge } from 'boltdocs/client'
 
 # CLI Reference
 
@@ -91,7 +91,7 @@ pnpm boltdocs preview
 
 ---
 
-### `boltdocs doctor`
+### `boltdocs doctor` <Badge variant={'warning'}>Experimetal</Badge>
 
 Runs automated health checks on your documentation to catch issues before they reach production.
 
@@ -113,7 +113,7 @@ The doctor command checks for:
 
 **Exit codes**: Returns `1` if any HIGH-severity issues are found (useful for CI/CD pipelines).
 
-For full details, see the [Doctor guide](/docs/core-concepts/doctor).
+For full details, see the [Doctor guide](/docs/guides/core-concepts/doctor).
 
 ---
 
