@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.4.0
+
+### Minor Changes
+
+- [`0ee1f85`](https://github.com/bolt-docs/boltdocs/commit/0ee1f8525500ca6b6dc1eb78260fc257b3698fd4) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - Support icons & title CodeBlock, Better Scroll, export Skeleton Component
+
 ## 2.3.0
 
 ### Minor Changes
