@@ -16,6 +16,8 @@ import { DocsLayout } from './docs-layout'
 import { MdxPage } from './mdx-page'
 import { MdxComponentsProvider } from './mdx-components-context'
 import { mdxComponentsDefault } from './mdx-component'
+// @ts-ignore
+import virtualCustomComponents from 'virtual:boltdocs-mdx-components'
 import { useRoutes } from '../hooks/use-routes'
 import { useLocation } from 'react-router-dom'
 import { useBoltdocsStore } from '../store/use-boltdocs-store'
@@ -164,7 +166,11 @@ export function AppShell({
   }, [hot])
 
   const allComponents = useMemo(
-    () => ({ ...mdxComponentsDefault, ...customComponents }),
+    () => ({
+      ...mdxComponentsDefault,
+      ...virtualCustomComponents,
+      ...customComponents,
+    }),
     [customComponents],
   )
 
