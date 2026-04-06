@@ -130,7 +130,7 @@ export default defineConfig({
 
 ### Navigation
 
-<Field name="navbar" type="Array<{ label: string | Record<string, string>; href: string; items?: Array<{ label: string | Record<string, string>; href: string }> }>">
+<Field name="navbar" type="Array<{ label: string | Record<string, string>; href: string }>" defaultValue="[]">
   Items displayed in the top navigation bar. Each item can be a simple link or a dropdown with nested items.
 
   ```ts

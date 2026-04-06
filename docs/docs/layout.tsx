@@ -6,7 +6,6 @@ import {
   Head,
   Breadcrumbs,
   PageNav,
-  ProgressBar,
   ErrorBoundary,
   CopyMarkdown,
   useRoutes,
@@ -29,10 +28,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="absolute -top-[5%] -right-[5%] w-[35%] h-[35%] rounded-full bg-purple-500/5 blur-[100px]" />
         <div className="absolute top-[20%] left-[20%] w-[20%] h-[20%] rounded-full bg-blue-400/5 blur-[80px]" />
       </div>
-      <ProgressBar />
       <Head
-        siteTitle={config.theme?.title || 'Boltdocs'}
-        siteDescription={config.theme?.description || ''}
+        siteTitle={config.theme?.title}
+        siteDescription={config.theme?.description}
         routes={allRoutes}
       />
       <Navbar />
