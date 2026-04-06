@@ -110,6 +110,9 @@ export function parseDocFile(
   if (locale) {
     finalPath += '/' + locale
   }
+  if (inferredTab) {
+    finalPath += '/' + inferredTab
+  }
   finalPath += cleanRoutePath === '/' ? '' : cleanRoutePath
 
   if (!finalPath || finalPath === '') finalPath = '/'

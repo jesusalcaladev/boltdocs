@@ -1,4 +1,3 @@
-import React from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import { useMdxComponents } from './mdx-components-context'
 

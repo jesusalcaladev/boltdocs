@@ -81,8 +81,10 @@ export function CodeBlock(props: CodeBlockProps) {
       className={cn(
         'group relative overflow-hidden bg-(--color-code-bg)',
         'contain-layout contain-paint', // Optimization: isolate code block rendering
-        !plain && 'my-6 rounded-lg border border-border-subtle',
-        shouldTruncate && '[&>pre]:max-h-[250px] [&>pre]:overflow-hidden',
+        {
+          'my-6 rounded-lg border border-border-subtle': !plain,
+          '[&>pre]:max-h-62.5 [&>pre]:overflow-hidden': shouldTruncate,
+        },
         props.className,
       )}
     >
@@ -116,7 +118,7 @@ export function CodeBlock(props: CodeBlockProps) {
             <RAC.Button
               onPress={handleCopy}
               className={cn(
-                'grid place-items-center w-8 h-8 bg-transparent outline-none cursor-pointer transition-all duration-200 hover:scale-115 active:scale-95 [&>svg]:w-5 [&>svg]:h-5 [&>svg]:stroke-2',
+                'grid place-items-center size-8 bg-transparent outline-none cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 [&>svg]:size-4 [&>svg]:stroke-2',
                 copied
                   ? 'text-emerald-400'
                   : 'text-text-muted hover:text-text-main',

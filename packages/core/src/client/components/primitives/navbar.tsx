@@ -1,11 +1,5 @@
 import { type ReactNode, useState, useEffect } from 'react'
-import {
-  Button,
-  Separator,
-  ToggleButton,
-  Link,
-  cn,
-} from './index'
+import { Separator, ToggleButton, Link, cn } from './index'
 import { Button as ButtonRAC } from 'react-aria-components'
 import { Search, Sun, Moon, ExternalLink } from 'lucide-react'
 import * as IconsSocials from '@components/icons-dev'
@@ -74,7 +68,12 @@ export const NavbarContent = ({ children, className }: ComponentBase) => {
 
 export const NavbarLeft = ({ children, className }: ComponentBase) => {
   return (
-    <div className={cn('flex flex-1 items-center justify-start gap-4 min-w-0', className)}>
+    <div
+      className={cn(
+        'flex flex-1 items-center justify-start gap-4 min-w-0',
+        className,
+      )}
+    >
       {children}
     </div>
   )
@@ -82,7 +81,12 @@ export const NavbarLeft = ({ children, className }: ComponentBase) => {
 
 export const NavbarRight = ({ children, className }: ComponentBase) => {
   return (
-    <div className={cn('flex flex-1 items-center justify-end gap-2 md:gap-4 min-w-0', className)}>
+    <div
+      className={cn(
+        'flex flex-1 items-center justify-end gap-2 md:gap-4 min-w-0',
+        className,
+      )}
+    >
       {children}
     </div>
   )
@@ -128,14 +132,16 @@ export const NavbarLogo = ({
 
 export const NavbarTitle = ({ children, className }: ComponentBase) => {
   return (
-    <span
-      className={cn(
-        'text-lg font-bold tracking-tight hidden sm:inline-block',
-        className,
-      )}
-    >
-      {children}
-    </span>
+    <Link href="/">
+      <span
+        className={cn(
+          'text-lg font-bold tracking-tight hidden sm:inline-block',
+          className,
+        )}
+      >
+        {children}
+      </span>
+    </Link>
   )
 }
 
@@ -241,7 +247,6 @@ export const NavbarTheme = ({
     </ToggleButton>
   )
 }
-
 
 export const Icon = ({ name }: { name: BoltdocsSocialLink['icon'] }) => {
   if (name === 'github') return <IconsSocials.Github />

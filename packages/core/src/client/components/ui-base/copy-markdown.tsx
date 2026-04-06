@@ -80,25 +80,19 @@ export function CopyMarkdown({ content, mdxRaw, config }: CopyMarkdownProps) {
             )}
           />
           <Menu className="w-52">
-            <MenuItem
-              onAction={handleCopy}
-              className="flex flex-row items-start gap-2.5 group"
-            >
+            <MenuItem onAction={handleCopy}>
               <Copy
                 size={16}
-                className="w-4 h-4 shrink-0 mt-0.5 transition-transform duration-200 group-hover:-translate-y-0.5 text-text-muted group-hover:text-primary-500"
+                className="size-4 mt-0.5 text-text-muted group-hover:text-primary-500"
               />
               <span className="font-medium text-[0.8125rem]">
                 Copy Markdown
               </span>
             </MenuItem>
-            <MenuItem
-              onAction={handleOpenRaw}
-              className="flex flex-row items-start gap-2.5 group"
-            >
+            <MenuItem onAction={handleOpenRaw}>
               <ExternalLink
                 size={16}
-                className="w-4 h-4 shrink-0 mt-0.5 transition-transform duration-200 group-hover:-translate-y-0.5 text-text-muted group-hover:text-primary-500"
+                className="size-4 mt-0.5 text-text-muted group-hover:text-primary-500"
               />
               <span className="font-medium text-[0.8125rem]">
                 View as Markdown

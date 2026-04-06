@@ -20,7 +20,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   return (
     <RAC.MenuTrigger {...props}>
       {trigger as any}
-      <Popover placement={props.placement} className="min-w-[140px]">
+      <Popover placement={props.placement} className="min-w-35">
         {menu as any}
       </Popover>
     </RAC.MenuTrigger>
@@ -52,7 +52,10 @@ export function Menu<T extends object>(props: RAC.MenuProps<T>) {
     <RAC.Menu
       {...props}
       className={RAC.composeRenderProps(props.className, (className) =>
-        cn('p-1.5 outline-none max-h-[inherit] overflow-auto', className),
+        cn(
+          'p-1.5 outline-none max-h-[inherit] overflow-auto max-w-75',
+          className,
+        ),
       )}
     />
   )
@@ -74,11 +77,14 @@ export function MenuItem(props: RAC.MenuItemProps) {
         props.className,
         (className, { isFocused, isPressed, isDisabled }) =>
           cn(
-            'group relative flex flex-row items-center gap-2 px-2 py-1 rounded-lg outline-none cursor-default transition-none',
-            'text-text-main text-[13px]',
-            isFocused && 'bg-bg-surface-elevated text-primary-600 shadow-sm ring-1 ring-border-strong/5',
-            isPressed && 'bg-bg-surface-elevated',
-            isDisabled && 'opacity-40 grayscale pointer-events-none',
+            'group relative flex flex-row items-center gap-2 px-2 py-1 rounded-lg outline-none cursor-default hover:cursor-pointer transition-none',
+            'text-text-main text-[12px]',
+            {
+              'bg-bg-surface-elevated text-primary-600 ring-1 ring-border-strong/5':
+                isFocused,
+              'bg-bg-surface-elevanted': isPressed,
+              'opacity-40 grayscale pointer-events-none': isDisabled,
+            },
             className,
           ),
       )}
@@ -88,20 +94,20 @@ export function MenuItem(props: RAC.MenuItemProps) {
         (children, { selectionMode, isSelected, hasSubmenu }) => (
           <>
             {selectionMode !== 'none' && (
-              <span className="flex items-center w-4 h-4 shrink-0 justify-center">
+              <span className="flex items-center size-4 shrink-0 justify-center">
                 {isSelected && selectionMode === 'multiple' && (
-                  <Check className="w-3.5 h-3.5 stroke-[2.5px] text-primary-500 animate-in zoom-in-50 duration-200" />
+                  <Check className="size-3.5 stroke-[2.5px] text-primary-500 animate-in zoom-in-50 duration-200" />
                 )}
                 {isSelected && selectionMode === 'single' && (
-                  <Dot className="w-6 h-6 text-primary-500 animate-in zoom-in-50 duration-200" />
+                  <Dot className="size-5 text-primary-500 animate-in zoom-in-50 duration-200" />
                 )}
               </span>
             )}
-            <div className="flex-1 min-w-0">
+            <div className="flex flex-row w-full transition-colors items-center gap-2 py-1 px-1">
               {children}
             </div>
             {hasSubmenu && (
-              <ChevronRight className="w-4 h-4 ml-auto text-text-muted group-focused:text-primary-500/70 transition-colors" />
+              <ChevronRight className="size-4 ml-auto text-text-muted group-focused:text-primary-500/70 transition-colors" />
             )}
           </>
         ),

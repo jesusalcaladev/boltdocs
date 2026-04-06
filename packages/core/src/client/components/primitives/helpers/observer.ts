@@ -14,50 +14,41 @@ export class Observer {
   private callback(entries: IntersectionObserverEntry[]) {
     if (entries.length === 0) return
 
-    let hasActive = false
-    this.items = this.items.map((item) => {
-      const entry = entries.find((entry) => entry.target.id === item.id)
-      let active = entry ? entry.isIntersecting : item.active && !item.fallback
-      if (this.single && hasActive) active = false
+    // 1. Update internal state based on current intersection and position
+    for (const entry of entries) {
+      const item = this.items.find((i) => i.id === entry.target.id)
+      if (item) {
+        // item.active will track if the heading is currently "on or below" the trigger line
+        item.active = entry.isIntersecting
 
-      if (item.active !== active) {
-        item = {
-          ...item,
-          t: Date.now(),
-          active,
-          fallback: false,
-        }
-      }
-
-      if (active) hasActive = true
-      return item
-    })
-
-    if (!hasActive && entries[0].rootBounds) {
-      const viewTop = entries[0].rootBounds.top
-      let min = Number.MAX_VALUE
-      let fallbackIdx = -1
-
-      for (let i = 0; i < this.items.length; i++) {
-        const element = document.getElementById(this.items[i].id)
-        if (!element) continue
-
-        const d = Math.abs(viewTop - element.getBoundingClientRect().top)
-        if (d < min) {
-          fallbackIdx = i
-          min = d
-        }
-      }
-
-      if (fallbackIdx !== -1) {
-        this.items[fallbackIdx] = {
-          ...this.items[fallbackIdx],
-          active: true,
-          fallback: true,
-          t: Date.now(),
-        }
+        // item.fallback will track if the heading has scrolled "above" the trigger line
+        // RootMargin top is -100px, so trigger line is at 100px.
+        const activationLine = 100
+        item.fallback =
+          !entry.isIntersecting && entry.boundingClientRect.top < activationLine
       }
     }
+
+    // 2. The active heading is the LAST one in document order that has scrolled past the line.
+    let highlightIdx = -1
+    for (let i = this.items.length - 1; i >= 0; i--) {
+      if (this.items[i].fallback) {
+        highlightIdx = i
+        break
+      }
+    }
+
+    // 3. Initial state: If no headings have passed the line yet, default to the first heading.
+    if (highlightIdx === -1 && this.items.length > 0) {
+      highlightIdx = 0
+    }
+
+    // 4. Map back to UI state
+    this.items = this.items.map((item, idx) => ({
+      ...item,
+      active: idx === highlightIdx,
+      t: idx === highlightIdx ? Date.now() : item.t,
+    }))
 
     this.onChange?.()
   }

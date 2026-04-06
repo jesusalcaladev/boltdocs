@@ -66,7 +66,7 @@
   --spacing-navbar: 3.5rem;
   --spacing-sidebar: 16rem;
   --spacing-toc: 14rem;
-  --spacing-content-max: 48rem;
+  --spacing-content-max: 54rem;
 
   @keyframes pulse {
     0%,

@@ -1,11 +1,11 @@
-import React, { createContext, useContext } from 'react'
+import { createContext, use } from 'react'
 
 export type MdxComponentsType = Record<string, React.ComponentType<any>>
 
 const MdxComponentsContext = createContext<MdxComponentsType>({})
 
 export function useMdxComponents() {
-  return useContext(MdxComponentsContext)
+  return use(MdxComponentsContext)
 }
 
 export function MdxComponentsProvider({
