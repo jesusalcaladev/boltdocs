@@ -10,10 +10,38 @@ import {
 } from 'lucide-react'
 import { cn } from '@client/utils/cn'
 
+import {
+  TypeScript,
+  JavaScript,
+  React as ReactIcon,
+  Json,
+  Css,
+  BracketsOrange,
+  Markdown,
+  Shell,
+  Yaml,
+} from '@components/icons-dev'
+
 // --- Constants & Types ---
 
 const ICON_SIZE = 16
 const STROKE_WIDTH = 2
+
+const FILE_EXTENSION_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
+  ts: TypeScript,
+  tsx: ReactIcon,
+  js: JavaScript,
+  jsx: ReactIcon,
+  json: Json,
+  css: Css,
+  html: BracketsOrange,
+  md: Markdown,
+  mdx: Markdown,
+  bash: Shell,
+  sh: Shell,
+  yaml: Yaml,
+  yml: Yaml,
+}
 
 const FILE_REGEXES = {
   CODE: /\.(ts|tsx|js|jsx|json|mjs|cjs|astro|vue|svelte)$/i,
@@ -66,6 +94,13 @@ function getFileIcon(filename: string, isFolder: boolean) {
         fillOpacity={0.15}
       />
     )
+  }
+
+  // Check for specialized language icons
+  const extension = name.split('.').pop() || ''
+  const LangIcon = FILE_EXTENSION_MAP[extension]
+  if (LangIcon) {
+    return <LangIcon size={ICON_SIZE} />
   }
 
   const fileIconClass = cn(

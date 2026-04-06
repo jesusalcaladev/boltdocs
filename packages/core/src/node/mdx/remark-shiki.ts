@@ -32,7 +32,7 @@ export function remarkShiki(config?: BoltdocsConfig) {
           code = codeAttr.value
         } else if (codeAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const expr = codeAttr.value.value ?? ''
-          code = expr.match(/^[`'"](.+)[`'"]$/)?.[1] ?? expr
+          code = expr.match(/^[`'"]([\s\S]+)[`'"]$/)?.[1] ?? expr
         }
       }
 

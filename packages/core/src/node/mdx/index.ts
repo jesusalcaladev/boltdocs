@@ -9,6 +9,7 @@ import type { BoltdocsConfig } from '../config'
 import { mdxCache, MDX_PLUGIN_VERSION } from './cache'
 import { remarkShiki } from './remark-shiki'
 import { rehypeShiki } from './rehype-shiki'
+import { remarkCodeMeta } from './remark-code-meta'
 
 let mdxCacheLoaded = false
 let hits = 0
@@ -38,6 +39,7 @@ export function boltdocsMdxPlugin(
     remarkPlugins: [
       remarkGfm,
       remarkFrontmatter,
+      remarkCodeMeta,
       [remarkShiki, config],
       ...(extraRemarkPlugins as any[]),
     ],

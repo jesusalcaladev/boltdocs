@@ -37,6 +37,7 @@ export function ComponentPreview(props: ComponentPreviewProps) {
             title={sandboxOptions.title}
             lang="tsx"
             highlightedHtml={highlightedHtml}
+            plain={true}
           >
             {initialCode}
           </CodeBlock>

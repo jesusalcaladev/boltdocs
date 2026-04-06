@@ -1,10 +1,37 @@
 import * as RAC from 'react-aria-components'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, File } from 'lucide-react'
 import { cn } from '@client/utils/cn'
 import { useCodeBlock } from './hooks/use-code-block'
 import { useConfig } from '@client/app/config-context'
-import { CodeSandbox } from '@components/icons-dev'
+import {
+  CodeSandbox,
+  TypeScript,
+  JavaScript,
+  React as ReactIcon,
+  Json,
+  Css,
+  BracketsOrange,
+  Markdown,
+  Shell,
+  Yaml,
+} from '@components/icons-dev'
 import { Tooltip } from '@components/primitives/tooltip'
+
+const langIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
+  ts: TypeScript,
+  tsx: ReactIcon,
+  js: JavaScript,
+  jsx: ReactIcon,
+  json: Json,
+  css: Css,
+  html: BracketsOrange,
+  md: Markdown,
+  mdx: Markdown,
+  bash: Shell,
+  sh: Shell,
+  yaml: Yaml,
+  yml: Yaml,
+}
 
 export interface CodeBlockProps {
   children?: React.ReactNode
@@ -15,6 +42,8 @@ export interface CodeBlockProps {
   title?: string
   lang?: string
   highlightedHtml?: string
+  'data-lang'?: string
+  plain?: boolean
   [key: string]: any
 }
 
@@ -25,11 +54,15 @@ export function CodeBlock(props: CodeBlockProps) {
     hideSandbox = true,
     hideCopy = false,
     highlightedHtml,
+    title,
+    'data-lang': dataLang,
+    plain = false,
     ...rest
   } = props
   const config = useConfig()
   const globalSandbox = config?.integrations?.sandbox
   const isSandboxEnabled = !!globalSandbox?.enable && !hideSandbox
+  const lang = props.lang || dataLang || ''
   const {
     copied,
     isExpanded,
@@ -41,13 +74,29 @@ export function CodeBlock(props: CodeBlockProps) {
     shouldTruncate,
   } = useCodeBlock(props)
 
+  const LangIcon = langIconMap[lang]
+
   return (
     <div
       className={cn(
-        'group relative my-6 overflow-hidden rounded-lg border border-border-subtle bg-(--color-code-bg)',
+        'group relative overflow-hidden bg-(--color-code-bg)',
+        !plain && 'my-6 rounded-lg border border-border-subtle',
         shouldTruncate && '[&>pre]:max-h-[250px] [&>pre]:overflow-hidden',
+        props.className,
       )}
     >
+      {/* Title Header */}
+      {title && (
+        <div className="flex items-center gap-2 border-b border-border-subtle bg-bg-surface/50 px-4 py-2 text-[13px] font-medium text-text-muted">
+          {LangIcon ? (
+            <LangIcon size={14} />
+          ) : (
+            <File size={14} className="opacity-60" />
+          )}
+          <span>{title}</span>
+        </div>
+      )}
+
       {/* Toolbar */}
       <div className="absolute top-3 right-4 z-50 flex items-center gap-2 transition-all duration-300 opacity-0 group-hover:opacity-100">
         {isSandboxEnabled && (
