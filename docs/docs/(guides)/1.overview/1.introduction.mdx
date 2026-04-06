@@ -1,32 +1,88 @@
 ---
 title: "Introduction"
-description: "Welcome to the official Boltdocs documentation."
-icon: BookOpen
+description: "Boltdocs is a Vite-native documentation framework that turns MDX files into beautiful, fast documentation sites."
+icon: Sparkles
 ---
 
-import { Tip } from 'boltdocs/client'
+import { Cards, Card, Note, Tip } from 'boltdocs/client'
+import { Zap, Paintbrush, Puzzle, Globe, GitBranch, Search, Terminal, Component } from 'lucide-react'
 
 # What is Boltdocs?
 
-Boltdocs is the modern documentation engine built on the raw speed of **Vite** and the flexibility of **React**. It transforms your Markdown files into high-performance, interactive experiences without the usual complexity. 
+Boltdocs is a documentation framework built directly on top of **Vite** and **React**. You write your docs in **MDX** (Markdown with JSX), and Boltdocs turns them into a fast, beautiful, and fully searchable documentation site — with zero boilerplate configuration.
+
+If you've ever struggled with documentation tools that fight you on customization, Boltdocs is the opposite. Every layer of the framework is designed to be overridden — from individual CSS variables all the way down to replacing entire layout sections with your own React components.
+
+---
 
 ## Why Boltdocs?
 
-Documentation tools often force you to choose between simplicity and power. Boltdocs gives you both:
+<Cards cols={2}>
+  <Card title="Vite-Native" icon={<Zap />}>
+    Built on Vite 7 — instant dev server startup, lightning-fast HMR, and optimized production builds. No webpack, no waiting.
+  </Card>
+  <Card title="80% Customizable" icon={<Paintbrush />}>
+    Override CSS variables, swap layout components, inject your own React components into MDX — or replace the entire layout. You control how much you customize.
+  </Card>
+  <Card title="25+ Components" icon={<Component />}>
+    Ship with Admonitions, Cards, Tabs, FileTree, Tables, Fields, Badges, and more. All styled, all accessible, all documented.
+  </Card>
+  <Card title="Plugin Architecture" icon={<Puzzle />}>
+    Extend the MDX pipeline with remark/rehype plugins, inject Vite plugins, or register global components — all through a clean plugin API.
+  </Card>
+  <Card title="i18n Built-In" icon={<Globe />}>
+    Multi-language support is folder-based. Drop translated files into locale directories, and Boltdocs handles routing, language switching, and smart redirects.
+  </Card>
+  <Card title="Versioning" icon={<GitBranch />}>
+    Maintain multiple documentation versions side by side. Boltdocs auto-generates a version switcher with intelligent cross-version navigation.
+  </Card>
+  <Card title="Full-Text Search" icon={<Search />}>
+    FlexSearch-powered client-side search — fast, locale-aware, and version-filtered. Works out of the box with zero configuration.
+  </Card>
+  <Card title="CLI Tooling" icon={<Terminal />}>
+    Scaffold projects with `create-boltdocs`, serve with `boltdocs dev`, build with `boltdocs build`, and audit with `boltdocs doctor`.
+  </Card>
+</Cards>
 
-- **Built for Developers**: Use React components directly in your MDX. If you can build it in React, you can put it in your docs.
-- **Instant Productivity**: Powered by Vite, development starts in milliseconds. Hot Module Replacement (HMR) keeps your flow state intact.
-- **Batteries-Included**: Internationalization, versioning, dark mode, and search are ready to go from day one.
+---
 
-## Core Features
+## How It Works
 
-- ⚡️ **Blazing Speed**: Leveraging smart preloading and asset optimization for a snappy user experience.
-- 📁 **Intuitive Routing**: Your folder structure *is* your site structure.
-- 🎨 **Effortless Styling**: Customize the look and feel in seconds using [CSS variables](/docs/guides/customization).
-- 🌍 **Global Reach**: Multilingual support is as simple as creating nested folders.
-- 📚 **Version History**: Switch between different documentation versions seamlessly.
-- 🧩 **Extensible**: Hook into the Vite lifecycle to add custom logic or transformations.
+At its core, Boltdocs is a **Vite plugin** that:
+
+1. **Scans** your `docs/` directory for `.md` and `.mdx` files
+2. **Parses** frontmatter, headings, and content from each file
+3. **Generates** routes automatically based on the folder structure
+4. **Renders** everything through a React app with built-in navigation, search, and theming
+
+You don't need to configure a router, set up a build pipeline, or wire up a search index. Boltdocs does it all — and gives you the hooks to customize every piece of it.
 
 <Tip>
-  New here? Start with the [Installation](/docs/guides/1.overview/2.installation) guide to get your first site up and running in minutes.
+  Boltdocs is "just Vite" under the hood. Any Vite plugin, Tailwind setup, or React pattern you already know will work seamlessly.
 </Tip>
+
+---
+
+## Architecture Overview
+
+Boltdocs is split into two main layers:
+
+| Layer | Package | What It Does |
+| :--- | :--- | :--- |
+| **Node** | `boltdocs` | Config resolution, file-system routing, MDX compilation, SSG, CLI, plugin orchestration |
+| **Client** | `boltdocs/client` | React components, hooks, layout primitives, theme system, search, state management |
+
+Additional entry points give you granular access:
+
+| Import | Purpose |
+| :--- | :--- |
+| `boltdocs/hooks` | All React hooks (`useRoutes`, `useI18n`, `useVersion`, etc.) |
+| `boltdocs/primitives` | Headless UI building blocks (Navbar, Sidebar, Popover, Tooltip, etc.) |
+| `boltdocs/mdx` | MDX components (Button, Card, Admonition, Table, etc.) |
+| `boltdocs/integrations` | Third-party integrations (CodeSandbox) |
+
+---
+
+## Next Steps
+
+Ready to get started? Head to the [Installation](/docs/overview/installation) guide and have your first docs site running in under 60 seconds.

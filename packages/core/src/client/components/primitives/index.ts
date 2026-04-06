@@ -12,6 +12,7 @@ export * from './menu'
 export * from './popover'
 export * from './tooltip'
 export * from './link'
+export * from './skeleton'
 export { Separator, ToggleButton } from 'react-aria-components'
 
 export { cn } from '../../utils/cn'

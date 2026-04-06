@@ -1,71 +1,100 @@
 ---
 title: "Components Overview"
-description: "An introduction to the built-in components available in Boltdocs."
+description: "Browse the full library of built-in MDX components available in Boltdocs."
 icon: Component
 ---
 
-import { MousePointer2, Tag, Layout, Columns2, List, FolderTree, Table, Code2, BookOpenCheck, Eye, Video, Image, ExternalLink, MessageSquare } from 'lucide-react'
+import { MousePointer2, Tag, Layout, Columns2, List, FolderTree, Table, Code2, BookOpenCheck, Eye, Video, Image, ExternalLink, MessageSquare, FileCode, ClipboardCopy } from 'lucide-react'
 
 # MDX Components
 
-Boltdocs transforms standard Markdown into a rich, interactive experience by automatically enhancing elements with React components. Beyond standard Markdown, Boltdocs provides a suite of premium UI components designed for technical documentation.
+Boltdocs ships with a rich library of React components that you can use directly in your `.mdx` files. They are automatically available — just use them in JSX syntax.
 
-## Interactive UI Components
+```mdx
+import { Note, Button, Cards, Card } from 'boltdocs/client'
 
-Browse our built-in component library to enhance your documentation with interactive elements:
+<Note>This is a callout</Note>
+<Button href="/docs">Get Started</Button>
+```
 
-<Cards>
+---
+
+## Interactive UI
+
+<Cards cols={3}>
   <Card title="Admonitions" icon={<MessageSquare />} href="/docs/admonitions">
-    Callouts for info, warnings, and error messages.
+    Note, Tip, Warning, Danger, Important, Caution, InfoBox.
   </Card>
   <Card title="Button" icon={<MousePointer2 />} href="/docs/button">
-    Versatile interactive button and link component.
+    Versatile button with variants, icons, and link support.
   </Card>
   <Card title="Badge" icon={<Tag />} href="/docs/badge">
-    Inline status indicators and category labels.
+    Inline status indicators and labels.
   </Card>
   <Card title="Cards" icon={<Layout />} href="/docs/cards">
-    Grid-based content blocks for featured information.
+    Grid-based content blocks with icons and links.
   </Card>
   <Card title="Tabs" icon={<Columns2 />} href="/docs/tabs">
-    Organize content into accessible tabbed views.
+    Organize content into tabbed views.
   </Card>
   <Card title="List" icon={<List />} href="/docs/list">
-    Enhanced feature lists with customizable icons.
+    Enhanced feature lists with icons.
   </Card>
   <Card title="FileTree" icon={<FolderTree />} href="/docs/file-tree">
-    Visual representation of project directory structures.
+    Visual directory structures.
   </Card>
   <Card title="Table" icon={<Table />} href="/docs/table">
-    Powerful tables with sorting, filtering, and pagination.
+    Data tables with headers and formatting.
   </Card>
   <Card title="Field" icon={<Code2 />} href="/docs/field">
-    Structured blocks for API property documentation.
+    API property documentation blocks.
   </Card>
   <Card title="ComponentProps" icon={<BookOpenCheck />} href="/docs/component-props">
-    Generate beautiful API specification tables.
+    Auto-generated props tables.
   </Card>
   <Card title="ComponentPreview" icon={<Eye />} href="/docs/component-preview">
-    Live code snippets with real-time component previews.
+    Live component previews with code.
+  </Card>
+  <Card title="CodeBlock" icon={<FileCode />} href="/docs/code-block">
+    Syntax-highlighted code with titles and copy.
   </Card>
 </Cards>
+
+---
 
 ## Media & Navigation
 
-Optimized components for rich media and site-wide navigation:
-
-<Cards>
+<Cards cols={3}>
   <Card title="Video" icon={<Video />} href="/docs/video">
-    Lazy-loaded, high-performance native video player.
+    Lazy-loaded native video player.
   </Card>
   <Card title="Image" icon={<Image />} href="/docs/image">
-    Theme-aware images with light and dark mode support.
+    Theme-aware images with light/dark support.
   </Card>
   <Card title="Link" icon={<ExternalLink />} href="/docs/link">
-    Enhanced navigation with built-in link previews.
+    Smart links with locale-aware routing.
+  </Card>
+  <Card title="CopyMarkdown" icon={<ClipboardCopy />} href="/docs/copy-markdown">
+    Copy raw MDX content with format options.
   </Card>
 </Cards>
 
+---
+
+## Import Paths
+
+All components are available from `boltdocs/client`:
+
+```tsx
+import { Note, Tip, Warning, Button, Card, Cards, Tabs, Tab } from 'boltdocs/client'
+```
+
+Or granularly from `boltdocs/mdx`:
+
+```tsx
+import { Table, Field, FileTree } from 'boltdocs/mdx'
+```
+
 <Tip>
-  Looking to create your own components? Check out our [MDX Customization](/docs/guides/4.customization/2-mdx-components) guide to learn how to inject your own React components globally.
+  Want to create your own globally available components? See the [MDX Components guide](/docs/customization/mdx-components).
 </Tip>

@@ -19,19 +19,50 @@ export function useNavbar() {
 
   // Transform links to the new NavbarLink structure
   const links: NavbarLink[] = rawLinks.map((item: any) => {
-    const href = item.href || item.to || item.link || ''
+    const href = (item.href || item.to || item.link || '') as string
+
+    // Robust active state calculation
+    const getIsActive = (h: string) => {
+      const activePath = location.pathname
+      if (activePath === h) return true
+      if (!h || h === '/') return activePath === '/'
+
+      const cleanPathParts = (p: string) => {
+        const parts = p.split('/').filter(Boolean)
+        let i = 0
+        // Skip locale
+        if (config.i18n?.locales && parts[i] && config.i18n.locales[parts[i]]) {
+          i++
+        }
+        // Skip version
+        if (config.versions?.versions && parts[i]) {
+          if (config.versions.versions.some((v) => v.path === parts[i])) {
+            i++
+          }
+        }
+        return parts.slice(i)
+      }
+
+      const hParts = cleanPathParts(h)
+      const pParts = cleanPathParts(activePath)
+
+      if (hParts.length === 0) return pParts.length === 0
+
+      // Must match at least as many parts as the candidate link
+      if (pParts.length < hParts.length) return false
+
+      // Every part of hParts must match pParts at the same position
+      return hParts.every((part, i) => pParts[i] === part)
+    }
+
     return {
       label: getTranslated(item.label || item.text, currentLocale),
       href,
-      active: location.pathname === href,
+      active: getIsActive(href),
       to:
         href.startsWith('http') || href.startsWith('//')
           ? 'external'
           : undefined,
-      items: item.items?.map((sub: any) => ({
-        label: getTranslated(sub.label || sub.text, currentLocale),
-        href: sub.href || sub.link || sub.to || '',
-      })),
     }
   })
 

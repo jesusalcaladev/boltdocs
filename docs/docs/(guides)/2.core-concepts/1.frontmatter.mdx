@@ -1,95 +1,116 @@
 ---
 title: "Frontmatter"
-description: "How to use frontmatter to define page metadata."
+description: "Control page metadata, sidebar ordering, badges, and icons with YAML frontmatter."
 icon: FileCode
 ---
 
-import { Field, Tip, ComponentPreview, Badge, Note } from 'boltdocs/client'
+import { Field, Tip, Note } from 'boltdocs/client'
 
 # Frontmatter Reference
 
-Boltdocs uses frontmatter to allow you to customize the metadata and sidebar appearance of your pages. Frontmatter is a block of YAML at the very top of your `.md` or `.mdx` files, delimited by `---`.
-
----
-
-## Available Fields
-
-### `title`
-<Field name="title" type="string">
-  Overrides the title of the page. By default, Boltdocs infers the title from the filename (stripping numeric prefixes and extensions).
-</Field>
-
-### `description`
-<Field name="description" type="string">
-  Used for SEO meta tags and [Link Previews](/docs/core-concepts/link-previews). This is highly recommended for better search engine indexing.
-</Field>
-
-### `permalink`
-<Field name="permalink" type="string">
-  Overrides the generated URL path. Useful for migrations or preserving SEO ranking when moving files.
-</Field>
-
-### `sidebarPosition`
-<Field name="sidebarPosition" type="number">
-  Controls the sorting order within its section. Lower numbers appear first.
-</Field>
-
-<Tip>
-  You can also use numeric prefixes in filenames (e.g., `1.getting-started.mdx`) to control ordering automatically.
-</Tip>
-
-### `badge`
-<Field name="badge" type="string | object">
-  Adds a small decorative badge in the sidebar. Can be a string color/label or an object like `{ text: "New", variant: "primary" }`.
-</Field>
-
-### `icon`
-<Field name="icon" type="string">
-  Adds an icon next to the link. Supports Lucide icon names, raw SVG, or image URLs.
-</Field>
-
----
-
-## Section Metadata
-
-When used in an `index.mdx` file, these fields control the behavior of the entire section/folder.
-
-### `groupTitle`
-<Field name="groupTitle" type="string">
-  Overrides the name of the section in the sidebar.
-</Field>
-
-### `groupPosition`
-<Field name="groupPosition" type="number">
-  Controls the sorting order of the entire section relative to other sections.
-</Field>
-
----
-
-## Example Usage
+Every `.md` and `.mdx` file in Boltdocs can have a **frontmatter** block at the very top — a section of YAML enclosed between `---` delimiters. Frontmatter lets you control how a page appears in the sidebar, what metadata gets injected into SEO tags, and how the route is generated.
 
 ```markdown
 ---
-title: "Advanced Configuration"
-description: "Learn how to deep-dive into Boltdocs settings."
-badge: { text: "New", variant: "primary" }
-sidebarPosition: 10
+title: "Getting Started"
+description: "Learn how to set up your first project."
 icon: Rocket
+badge: New
+sidebarPosition: 1
 ---
 
-# Advanced Configuration
+# Getting Started
 
-Content goes here...
+Your content here...
 ```
 
-## Personalization (CSS)
+---
 
-Customize the appearance of icons and badges using these variables in your `custom.css`:
+## Page Fields
 
-```css
-:root {
-  --ld-sidebar-icon-color: var(--ld-text-muted);
-  --ld-sidebar-badge-variant-new-bg: var(--ld-brand-primary);
-  /* Add more specific badge variant overrides here */
-}
+These fields configure the appearance and behavior of individual pages.
+
+<Field name="title" type="string">
+  Override the page title. When omitted, Boltdocs infers the title from the filename by stripping numeric prefixes and extensions. For example, `2.getting-started.mdx` becomes "getting-started".
+</Field>
+
+<Field name="description" type="string">
+  Used for the HTML meta description and for search result previews. If omitted, Boltdocs automatically extracts the first ~160 characters of the page content as a fallback.
+</Field>
+
+<Field name="permalink" type="string">
+  Override the auto-generated URL path entirely. Useful when migrating from another docs tool and you need to preserve existing URLs for SEO.
+
+  ```yaml
+  permalink: /guides/quick-start
+  ```
+</Field>
+
+<Field name="sidebarPosition" type="number">
+  Explicitly control the ordering of this page within its group. Lower numbers appear first. You can also control ordering via numeric file prefixes (e.g., `1.setup.mdx`).
+</Field>
+
+<Field name="icon" type="string">
+  An icon displayed next to the page title in the sidebar. Accepts any [Lucide](https://lucide.dev/icons/) icon name (e.g., `Rocket`, `Settings`, `Code`).
+</Field>
+
+<Field name="badge" type='string | { text: "new" | "updated" | "deprecated"; expires?: string }'>
+  A small badge displayed next to the sidebar item. Can be a simple string or an object with an expiration date.
+
+  ```yaml
+  # Simple string
+  badge: New
+
+  # Object with auto-expiry
+  badge:
+    text: new
+    expires: "2025-06-01"
+  ```
+
+  When `expires` is set and the date has passed, the badge is automatically hidden.
+</Field>
+
+---
+
+## Group Fields
+
+When used in an `index.mdx` file inside a directory, these fields control the entire group (folder) behavior.
+
+<Field name="groupTitle" type="string">
+  Override the display name of the containing directory in the sidebar. By default, Boltdocs uses the folder name (stripped of numeric prefixes and capitalized).
+</Field>
+
+<Field name="groupPosition" type="number">
+  Control the ordering of the entire group relative to other groups in the sidebar.
+</Field>
+
+<Tip>
+  You can combine numeric folder prefixes (e.g., `1.overview/`) with `groupPosition` in `index.mdx` for maximum control. The frontmatter value always takes priority.
+</Tip>
+
+---
+
+## Full Example
+
+```yaml
+---
+title: "Advanced Configuration"
+description: "Deep-dive into every configuration option available."
+icon: Wrench
+badge:
+  text: updated
+  expires: "2025-12-31"
+sidebarPosition: 10
+---
+```
+
+And for a group index file (`1.getting-started/index.mdx`):
+
+```yaml
+---
+title: "Welcome"
+groupTitle: "Getting Started"
+groupPosition: 1
+icon: Sparkles
+---
 ```

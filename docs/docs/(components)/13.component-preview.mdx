@@ -1,6 +1,7 @@
 ---
 title: "Component Preview"
 description: "Showcase React components beautifully alongside their source code."
+icon: Component
 ---
 
 # Component Preview
@@ -23,7 +24,7 @@ export default function MyComponent() {
 }
 `} 
   preview={
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <div className='flex flex-row gap-2'>
       <Button variant="primary">Click Me</Button>
       <Badge variant="success">Active</Badge>
     </div>
@@ -86,37 +87,10 @@ Use `hideCode={true}` for secondary examples or where the implementation details
 
 <ComponentPreview 
   hideCode={true}
-  preview={<div style={{ padding: '2rem', background: 'var(--ld-bg-soft)', borderRadius: '0.5rem', textAlign: 'center' }}>Showcase Only Content</div>} 
+  preview={<div className='flex flex-row gap-2 p-4 bg-surface-soft rounded-lg'>Showcase Only Content</div>} 
 />
 
 ### Technical Features
 
 - **Live Rendering**: Components are rendered using the actual theme context, ensuring they look exactly as they would in production.
 - **Copy to Clipboard**: Built-in logic to copy the provided code snippet instantly.
-- **Sandbox Export**: Generates a dynamic environment with all necessary dependencies pre-configured.
-
-### Personalization (CSS)
-
-Customize the wrapper, preview container, and toolbar using these classes in your `custom.css`:
-
-```css
-/* Outer wrapper around both preview and code */
-.boltdocs-component-preview {
-  border: 1px solid var(--ld-border-subtle);
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
-
-/* The area where the component is rendered */
-.boltdocs-preview-area {
-  padding: 2.5rem;
-  background-image: radial-gradient(var(--ld-border-subtle) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-/* Toolbar actions */
-.boltdocs-preview-toolbar {
-  background: var(--ld-bg-soft);
-  border-top: 1px solid var(--ld-border-subtle);
-}
-```

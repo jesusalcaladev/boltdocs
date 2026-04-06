@@ -1,0 +1,93 @@
+---
+title: "CodeBlock"
+description: "Syntax-highlighted code blocks with file names, line numbers, and copy button."
+icon: FileCode
+badge: New
+---
+
+# CodeBlock
+
+The `CodeBlock` component is the enhanced `pre` tag replacement that Boltdocs uses for all fenced code blocks. It provides syntax highlighting powered by [Shiki](https://shiki.style/), a file name header, and a copy-to-clipboard button.
+
+<Note>
+  You don't need to use `<CodeBlock>` directly in MDX. Standard fenced code blocks (` ```ts `) are automatically rendered as CodeBlocks. This page documents the component for customization purposes.
+</Note>
+
+## How It Works
+
+When you write:
+
+````mdx
+```ts title="example.ts"
+const x = 1
+```
+````
+
+```ts title="example.ts"
+const x = 1
+```
+
+Boltdocs:
+1. Detects the language (`ts`)
+2. Sends the code to Shiki for syntax highlighting
+3. Renders the `<CodeBlock>` component with the highlighted HTML
+
+---
+
+## Props Table
+
+<ComponentProps
+  props={[
+    {
+      name: "className",
+      type: "string",
+      description: "Additional CSS classes to apply to the container."
+    },
+    {
+      name: "children",
+      type: "string | ReactNode",
+      description: "The code content (usually pre-highlighted HTML from Shiki)."
+    },
+    {
+      name: "title",
+      type: "string",
+      description: "File name displayed in the header bar (set via code block meta: ```ts title=\"app.ts\")."
+    },
+  ]}
+/>
+
+---
+
+## Themes
+
+Code blocks use the theme configured in `boltdocs.config.ts`:
+
+```ts
+export default defineConfig({
+  theme: {
+    codeTheme: {
+      light: 'github-light',
+      dark: 'one-dark-pro',
+    },
+  },
+})
+```
+
+Boltdocs supports any [Shiki theme](https://shiki.style/themes). The light and dark variants are automatically applied based on the active color scheme.
+
+---
+
+## Overriding CodeBlock
+
+To replace the default code block rendering, override `pre` in your `mdx-components.tsx`:
+
+```tsx
+// docs/mdx-components.tsx
+export default {
+  pre: ({ children, ...props }: any) => (
+    <pre className="my-custom-codeblock" {...props}>
+      {children}
+    </pre>
+  ),
+}
+```

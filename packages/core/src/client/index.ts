@@ -21,7 +21,6 @@ export { OnThisPage } from '@components/ui-base/on-this-page'
 export { Head } from '@components/ui-base/head'
 export { Breadcrumbs } from '@components/ui-base/breadcrumbs'
 export { PageNav } from '@components/ui-base/page-nav'
-export { ProgressBar } from '@components/ui-base/progress-bar'
 export { ErrorBoundary } from '@components/ui-base/error-boundary'
 export { CopyMarkdown } from '@components/ui-base/copy-markdown'
 

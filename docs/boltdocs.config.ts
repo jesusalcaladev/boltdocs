@@ -1,6 +1,8 @@
 import { defineConfig } from 'boltdocs'
+import mermaidPlugin from '@bdocs/plugin-mermaid'
 
 export default defineConfig({
+  plugins: [mermaidPlugin()],
   siteUrl: 'https://boltdocs.vercel.app/',
   homePage: './src/HomePage.tsx',
   theme: {
@@ -21,12 +23,16 @@ export default defineConfig({
     },
     navbar: [
       {
-        href: '/',
-        label: 'Home',
-      },
-      {
         label: 'Docs',
         href: '/docs/overview/introduction',
+      },
+      {
+        label: 'API',
+        href: '/docs/hooks/use-routes',
+      },
+      {
+        label: 'Components',
+        href: '/docs/components/overview',
       },
     ],
     editLink:
@@ -34,9 +40,10 @@ export default defineConfig({
     githubRepo: 'jesusalcaladev/boltdocs',
     tabs: [
       { id: 'guides', text: 'Guides', icon: 'SquareLibrary' },
+      { id: 'api', text: 'API', icon: 'Braces' },
+      { id: 'primitives', text: 'Primitives', icon: 'Boxes' },
       { id: 'components', text: 'Components', icon: 'Component' },
       { id: 'plugins', text: 'Plugins', icon: 'Plug' },
-      { id: 'integrations', text: 'Integrations', icon: 'Code' },
     ],
   },
   robots: {

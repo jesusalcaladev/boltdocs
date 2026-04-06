@@ -44,13 +44,6 @@ export interface BoltdocsThemeConfig {
     label: string | Record<string, string>
     /** URL path or external link */
     href: string
-    /** Nested items for NavigationMenu */
-    items?: Array<{
-      /** Text to display (can be a string or a map of translations) */
-      label: string | Record<string, string>
-      /** URL path or external link */
-      href: string
-    }>
   }>
   /** Items to display in the sidebar, organized optionally by group URLs */
   sidebar?: Record<string, Array<{ text: string; link: string }>>
@@ -344,10 +337,6 @@ export async function resolveConfig(
     cleanThemeConfig.navbar = cleanThemeConfig.navbar.map((item: any) => ({
       label: item.label || item.text || '',
       href: item.href || item.link || item.to || '',
-      items: item.items?.map((sub: any) => ({
-        label: sub.label || sub.text || '',
-        href: sub.href || sub.link || sub.to || '',
-      })),
     }))
   }
 

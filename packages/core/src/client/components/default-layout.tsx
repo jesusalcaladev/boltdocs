@@ -5,7 +5,6 @@ import { OnThisPage } from '@components/ui-base/on-this-page'
 import { Head } from '@components/ui-base/head'
 import { Breadcrumbs } from '@components/ui-base/breadcrumbs'
 import { PageNav } from '@components/ui-base/page-nav'
-import { ProgressBar } from '@components/ui-base/progress-bar'
 import { ErrorBoundary } from '@components/ui-base/error-boundary'
 import { CopyMarkdown } from '@components/ui-base/copy-markdown'
 import { useRoutes } from '@client/hooks/use-routes'
@@ -40,7 +39,6 @@ export function DefaultLayout({ children }: LayoutProps) {
 
   return (
     <DocsLayout>
-      <ProgressBar />
       <Head
         siteTitle={
           getTranslated(config.theme?.title, currentLocale) || 'Boltdocs'

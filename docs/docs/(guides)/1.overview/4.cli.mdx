@@ -1,58 +1,131 @@
 ---
 title: "CLI Reference"
-description: "Learn how to use the create-boltdocs CLI."
+description: "All Boltdocs CLI commands: dev, build, preview, and doctor."
 icon: Terminal
 badge: Updated
 ---
 
-import { FileTree, Table, Note } from 'boltdocs/client'
+import { Table, Note, Tip, Field } from 'boltdocs/client'
 
-# Command Line Interface (CLI)
+# CLI Reference
 
-Boltdocs comes with a powerfull scaffolding tool named `create-boltdocs` that helps you bootstrap a new documentation site in seconds.
-
-## Usage
-
-Run the following command in your terminal to get started:
-
-```bash
-npx create-boltdocs@latest
-```
-
-## Commands & Options
-
-| Command | Description |
-| :--- | :--- |
-| `pnpm create boltdocs` | Interactive wizard to bootstrap a new project. |
-| `--template <name>` | Skip the wizard and use a specific template (`base` or `empty`). |
-| `--help` | Show all available CLI flags and options. |
+Boltdocs ships with two CLI tools: the **scaffolding CLI** (`create-boltdocs`) for new projects, and the **runtime CLI** (`boltdocs`) for development, building, previewing, and auditing.
 
 ---
 
-## What it generates
+## Scaffolding: `create-boltdocs`
 
-When you run the CLI, it creates a fully configured documentation environment. Here is a look at the generated project structure:
+Bootstrap a new documentation project with an interactive wizard:
 
-<FileTree>
-- my-docs/
-  - docs/
-    - index.mdx          # Your entry point
-  - src/
-    - components/       # Custom React components
-  - boltdocs.config.js  # Theme configuration
-  - custom.css          # Your design tokens
-  - package.json        # Dependencies
-  - vite.config.ts      # Vite & Plugin setup
-</FileTree>
+```bash
+pnpm create boltdocs@latest
+npx create-boltdocs@latest
+yarn create boltdocs
+```
 
-## Customization
+<Table
+  headers={["Option", "Description"]}
+  data={[
+    ['`--template <name>`', 'Skip the wizard and use a template directly (`base` or `empty`).'],
+    ['`--help`', 'Show all available CLI flags.'],
+  ]}
+/>
 
-Once the CLI finishes, you own the code! Because Boltdocs is built on **Vite**, you can:
+---
 
-- **Add Plugins**: Install any Vite, Remark, or Rehype plugins.
-- **Use Tailwind**: Configure Tailwind CSS or Sass as you would in any Vite project.
-- **Custom Components**: Import your own React components directly into MDX.
+## Runtime Commands
+
+Once your project is set up, use these commands from the project root.
+
+### `boltdocs dev`
+
+Starts a Vite development server with full hot module replacement (HMR). When you save a `.mdx` file, the changes appear instantly in the browser without reloading.
+
+```bash
+pnpm boltdocs dev
+```
+
+Under the hood, this command:
+1. Resolves your `boltdocs.config.ts`
+2. Generates a full Vite configuration (React, Tailwind, MDX, image optimization)
+3. Starts a Vite dev server with custom middleware for documentation routes
+4. Watches for file changes and pushes route/config updates via WebSocket
+
+<Tip>
+  You don't need a `vite.config.ts` file. Boltdocs generates the entire Vite configuration for you automatically.
+</Tip>
+
+---
+
+### `boltdocs build`
+
+Creates a production-optimized build with static site generation (SSG).
+
+```bash
+pnpm boltdocs build
+```
+
+This command:
+1. Generates a temporary `index.html` (cleaned up after build)
+2. Runs Vite's production build
+3. Pre-renders all documentation routes as static HTML files
+4. Generates a `sitemap.xml` and `robots.txt`
+5. Optimizes all images (PNG, JPEG, WebP, SVG)
+6. Flushes internal caches
+
+The output goes to the `dist/` directory, ready for deployment to any static hosting provider (Vercel, Netlify, Cloudflare Pages, etc.).
+
+---
+
+### `boltdocs preview`
+
+Serves the production build locally for verification before deploying.
+
+```bash
+pnpm boltdocs preview
+```
 
 <Note>
-  Boltdocs stays out of your way. Anything you can do with Vite, you can do with Boltdocs.
+  Always run `boltdocs build` before `boltdocs preview`. The preview command serves files from the `dist/` directory.
 </Note>
+
+---
+
+### `boltdocs doctor`
+
+Runs automated health checks on your documentation to catch issues before they reach production.
+
+```bash
+pnpm boltdocs doctor
+```
+
+The doctor command checks for:
+
+<Table
+  headers={["Check", "Severity", "Description"]}
+  data={[
+    ['Broken internal links', 'HIGH', 'Markdown and HTML links pointing to files that don\'t exist.'],
+    ['Missing title', 'WARNING', 'Pages without a `title` field in frontmatter.'],
+    ['Missing description', 'LOW', 'Pages without a `description` field (affects SEO).'],
+    ['Orphaned translations', 'WARNING', 'Default locale pages missing translations in other locales.'],
+  ]}
+/>
+
+**Exit codes**: Returns `1` if any HIGH-severity issues are found (useful for CI/CD pipelines).
+
+For full details, see the [Doctor guide](/docs/core-concepts/doctor).
+
+---
+
+## Recommended `package.json` Scripts
+
+```json
+{
+  "scripts": {
+    "dev": "boltdocs dev",
+    "build": "boltdocs build",
+    "preview": "boltdocs preview",
+    "doctor": "boltdocs doctor"
+  }
+}
+```

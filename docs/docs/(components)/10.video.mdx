@@ -79,27 +79,3 @@ For maximum browser compatibility, you can pass standard `<source>` elements as 
   <source src="video.webm" type="video/webm" />
   <source src="video.mp4" type="video/mp4" />
 </Video>
-
-### Personalization (CSS)
-
-Target these component-specific classes in your `custom.css` to override default styles:
-
-```css
-/* Container wrapper */
-.boltdocs-video-wrapper {
-  border-radius: 0.75rem;
-  overflow: hidden;
-  box-shadow: 0 4px 24px -12px rgba(0,0,0,0.5);
-}
-
-/* The video element itself */
-.boltdocs-video {
-  width: 100%;
-  aspect-ratio: 16/9;
-}
-
-/* Placeholder state */
-.boltdocs-video-placeholder {
-  background: var(--ld-bg-soft);
-}
-```

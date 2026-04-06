@@ -1,171 +1,403 @@
 ---
 title: "Configuration"
-description: "Understand the configuration options for Boltdocs."
+description: "Complete reference for every property in boltdocs.config.ts."
 icon: Settings
 ---
 
-import { Note, Important, Tip, ComponentProps } from 'boltdocs/client'
+import { Field, Note, Tip, Important, Warning } from 'boltdocs/client'
 
-# Configuration
+# Configuration Reference
 
-The `boltdocs.config.js` (or `.ts`, `.mjs`) file at the root of your project controls how Boltdocs functions, builds routes, and renders the UI.
+The `boltdocs.config.ts` file at the root of your project is the single source of truth for how Boltdocs builds, routes, and renders your documentation site.
 
 <Tip>
-  We strongly recommend adding a JSDoc type annotation for autocomplete and type safety.
+  Use `defineConfig()` for full TypeScript autocompletion and type checking.
 </Tip>
 
-```js
-/**
- * @type {import('boltdocs').BoltdocsConfig}
- */
-export default {
-  // Your options...
-};
+```ts
+import { defineConfig } from 'boltdocs'
+
+export default defineConfig({
+  // All options documented below
+})
 ```
+
+Boltdocs also supports `boltdocs.config.js` and `boltdocs.config.mjs`.
 
 ---
 
-## Configuration Options
+## Root Options
 
-### Root Options
+These are the top-level properties of `BoltdocsConfig`.
 
-<ComponentProps
-  props={[
-    {
-      name: "siteUrl",
-      type: "string",
-      description: "The base URL of the site, used for generating absolute paths in your sitemaps and canonical URLs."
-    },
-    {
-      name: "docsDir",
-      type: "string",
-      defaultValue: '"docs"',
-      description: "The root directory containing your Markdown/MDX documentation files."
-    },
-    {
-      name: "themeConfig",
-      type: "BoltdocsThemeConfig",
-      required: true,
-      description: "Holds the majority of your site's visual and functional settings."
-    },
-    {
-      name: "i18n",
-      type: "BoltdocsI18nConfig",
-      description: "Configuration for internationalization (locales, default locale, etc.)."
-    },
-    {
-      name: "versions",
-      type: "BoltdocsVersionsConfig",
-      description: "Configuration for documentation versioning."
-    },
-    {
-      name: "external",
-      type: "Record<string, string>",
-      description: "Map of custom external route paths to their corresponding React component file paths."
-    }
-  ]}
-/>
+<Field name="siteUrl" type="string">
+  The base URL of your deployed site (e.g., `'https://my-docs.com'`). Used for generating canonical URLs, sitemaps, and Open Graph metadata.
+</Field>
+
+<Field name="docsDir" type="string" defaultValue='"docs"'>
+  The root directory where Boltdocs scans for `.md` and `.mdx` files. Resolved relative to the project root.
+</Field>
+
+<Field name="homePage" type="string">
+  Path to a custom React component to render at the root route (`/`). For example, `'./src/HomePage.tsx'`.
+</Field>
+
+<Field name="theme" type="BoltdocsThemeConfig">
+  Configuration for the site's appearance, navigation, and branding. See the [Theme Configuration](#theme-configuration) section below.
+</Field>
+
+<Field name="i18n" type="BoltdocsI18nConfig">
+  Configuration for internationalization. See [i18n Configuration](#i18n-configuration) below, or the full [Internationalization guide](/docs/core-concepts/internationalization).
+</Field>
+
+<Field name="versions" type="BoltdocsVersionsConfig">
+  Configuration for multi-version documentation. See [Versions Configuration](#versions-configuration) below, or the full [Versioning guide](/docs/core-concepts/versioning).
+</Field>
+
+<Field name="plugins" type="BoltdocsPlugin[]">
+  An array of Boltdocs plugins that extend the MDX pipeline or inject Vite plugins. See the [Plugins guide](/docs/plugins).
+</Field>
+
+<Field name="external" type="Record<string, string>">
+  Map custom route paths to React component files. Useful for non-documentation pages like changelogs or dashboards.
+
+  ```ts
+  external: {
+    '/changelog': './src/Changelog.tsx',
+    '/pricing': './src/Pricing.tsx',
+  }
+  ```
+</Field>
+
+<Field name="integrations" type="BoltdocsIntegrationsConfig">
+  Settings for third-party integrations like CodeSandbox. See [Integrations Configuration](#integrations-configuration) below.
+</Field>
+
+<Field name="robots" type="BoltdocsRobotsConfig">
+  Configuration for the auto-generated `robots.txt` file. See [Robots Configuration](#robots-configuration) below.
+</Field>
+
+<Field name="vite" type="InlineConfig">
+  Low-level Vite configuration overrides. Merged directly into the Vite config. Use this for custom aliases, SSR settings, or any Vite option not covered by Boltdocs.
+</Field>
 
 ---
 
 ## Theme Configuration
 
-<ComponentProps
-  props={[
-    {
-      name: "title",
-      type: "string",
-      defaultValue: '"Boltdocs"',
-      description: "The global title of your documentation site, displayed in the navbar and used for SEO."
-    },
-    {
-      name: "description",
-      type: "string",
-      description: "The global site description, used for SEO meta tags."
-    },
-    {
-      name: "logo",
-      type: "string | object",
-      description: "The URL path to your site logo. Supports a simple string path or a specialized object for light/dark versions."
-    },
-    {
-      name: "navbar",
-      type: "NavbarItem[]",
-      description: "Items to display in the top navigation bar (links, positioning, labels)."
-    },
-    {
-      name: "sidebar",
-      type: "SidebarConfig",
-      description: "Custom sidebar groups. While Boltdocs generates the sidebar automatically, you can override it here."
-    },
-    {
-      name: "githubRepo",
-      type: "string",
-      description: "Points to your GitHub repo in owner/repo format. Enables the GitHub stars badge in the navbar."
-    },
-    {
-      name: "editLink",
-      type: "string",
-      description: "URL template for the 'Edit this page' link. Use :path for the current file."
-    }
-  ]}
-/>
-
-
----
-
-## Personalization (CSS)
-
-Boltdocs uses CSS variables (tokens) for all styling. You can override these in your `custom.css` file.
-
-```css
-:root {
-  /* Brand Colors */
-  --ld-brand-primary: #7f13ec;
-  --ld-brand-secondary: #ff4d4d;
-
-  /* Backgrounds */
-  --ld-bg-main: #ffffff;
-  --ld-bg-soft: #f9f9f9;
-  --ld-bg-mute: #f1f1f1;
-
-  /* Typography */
-  --ld-text-main: #1a1a1a;
-  --ld-text-muted: #666666;
-}
-```
-
----
-
-## Vite Plugin Options
-
-In your `vite.config.ts`, you can pass options directly to the `boltdocs()` plugin.
+The `theme` object controls the entire appearance and navigation of your site.
 
 ```ts
 export default defineConfig({
-  plugins: [
-    boltdocs({
-      docsDir: "./docs",
-      homePage: "./src/HomePage.tsx",
-    })
-  ]
-});
+  theme: {
+    title: 'My Docs',
+    description: 'Documentation for my project.',
+    logo: {
+      dark: '/logo-dark.svg',
+      light: '/logo-light.svg',
+      alt: 'My Logo',
+    },
+    // ... all options below
+  },
+})
 ```
 
-<ComponentProps
-  props={[
+### Branding
+
+<Field name="title" type="string | Record<string, string>" defaultValue='"Boltdocs"'>
+  The site title displayed in the navbar and used for SEO. Supports i18n with a locale map:
+
+  ```ts
+  title: { en: 'My Docs', es: 'Mis Docs' }
+  ```
+</Field>
+
+<Field name="description" type="string | Record<string, string>">
+  Used for the HTML meta description tag. Supports i18n.
+</Field>
+
+<Field name="logo" type="string | { dark: string; light: string; alt?: string; width?: number; height?: number }">
+  A URL path to your site logo. For theme-aware logos, pass an object with `dark` and `light` variants. Images should be placed in the `public/` directory.
+</Field>
+
+<Field name="favicon" type="string">
+  URL path to the site favicon (e.g., `'/favicon.ico'`). Falls back to the logo if not specified.
+</Field>
+
+<Field name="ogImage" type="string">
+  The Open Graph image URL displayed when your site is shared on social media.
+</Field>
+
+### Navigation
+
+<Field name="navbar" type="Array<{ label: string | Record<string, string>; href: string }>" defaultValue="[]">
+  Items displayed in the top navigation bar. Each item can be a simple link or a dropdown with nested items.
+
+  ```ts
+  navbar: [
+    { label: 'Home', href: '/' },
+    { label: 'Docs', href: '/docs/overview/introduction' },
     {
-      name: "docsDir",
-      type: "string",
-      defaultValue: '"docs"',
-      description: "The root directory containing your Markdown/MDX documentation files."
+      label: 'Resources',
+      href: '#',
+      items: [
+        { label: 'Blog', href: 'https://blog.example.com' },
+        { label: 'GitHub', href: 'https://github.com/my-org' },
+      ],
     },
-    {
-      name: "homePage",
-      type: "string",
-      description: "Path to a custom React component to render at the base route /."
-    }
-  ]}
-/>
+  ]
+  ```
+</Field>
 
+<Field name="sidebar" type='Record<string, Array<{ text: string; link: string }>>'>
+  Override the auto-generated sidebar with manual entries. Organized by URL prefix. In most cases, you won't need this — Boltdocs generates the sidebar from your folder structure.
+</Field>
 
+<Field name="tabs" type='Array<{ id: string; text: string | Record<string, string>; icon?: string }>'>
+  Top-level navigation tabs for organizing docs into categories (e.g., "Guides", "API", "Components"). Tab IDs correspond to `(tab-id)` directory names in your `docs/` folder.
+
+  ```ts
+  tabs: [
+    { id: 'guides', text: 'Guides', icon: 'SquareLibrary' },
+    { id: 'api', text: 'API', icon: 'Braces' },
+  ]
+  ```
+
+  The `icon` property accepts Lucide icon names.
+</Field>
+
+### Links & Social
+
+<Field name="editLink" type="string">
+  A URL template for the "Edit this page" link on every documentation page. Use `:path` as a placeholder for the file path.
+
+  ```ts
+  editLink: 'https://github.com/my-org/my-repo/edit/main/docs/:path'
+  ```
+</Field>
+
+<Field name="communityHelp" type="string">
+  URL for a "Get help" link displayed alongside the table of contents (e.g., a Discord invite or forum link).
+</Field>
+
+<Field name="githubRepo" type="string">
+  Your GitHub repository in `'owner/repo'` format. Enables the GitHub stars badge in the navbar.
+</Field>
+
+<Field name="socialLinks" type='Array<{ icon: string; link: string }>'>
+  Social media links displayed in the navbar. The `icon` field supports `'github'`, `'discord'`, `'x'`, `'bluesky'`, or any custom string.
+
+  ```ts
+  socialLinks: [
+    { icon: 'discord', link: 'https://discord.gg/my-server' },
+    { icon: 'x', link: 'https://x.com/myproject' },
+  ]
+  ```
+</Field>
+
+### Display Options
+
+<Field name="breadcrumbs" type="boolean" defaultValue="true">
+  Whether to display breadcrumb navigation above the content area.
+</Field>
+
+<Field name="poweredBy" type="boolean" defaultValue="true">
+  Whether to display the "Powered by Boltdocs" badge in the sidebar footer.
+</Field>
+
+<Field name="version" type="string">
+  The current version of your project (e.g., `'v2.8.9'`). Displayed as a badge in the navbar — this is for display purposes only, not related to the [versioning system](/docs/core-concepts/versioning).
+</Field>
+
+<Field name="footer" type='{ text?: string }'>
+  Footer configuration. The `text` field supports HTML.
+</Field>
+
+### Code Blocks
+
+<Field name="codeTheme" type='string | { light: string; dark: string }' defaultValue='{ light: "github-light", dark: "github-dark" }'>
+  The syntax highlighting theme for code blocks. Boltdocs uses [Shiki](https://shiki.style/) and supports any of its [built-in themes](https://shiki.style/themes).
+
+  ```ts
+  codeTheme: {
+    light: 'github-light',
+    dark: 'one-dark-pro',
+  }
+  ```
+</Field>
+
+<Field name="copyMarkdown" type='boolean | { text?: string; icon?: string }' defaultValue="true">
+  Configuration for the "Copy Markdown" button shown at the top of each page. Set to `false` to disable it entirely.
+</Field>
+
+---
+
+## i18n Configuration
+
+Configure internationalization within the `i18n` property.
+
+```ts
+export default defineConfig({
+  i18n: {
+    defaultLocale: 'en',
+    locales: {
+      en: 'English',
+      es: 'Español',
+      fr: 'Français',
+    },
+    localeConfigs: {
+      es: { label: 'Español', direction: 'ltr', htmlLang: 'es-ES' },
+      ar: { label: 'العربية', direction: 'rtl', htmlLang: 'ar' },
+    },
+  },
+})
+```
+
+<Field name="defaultLocale" type="string" required>
+  The default locale code (e.g., `'en'`). Files in the root `docs/` directory (without a locale folder) are treated as this locale.
+</Field>
+
+<Field name="locales" type="Record<string, string>" required>
+  A map of locale codes to display names. Each key should match a folder name inside your `docs/` directory.
+</Field>
+
+<Field name="localeConfigs" type="Record<string, BoltdocsLocaleConfig>">
+  Detailed configuration per locale:
+
+  | Property | Type | Description |
+  | :--- | :--- | :--- |
+  | `label` | `string` | Display name (overrides the value from `locales`) |
+  | `direction` | `'ltr' \| 'rtl'` | Text direction |
+  | `htmlLang` | `string` | The `lang` attribute for the `<html>` tag (e.g., `'en-US'`) |
+  | `calendar` | `string` | Calendar system (e.g., `'gregory'`) |
+</Field>
+
+---
+
+## Versions Configuration
+
+Configure documentation versioning within the `versions` property.
+
+```ts
+export default defineConfig({
+  versions: {
+    defaultVersion: 'v2',
+    prefix: 'v',
+    versions: [
+      { label: 'v2.0', path: '2' },
+      { label: 'v1.0', path: '1' },
+    ],
+  },
+})
+```
+
+<Field name="defaultVersion" type="string" required>
+  The default version path. Used when no version is specified in the URL.
+</Field>
+
+<Field name="prefix" type="string">
+  Optional prefix prepended to version folder names. If set to `'v'`, version `'2'` maps to the folder `v2/`.
+</Field>
+
+<Field name="versions" type="Array<{ label: string; path: string }>" required>
+  The list of available versions. `label` is what users see in the dropdown; `path` maps to the folder name.
+</Field>
+
+---
+
+## Robots Configuration
+
+Control the auto-generated `robots.txt`.
+
+```ts
+export default defineConfig({
+  robots: {
+    rules: [
+      { userAgent: '*', allow: '/' },
+    ],
+    sitemaps: ['https://my-docs.com/sitemap.xml'],
+  },
+})
+```
+
+You can also pass a raw string if you prefer to write it manually:
+
+```ts
+robots: 'User-agent: *\nAllow: /'
+```
+
+---
+
+## Integrations Configuration
+
+```ts
+export default defineConfig({
+  integrations: {
+    sandbox: {
+      enable: true,
+      config: { /* default sandbox options */ },
+    },
+  },
+})
+```
+
+<Field name="sandbox.enable" type="boolean" defaultValue="false">
+  Whether to enable the "Open in Sandbox" button on code blocks.
+</Field>
+
+<Field name="sandbox.config" type="Record<string, unknown>">
+  Default options passed to all sandbox instances.
+</Field>
+
+---
+
+## Full Example
+
+Here's a complete configuration showing most options:
+
+```ts
+import { defineConfig } from 'boltdocs'
+import mermaidPlugin from '@boltdocs/plugin-mermaid'
+
+export default defineConfig({
+  siteUrl: 'https://docs.myproject.com',
+  homePage: './src/HomePage.tsx',
+  theme: {
+    title: 'MyProject',
+    description: 'Build incredible things faster.',
+    breadcrumbs: true,
+    favicon: '/favicon.svg',
+    logo: {
+      dark: '/logo-dark.svg',
+      light: '/logo-light.svg',
+      alt: 'MyProject Logo',
+    },
+    navbar: [
+      { label: 'Home', href: '/' },
+      { label: 'Docs', href: '/docs/overview/introduction' },
+    ],
+    tabs: [
+      { id: 'guides', text: 'Guides', icon: 'SquareLibrary' },
+      { id: 'api', text: 'API', icon: 'Braces' },
+    ],
+    editLink: 'https://github.com/my-org/my-repo/edit/main/docs/:path',
+    githubRepo: 'my-org/my-repo',
+    socialLinks: [
+      { icon: 'discord', link: 'https://discord.gg/my-server' },
+    ],
+    codeTheme: {
+      light: 'github-light',
+      dark: 'one-dark-pro',
+    },
+  },
+  i18n: {
+    defaultLocale: 'en',
+    locales: { en: 'English', es: 'Español' },
+  },
+  plugins: [mermaidPlugin()],
+  robots: {
+    rules: [{ userAgent: '*', allow: '/' }],
+    sitemaps: ['https://docs.myproject.com/sitemap.xml'],
+  },
+})
+```

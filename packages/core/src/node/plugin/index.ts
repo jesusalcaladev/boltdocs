@@ -273,6 +273,7 @@ export function boltdocsPlugin(
             i18n: config?.i18n,
             versions: config?.versions,
             siteUrl: config?.siteUrl,
+            plugins: config?.plugins?.map((p) => ({ name: p.name })),
           }
           return `export default ${JSON.stringify(clientConfig, null, 2)};`
         }

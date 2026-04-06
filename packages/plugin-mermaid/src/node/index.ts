@@ -41,7 +41,7 @@ export default function mermaidPlugin() {
     name: 'boltdocs-plugin-mermaid',
     remarkPlugins: [remarkMermaid],
     components: {
-      Mermaid: '@boltdocs/plugin-mermaid/client',
+      Mermaid: '@bdocs/plugin-mermaid/client',
     },
   }
 }

@@ -10,7 +10,7 @@ The List component provides enhanced styling for bulleted lists, featuring custo
 
 ## Overview
 
-<div style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap' }}>
+<div className='flex flex-row gap-2'>
   <List variant="checked">
     <li>Native MDX Support</li>
     <li>Edge-optimized SSR</li>
@@ -64,19 +64,3 @@ Use `checked` for features or completed tasks, and `arrow` for directional or se
     <li>Reach the goal</li>
   </List>
 </Cards>
-
-### Personalization (CSS)
-
-Customize the icon color, size, and item spacing using these CSS variables in your `custom.css`.
-
-```css
-:root {
-  /* Icon Appearance */
-  --ld-list-icon-color: var(--ld-color-primary);
-  --ld-list-icon-size: 1.1em;
-  
-  /* Spacing */
-  --ld-list-gap: 0.5rem;
-  --ld-list-indent: 1.5rem;
-}
-```

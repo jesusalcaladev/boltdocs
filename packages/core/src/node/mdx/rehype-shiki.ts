@@ -31,6 +31,11 @@ export function rehypeShiki(config?: BoltdocsConfig) {
         const lang = langMatch ? langMatch.slice(9) : 'text'
         const code = codeNode.children[0]?.value || ''
 
+        // Extract title from meta string (e.g., ```ts title="app.ts")
+        const meta: string = codeNode.data?.meta || codeNode.properties?.metastring || ''
+        const titleMatch = meta.match(/title\s*=\s*"([^"]*)"/)
+        const title = titleMatch ? titleMatch[1] : undefined
+
         const options: any = { lang }
         if (typeof codeTheme === 'object') {
           options.themes = {
@@ -46,6 +51,10 @@ export function rehypeShiki(config?: BoltdocsConfig) {
         // Inject highlighted HTML and mark as highlighted for CodeBlock component
         node.properties.dataHighlighted = 'true'
         node.properties.highlightedHtml = html
+        node.properties['data-lang'] = lang
+        if (title) {
+          node.properties.title = title
+        }
         node.children = []
       }
     })
