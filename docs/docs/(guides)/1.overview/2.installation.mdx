@@ -1,80 +1,141 @@
 ---
 title: "Installation"
-description: "Learn how to install and set up Boltdocs in your project."
+description: "Get a Boltdocs project up and running in under 60 seconds."
 icon: Download
 ---
 
-import { FileTree, Card, Cards, Note, Tip } from 'boltdocs/client'
-import { Rocket, Eye } from 'lucide-react'
+import { FileTree, Note, Tip, Warning, Table } from 'boltdocs/client'
 
 # Installation
 
-Get up and running with Boltdocs in under a minute. Our scaffolding tool handles the heavy lifting so you can focus on writing.
-
-<Note title="Requirements">
-  Boltdocs requires **Node.js 18.0.0** or newer. We recommend using **pnpm** for the best experience.
-</Note>
-
 ## Quick Start
 
-Follow these simple steps to bootstrap your documentation project.
-
-### 1. Bootstrap your project
-
-Run the following command to kickstart your new documentation site:
+The fastest way to create a new Boltdocs project is with the scaffolding CLI:
 
 ```bash
+# Using pnpm (recommended)
 pnpm create boltdocs@latest
+
+# Using npm
+npx create-boltdocs@latest
+
+# Using yarn
+yarn create boltdocs
 ```
 
-<Tip>
-  The CLI will ask for a **Project Name** and a **Template**. We recommend starting with the **Base Template** as it includes a custom homepage and example components.
-</Tip>
-
-### 2. Launch the dev server
-
-Navigate to your new folder and fire up the development environment:
+The CLI will walk you through a few prompts (project name, template) and generate a fully configured project. Once it's done:
 
 ```bash
-cd my-boltdocs-site
+cd my-docs
 pnpm install
-pnpm run dev
+pnpm dev
 ```
 
-Your site is now live at `http://localhost:5173`. Any changes you make to your Markdown files will reflect instantly!
+Open your browser at `http://localhost:5173` and you're live.
 
 ---
 
-## Project Structure
+## Generated Project Structure
 
-After installation, your project will follow this standard structure:
+Here's what the CLI creates for you:
 
 <FileTree>
-- docs/
-  - index.mdx
-  - (guides)/
-    - 1.overview.mdx
-- src/
-  - components/
-- boltdocs.config.js
-- package.json
-- custom.css (optional)
-- vite.config.ts
+- my-docs/
+  - docs/
+    - index.mdx              # Your documentation entry point
+    - layout.tsx              # Custom layout (optional)
+    - mdx-components.tsx      # Custom MDX overrides (optional)
+  - src/
+    - HomePage.tsx            # Custom homepage component
+  - public/
+    - light.svg               # Logo for light mode
+    - dark.svg                # Logo for dark mode
+  - boltdocs.config.ts        # Framework configuration
+  - index.css                 # Custom CSS overrides
+  - package.json
 </FileTree>
 
 ---
 
-## Production Build
+## Manual Setup
 
-When your docs are ready for the world, generate a highly optimized static build:
+If you prefer to add Boltdocs to an existing project, you can install it manually.
 
-<Cards cols={2}>
-  <Card title="Build" icon={<Rocket />}>
-    `pnpm run build`
-    Generates production files in the `dist/` directory.
-  </Card>
-  <Card title="Preview" icon={<Eye />}>
-    `pnpm run preview`
-    Spin up a local server to test the production build.
-  </Card>
-</Cards>
+### 1. Install Dependencies
+
+```bash
+pnpm add boltdocs react react-dom
+pnpm add -D typescript @types/react @types/react-dom
+```
+
+### 2. Create `boltdocs.config.ts`
+
+Create a configuration file at the root of your project:
+
+```ts
+import { defineConfig } from 'boltdocs'
+
+export default defineConfig({
+  siteUrl: 'https://my-docs.com',
+  theme: {
+    title: 'My Docs',
+    description: 'Documentation for my project.',
+  },
+})
+```
+
+### 3. Create Your First Page
+
+Create a `docs/` directory and add an `index.mdx` file:
+
+```mdx
+---
+title: "Welcome"
+description: "Welcome to the documentation."
+---
+
+# Welcome
+
+This is your first documentation page.
+```
+
+### 4. Add Scripts
+
+Add these scripts to your `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev": "boltdocs dev",
+    "build": "boltdocs build",
+    "preview": "boltdocs preview"
+  }
+}
+```
+
+### 5. Start the Dev Server
+
+```bash
+pnpm dev
+```
+
+<Note>
+  Boltdocs generates its own HTML entry point and Vite configuration — you don't need a `vite.config.ts` or `index.html` file when using the CLI commands.
+</Note>
+
+---
+
+## System Requirements
+
+<Table
+  headers={["Requirement", "Version"]}
+  data={[
+    ['Node.js', '18.0 or higher'],
+    ['React', '19.1 or higher'],
+    ['Package Manager', 'pnpm (recommended), npm, or yarn'],
+  ]}
+/>
+
+<Tip>
+  We recommend **pnpm** for faster installs and better monorepo support, but npm and yarn work just as well.
+</Tip>

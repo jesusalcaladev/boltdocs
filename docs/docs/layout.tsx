@@ -11,7 +11,6 @@ import {
   CopyMarkdown,
   useRoutes,
   useConfig,
-  useMdxComponents,
 } from 'boltdocs/client'
 import { useLocation } from 'boltdocs/hooks'
 
@@ -19,8 +18,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { routes: filteredRoutes, allRoutes, currentRoute } = useRoutes()
   const { pathname } = useLocation()
   const config = useConfig()
-  const mdxComponents = useMdxComponents()
-  const CopyMarkdownComp = (mdxComponents.CopyMarkdown as any) || CopyMarkdown
 
   const isHome = pathname === '/' || pathname === ''
 
@@ -47,7 +44,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {!isHome && (
             <DocsLayout.ContentHeader>
               <Breadcrumbs />
-              <CopyMarkdownComp
+              <CopyMarkdown
                 mdxRaw={currentRoute?._rawContent}
                 route={currentRoute}
                 config={config.theme?.copyMarkdown}

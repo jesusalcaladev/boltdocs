@@ -1,0 +1,81 @@
+---
+title: "Search Dialog"
+description: "High-performance search modal primitive with FlexSearch integration."
+icon: Search
+---
+
+import { Field, Note, Tip, Table } from 'boltdocs/client'
+
+# Search Dialog
+
+The `SearchDialog` is a complex primitive that handles the search modal, input field, and the list of results. It is built on top of [FlexSearch](https://github.com/nextapps-de/flexsearch) for lightning-fast, client-side searching.
+
+---
+
+## Architecture
+
+The search functionality is split into the visual dialog primitives and the `useSearch` hook which manages the indexing and filtering logic.
+
+```tsx
+import {
+  SearchDialogRoot, SearchDialogAutocomplete,
+  SearchDialogInput, SearchDialogList, SearchDialogItem
+} from 'boltdocs/primitives'
+```
+
+---
+
+## API Reference
+
+### SearchDialogRoot
+```tsx
+import {
+  SearchDialogRoot, SearchDialogAutocomplete, SearchDialogInput,
+  SearchDialogList, SearchDialogItemRoot, SearchDialogItemIcon,
+  SearchDialogItemTitle, SearchDialogItemBio,
+} from 'boltdocs/primitives'
+import { useSearch, useRoutes } from 'boltdocs/hooks'
+import { useNavigate } from 'react-router-dom'
+
+function CustomSearch() {
+  const { routes } = useRoutes()
+  const search = useSearch(routes)
+  const navigate = useNavigate()
+
+  return (
+    <SearchDialogRoot
+      isOpen={search.isOpen}
+      onOpenChange={search.setIsOpen}
+    >
+      <SearchDialogAutocomplete
+        onSelectionChange={(key) => {
+          if (key) {
+            navigate(String(key))
+            search.setIsOpen(false)
+          }
+        }}
+      >
+        <SearchDialogInput {...search.input} />
+
+        <SearchDialogList items={search.list}>
+          {(item) => (
+            <SearchDialogItemRoot
+              key={item.id}
+              id={item.path}
+              textValue={item.title}
+            >
+              <SearchDialogItemIcon isHeading={item.isHeading} />
+              <div className="flex flex-col min-w-0 flex-1">
+                <SearchDialogItemTitle>{item.title}</SearchDialogItemTitle>
+                {item.bio && (
+                  <SearchDialogItemBio>{item.bio}</SearchDialogItemBio>
+                )}
+              </div>
+            </SearchDialogItemRoot>
+          )}
+        </SearchDialogList>
+      </SearchDialogAutocomplete>
+    </SearchDialogRoot>
+  )
+}
+```

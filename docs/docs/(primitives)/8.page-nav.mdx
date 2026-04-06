@@ -1,0 +1,102 @@
+---
+title: "Page Navigation"
+description: "Bottom navigation buttons for moving between previous and next documentation pages."
+icon: ArrowLeftRight
+---
+
+import { Field, Note, Tip, Table } from 'boltdocs/client'
+
+# Page Navigation
+
+The `PageNav` primitive renders "Previous" and "Next" buttons at the bottom of a documentation page. It intelligently calculates the adjacent pages based on the current section (tab) and route order.
+
+---
+
+## Architecture
+
+The page navigation consists of a root container and individual links that automatically handle the "Prev" and "Next" labels.
+
+```tsx
+import { PageNavRoot, PageNavLink } from 'boltdocs/primitives'
+```
+
+---
+
+## API Reference
+
+### PageNavRoot
+The main container, typically placed at the very end of the MDX content.
+
+<Field name="children" type="ReactNode">
+  Expected to contain two `PageNavLink` components.
+</Field>
+
+### PageNavLink
+A specialized link button that displays a directional arrow and a page title.
+
+<Field name="type" type='"prev" | "next"' required>
+  Determines the arrow direction and the default label prefix.
+</Field>
+
+<Field name="href" type="string" required>
+  The destination path.
+</Field>
+
+<Field name="label" type="string" required>
+  The title of the target page.
+</Field>
+
+---
+
+## Building from Scratch
+
+Using the `usePageNav` hook, you can render the navigation section only when adjacent pages exist.
+
+```tsx
+import { PageNavRoot, PageNavLink } from 'boltdocs/primitives'
+import { usePageNav } from 'boltdocs/hooks'
+
+export function CustomFooterNav() {
+  const { prevPage, nextPage } = usePageNav()
+
+  if (!prevPage && !nextPage) return null
+
+  return (
+    <PageNavRoot>
+      {prevPage && (
+        <PageNavLink 
+          type="prev" 
+          href={prevPage.path} 
+          label={prevPage.title} 
+        />
+      )}
+      
+      {nextPage && (
+        <PageNavLink 
+          type="next" 
+          href={nextPage.path} 
+          label={nextPage.title} 
+        />
+      )}
+    </PageNavRoot>
+  )
+}
+```
+
+---
+
+## Logic Hook: `usePageNav`
+
+The `usePageNav` hook tracks the user's current location within the documentation tree. It effectively "flattens" the sidebar hierarchy within the current **Tab** to find the logically preceding and succeeding pages.
+
+### Return Value
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `prevPage` | `Route \| null` | The route object for the previous page in the sequence. |
+| `nextPage` | `Route \| null` | The route object for the next page in the sequence. |
+| `currentRoute` | `Route` | The route object for the page currently being viewed. |
+
+<Note>
+  `usePageNav` respects your sidebar grouping. It will navigate through all pages in a group before moving to the next group.
+</Note>

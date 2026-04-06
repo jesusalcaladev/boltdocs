@@ -60,20 +60,3 @@ By placing two `<Image>` components with different `theme` values back-to-back, 
 Standard Markdown `![]()` works perfectly in Boltdocs for global images. Use the `<Image>` component specifically when you need theme-awareness or advanced React logic.
 
 <Image src="https://placehold.co/600x200?text=Global+Image" alt="Global Content" />
-
-### Personalization (CSS)
-
-Images are rendered as standard `<img>` tags within a wrapper. You can target them globally or via classes in `custom.css`:
-
-```css
-/* All documentation images */
-.boltdocs-content img {
-  border-radius: 0.5rem;
-  border: 1px solid var(--ld-border-subtle);
-  transition: transform 0.2s ease;
-}
-
-.boltdocs-content img:hover {
-  transform: scale(1.01);
-}
-```

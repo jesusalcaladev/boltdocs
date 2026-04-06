@@ -1,67 +1,128 @@
 ---
 title: "Tabs"
-description: "Organize content with horizontal navigation tabs."
+description: "Organize documentation into high-level categories with navigation tabs."
 icon: PanelsTopLeft
 ---
 
-import { FileTree, Note, Field } from 'boltdocs/client'
+import { FileTree, Note, Tip, Field } from 'boltdocs/client'
 
 # Navigation Tabs
 
-Tabs allow you to split your documentation into high-level categories (e.g., "Guides", "API", "Components"). They appear as a premium second row in the navigation bar.
+Tabs split your documentation into high-level categories — like "Guides", "API Reference", and "Components" — displayed as a horizontal navigation bar below the main navbar.
 
-## 1. Configuration
+---
 
-Add the `tabs` array to your `themeConfig` in `boltdocs.config.ts`. Each tab requires an `id` (used for routing), `text` (for display), and an optional `icon`.
+## Configuration
 
-```js
-// boltdocs.config.ts
-export default {
-  themeConfig: {
+Define tabs in your `boltdocs.config.ts`:
+
+```ts
+import { defineConfig } from 'boltdocs'
+
+export default defineConfig({
+  theme: {
     tabs: [
-      { id: 'guides', text: 'Guides', icon: 'Book' },
-      { id: 'api', text: 'API Reference', icon: 'Code' }
-    ]
-  }
-}
+      { id: 'guides', text: 'Guides', icon: 'SquareLibrary' },
+      { id: 'api', text: 'API', icon: 'Braces' },
+      { id: 'components', text: 'Components', icon: 'Component' },
+    ],
+  },
+})
 ```
 
+<Field name="id" type="string" required>
+  A unique identifier that matches a parenthesized directory name inside `docs/`. Case-insensitive — `(GUIDES)` matches id `'guides'`.
+</Field>
+
+<Field name="text" type="string | Record<string, string>" required>
+  Display text for the tab. Supports i18n by passing a locale map:
+
+  ```ts
+  text: { en: 'Guides', es: 'Guías' }
+  ```
+</Field>
+
 <Field name="icon" type="string">
-  Supports Lucide Icon names (e.g., `Rocket`), raw SVG strings, or image URLs.
+  Optional icon displayed next to the tab text. Accepts [Lucide](https://lucide.dev/icons/) icon names.
 </Field>
 
 ---
 
-## 2. Directory Structure
+## Directory Structure
 
-To associate a directory with a tab, wrap the directory name in parentheses `(id)`. This indicates to Boltdocs that the content belongs to that specific navigation context.
+Associate content with a tab by wrapping the directory name in **parentheses**:
 
 <FileTree>
 - docs/
-  - (guides)/            # Maps to /docs/guides
-    - index.mdx
-    - installation.mdx
-  - (api)/               # Maps to /docs/api
-    - reference.mdx
-    - types.mdx
+  - (guides)/
+    - 1.overview/
+      - 1.introduction.mdx     # Tab: guides → /docs/overview/introduction
+    - 2.concepts/
+      - 1.routing.mdx          # Tab: guides → /docs/concepts/routing
+  - (api)/
+    - hooks/
+      - use-routes.mdx          # Tab: api → /docs/hooks/use-routes
+  - (components)/
+    - button.mdx                # Tab: components → /docs/button
 </FileTree>
+
+<Note>
+  The parenthesized folder name is **stripped from the URL**. Content inside `(guides)/1.overview/` maps to `/docs/overview/`, not `/docs/guides/overview/`.
+</Note>
 
 ---
 
-## 3. Filtering Logic
+## How Filtering Works
 
-When tabs are enabled, the sidebar automatically filters routes based on the active tab.
+When tabs are active, the sidebar and page navigation automatically filter based on the current tab:
 
-- **Exclusive Content**: Routes inside `(id)` folders only appear when that tab is selected.
-- **Global Content**: Files outside of any `(id)` folder will be visible across **all tabs** (useful for global search or landing pages).
+- **Exclusive content**: Routes inside a `(tab-id)/` directory only appear when that specific tab is selected.
+- **Global content**: Files placed **outside** any tab directory are visible across **all** tabs. This is useful for shared pages like a landing page or changelog.
 
-<Note>
-  Tab IDs are case-insensitive. A folder named `(GUIDES)` will correctly map to the `guides` tab ID.
-</Note>
+---
+
+## The `useTabs()` Hook
+
+Build custom tab UIs with the `useTabs()` hook:
+
+```tsx
+import { useTabs } from 'boltdocs/hooks'
+import { useRoutes, useConfig } from 'boltdocs/client'
+
+function CustomTabs() {
+  const config = useConfig()
+  const { routes } = useRoutes()
+  const tabs = config.theme?.tabs || []
+
+  const {
+    activeIndex,       // Index of the currently active tab
+    activeTabId,       // ID string of the active tab (e.g., 'guides')
+    indicatorStyle,    // CSS properties for the animated underline indicator
+    tabRefs,           // Ref array for measuring tab elements
+  } = useTabs(tabs, routes)
+
+  return (
+    <nav>
+      {tabs.map((tab, i) => (
+        <a
+          key={tab.id}
+          ref={(el) => { tabRefs.current[i] = el }}
+          className={i === activeIndex ? 'active' : ''}
+        >
+          {typeof tab.text === 'string' ? tab.text : tab.text.en}
+        </a>
+      ))}
+      <div className="indicator" style={indicatorStyle} />
+    </nav>
+  )
+}
+```
+
+---
 
 ## Personalization (CSS)
 
-Customize the appearance of the navigation tabs using these CSS variables in your `custom.css`:
+Customize tab appearance with these CSS variables:
 
 ```css
 :root {

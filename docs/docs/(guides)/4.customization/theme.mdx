@@ -1,150 +1,194 @@
 ---
 title: "Theming Reference"
-description: "A complete list of CSS variables to customize the Boltdocs theme."
+description: "Complete CSS variable reference for customizing every aspect of the Boltdocs theme."
 icon: Palette
 ---
 
+import { Note, Tip, Important, Table } from 'boltdocs/client'
+
 # Theme Customization
 
-Boltdocs gives you incredible control over the look and feel of your docs without requiring you to "eject" or completely rewrite the UI.
+Boltdocs gives you full control over the appearance of your documentation through **CSS Variables**. You never need to "eject" or modify framework internals — just override the variables in your `index.css` file.
 
-The system uses highly structured **CSS Variables** defined in standard `@media` or `[data-theme]` selectors to allow perfect customizability and native light/dark mode support.
+---
 
-## The Global `custom.css` file
+## How It Works
 
-When you scaffold a new Boltdocs app, a `custom.css` file is placed in the root of the project. This file overrides our default theme definitions. For it to work, it must be linked in your Vite Plugin options or `boltdocs.config.js`:
-
-```js
-// vite.config.ts
-import { defineConfig } from 'vite';
-import { boltdocs } from 'boltdocs';
-
-export default defineConfig({
-  plugins: [
-    boltdocs({
-      customCss: './custom.css'
-    })
-  ]
-});
-```
-
-## Overriding Variables
-
-Inside your `custom.css`, you can override properties. The `theme-light` or `[data-theme="light"]` selectors handle light mode, while `:root` defaults to dark mode. 
-
-By default, Boltdocs Dark Theme uses a deep `#0a0a0f` background with white (`#ffffff`) accents, while the Light Theme uses `#ffffff` background with purple (`#7f13ec`) primary accents.
-
-### Example: Changing the Primary Color
-
-To change the primary accent color to a brand color (like a vibrant green), simply update the accent and button variables:
+Boltdocs defines all design tokens as CSS custom properties inside its default theme (`neutral.css`). The theme uses **Tailwind CSS v4's `@theme` directive** and semantic color aliases. To customize, import the base theme and override variables:
 
 ```css
-:root {
-  /* Dark Mode Accents */
-  --ld-color-primary: #10b981;
-  --ld-color-primary-hover: #059669;
-  --ld-btn-primary-bg: #10b981;
-  --ld-btn-primary-text: #ffffff;
-  --ld-color-primary-glow: rgba(16, 185, 129, 0.25);
-}
+/* index.css */
+@import 'boltdocs/theme/neutral.css';
 
-[data-theme="light"], .theme-light {
-  /* Light Mode Accents */
-  --ld-color-primary: #059669;
-  --ld-color-primary-hover: #047857;
-  --ld-btn-primary-bg: #059669;
-  --ld-btn-primary-text: #ffffff;
+@theme {
+  --color-primary-500: oklch(0.65 0.25 160);
+  --font-sans: "Geist", system-ui, sans-serif;
+}
+```
+
+<Important>
+  Boltdocs uses **Tailwind CSS v4** syntax. Variables are defined inside `@theme { }` blocks, not `:root`. The `--color-*` prefix maps directly to Tailwind utility classes (e.g., `bg-bg-main` → `--color-bg-main`).
+</Important>
+
+### Dark Mode
+
+Dark mode overrides are applied via the `:root[data-theme="dark"]` selector:
+
+```css
+:root[data-theme="dark"],
+:root:not(.theme-light) {
+  --color-bg-main: var(--color-neutral-950);
+  --color-text-main: var(--color-neutral-50);
 }
 ```
 
 ---
 
-## Comprehensive Variable Reference
+## Variable Reference
 
-Below is the complete list of CSS variables you can override to fully theme your documentation site.
+### Primary Color Scale
 
-### Base Palette & Backgrounds
+The primary color is defined as a 10-step OKLCH scale. Override these to change the accent color:
 
-These control the underlying blocks of the website (Main content, Sidebar, Code blocks, etc).
+| Variable | Default | Usage |
+| :--- | :--- | :--- |
+| `--color-primary-50` | `oklch(0.985 0.012 265.8)` | Lightest tint |
+| `--color-primary-100` | `oklch(0.92 0.045 265.8)` | Background tints |
+| `--color-primary-200` | `oklch(0.84 0.085 265.8)` | Hover backgrounds |
+| `--color-primary-300` | `oklch(0.74 0.125 265.8)` | Borders |
+| `--color-primary-400` | `oklch(0.64 0.165 265.8)` | Links, inline code |
+| `--color-primary-500` | `oklch(0.54 0.195 265.8)` | **Main accent** — buttons, active states |
+| `--color-primary-600` | `oklch(0.45 0.165 265.8)` | Hover states |
+| `--color-primary-700` | `oklch(0.36 0.135 265.8)` | Dark accents |
+| `--color-primary-800` | `oklch(0.27 0.095 265.8)` | Very dark |
+| `--color-primary-900` | `oklch(0.15 0.045 265.8)` | Darkest |
 
-| Variable | Description |
-| -------- | ----------- |
-| `--ld-bg-main` | The absolute page background color |
-| `--ld-bg-soft` | A slightly different background for contrasting areas (e.g. Sidebar) |
-| `--ld-bg-mute` | Muted background for active sidebar elements or muted blocks |
-| `--ld-surface` | Background for floating surfaces like Cards and Dialogs |
-| `--ld-border-subtle` | Lightest border for dividing elements |
-| `--ld-border-strong` | Stronger border for focused elements or distinct divisions |
+#### Changing the Primary Color
 
-### Text Colors
-
-| Variable | Description |
-| -------- | ----------- |
-| `--ld-text-main` | The primary document text color |
-| `--ld-text-muted` | Muted text (secondary labels, descriptions) |
-| `--ld-text-dim` | Heavily dimmed text (metadata, placeholders) |
-
-### Accents & Gradients
-
-| Variable | Description |
-| -------- | ----------- |
-| `--ld-color-primary` | Main accent color (Links, active states) |
-| `--ld-color-primary-hover` | Hover state for the main accent color |
-| `--ld-color-primary-text` | Color of text sitting *on top* of a primary background |
-
-### Code Blocks
-
-| Variable | Description |
-| -------- | ----------- |
-| `--ld-code-bg` | Background of `pre` codeblocks |
-| `--ld-code-header` | Background of the code block title bar |
-| `--ld-code-text` | Default color of code text before syntax highlighting |
-
-### Layout & Dimensions
-
-You can change the physical size and spacing of the layout using these variables.
-
-| Variable | Default | Description |
-| -------- | ------- | ----------- |
-| `--ld-navbar-height` | `3.5rem` | Height of the top navigation bar |
-| `--ld-sidebar-width` | `14.5rem` | Width of the left documentation sidebar |
-| `--ld-toc-width` | `13rem` | Width of the right Table of Contents sidebar |
-| `--ld-content-max-width` | `820px` | Maximum width of the central markdown article |
-
-### Typography & Fonts
-
-Boltdocs uses `Inter` for Sans-Serif and `JetBrains Mono` for code blocks by default.
-
-| Variable | Description |
-| -------- | ----------- |
-| `--ld-font-sans` | The primary font stack for the entire site |
-| `--ld-font-mono` | The monospace font stack for `pre` and `code` tags |
-
-To replace the font with **Geist** for instance:
+To set a green accent:
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap');
-
-:root {
-  --ld-font-sans: "Geist", system-ui, -apple-system, sans-serif;
+@theme {
+  --color-primary-50: oklch(0.98 0.02 155);
+  --color-primary-100: oklch(0.93 0.05 155);
+  --color-primary-200: oklch(0.85 0.1 155);
+  --color-primary-300: oklch(0.75 0.15 155);
+  --color-primary-400: oklch(0.65 0.2 155);
+  --color-primary-500: oklch(0.55 0.22 155);
+  --color-primary-600: oklch(0.45 0.18 155);
+  --color-primary-700: oklch(0.35 0.14 155);
+  --color-primary-800: oklch(0.25 0.1 155);
+  --color-primary-900: oklch(0.15 0.05 155);
 }
 ```
 
-### UI Component Colors
+### Neutral Gray Scale
 
-There are dedicated variables to control the theme of Admonitions, Alerts, and specific MDX components (Success, Warning, Danger, Info).
+These control the base grays used for backgrounds, text, and borders:
 
-| Variable Prefix | Description | Example |
-| --------------- | ----------- | ------- |
-| `--ld-ui-success-*` | Theme for Success indicators | `--ld-ui-success-bg`, `--ld-ui-success-text` |
-| `--ld-ui-warning-*` | Theme for Warnings / Beta alerts | `--ld-ui-warning-bg`, `--ld-ui-warning-text` |
-| `--ld-ui-danger-*` | Theme for Danger / Error alerts | `--ld-ui-danger-bg`, `--ld-ui-danger-text` |
-| `--ld-ui-info-*` | Theme for Informational alerts | `--ld-ui-info-bg`, `--ld-ui-info-text` |
+| Variable | Used By |
+| :--- | :--- |
+| `--color-neutral-50` | Light mode `bg-main`, dark mode `text-main` |
+| `--color-neutral-100` – `300` | Surfaces, borders, muted backgrounds |
+| `--color-neutral-400` – `500` | Muted/dim text |
+| `--color-neutral-700` – `800` | Dark mode borders, surfaces |
+| `--color-neutral-900` – `950` | Dark mode backgrounds |
 
-## Theme Configuration Options
+### Semantic Colors
 
-Beyond CSS variables, you can customize functional features of the theme in your configuration file (`boltdocs.config.ts`).
+These are mapped from the neutral/primary scales and control the UI:
 
-## Extending Layout Components
+| Variable | Description | Light Value | Dark Value |
+| :--- | :--- | :--- | :--- |
+| `--color-bg-main` | Base page background | `neutral-50` | `neutral-950` |
+| `--color-bg-surface` | Cards, floating surfaces | `neutral-100` | `neutral-900` |
+| `--color-bg-muted` | Hover/active backgrounds | `neutral-200` | `neutral-800` |
+| `--color-text-main` | Primary text | `neutral-900` | `neutral-50` |
+| `--color-text-muted` | Secondary text | `neutral-500` | `neutral-400` |
+| `--color-text-dim` | Placeholders, metadata | `neutral-400` | `neutral-500` |
+| `--color-border-subtle` | Light dividers | `neutral-200` | `neutral-800` |
+| `--color-border-strong` | Strong dividers | `neutral-300` | `neutral-700` |
+| `--color-code-bg` | Code block background | `neutral-100` | `neutral-900` |
+| `--color-code-text` | Code block text | `neutral-800` | `neutral-200` |
 
-If changing CSS variables isn't enough, Boltdocs allows full Component overriding via our [MDX Components](/docs/guides/4.customization/2-mdx-components) API.
+### Status Colors
+
+| Variable | Usage |
+| :--- | :--- |
+| `--color-danger-500` | Danger alerts, error states |
+| `--color-success-500` | Success alerts, tips |
+| `--color-warning-500` | Warning alerts, caution |
+| `--color-info-500` | Info alerts, notes |
+
+### Layout Dimensions
+
+| Variable | Default | Description |
+| :--- | :--- | :--- |
+| `--spacing-navbar` | `3.5rem` | Height of the top navigation bar |
+| `--spacing-sidebar` | `16rem` | Width of the left sidebar |
+| `--spacing-toc` | `14rem` | Width of the right table of contents |
+| `--spacing-content-max` | `48rem` | Maximum width of the content area |
+
+### Typography
+
+| Variable | Default | Description |
+| :--- | :--- | :--- |
+| `--font-sans` | `Inter, system-ui, sans-serif` | Primary font stack |
+| `--font-mono` | `JetBrains Mono, monospace` | Monospace font for code |
+| `--font-display` | Same as `--font-sans` | Font for headings/display text |
+
+#### Replacing the Font
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-display: "Outfit", system-ui, -apple-system, sans-serif;
+}
+```
+
+### Border Radius
+
+| Variable | Default |
+| :--- | :--- |
+| `--radius-sm` | `0.375rem` |
+| `--radius-md` | `0.5rem` |
+| `--radius-lg` | `0.75rem` |
+| `--radius-xl` | `1rem` |
+| `--radius-2xl` | `1.5rem` |
+| `--radius-full` | `99999rem` |
+
+### Easing Functions
+
+| Variable | Value | Usage |
+| :--- | :--- | :--- |
+| `--ease-fluid` | `cubic-bezier(0.3, 0, 0, 1)` | Smooth, natural transitions |
+| `--ease-snappy` | `cubic-bezier(0.2, 0, 0, 1)` | Quick, responsive interactions |
+
+---
+
+## Full Theme Override Example
+
+```css
+/* index.css */
+@import 'boltdocs/theme/neutral.css';
+
+/* Override primary to green */
+@theme {
+  --color-primary-500: oklch(0.65 0.2 155);
+  --color-primary-400: oklch(0.72 0.18 155);
+  --font-sans: "Geist", system-ui, sans-serif;
+}
+
+/* Customize dark mode */
+:root[data-theme="dark"],
+:root:not(.theme-light) {
+  --color-bg-main: oklch(0.08 0.01 265);
+  --color-bg-surface: oklch(0.12 0.01 265);
+}
+```
+
+<Tip>
+  For more advanced customization — replacing layout components or overriding MDX elements — see the [Custom Layout](/docs/customization/layout) and [MDX Components](/docs/customization/mdx-components) guides.
+</Tip>

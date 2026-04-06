@@ -1,65 +1,154 @@
 ---
 title: "File-System Routing"
-description: "Learn how Boltdocs transforms files into browser routes."
+description: "How Boltdocs transforms your folder structure into browser routes."
 icon: Route
 ---
 
-import { FileTree, Card, Cards, Note } from 'boltdocs/client'
-import { Hash, Folder, Link } from 'lucide-react'
+import { FileTree, Card, Cards, Note, Tip, Warning } from 'boltdocs/client'
+import { Hash, Folder, Link, Layers } from 'lucide-react'
 
 # File-Based Routing
 
-Boltdocs uses a file-based routing system built on top of React Router. Your application's routes are automatically inferred from the folder structure within the `docs/` directory.
+Boltdocs uses a **file-based routing system** built on React Router. Every `.md` and `.mdx` file inside your `docs/` directory automatically becomes a route — no manual router configuration needed.
 
-## Basic Routing
+---
 
-Files are mapped automatically to URL paths based on their filename and directory. This makes organization intuitive and maintenance easy.
+## How Files Become Routes
+
+The routing pipeline works like this:
+
+1. Boltdocs scans the `docs/` directory recursively for `.md` and `.mdx` files
+2. Each file is parsed to extract frontmatter, headings, and content
+3. The file path is transformed into a URL by stripping extensions, numeric prefixes, and tab directories
+4. Routes are grouped, sorted, and made available to the client-side React app
+
+### Basic Mapping
 
 <FileTree>
 - docs/
-  - index.mdx           # -> /
-  - about.mdx           # -> /about
-  - api/
-    - index.mdx         # -> /api
-    - endpoints.mdx     # -> /api/endpoints
+  - index.mdx              # → /docs
+  - about.mdx              # → /docs/about
+  - getting-started/
+    - index.mdx            # → /docs/getting-started
+    - installation.mdx     # → /docs/getting-started/installation
 </FileTree>
 
 ---
 
-## Strategic Routing
-
-Boltdocs provides several ways to control how your routes are generated and displayed.
+## Route Conventions
 
 <Cards cols={2}>
   <Card title="Numeric Prefixes" icon={<Hash />}>
-    Use numbers like `1.introduction.mdx` to force a specific sort order in the sidebar. The number is stripped from the URL.
+    Prefix files and folders with numbers to control sidebar ordering. The number is **stripped from the URL**. `1.introduction.mdx` → `/docs/introduction`.
   </Card>
-  <Card title="Nested Sections" icon={<Folder />}>
-    Folders with an `index.mdx` act as parent pages. Folders without one act as logical groups in the sidebar.
+  <Card title="Nested Groups" icon={<Folder />}>
+    Folders become sidebar groups. An `index.mdx` inside a folder doubles as the group's main page and provides group-level metadata (title, icon, position).
   </Card>
   <Card title="Custom Permalinks" icon={<Link />}>
-    Override any route by adding `permalink: /my-path` to the frontmatter.
+    Override any auto-generated route by adding `permalink: /my-path` to the frontmatter. The file keeps its physical location, but the URL changes.
   </Card>
-  <Card title="Hidden Folders" icon={<Folder />}>
-    Wrap folder names in parentheses like `(guides)` to associate them with **Tabs** without affecting the URL path.
+  <Card title="Tab Directories" icon={<Layers />}>
+    Wrap a folder name in parentheses — `(guides)/` — to associate it with a navigation tab. The parenthesized name is removed from the URL.
   </Card>
 </Cards>
 
 ---
 
-## Route Ordering Example
+## The URL Construction Pipeline
 
-The visual order in your sidebar often needs to be different from alphabetical order.
+When Boltdocs computes a URL, it processes the file path through a specific hierarchy:
+
+```
+/docs/{version}/{locale}/{clean-path}
+```
+
+Each layer is **optional** and only added when the corresponding feature is enabled:
+
+| Layer | Source | Example |
+| :--- | :--- | :--- |
+| Base | Always `/docs` | `/docs` |
+| Version | Folder matching `versions` config | `/docs/v2` |
+| Locale | Folder matching `i18n.locales` | `/docs/v2/es` |
+| Clean Path | Remaining path with prefixes stripped | `/docs/v2/es/getting-started/installation` |
+
+### Parsing Order
+
+The router processes directories in this exact order:
+
+1. **Version directory** — checked first (e.g., `v1/`, `v2/`)
+2. **Locale directory** — checked second (e.g., `en/`, `es/`)
+3. **Tab directory** — checked third (e.g., `(guides)/`, `(api)/`)
+4. **Group directory** — everything else becomes sidebar groups
+
+---
+
+## Ordering Sidebar Items
+
+### With Numeric Prefixes (Recommended)
+
+The simplest way to order pages and groups:
 
 ```text
 docs/
 ├── 1.getting-started/
-│   ├── 1.installation.mdx    <- Served at /getting-started/installation
-│   └── 2.cli.mdx             <- Served at /getting-started/cli
+│   ├── 1.installation.mdx    → /docs/getting-started/installation
+│   └── 2.configuration.mdx   → /docs/getting-started/configuration
 └── 2.core-concepts/
-    └── 1.routing.mdx         <- Served at /core-concepts/routing
+    └── 1.routing.mdx         → /docs/core-concepts/routing
 ```
 
 <Note>
-  Notice how Boltdocs strips the numeric prefix and the `.mdx` extension to keep your URLs clean and professional.
+  Boltdocs strips the number and the dot from both the URL path **and** the display title. `1.getting-started` becomes "getting-started" in the URL and "Getting Started" in the sidebar.
 </Note>
+
+### With Frontmatter
+
+For finer control, use `sidebarPosition` in frontmatter (overrides numeric prefixes):
+
+```yaml
+---
+title: "Installation"
+sidebarPosition: 1
+---
+```
+
+---
+
+## Tab Directories
+
+Tabs let you organize documentation into high-level categories. The key mechanic is the **parenthesized folder name**:
+
+<FileTree>
+- docs/
+  - (guides)/
+    - 1.overview/
+      - 1.introduction.mdx     # → /docs/overview/introduction (tab: guides)
+  - (api)/
+    - hooks/
+      - use-routes.mdx          # → /docs/hooks/use-routes (tab: api)
+</FileTree>
+
+The parenthesized part (`guides`, `api`) is stripped from the URL and used only for tab association. See the [Tabs guide](/docs/core-concepts/tabs) for configuration details.
+
+---
+
+## Index Files
+
+When a directory contains an `index.mdx` file, it serves two purposes:
+
+1. **Route**: It becomes the main page for that directory (e.g., `getting-started/index.mdx` → `/docs/getting-started`)
+2. **Group metadata**: Frontmatter in `index.mdx` controls the group's title, position, and icon in the sidebar
+
+```yaml
+# getting-started/index.mdx
+---
+title: "Welcome"
+groupTitle: "Getting Started"
+groupPosition: 1
+icon: Sparkles
+---
+```
+
+<Tip>
+  If a directory doesn't have an `index.mdx`, it still appears as a group in the sidebar — Boltdocs infers the group name from the folder name.
+</Tip>

@@ -1,0 +1,184 @@
+---
+title: "Plugins"
+description: "Extend Boltdocs with custom remark/rehype plugins, Vite plugins, and global components."
+---
+
+import { Field, Note, Tip, Important } from 'boltdocs/client'
+
+# Plugin System
+
+Boltdocs is designed to be lean and fast, but it doesn't sacrifice extensibility. The plugin system lets you hook into the MDX build pipeline, inject Vite plugins, and register global components — all through a clean API.
+
+---
+
+## How Plugins Work
+
+Every plugin in Boltdocs implements the `BoltdocsPlugin` interface and is registered via the `plugins` array in your config:
+
+```ts
+import { defineConfig } from 'boltdocs'
+import mermaidPlugin from '@boltdocs/plugin-mermaid'
+
+export default defineConfig({
+  plugins: [
+    mermaidPlugin(),
+  ],
+})
+```
+
+Under the hood, Boltdocs processes plugins at build time:
+
+1. **Remark plugins** are injected into the MDX parsing pipeline (Markdown AST → before HTML)
+2. **Rehype plugins** are injected after Markdown has been parsed to HTML AST
+3. **Vite plugins** are merged into the Vite build configuration
+4. **Components** are auto-imported into the MDX provider — available in all `.mdx` files without imports
+
+---
+
+## The `BoltdocsPlugin` Interface
+
+<Field name="name" type="string" required>
+  A unique identifier for the plugin. Used for debugging and deduplication.
+</Field>
+
+<Field name="enforce" type='"pre" | "post"'>
+  Controls execution order relative to the core pipeline. `"pre"` runs before default processing, `"post"` runs after.
+</Field>
+
+<Field name="remarkPlugins" type="unknown[]">
+  An array of [Remark](https://github.com/remarkjs/remark) plugins. These operate on the Markdown AST before it becomes HTML. Common use cases: custom syntax transforms, content injection, diagram rendering.
+</Field>
+
+<Field name="rehypePlugins" type="unknown[]">
+  An array of [Rehype](https://github.com/rehypejs/rehype) plugins. These operate on the HTML AST after Markdown parsing. Common use cases: adding IDs to headings, link transforms, HTML sanitization.
+</Field>
+
+<Field name="vitePlugins" type="VitePlugin[]">
+  Standard Vite plugins to inject into the build. This gives you access to Vite's full plugin API — virtual modules, custom transformations, asset optimization, etc.
+</Field>
+
+<Field name="components" type="Record<string, string>">
+  A map of component **Name → Module Path**. These components become globally available in all MDX files without manual imports.
+
+  ```ts
+  components: {
+    Mermaid: '@boltdocs/plugin-mermaid/client',
+    MyChart: './src/components/MyChart.tsx',
+  }
+  ```
+</Field>
+
+---
+
+## Creating a Plugin
+
+### Step 1: Define the Factory Function
+
+```ts
+// my-plugin.ts
+import type { BoltdocsPlugin } from 'boltdocs'
+
+export default function myPlugin(options?: { color?: string }): BoltdocsPlugin {
+  return {
+    name: 'boltdocs-plugin-my-feature',
+    remarkPlugins: [],
+    rehypePlugins: [],
+    vitePlugins: [],
+    components: {},
+  }
+}
+```
+
+### Step 2: Add Remark/Rehype Transforms
+
+```ts
+import { visit } from 'unist-util-visit'
+
+function remarkHighlight() {
+  return (tree: any) => {
+    visit(tree, 'text', (node) => {
+      // Transform ==text== into <mark>text</mark>
+      if (node.value.includes('==')) {
+        node.type = 'html'
+        node.value = node.value.replace(
+          /==([^=]+)==/g,
+          '<mark>$1</mark>'
+        )
+      }
+    })
+  }
+}
+
+export default function highlightPlugin(): BoltdocsPlugin {
+  return {
+    name: 'boltdocs-plugin-highlight',
+    remarkPlugins: [remarkHighlight],
+  }
+}
+```
+
+### Step 3: Register Global Components
+
+```ts
+export default function chartPlugin(): BoltdocsPlugin {
+  return {
+    name: 'boltdocs-plugin-charts',
+    components: {
+      BarChart: './src/components/BarChart.tsx',
+      LineChart: './src/components/LineChart.tsx',
+    },
+  }
+}
+```
+
+Now `<BarChart />` and `<LineChart />` work in any MDX file without imports.
+
+### Step 4: Register in Config
+
+```ts
+import { defineConfig } from 'boltdocs'
+import chartPlugin from './plugins/chart-plugin'
+
+export default defineConfig({
+  plugins: [chartPlugin()],
+})
+```
+
+---
+
+## Using Vite Plugins
+
+Since Boltdocs is "just Vite," any standard Vite plugin works. You can inject them through the plugin API:
+
+```ts
+import type { Plugin } from 'vite'
+
+function myVitePlugin(): Plugin {
+  return {
+    name: 'my-vite-plugin',
+    transform(code, id) {
+      // Transform files during build
+      return code
+    },
+  }
+}
+
+export default function myBoltdocsPlugin(): BoltdocsPlugin {
+  return {
+    name: 'boltdocs-plugin-custom',
+    vitePlugins: [myVitePlugin()],
+  }
+}
+```
+
+<Tip>
+  You can also add Vite plugins directly to the `vite` property in `boltdocs.config.ts` if you don't need the plugin abstraction.
+</Tip>
+
+---
+
+## Official Plugins
+
+Boltdocs maintains official plugins for common documentation needs. See the dedicated pages:
+
+- [**Mermaid Plugin**](/docs/plugins/mermaid) — Render Mermaid diagrams from code blocks

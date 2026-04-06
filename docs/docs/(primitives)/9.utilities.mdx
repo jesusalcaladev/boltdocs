@@ -1,0 +1,100 @@
+---
+title: "Utilities"
+description: "Core UI primitives used throughout the Boltdocs framework."
+icon: Box
+---
+
+import { Field, Note, Tip, Table } from 'boltdocs/client'
+
+# Utility Primitives
+
+Boltdocs provides a set of core UI primitives that serve as the building blocks for all other components. These are built using [React Aria Components](https://react-spectrum.adobe.com/react-aria/react-aria-components.html) to ensure perfect accessibility.
+
+---
+
+## Button
+A versatile button component with multiple variants.
+
+```tsx
+import { Button } from 'boltdocs/primitives'
+```
+
+<Field name="variant" type='"primary" | "secondary" | "ghost" | "danger"'>
+  The visual style of the button.
+</Field>
+
+<Field name="size" type='"sm" | "md" | "lg"'>
+  Horizontal and vertical padding.
+</Field>
+
+<Field name="onPress" type="() => void">
+  Callback for click/tap interaction.
+</Field>
+
+---
+
+## Link
+A smart link that automatically handles internal (client-side) vs external navigation.
+
+```tsx
+import { Link } from 'boltdocs/primitives'
+```
+
+<Field name="href" type="string" required>
+  The target destination.
+</Field>
+
+<Field name="target" type='"_blank" | "_self"'>
+  Standard HTML target attribute.
+</Field>
+
+---
+
+## Tooltip & Popover
+Floating UI elements for providing additional context.
+
+```tsx
+import { Tooltip, Popover } from 'boltdocs/primitives'
+```
+
+### Tooltip API
+<Field name="content" type="ReactNode">
+  The text or element to show on hover.
+</Field>
+
+<Field name="placement" type='"top" | "bottom" | "left" | "right"'>
+  Where the tooltip should appear relative to the trigger.
+</Field>
+
+---
+
+## Skeleton
+A loading placeholder that mimics the layout of your final content.
+
+```tsx
+import { Skeleton } from 'boltdocs/primitives'
+```
+
+<Field name="className" type="string">
+  Use `h-4 w-full` to control the dimensions.
+</Field>
+
+---
+
+## Menu
+A high-level accessible dropdown menu.
+
+```tsx
+import { Menu, MenuTrigger, MenuItem } from 'boltdocs/primitives'
+```
+
+### Full Example
+```tsx
+<MenuTrigger>
+  <button>Options</button>
+  <Menu>
+    <MenuItem onAction={() => console.log('Edit')}>Edit</MenuItem>
+    <MenuItem onAction={() => console.log('Delete')}>Delete</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
