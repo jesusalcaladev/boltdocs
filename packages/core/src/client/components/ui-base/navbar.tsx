@@ -91,28 +91,7 @@ export function Navbar() {
 }
 
 function NavbarLinkItem({ link }: { link: NavbarLinkType }) {
-  const localizedHref = useLocalizedTo(link.href)
-  const navigate = useNavigate()
-
-  if (link.items && link.items.length > 0) {
-    return (
-      <NavbarPrimitive.Menu
-        key={link.href}
-        label={link.label as string}
-        active={link.active}
-      >
-        {link.items.map((sub, idx) => (
-          <NavbarPrimitive.Item
-            key={`${sub.href}-${idx}`}
-            label={sub.label as string}
-            onPress={() => navigate(sub.href)}
-            isCurrent={sub.active}
-          />
-        ))}
-      </NavbarPrimitive.Menu>
-    )
-  }
-
+  const localizedHref = useLocalizedTo(link.href || '')
   return <NavbarPrimitive.Link {...(link as any)} href={localizedHref} />
 }
 

@@ -4,13 +4,10 @@ import {
   Separator,
   ToggleButton,
   Link,
-  Menu,
-  MenuItem,
-  MenuTrigger,
   cn,
 } from './index'
 import { Button as ButtonRAC } from 'react-aria-components'
-import { Search, Sun, Moon, ExternalLink, ChevronDown } from 'lucide-react'
+import { Search, Sun, Moon, ExternalLink } from 'lucide-react'
 import * as IconsSocials from '@components/icons-dev'
 import type { ComponentBase } from './types'
 import type { BoltdocsSocialLink } from '@node/config'
@@ -39,22 +36,6 @@ export interface NavbarThemeProps {
   onThemeChange: (isSelected: boolean) => void
 }
 
-export interface NavbarMenuProps extends ComponentBase {
-  label: ReactNode
-  icon?: ReactNode
-  active?: boolean
-}
-
-export interface NavbarVersionProps extends ComponentBase {
-  current: string
-}
-
-export interface NavbarItemProps extends Omit<ComponentBase, 'children'> {
-  label: string
-  onPress?: () => void
-  isCurrent?: boolean
-}
-
 export interface NavbarSocialsProps extends ComponentBase {
   icon: string
   link: string
@@ -69,7 +50,6 @@ export const NavbarRoot = ({
     <header
       className={cn(
         'boltdocs-navbar sticky top-0 z-50 w-full border-b border-border-subtle bg-bg-main/80 backdrop-blur-md',
-        'will-change-transform', // Optimization: layer promotion
         className,
       )}
       {...props}
@@ -94,13 +74,15 @@ export const NavbarContent = ({ children, className }: ComponentBase) => {
 
 export const NavbarLeft = ({ children, className }: ComponentBase) => {
   return (
-    <div className={cn('flex items-center gap-4', className)}>{children}</div>
+    <div className={cn('flex flex-1 items-center justify-start gap-4 min-w-0', className)}>
+      {children}
+    </div>
   )
 }
 
 export const NavbarRight = ({ children, className }: ComponentBase) => {
   return (
-    <div className={cn('flex items-center gap-2 md:gap-4', className)}>
+    <div className={cn('flex flex-1 items-center justify-end gap-2 md:gap-4 min-w-0', className)}>
       {children}
     </div>
   )
@@ -110,7 +92,7 @@ export const NavbarCenter = ({ children, className }: ComponentBase) => {
   return (
     <div
       className={cn(
-        'hidden lg:flex flex-1 justify-center items-center gap-4 px-4',
+        'hidden lg:flex flex-1 justify-center items-center gap-4 px-4 min-w-0 w-full',
         className,
       )}
     >
@@ -218,7 +200,7 @@ export const NavbarSearchTrigger = ({
         'flex items-center gap-2 rounded-full border border-border-subtle bg-bg-surface px-3 py-2 text-sm text-text-muted outline-none cursor-pointer',
         'transition-all duration-200 hover:border-border-strong hover:text-text-main hover:bg-bg-muted hover:shadow-sm active:scale-[0.98]',
         'focus-visible:ring-2 focus-visible:ring-primary-500/30',
-        'w-full max-w-[320px] justify-between',
+        'w-full max-w-[720px] justify-between',
         className,
       )}
     >
@@ -260,59 +242,6 @@ export const NavbarTheme = ({
   )
 }
 
-export const NavbarMenu = ({
-  label,
-  children,
-  className,
-  icon,
-  active,
-}: NavbarMenuProps) => {
-  return (
-    <MenuTrigger placement="bottom start">
-      <Button
-        variant="ghost"
-        className={cn(
-          'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-text-muted outline-none cursor-pointer transition-colors',
-          'hover:bg-bg-surface hover:text-text-main data-hovered:bg-bg-surface data-hovered:text-text-main',
-          'focus-visible:ring-2 focus-visible:ring-primary-500/30',
-          {
-            'text-primary-500 font-semibold bg-primary-500/5': active,
-          },
-          className,
-        )}
-      >
-        {icon && <span className="flex items-center shrink-0">{icon}</span>}
-        <span className="text-[13px] font-bold uppercase tracking-wide">
-          {label}
-        </span>
-        <ChevronDown size={14} className="ml-0.5 opacity-50 transition-transform duration-200" />
-      </Button>
-      <Menu className="min-w-[200px] border border-border-subtle bg-bg-surface shadow-xl rounded-xl p-1.5 entering:animate-in entering:fade-in entering:zoom-in-95 exiting:animate-out exiting:fade-out exiting:zoom-out-95">
-        {children as any}
-      </Menu>
-    </MenuTrigger>
-  )
-}
-
-export const NavbarItem = ({
-  label,
-  className,
-  onPress,
-  isCurrent,
-}: NavbarItemProps) => {
-  return (
-    <MenuItem
-      onAction={onPress}
-      className={cn(
-        isCurrent &&
-          'bg-primary-500 text-white font-medium hover:bg-primary-600 focus:bg-primary-600 focus:text-white',
-        className,
-      )}
-    >
-      {label}
-    </MenuItem>
-  )
-}
 
 export const Icon = ({ name }: { name: BoltdocsSocialLink['icon'] }) => {
   if (name === 'github') return <IconsSocials.Github />
@@ -363,8 +292,6 @@ export default {
   Link: NavbarLink,
   SearchTrigger: NavbarSearchTrigger,
   Theme: NavbarTheme,
-  Item: NavbarItem,
-  Menu: NavbarMenu,
   Socials: NavbarSocials,
   Split: NavbarSplit,
   Content: NavbarContent,

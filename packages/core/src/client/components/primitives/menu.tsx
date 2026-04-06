@@ -20,7 +20,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   return (
     <RAC.MenuTrigger {...props}>
       {trigger as any}
-      <Popover placement={props.placement} className="min-w-[200px]">
+      <Popover placement={props.placement} className="min-w-[140px]">
         {menu as any}
       </Popover>
     </RAC.MenuTrigger>
@@ -74,10 +74,10 @@ export function MenuItem(props: RAC.MenuItemProps) {
         props.className,
         (className, { isFocused, isPressed, isDisabled }) =>
           cn(
-            'group relative flex flex-row items-center gap-2.5 px-3 py-1.5 rounded-lg outline-none cursor-default transition-all duration-200',
-            'text-text-main text-[0.8125rem]',
-            isFocused && 'bg-primary-500/10 text-primary-600 shadow-sm',
-            isPressed && 'scale-[0.98] bg-primary-500/15',
+            'group relative flex flex-row items-center gap-2 px-2 py-1 rounded-lg outline-none cursor-default transition-none',
+            'text-text-main text-[13px]',
+            isFocused && 'bg-bg-surface-elevated text-primary-600 shadow-sm ring-1 ring-border-strong/5',
+            isPressed && 'bg-bg-surface-elevated',
             isDisabled && 'opacity-40 grayscale pointer-events-none',
             className,
           ),
@@ -97,7 +97,7 @@ export function MenuItem(props: RAC.MenuItemProps) {
                 )}
               </span>
             )}
-            <div className="flex-1 flex flex-row items-center gap-2.5 truncate font-medium">
+            <div className="flex-1 min-w-0">
               {children}
             </div>
             {hasSubmenu && (
