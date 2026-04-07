@@ -1,5 +1,6 @@
 import type React from 'react'
 import { cn } from '@client/utils/cn'
+import { useLocation } from '../hooks'
 
 /**
  * Props shared by all layout slot components.
@@ -56,6 +57,7 @@ function Body({ children, className, style }: SlotProps) {
  * Main scrollable content area.
  */
 function Content({ children, className, style }: SlotProps) {
+  const { pathname } = useLocation()
   return (
     <main
       className={cn(
@@ -65,7 +67,10 @@ function Content({ children, className, style }: SlotProps) {
       )}
       style={style}
     >
-      <div className="boltdocs-page mx-auto max-w-content-max pt-4 pb-20 px-4 sm:px-8">
+      {/* colocar el max-w-content-max si el pathname tiene /docs/ */}
+      <div className={cn("boltdocs-page mx-auto pt-4 pb-20 px-4 sm:px-8",{
+        'max-w-content-max': pathname.includes('/docs/'),
+      })}>
         {children}
       </div>
     </main>
