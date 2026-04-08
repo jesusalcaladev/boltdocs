@@ -57,7 +57,6 @@ function Body({ children, className, style }: SlotProps) {
  * Main scrollable content area.
  */
 function Content({ children, className, style }: SlotProps) {
-  const { pathname } = useLocation()
   return (
     <main
       className={cn(
@@ -67,13 +66,29 @@ function Content({ children, className, style }: SlotProps) {
       )}
       style={style}
     >
-      {/* colocar el max-w-content-max si el pathname tiene /docs/ */}
-      <div className={cn("boltdocs-page mx-auto pt-4 pb-20 px-4 sm:px-8",{
-        'max-w-content-max': pathname.includes('/docs/'),
-      })}>
-        {children}
-      </div>
+      {children}
     </main>
+  )
+}
+
+/**
+ * MDX Content wrapper with standard page padding and max-width logic.
+ */
+function ContentMdx({ children, className, style }: SlotProps) {
+  const { pathname } = useLocation()
+  return (
+    <div
+      className={cn(
+        'boltdocs-page mx-auto pt-4 pb-20 px-4 sm:px-8',
+        {
+          'max-w-content-max': pathname.includes('/docs/'),
+        },
+        className,
+      )}
+      style={style}
+    >
+      {children}
+    </div>
   )
 }
 
@@ -102,10 +117,19 @@ function ContentFooter({ children, className, style }: SlotProps) {
   )
 }
 
+interface DocsLayoutComponent extends React.FC<SlotProps> {
+  Body: typeof Body
+  Content: typeof Content
+  ContentMdx: typeof ContentMdx
+  ContentHeader: typeof ContentHeader
+  ContentFooter: typeof ContentFooter
+}
+
 // Attach sub-components to the root
 export const DocsLayout = Object.assign(DocsLayoutRoot, {
   Body,
   Content,
+  ContentMdx,
   ContentHeader,
   ContentFooter,
-})
+}) as DocsLayoutComponent
