@@ -1,5 +1,13 @@
 # boltdocs
 
+## 2.4.1
+
+### Patch Changes
+
+- [`80de4bd`](https://github.com/bolt-docs/boltdocs/commit/80de4bd49c3de90ec234148c8077b479935db2cf) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - updated width with pathname
+
+- [`c49cefa`](https://github.com/bolt-docs/boltdocs/commit/c49cefa292075606ae626826a890a93bda939ba5) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - added name tabs in URLs & repared icons size
+
 ## 2.4.0
 
 ### Minor Changes
