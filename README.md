@@ -89,5 +89,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <p align="center">
   Built with ❤️ for the documentation community.  
-  <b><a href="https://github.com/bolt-docs/boltdocs">GitHub</a></b> • <b><a href="#">Discord</a></b> • <b><a href="#">Twitter</a></b>
 </p>
