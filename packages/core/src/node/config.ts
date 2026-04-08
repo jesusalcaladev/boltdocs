@@ -215,8 +215,6 @@ export interface BoltdocsConfig {
   versions?: BoltdocsVersionsConfig
   /** Custom plugins for extending functionality */
   plugins?: BoltdocsPlugin[]
-  /** Map of custom external route paths to component file paths */
-  external?: Record<string, string>
   /** External integrations configuration */
   integrations?: BoltdocsIntegrationsConfig
   /** Configuration for the robots.txt file */
@@ -351,7 +349,6 @@ export async function resolveConfig(
     versions: userConfig.versions,
     siteUrl: userConfig.siteUrl,
     plugins: userConfig.plugins || [],
-    external: userConfig.external,
     integrations: userConfig.integrations,
     robots: userConfig.robots,
     vite: userConfig.vite,

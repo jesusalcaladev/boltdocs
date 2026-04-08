@@ -24,7 +24,7 @@ export function generateEntryCode(
   const cssPath = path.resolve(process.cwd(), 'index.css')
   const cssImport = fs.existsSync(cssPath) ? "import './index.css';" : ''
 
-  const homeOption = options.homePage ? 'homePage: HomePage,' : ''
+  let homeOption = options.homePage ? 'homePage: HomePage,' : ''
   const pluginComponents =
     config?.plugins?.flatMap((p) => Object.entries(p.components || {})) || []
 
@@ -40,20 +40,27 @@ const ${name} = _comp_${name}.default || _comp_${name}['${name}'] || _comp_${nam
   const componentMap = pluginComponents.map(([name]) => name).join(', ')
 
   const docsDirName = path.basename(options.docsDir || 'docs')
+  const docsDir = path.resolve(process.cwd(), options.docsDir || 'docs')
 
-  const externalEntries = Object.entries(config?.external || {})
-  const externalImports = externalEntries
-    .map(
-      ([_routePath, compPath], i) =>
-        `import _ext_${i} from '${normalizePath(compPath)}';`,
-    )
-    .join('\n')
-  const externalOption =
-    externalEntries.length > 0
-      ? `externalPages: { ${externalEntries
-          .map(([path], i) => `"${path}": _ext_${i}`)
-          .join(', ')} },`
+  // Detect external pages module
+  const externalModulePath = ['tsx', 'ts', 'jsx', 'js']
+    .map((ext) => path.resolve(docsDir, `pages-external/index.${ext}`))
+    .find((p) => fs.existsSync(p))
+
+  const externalModuleImport = externalModulePath
+    ? `import * as _external_module from '${normalizePath(externalModulePath)}';`
+    : ''
+
+  // Prioritize homePage from external module if it exists
+  homeOption = externalModulePath
+    ? 'homePage: _external_module.homePage || HomePage,'
+    : options.homePage
+      ? 'homePage: HomePage,'
       : ''
+
+  const externalOption = externalModulePath
+    ? 'externalPages: _external_module.pages, externalLayout: _external_module.layout,'
+    : ''
 
   return `
 import { createBoltdocsApp as _createApp } from 'boltdocs/client';
@@ -63,7 +70,7 @@ import _user_mdx_components from 'virtual:boltdocs-mdx-components';
 ${cssImport}
 ${homeImport}
 ${componentImports}
-${externalImports}
+${externalModuleImport}
 
 _createApp({
   target: '#root',

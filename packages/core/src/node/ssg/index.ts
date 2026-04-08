@@ -28,6 +28,53 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   const { docsDir, docsDirName, outDir, config } = options
   const routes = await generateRoutes(docsDir, config)
 
+  // Detect external routes to include in SSG
+  const externalModulePath = ['tsx', 'ts', 'jsx', 'js']
+    .map((ext) => path.resolve(docsDir, `pages-external/index.${ext}`))
+    .find((p) => fs.existsSync(p))
+
+  if (externalModulePath) {
+    try {
+      // We use a simple way to get the keys of the 'pages' export
+      // Since we can't easily execute TSX in this context without a bundler,
+      // we'll at least try to generate placeholder pages for them
+      // OR we can try to use 'esbuild' to get the exports
+      const content = fs.readFileSync(externalModulePath, 'utf-8')
+      const pagesMatch = content.match(/pages\s*:\s*{([^}]+)}/s)
+      if (pagesMatch) {
+        const paths = pagesMatch[1]
+          .split(',')
+          .map((line) => line.split(':')[0].trim().replace(/['"]/g, ''))
+          .filter((p) => p && p.startsWith('/'))
+
+        for (const p of paths) {
+          if (!routes.some((r) => r.path === p)) {
+            routes.push({
+              path: p,
+              title: p.slice(1).charAt(0).toUpperCase() + p.slice(2),
+              filePath: '',
+              componentPath: '',
+              _content: '',
+            } as any)
+          }
+        }
+      }
+
+      // Always include home page if it might be custom
+      if (content.includes('homePage') && !routes.some((r) => r.path === '/')) {
+        routes.push({
+          path: '/',
+          title: 'Home',
+          filePath: '',
+          componentPath: '',
+          _content: '',
+        } as any)
+      }
+    } catch (e) {
+      console.warn('[boltdocs] Failed to parse external routes for SSG:', e)
+    }
+  }
+
   // Resolve the SSR module (compiled by tsup)
   const ssrModulePath = path.resolve(_dirname, '../client/ssr.js')
   if (!fs.existsSync(ssrModulePath)) {

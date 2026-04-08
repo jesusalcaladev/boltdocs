@@ -102,10 +102,10 @@ export function boltdocsPlugin(
                 (locale) =>
                   url.startsWith(`/${locale}/docs`) || url === `/${locale}`,
               )) ||
-            (config.external &&
-              Object.keys(config.external).some((extPath) =>
-                url.startsWith(extPath),
-              ))
+            // Handle any HTML request that isn't a known static file or docs,
+            // as it potentially could be an external page.
+            // (The client-side router will handle 404s if it doesn't match anything)
+            true
 
           // Improved check: If it's a doc route, serve HTML even if it has a dot (e.g. version 1.1)
           // We only skip if it has a known asset extension to prevent serving HTML for images/js/etc.
@@ -140,11 +140,15 @@ export function boltdocsPlugin(
         const mdxCompPaths = mdxCompExtensions.map((ext) =>
           path.resolve(docsDir, `mdx-components.${ext}`),
         )
+        const extPagesPaths = mdxCompExtensions.map((ext) =>
+          path.resolve(docsDir, `pages-external/index.${ext}`),
+        )
 
         server.watcher.add([
           ...configPaths,
           ...mdxCompPaths,
           ...layoutCompPaths,
+          ...extPagesPaths,
         ])
 
         const handleFileEvent = async (
@@ -180,6 +184,19 @@ export function boltdocsPlugin(
             ) {
               const mod = server.moduleGraph.getModuleById(
                 '\0virtual:boltdocs-layout',
+              )
+              if (mod) server.moduleGraph.invalidateModule(mod)
+              server.ws.send({ type: 'full-reload' })
+              return
+            }
+
+            // If any pages-external file changes, invalidate the entry module
+            if (
+              normalized.includes('/pages-external/') ||
+              normalized.includes('\\pages-external\\')
+            ) {
+              const mod = server.moduleGraph.getModuleById(
+                '\0virtual:boltdocs-entry',
               )
               if (mod) server.moduleGraph.invalidateModule(mod)
               server.ws.send({ type: 'full-reload' })
