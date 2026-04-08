@@ -74,6 +74,8 @@ export interface CreateBoltdocsAppOptions {
   homePage?: React.ComponentType
   /** Custom external pages mapped by their route path */
   externalPages?: Record<string, React.ComponentType>
+  /** Optional custom layout for external pages */
+  externalLayout?: React.ComponentType<{ children: React.ReactNode }>
   /** Optional custom MDX components provided by plugins */
   components?: Record<string, React.ComponentType>
 }
