@@ -67,6 +67,7 @@ The root layout shell. It provides the structural containers:
 | `<DocsLayout>` | Root wrapper — full-height flex column with theme-aware background |
 | `<DocsLayout.Body>` | Horizontal container for sidebar + content + ToC |
 | `<DocsLayout.Content>` | Main scrollable content area with max-width constraint |
+| `<DocsLayout.ContentMdx>` | MDX Content wrapper with standard page padding and max-width logic |
 | `<DocsLayout.ContentHeader>` | Header row inside content (breadcrumbs, copy button) |
 | `<DocsLayout.ContentFooter>` | Footer row inside content (page navigation) |
 
@@ -146,6 +147,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         <DocsLayout.Content>
           {!isHome && (
+            <DocsLayout.ContentMdx>
             <DocsLayout.ContentHeader>
               <Breadcrumbs />
               <CopyMarkdownComp
@@ -154,6 +156,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 config={config.theme?.copyMarkdown}
               />
             </DocsLayout.ContentHeader>
+            </DocsLayout.ContentMdx>
           )}
 
           <ErrorBoundary>{children}</ErrorBoundary>

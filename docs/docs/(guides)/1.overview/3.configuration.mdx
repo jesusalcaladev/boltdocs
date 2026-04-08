@@ -14,7 +14,7 @@ The `boltdocs.config.ts` file at the root of your project is the single source o
   Use `defineConfig()` for full TypeScript autocompletion and type checking.
 </Tip>
 
-```ts
+```ts title="boltdocs.config.ts"
 import { defineConfig } from 'boltdocs'
 
 export default defineConfig({
@@ -38,10 +38,6 @@ These are the top-level properties of `BoltdocsConfig`.
   The root directory where Boltdocs scans for `.md` and `.mdx` files. Resolved relative to the project root.
 </Field>
 
-<Field name="homePage" type="string">
-  Path to a custom React component to render at the root route (`/`). For example, `'./src/HomePage.tsx'`.
-</Field>
-
 <Field name="theme" type="BoltdocsThemeConfig">
   Configuration for the site's appearance, navigation, and branding. See the [Theme Configuration](#theme-configuration) section below.
 </Field>
@@ -58,16 +54,6 @@ These are the top-level properties of `BoltdocsConfig`.
   An array of Boltdocs plugins that extend the MDX pipeline or inject Vite plugins. See the [Plugins guide](/docs/plugins).
 </Field>
 
-<Field name="external" type="Record<string, string>">
-  Map custom route paths to React component files. Useful for non-documentation pages like changelogs or dashboards.
-
-  ```ts
-  external: {
-    '/changelog': './src/Changelog.tsx',
-    '/pricing': './src/Pricing.tsx',
-  }
-  ```
-</Field>
 
 <Field name="integrations" type="BoltdocsIntegrationsConfig">
   Settings for third-party integrations like CodeSandbox. See [Integrations Configuration](#integrations-configuration) below.
@@ -87,7 +73,7 @@ These are the top-level properties of `BoltdocsConfig`.
 
 The `theme` object controls the entire appearance and navigation of your site.
 
-```ts
+```ts title="boltdocs.config.ts"
 export default defineConfig({
   theme: {
     title: 'My Docs',
@@ -133,7 +119,7 @@ export default defineConfig({
 <Field name="navbar" type="Array<{ label: string | Record<string, string>; href: string }>" defaultValue="[]">
   Items displayed in the top navigation bar. Each item can be a simple link or a dropdown with nested items.
 
-  ```ts
+  ```ts title="boltdocs.config.ts"
   navbar: [
     { label: 'Home', href: '/' },
     { label: 'Docs', href: '/docs/overview/introduction' },
@@ -236,7 +222,7 @@ export default defineConfig({
 
 Configure internationalization within the `i18n` property.
 
-```ts
+```ts title="boltdocs.config.ts"
 export default defineConfig({
   i18n: {
     defaultLocale: 'en',
@@ -278,7 +264,7 @@ export default defineConfig({
 
 Configure documentation versioning within the `versions` property.
 
-```ts
+```ts title="boltdocs.config.ts"
 export default defineConfig({
   versions: {
     defaultVersion: 'v2',
@@ -309,7 +295,7 @@ export default defineConfig({
 
 Control the auto-generated `robots.txt`.
 
-```ts
+```ts title="boltdocs.config.ts"
 export default defineConfig({
   robots: {
     rules: [
@@ -330,7 +316,7 @@ robots: 'User-agent: *\nAllow: /'
 
 ## Integrations Configuration
 
-```ts
+```ts title="boltdocs.config.ts"
 export default defineConfig({
   integrations: {
     sandbox: {
@@ -355,13 +341,12 @@ export default defineConfig({
 
 Here's a complete configuration showing most options:
 
-```ts
+```ts title="boltdocs.config.ts"
 import { defineConfig } from 'boltdocs'
 import mermaidPlugin from '@bdocs/plugin-mermaid'
 
 export default defineConfig({
   siteUrl: 'https://docs.myproject.com',
-  homePage: './src/HomePage.tsx',
   theme: {
     title: 'MyProject',
     description: 'Build incredible things faster.',
