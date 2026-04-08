@@ -4,7 +4,6 @@ import mermaidPlugin from '@bdocs/plugin-mermaid'
 export default defineConfig({
   plugins: [mermaidPlugin()],
   siteUrl: 'https://boltdocs.vercel.app/',
-  homePage: './src/HomePage.tsx',
   theme: {
     title: 'boltdocs',
     description:
@@ -34,6 +33,11 @@ export default defineConfig({
         label: 'Components',
         href: '/docs/components/overview',
       },
+      {
+        label: "Roadmap",
+        href: "/roadmap",
+        
+      }
     ],
     editLink:
       'https://github.com/jesusalcaladev/boltdocs/edit/main/docs/docs/:path',
@@ -54,10 +58,5 @@ export default defineConfig({
       },
     ],
     sitemaps: ['https://boltdocs.vercel.app/sitemap.xml'],
-  },
-  integrations: {
-    sandbox: {
-      enable: false,
-    },
   },
 })
