@@ -105,6 +105,7 @@ export function AppShell({
   hot,
   homePage: HomePage,
   externalPages,
+  externalLayout: ExternalLayout,
   components: customComponents = {},
 }: {
   initialRoutes: ComponentRoute[]
@@ -117,11 +118,13 @@ export function AppShell({
   hot?: CreateBoltdocsAppOptions['hot']
   homePage?: React.ComponentType
   externalPages?: Record<string, React.ComponentType>
+  externalLayout?: React.ComponentType<{ children: React.ReactNode }>
   components?: Record<string, React.ComponentType>
 }) {
   const [routesInfo, setRoutesInfo] = useState<ComponentRoute[]>(initialRoutes)
   const [config, setConfig] = useState(initialConfig)
   const computedExternalPages = externalPages || {}
+  const EffectiveExternalLayout = ExternalLayout || UserLayout
 
   const resolvedRoutes = useMemo(() => {
     return routesInfo
@@ -206,9 +209,9 @@ export function AppShell({
                     <Route
                       path="/"
                       element={
-                        <UserLayout>
+                        <EffectiveExternalLayout>
                           <HomePage />
-                        </UserLayout>
+                        </EffectiveExternalLayout>
                       }
                     />
                     {config.i18n &&
@@ -217,9 +220,9 @@ export function AppShell({
                           key={`home-${locale}`}
                           path={`/${locale}`}
                           element={
-                            <UserLayout>
+                            <EffectiveExternalLayout>
                               <HomePage />
-                            </UserLayout>
+                            </EffectiveExternalLayout>
                           }
                         />
                       ))}
@@ -235,9 +238,9 @@ export function AppShell({
                         <Route
                           path={extPath}
                           element={
-                            <UserLayout>
+                            <EffectiveExternalLayout>
                               <ExtComponent />
-                            </UserLayout>
+                            </EffectiveExternalLayout>
                           }
                         />
                         {config.i18n &&
@@ -246,9 +249,9 @@ export function AppShell({
                               key={`${extPath}-${locale}`}
                               path={`/${locale}${cleanPath}`}
                               element={
-                                <UserLayout>
+                                <EffectiveExternalLayout>
                                   <ExtComponent />
-                                </UserLayout>
+                                </EffectiveExternalLayout>
                               }
                             />
                           ))}
@@ -305,6 +308,7 @@ export function createBoltdocsApp(options: CreateBoltdocsAppOptions) {
     hot,
     homePage,
     externalPages,
+    externalLayout,
     components,
   } = options
   const container = document.querySelector(target)
@@ -325,6 +329,7 @@ export function createBoltdocsApp(options: CreateBoltdocsAppOptions) {
           hot={hot}
           homePage={homePage}
           externalPages={externalPages}
+          externalLayout={externalLayout}
           components={components}
         />
       </BrowserRouter>
