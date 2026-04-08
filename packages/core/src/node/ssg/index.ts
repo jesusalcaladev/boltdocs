@@ -90,23 +90,36 @@ export async function generateStaticPages(options: SSGOptions): Promise<void> {
   const Module = _require('module')
   const originalRequire = Module.prototype.require
   ;(Module.prototype as any).require = function (id: string, ...args: any[]) {
-    if (id === 'virtual:boltdocs-layout') {
-      return {
-        __esModule: true,
-        default: function SSG_Virtual_Layout(props: any) {
-          try {
-            const client = originalRequire.apply(this, [
-              path.resolve(_dirname, '../client/index.js'),
-            ])
-            const Comp =
-              client.DefaultLayout || (({ children }: any) => children)
-            const React = originalRequire.apply(this, ['react'])
-            return React.createElement(Comp, props)
-          } catch (e) {
-            return props.children
-          }
-        },
+    if (id.startsWith('virtual:boltdocs-')) {
+      if (id === 'virtual:boltdocs-layout') {
+        return {
+          __esModule: true,
+          default: function SSG_Virtual_Layout(props: any) {
+            try {
+              const client = originalRequire.apply(this, [
+                path.resolve(_dirname, '../client/index.js'),
+              ])
+              const Comp =
+                client.DefaultLayout || (({ children }: any) => children)
+              const React = originalRequire.apply(this, ['react'])
+              return React.createElement(Comp, props)
+            } catch (e) {
+              return props.children
+            }
+          },
+        }
       }
+
+      if (id === 'virtual:boltdocs-mdx-components') {
+        return { __esModule: true, default: {} }
+      }
+
+      if (id === 'virtual:boltdocs-config') {
+        return { __esModule: true, default: config }
+      }
+
+      // Safe fallback for other virtual modules
+      return { __esModule: true, default: id.includes('routes') ? [] : {} }
     }
     return originalRequire.apply(this, [id, ...args])
   }
