@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.4.2
+
+### Patch Changes
+
+- [`3073b74`](https://github.com/bolt-docs/boltdocs/commit/3073b747b9bd90e154c24758b5a502dfe51c043e) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - fix: repared error in build with virtual-imports
+
 ## 2.4.1
 
 ### Patch Changes
