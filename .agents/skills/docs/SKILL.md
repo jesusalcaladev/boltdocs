@@ -10,7 +10,6 @@ Follow these rules and structures to maintain consistency across the Boltdocs do
 ## 1. Core Principles
 
 - **Comprehensive**: Never leave features or props undocumented.
-- **Visual-First**: Always include a `<PrevieCode/>` or Code snippet with a live demonstration when possible.
 - **Ordered Hierarchy**: Use numerical prefixes (e.g., `1.overview.mdx`) for logical page flow in the sidebar.
 - **Action-Oriented**: Write for developers who want to _do_ something. Focus on implementation and practical usage.
 
@@ -32,19 +31,12 @@ A detailed API reference using the `<Table />` or `<Field />` or `<ComponentProp
 ### Variants & Examples
 
 - **Basic Usage**: The simplest way to implement, no use component Playground, use the component itself.
-- **Customization**: How to use props to change appearance or behavior.
-- **Personalization (CSS)**: List all CSS variables (tokens) available for this component.
-
-```css
-:root {
-  --ld-button-bg: #7f13ec;
-}
-```
+- **Avance Usage**: Use component Playground to demonstrate advanced usage.
+- **API Reference**: Document all available props and their types.
 
 ## 3. Documenting Integrations
 
 - **Analyze the API**: Summarize the core underlying API being utilized.
-- **Generic Support**: Document exported functions (e.g., `openSandbox`) and their type signatures.
 - **Live Implementation**: Add a playground with a "Try it in [Service]" button.
 - **Options Reference**: Document all configuration objects (e.g., `SandboxOptions`).
 
