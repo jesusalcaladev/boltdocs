@@ -11,29 +11,40 @@ export function ScrollHandler() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used as a trigger for scroll-to-top on navigation
   useLayoutEffect(() => {
-    const container = document.querySelector('.boltdocs-content')
-    if (!container) return
+    const container = document.querySelector('.boltdocs-content') || window
+    
+    // Helper to get scroll top
+    const getScrollTop = () => {
+      if (container === window) return window.scrollY
+      return (container as HTMLElement).scrollTop
+    }
+    
+    // Helper to scroll
+    const scrollTo = (top: number, behavior: ScrollBehavior = 'auto') => {
+      if (container === window) {
+        window.scrollTo({ top, behavior })
+      } else {
+        (container as HTMLElement).scrollTo({ top, behavior })
+      }
+    }
 
     if (hash) {
       const id = hash.replace('#', '')
       const element = document.getElementById(id)
       if (element) {
         const offset = 80
-        const containerRect = container.getBoundingClientRect().top
+        const containerTop = container === window ? 0 : (container as HTMLElement).getBoundingClientRect().top
         const elementRect = element.getBoundingClientRect().top
-        const elementPosition = elementRect - containerRect
-        const offsetPosition = elementPosition - offset + container.scrollTop
+        const elementPosition = elementRect - containerTop
+        const offsetPosition = elementPosition - offset + getScrollTop()
 
-        container.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth',
-        })
+        scrollTo(offsetPosition, 'smooth')
         return
       }
     }
 
     // Scroll to top on navigation when no hash is specified
-    container.scrollTo(0, 0)
+    scrollTo(0)
   }, [pathname, hash])
 
   return null
