@@ -198,6 +198,18 @@ export interface BoltdocsIntegrationsConfig {
 }
 
 /**
+ * Configuration for security-related settings.
+ */
+export interface BoltdocsSecurityConfig {
+  /** Map of standard security headers to override or supplement defaults */
+  headers?: Record<string, string>
+  /** Whether to enable Content Security Policy (CSP) generation (default: false) */
+  enableCSP?: boolean
+  /** Additional custom headers to inject into responses */
+  customHeaders?: Record<string, string>
+}
+
+/**
  * The root configuration object for Boltdocs.
  */
 export interface BoltdocsConfig {
@@ -219,6 +231,8 @@ export interface BoltdocsConfig {
   integrations?: BoltdocsIntegrationsConfig
   /** Configuration for the robots.txt file */
   robots?: BoltdocsRobotsConfig
+  /** Security-related settings and headers */
+  security?: BoltdocsSecurityConfig
   /** Low-level Vite configuration overrides */
   vite?: import('vite').InlineConfig
 }
@@ -241,6 +255,7 @@ interface RawUserConfig
     Partial<BoltdocsThemeConfig> {
   favicon?: string
   ogImage?: string
+  security?: BoltdocsSecurityConfig
 }
 
 /**
@@ -351,6 +366,7 @@ export async function resolveConfig(
     plugins: userConfig.plugins || [],
     integrations: userConfig.integrations,
     robots: userConfig.robots,
+    security: userConfig.security,
     vite: userConfig.vite,
   }
 }

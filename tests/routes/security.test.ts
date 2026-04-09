@@ -69,6 +69,18 @@ describe('Security: Route Parser', () => {
     expect(result.route.title).toBe(longTitle)
   })
 
+  it('should allow paths with route groups (parentheses)', () => {
+    const routeGroupPath = 'C:\\docs\\(guides)\\overview.md'
+    vi.mocked(utils.parseFrontmatter).mockReturnValue({
+      data: { title: 'Overview' },
+      content: '# Overview',
+    })
+
+    const result = parseDocFile(routeGroupPath, docsDir, basePath)
+    expect(result.route.title).toBe('Overview')
+    expect(result.route.path).toBe('/docs/guides/overview')
+  })
+
   describe('Advanced Path Traversal', () => {
     it('should block null byte injection', () => {
       const malicious = 'C:\\docs\\secret.md\0.txt'

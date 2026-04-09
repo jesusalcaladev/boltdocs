@@ -10,6 +10,8 @@ import { generateEntryCode } from './entry'
 import { injectHtmlMeta, getHtmlTemplate } from './html'
 import { generateRobotsTxt } from '../ssg/robots'
 import { generateSearchData } from '../search'
+import { SECURITY_HEADERS } from '../security/headers'
+import { getCSPHeader } from '../security/csp'
 import fs from 'fs'
 
 export * from './types'
@@ -77,6 +79,24 @@ export function boltdocsPlugin(
       },
 
       configureServer(server) {
+        // Security: Apply hardened headers and CSP
+        server.middlewares.use((_req, res, next) => {
+          const isProd = process.env.NODE_ENV === 'production'
+
+          if (isProd) {
+            Object.entries(SECURITY_HEADERS).forEach(([header, value]) => {
+              res.setHeader(header, value)
+            })
+          }
+
+          // Inject CSP if enabled in configuration
+          if (config.security?.enableCSP) {
+            res.setHeader('Content-Security-Policy', getCSPHeader(config))
+          }
+
+          next()
+        })
+
         // Serve robots.txt from config
         server.middlewares.use((req, res, next) => {
           if (req.url === '/robots.txt') {

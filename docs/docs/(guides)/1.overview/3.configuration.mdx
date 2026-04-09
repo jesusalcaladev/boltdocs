@@ -337,6 +337,46 @@ export default defineConfig({
 
 ---
 
+## Security Configuration
+
+Boltdocs includes a built-in security layer to harden your documentation site. By default, it applies recommended security headers in production.
+
+```ts title="boltdocs.config.ts"
+export default defineConfig({
+  security: {
+    enableCSP: true,
+    headers: {
+      'X-Frame-Options': 'SAMEORIGIN', // Override a default header
+    },
+    customHeaders: {
+      'X-Custom-Security': 'high'
+    }
+  }
+})
+```
+
+<Field name="enableCSP" type="boolean" defaultValue="false">
+  Whether to enable the Content Security Policy (CSP) header. When enabled, Boltdocs generates a restrictive policy that allows only trusted sources.
+  
+  <Note>
+    In development mode, the policy is automatically relaxed (adding `'unsafe-eval'`) to support Vite's Hot Module Replacement (HMR).
+  </Note>
+</Field>
+
+<Field name="headers" type="Record<string, string>">
+  Overrides for the default security headers. Boltdocs applies the following by default in production:
+  - `X-Content-Type-Options: nosniff`
+  - `X-Frame-Options: DENY`
+  - `X-XSS-Protection: 1; mode=block`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+</Field>
+
+<Field name="customHeaders" type="Record<string, string>">
+  Additional HTTP headers to inject into responses.
+</Field>
+
+---
+
 ## Full Example
 
 Here's a complete configuration showing most options:
@@ -383,6 +423,9 @@ export default defineConfig({
   robots: {
     rules: [{ userAgent: '*', allow: '/' }],
     sitemaps: ['https://docs.myproject.com/sitemap.xml'],
+  },
+  security: {
+    enableCSP: true,
   },
 })
 ```

@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { boltdocsPlugin } from './plugin/index'
 import { boltdocsMdxPlugin } from './mdx/index'
+import { SECURITY_HEADERS } from './security/headers'
+import { getCSPHeader } from './security/csp'
 import type { BoltdocsPluginOptions } from './plugin/index'
 
 import { resolveConfig, type BoltdocsConfig } from './config'
@@ -31,6 +33,15 @@ export async function createViteConfig(
   mode: 'development' | 'production' = 'development',
 ): Promise<InlineConfig> {
   const config = await resolveConfig('docs', root)
+  const isProd = mode === 'production'
+
+  // Prepare security headers
+  const securityHeaders: Record<string, string> = isProd
+    ? { ...SECURITY_HEADERS }
+    : {}
+  if (config.security?.enableCSP) {
+    securityHeaders['Content-Security-Policy'] = getCSPHeader(config)
+  }
 
   const viteConfig: InlineConfig = {
     root,
@@ -43,6 +54,20 @@ export async function createViteConfig(
         homePage: config.homePage,
       }),
     ],
+    server: {
+      headers: {
+        ...securityHeaders,
+        ...config.vite?.server?.headers,
+      },
+      ...config.vite?.server,
+    },
+    preview: {
+      headers: {
+        ...securityHeaders,
+        ...config.vite?.preview?.headers,
+      },
+      ...config.vite?.preview,
+    },
     ...config.vite,
   }
 
