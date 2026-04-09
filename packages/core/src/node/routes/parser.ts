@@ -11,7 +11,10 @@ import {
   extractNumberPrefix,
   sanitizeHtml,
   stripHtmlTags,
+  logSecurityEvent,
 } from '../utils'
+import { MAX_PATH_LENGTH, ALLOWED_PATH_CHARS } from '../security.config'
+import { EncodingSecurityError, PathTraversalError } from '../errors'
 
 /**
  * Parses a single Markdown/MDX file and extracts its metadata for routing.
@@ -32,8 +35,30 @@ export function parseDocFile(
   basePath: string,
   config?: BoltdocsConfig,
 ): ParsedDocFile {
-  // Security: Prevent path traversal
-  const decodedFile = decodeURIComponent(file)
+  // Security: Prevent path traversal and malicious encoding
+  let decodedFile: string
+  try {
+    decodedFile = decodeURIComponent(file)
+  } catch {
+    const fileName = path.basename(file)
+    logSecurityEvent('ENCODING_ERROR', 'Invalid character encoding', { file: fileName })
+    throw new EncodingSecurityError(
+      `Security breach: Invalid characters or encoding in path: ${fileName}`,
+    )
+  }
+
+  // Validation: Path length
+  if (decodedFile.length > MAX_PATH_LENGTH) {
+    const fileName = path.basename(decodedFile)
+    logSecurityEvent('PATH_TOO_LONG', 'Path length exceeds limit', {
+      length: decodedFile.length,
+      file: fileName,
+    })
+    throw new PathTraversalError(
+      `Security breach: Path length exceeds limit of ${MAX_PATH_LENGTH} characters: ${fileName}`,
+    )
+  }
+
   const absoluteFile = path.resolve(decodedFile)
   const absoluteDocsDir = path.resolve(docsDir)
   const relativePath = normalizePath(
@@ -43,10 +68,15 @@ export function parseDocFile(
   if (
     relativePath.startsWith('../') ||
     relativePath === '..' ||
-    absoluteFile.includes('\0')
+    absoluteFile.includes('\0') ||
+    !ALLOWED_PATH_CHARS.test(relativePath)
   ) {
-    throw new Error(
-      `Security breach: File is outside of docs directory or contains null bytes: ${file}`,
+    const fileName = path.basename(file)
+    logSecurityEvent('PATH_TRAVERSAL_ATTEMPT', 'Path traversal or invalid characters detected', {
+      path: relativePath,
+    })
+    throw new PathTraversalError(
+      `Security breach: File is outside of docs directory, contains null bytes, or invalid characters: ${fileName}`,
     )
   }
 

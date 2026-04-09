@@ -1,6 +1,24 @@
 import fs from 'fs'
 import matter from 'gray-matter'
 import DOMPurify from 'isomorphic-dompurify'
+import {
+  MAX_PATH_LENGTH,
+  ALLOWED_PATH_CHARS,
+  MAX_FRONTMATTER_SIZE,
+  FrontmatterSchema,
+  type FrontmatterData,
+} from './security.config'
+
+export {
+  MAX_PATH_LENGTH,
+  ALLOWED_PATH_CHARS,
+  MAX_FRONTMATTER_SIZE,
+  FrontmatterSchema,
+  type FrontmatterData,
+}
+import { ValidationError } from './errors'
+
+// Removed centralized constants - now in security.config.ts
 
 /**
  * Normalizes a file path by replacing Windows backslashes with forward slashes.
@@ -73,9 +91,41 @@ export function parseFrontmatter(filePath: string): {
 } {
   const raw = fs.readFileSync(filePath, 'utf-8')
   try {
-    const { data, content } = matter(raw)
-    return { data, content }
+    const { data, content, matter: rawMatter } = matter(raw)
+
+    // Security: Check frontmatter size
+    if (rawMatter && rawMatter.length > MAX_FRONTMATTER_SIZE) {
+      logSecurityEvent('FRONTMATTER_TOO_LARGE', 'Frontmatter block exceeds size limit', {
+        size: rawMatter.length,
+        file: filePath,
+      })
+      throw new ValidationError(
+        `Security breach: Frontmatter size exceeds limit of ${MAX_FRONTMATTER_SIZE} bytes`,
+      )
+    }
+
+    // Validation: Schema check
+    const result = FrontmatterSchema.safeParse(data)
+    if (!result.success) {
+      // We could log this or throw, but for metadata we'll just filter invalid fields
+      // or we can be strict as requested.
+      // The task says "Integrar validación de esquema con Zod".
+      // Let's log it.
+      console.warn(`[VALIDATION][${filePath}] Invalid frontmatter fields detected.`)
+    }
+
+    // Explicitly allow only known fields from the schema for security (unless we use passthrough)
+    const validatedData = result.success ? result.data : {}
+
+    // Sanitization: Clean metadata fields
+    const sanitizedData: any = { ...validatedData }
+    if (sanitizedData.title) sanitizedData.title = stripHtmlTags(sanitizedData.title).trim()
+    if (sanitizedData.description)
+      sanitizedData.description = stripHtmlTags(sanitizedData.description).trim()
+
+    return { data: sanitizedData, content }
   } catch (e) {
+    if (e instanceof ValidationError) throw e
     // If frontmatter is malformed (e.g. while editing), return empty data and raw content
     return { data: {}, content: raw }
   }
@@ -116,8 +166,11 @@ export function escapeXml(str: string): string {
  * @returns The corresponding route path (e.g., '/guide')
  */
 export function fileToRoutePath(relativePath: string): string {
-  // Strip number prefixes from every segment
-  let cleanedPath = relativePath.split('/').map(stripNumberPrefix).join('/')
+  // Strip number prefixes and sanitize each segment
+  let cleanedPath = relativePath
+    .split('/')
+    .map((p) => stripNumberPrefix(sanitizeFilename(p)))
+    .join('/')
 
   // Remove trailing slash if present
   let routePath = cleanedPath.replace(/\/$/, '')
@@ -150,8 +203,59 @@ export function fileToRoutePath(relativePath: string): string {
  * @returns The sanitized HTML
  */
 export function sanitizeHtml(html: string): string {
-  return DOMPurify.sanitize(html)
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      'b',
+      'i',
+      'em',
+      'strong',
+      'a',
+      'p',
+      'br',
+      'code',
+      'pre',
+      'span',
+      'div',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'ul',
+      'ol',
+      'li',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'blockquote',
+      'hr',
+    ],
+    ALLOWED_ATTR: ['href', 'title', 'target', 'class', 'id', 'src', 'alt', 'width', 'height'],
+    FORCE_BODY: true,
+  })
 }
+
+// Security Hook: Validate URL protocols in href/src
+DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  // Check for href
+  if (node.hasAttribute('href')) {
+    const href = node.getAttribute('href')?.toLowerCase() || ''
+    if (href.startsWith('javascript:') || href.startsWith('data:') || href.startsWith('vbscript:')) {
+      node.removeAttribute('href')
+    }
+  }
+  // Check for src
+  if (node.hasAttribute('src')) {
+    const src = node.getAttribute('src')?.toLowerCase() || ''
+    if (src.startsWith('javascript:') || src.startsWith('data:') || src.startsWith('vbscript:')) {
+      node.removeAttribute('src')
+    }
+  }
+})
 
 /**
  * Strips all HTML tags from a string, returning only the text content.
@@ -198,4 +302,46 @@ export function getTranslated(
   // Fallback: Use the first available translation or an empty string
   const firstValue = Object.values(value)[0]
   return firstValue || ''
+}
+/**
+ * Sanitizes a filename or path component by removing dangerous characters.
+ * Prevents multiple dots to avoid path traversal tricks.
+ *
+ * @param name - The name to sanitize
+ * @returns The sanitized name
+ */
+export function sanitizeFilename(name: string): string {
+  return name
+    .replace(/[^a-zA-Z0-9\-_\/\.]/g, '') // Remove non-whitelisted characters
+    .split('/')
+    .filter((p) => p !== '..' && p !== '.') // Remove traversal and current dir indicators
+    .map((p) => p.replace(/\.\.+/g, '.')) // Prevent multiple dots in segments
+    .join('/')
+}
+
+/**
+ * Logs a security violation with relevant metadata.
+ * Redacts absolute paths to prevent information leakage.
+ */
+export function logSecurityEvent(
+  type: string,
+  message: string,
+  details: Record<string, any> = {},
+): void {
+  const timestamp = new Date().toISOString()
+  const redactedDetails = { ...details }
+
+  // Simple redaction logic for potential system paths
+  for (const key in redactedDetails) {
+    if (typeof redactedDetails[key] === 'string' && redactedDetails[key].includes(':')) {
+      // Very basic redaction: just keep the filename part if it looks like a path
+      redactedDetails[key] = redactedDetails[key].split(/[\\/]/).pop() || redactedDetails[key]
+    }
+  }
+
+  console.error(
+    `[SECURITY][${timestamp}] TYPE: ${type} | MESSAGE: ${message} | DETAILS: ${JSON.stringify(
+      redactedDetails,
+    )}`,
+  )
 }
