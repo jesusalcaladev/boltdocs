@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "jesusalcaladev/boltdocs"
+      "repo": "bolt-docs/boltdocs"
     }
   ],
   "commit": false,
