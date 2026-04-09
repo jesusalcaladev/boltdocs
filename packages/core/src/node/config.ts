@@ -1,6 +1,8 @@
 import path from 'path'
 import fs from 'fs'
 import { loadConfigFromFile, type Plugin as VitePlugin } from 'vite'
+import { BoltdocsConfigSchema } from './config/schema'
+import { ValidationError } from './errors'
 
 /**
  * Represents a single social link in the configuration.
@@ -353,7 +355,7 @@ export async function resolveConfig(
     }))
   }
 
-  return {
+  const finalConfig: BoltdocsConfig = {
     docsDir: path.resolve(docsDir),
     homePage: userConfig.homePage,
     theme: {
@@ -369,4 +371,21 @@ export async function resolveConfig(
     security: userConfig.security,
     vite: userConfig.vite,
   }
+
+  // Validate the final configuration
+  const validation = BoltdocsConfigSchema.safeParse(finalConfig)
+  if (!validation.success) {
+    const errorMessages = validation.error.issues
+      .map((err: any) => {
+        const path = err.path.join('.')
+        return `  - ${path}: ${err.message}`
+      })
+      .join('\n')
+
+    throw new ValidationError(
+      `Invalid Boltdocs configuration:\n${errorMessages}`,
+    )
+  }
+
+  return validation.data as BoltdocsConfig
 }
