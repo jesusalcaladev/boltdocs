@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import { loadConfigFromFile, type Plugin as VitePlugin } from 'vite'
-import { BoltdocsConfigSchema } from './config/schema'
+import { BoltdocsConfigSchema } from './schema/config'
 import { ValidationError } from './errors'
 import type {
   PluginLifecycleHooks,
@@ -326,7 +326,6 @@ export async function resolveConfig(
     }
   }
 
-  // Robust merging strategy
   const themeConfigFromTop: BoltdocsThemeConfig = {
     title: userConfig.title,
     description: userConfig.description,
@@ -348,18 +347,14 @@ export async function resolveConfig(
     editLink: userConfig.editLink,
   }
 
-  // User can define properties at top level or inside themeConfig/theme
   const userThemeConfig: BoltdocsThemeConfig = {
     ...themeConfigFromTop,
     ...(userConfig.theme || {}),
   }
 
-  // Clean undefined properties
   const cleanThemeConfig = Object.fromEntries(
     Object.entries(userThemeConfig).filter(([_, v]) => v !== undefined),
   ) as BoltdocsThemeConfig
-
-  // Transform old navbar items if necessary
   if (cleanThemeConfig.navbar) {
     cleanThemeConfig.navbar = cleanThemeConfig.navbar.map((item: any) => ({
       label: item.label || item.text || '',

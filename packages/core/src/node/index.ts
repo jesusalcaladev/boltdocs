@@ -81,5 +81,4 @@ export type { RouteMeta } from './routes'
 export type { BoltdocsConfig, BoltdocsThemeConfig } from './config'
 export { resolveConfig, defineConfig } from './config'
 
-// New plugin system exports
 export * from './plugins'

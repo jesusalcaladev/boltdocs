@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import semver from 'semver'
 import path from 'path'
-import { BoltdocsPluginSchema } from '../config/schema'
+import { BoltdocsPluginSchema } from '../schema/config'
 import {
   PluginValidationError,
   PluginCompatibilityError,

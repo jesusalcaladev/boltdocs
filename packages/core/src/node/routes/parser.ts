@@ -13,7 +13,7 @@ import {
   stripHtmlTags,
   logSecurityEvent,
 } from '../utils'
-import { MAX_PATH_LENGTH, ALLOWED_PATH_CHARS } from '../security.config'
+import { MAX_PATH_LENGTH, ALLOWED_PATH_CHARS } from '../security/constants'
 import { EncodingSecurityError, PathTraversalError } from '../errors'
 
 /**

@@ -5,9 +5,11 @@ import {
   MAX_PATH_LENGTH,
   ALLOWED_PATH_CHARS,
   MAX_FRONTMATTER_SIZE,
+} from './security/constants'
+import {
   FrontmatterSchema,
   type FrontmatterData,
-} from './security.config'
+} from './schema/frontmatter'
 
 export {
   MAX_PATH_LENGTH,
