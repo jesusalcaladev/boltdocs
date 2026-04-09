@@ -39,6 +39,8 @@ export function remarkMermaid() {
 export default function mermaidPlugin() {
   return {
     name: 'boltdocs-plugin-mermaid',
+    version: '0.0.2',
+    permissions: ['mdx:remark', 'components'],
     remarkPlugins: [remarkMermaid],
     components: {
       Mermaid: '@bdocs/plugin-mermaid/client',
