@@ -16,15 +16,33 @@ export const FooterConfigSchema = z.object({
 })
 
 /**
+ * Zod schema for plugin permissions.
+ */
+export const PluginPermissionSchema = z.enum([
+  'fs:read',
+  'fs:write',
+  'vite:config',
+  'mdx:remark',
+  'mdx:rehype',
+  'components',
+  'hooks:build',
+  'hooks:dev',
+])
+
+/**
  * Zod schema for a Boltdocs plugin.
  */
 export const BoltdocsPluginSchema = z.object({
   name: z.string(),
   enforce: z.enum(['pre', 'post']).optional(),
+  version: z.string().optional(),
+  boltdocsVersion: z.string().optional(),
+  permissions: z.array(PluginPermissionSchema).optional(),
   remarkPlugins: z.array(z.any()).optional(),
   rehypePlugins: z.array(z.any()).optional(),
   vitePlugins: z.array(z.any()).optional(),
   components: z.record(z.string(), z.string()).optional(),
+  hooks: z.record(z.string(), z.any()).optional(),
 })
 
 /**

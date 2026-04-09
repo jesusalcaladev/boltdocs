@@ -3,6 +3,10 @@ import fs from 'fs'
 import { loadConfigFromFile, type Plugin as VitePlugin } from 'vite'
 import { BoltdocsConfigSchema } from './config/schema'
 import { ValidationError } from './errors'
+import type {
+  PluginLifecycleHooks,
+  PluginPermission,
+} from './plugins/plugin-types'
 
 /**
  * Represents a single social link in the configuration.
@@ -176,6 +180,12 @@ export interface BoltdocsPlugin {
   name: string
   /** Whether to run this plugin before or after default ones (optional) */
   enforce?: 'pre' | 'post'
+  /** Version of the plugin (optional) */
+  version?: string
+  /** Minimum compatible Boltdocs version (optional, semver range) */
+  boltdocsVersion?: string
+  /** List of permissions this plugin requires to operate */
+  permissions?: PluginPermission[]
   /** Optional remark plugins to add to the MDX pipeline */
   remarkPlugins?: unknown[]
   /** Optional rehype plugins to add to the MDX pipeline */
@@ -184,6 +194,8 @@ export interface BoltdocsPlugin {
   vitePlugins?: VitePlugin[]
   /** Optional custom React components to register in MDX. Map of Name -> Module Path. */
   components?: Record<string, string>
+  /** Implementation of lifecycle hooks */
+  hooks?: PluginLifecycleHooks
 }
 
 /**

@@ -10,6 +10,7 @@ import { mdxCache, MDX_PLUGIN_VERSION } from './cache'
 import { remarkShiki } from './remark-shiki'
 import { rehypeShiki } from './rehype-shiki'
 import { remarkCodeMeta } from './remark-code-meta'
+import { PluginSandbox } from '../plugins'
 
 let mdxCacheLoaded = false
 let hits = 0
@@ -31,9 +32,15 @@ export function boltdocsMdxPlugin(
   compiler = mdxPlugin,
 ): Plugin {
   const extraRemarkPlugins =
-    config?.plugins?.flatMap((p) => p.remarkPlugins || []) || []
+    config?.plugins?.flatMap((p) => {
+      const caps = PluginSandbox.getSanitizedCapabilities(p as any)
+      return caps.remarkPlugins || []
+    }) || []
   const extraRehypePlugins =
-    config?.plugins?.flatMap((p) => p.rehypePlugins || []) || []
+    config?.plugins?.flatMap((p) => {
+      const caps = PluginSandbox.getSanitizedCapabilities(p as any)
+      return caps.rehypePlugins || []
+    }) || []
 
   const baseMdxPlugin = compiler({
     remarkPlugins: [

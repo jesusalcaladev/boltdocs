@@ -7,7 +7,7 @@ import { SECURITY_HEADERS } from './security/headers'
 import { getCSPHeader } from './security/csp'
 import type { BoltdocsPluginOptions } from './plugin/index'
 
-import { resolveConfig, type BoltdocsConfig } from './config'
+import { resolveConfig } from './config'
 
 export default async function boltdocs(
   options?: BoltdocsPluginOptions,
@@ -80,3 +80,6 @@ export type { SSGOptions } from './ssg'
 export type { RouteMeta } from './routes'
 export type { BoltdocsConfig, BoltdocsThemeConfig } from './config'
 export { resolveConfig, defineConfig } from './config'
+
+// New plugin system exports
+export * from './plugins'
