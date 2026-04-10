@@ -14,6 +14,9 @@ export function generateExternalTemplate(projectDir: string) {
 
   const externalPagesContent = `import React from 'react'
 import { PrimitiveButton } from 'boltdocs/client'
+import HomePage from '../../src/home-page'
+
+export const homePage = HomePage
 
 /**
  * External pages are standalone React components mapped to specific routes.

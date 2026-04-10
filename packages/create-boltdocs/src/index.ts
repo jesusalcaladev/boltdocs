@@ -108,16 +108,18 @@ async function run() {
   console.log(`${green('✔')} Created project directory`)
 
   // 2. Generate specific template
-  const configOptions: any = { homePage: './src/home-page.tsx' }
+  const configOptions: any = {}
 
   if (response.template === 'empty') {
     generateEmptyTemplate(projectDir, response.projectName)
   } else if (response.template === 'i18n') {
     configOptions.i18n = true
+    configOptions.homePage = './src/home-page.tsx'
     generateI18nTemplate(projectDir)
   } else if (response.template === 'external') {
     generateExternalTemplate(projectDir)
   } else {
+    configOptions.homePage = './src/home-page.tsx'
     generateBaseTemplate(projectDir)
   }
 
