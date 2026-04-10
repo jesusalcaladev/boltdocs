@@ -1,5 +1,12 @@
 # docs
 
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`f54fc62`](https://github.com/bolt-docs/boltdocs/commit/f54fc62982411e893beeccb2ebcb20d7a4925bdd), [`fc08cc4`](https://github.com/bolt-docs/boltdocs/commit/fc08cc42a759a2e771fcdf5ab1f8d76ac5108245)]:
+  - @bdocs/plugin-mermaid@0.1.0
+
 ## 2.0.0
 
 ### Major Changes
