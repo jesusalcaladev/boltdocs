@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.5.3
+
+### Patch Changes
+
+- [`613b4b7`](https://github.com/bolt-docs/boltdocs/commit/613b4b7c256b2dec3af6d2aa7eb00f1b9a9beea1) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - removed integrations of config
+
 ## 2.5.2
 
 ### Patch Changes
