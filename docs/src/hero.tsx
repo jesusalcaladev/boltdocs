@@ -1,6 +1,6 @@
-import { Button } from 'boltdocs/client'
-import { ArrowRight } from 'lucide-react'
-import { Terminal } from './terminal'
+import { Button } from "boltdocs/client";
+import { ArrowRight } from "lucide-react";
+import { Terminal } from "./terminal";
 
 export const Hero = () => (
   <section className="relative py-20 px-6 w-full">
@@ -26,9 +26,10 @@ export const Hero = () => (
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <Button
+          href="/docs/guides/overview/introduction"
           iconPosition="right"
           icon={<ArrowRight className="size-4" />}
-          rounded={'full'}
+          rounded={"full"}
           className="bg-text-main text-bg-main"
         >
           Get Started
@@ -37,4 +38,4 @@ export const Hero = () => (
       <Terminal />
     </div>
   </section>
-)
+);
