@@ -89,6 +89,10 @@ export function getBoltdocsConfig(
     locales: {
       en: 'English',
       es: 'Español'
+    },
+    localeConfigs: {
+      en: { label: 'English', direction: 'ltr' },
+      es: { label: 'Español', direction: 'ltr' }
     }
   },`
     : ''
@@ -171,14 +175,13 @@ export function getLayoutPage() {
   Head,
   Breadcrumbs,
   PageNav,
-  ProgressBar,
   ErrorBoundary,
   CopyMarkdown,
   useRoutes,
   useConfig,
   useMdxComponents,
+  useLocation
 } from 'boltdocs/client'
-import { useLocation} from 'boltdocs/hooks'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { routes: filteredRoutes, allRoutes, currentRoute } = useRoutes()
@@ -192,7 +195,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <DocsLayout>
       {/* Modern Spotlight Gradients */}
-      <ProgressBar />
       <Head
         siteTitle={config.theme?.title || 'Boltdocs'}
         siteDescription={config.theme?.description || ''}

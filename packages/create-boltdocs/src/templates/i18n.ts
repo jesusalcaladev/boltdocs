@@ -26,11 +26,11 @@ export function Button({ children, className = '', ...props }: React.ButtonHTMLA
 
   const homePageContent = `import React from 'react';
 import { Button } from './components/Button';
-import { useI18n } from 'boltdocs/hooks';
+import { useI18n } from 'boltdocs/client';
 
 export default function HomePage() {
-  const i18n = useI18n();
-  const locale = (i18n as any)?.locale || 'en';
+  const { currentLocale } = useI18n();
+  const locale = currentLocale || 'en';
   
   const translations: any = {
     en: {

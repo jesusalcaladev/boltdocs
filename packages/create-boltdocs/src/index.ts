@@ -17,6 +17,7 @@ import {
 import { generateEmptyTemplate } from './templates/empty.js'
 import { generateBaseTemplate } from './templates/base.js'
 import { generateI18nTemplate } from './templates/i18n.js'
+import { generateExternalTemplate } from './templates/external.js'
 
 const { green, yellow, bold, cyan, magenta, blue, red, dim } = picocolors
 
@@ -41,7 +42,7 @@ async function run() {
  |____/ \\___/|_____| |_| |____/ \\___/ \\____|____/`),
     ),
   )
-  console.log(dim(`\n  v0.0.1 - The modern documentation framework\n`))
+  console.log(dim(`\n  v0.0.2 - The modern documentation framework\n`))
 
   const response = await prompts([
     {
@@ -69,6 +70,11 @@ async function run() {
           title: yellow('i18n'),
           description: 'Multi-language support (EN/ES).',
           value: 'i18n',
+        },
+        {
+          title: blue('External'),
+          description: 'Custom routes and external layouts.',
+          value: 'external',
         },
       ],
       initial: 1,
@@ -102,13 +108,15 @@ async function run() {
   console.log(`${green('✔')} Created project directory`)
 
   // 2. Generate specific template
-  const configOptions: any = { homePage: './src/HomePage.tsx' }
+  const configOptions: any = { homePage: './src/home-page.tsx' }
 
   if (response.template === 'empty') {
     generateEmptyTemplate(projectDir, response.projectName)
   } else if (response.template === 'i18n') {
     configOptions.i18n = true
     generateI18nTemplate(projectDir)
+  } else if (response.template === 'external') {
+    generateExternalTemplate(projectDir)
   } else {
     generateBaseTemplate(projectDir)
   }

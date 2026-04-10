@@ -24,8 +24,7 @@ export function Button({ children, ...props }: React.ButtonHTMLAttributes<HTMLBu
 `
   fs.writeFileSync(path.join(componentsDir, 'Button.tsx'), buttonContent)
 
-  const homePageContent = `import { Button } from 'boltdocs/primitives';
-import { Cards, Card } from 'boltdocs/mdx'
+  const homePageContent = `import { Button, Cards, Card } from 'boltdocs/client';
 
 export default function HomePage() {
   return (
@@ -72,7 +71,7 @@ export default function HomePage() {
   const docsDir = path.join(projectDir, 'docs')
   fs.mkdirSync(docsDir, { recursive: true })
 
-  fs.writeFileSync(path.join(srcDir, 'HomePage.tsx'), homePageContent)
+  fs.writeFileSync(path.join(srcDir, 'home-page.tsx'), homePageContent)
   fs.writeFileSync(path.join(docsDir, 'layout.tsx'), getLayoutPage())
   fs.writeFileSync(path.join(projectDir, 'index.css'), getIndexCss())
 
