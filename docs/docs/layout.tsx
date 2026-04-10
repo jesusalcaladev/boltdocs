@@ -10,8 +10,8 @@ import {
   CopyMarkdown,
   useRoutes,
   useConfig,
+  useLocation
 } from 'boltdocs/client'
-import { useLocation } from 'boltdocs/hooks'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { routes: filteredRoutes, allRoutes, currentRoute } = useRoutes()

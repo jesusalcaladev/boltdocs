@@ -1,4 +1,4 @@
-import { Link } from "boltdocs/mdx";
+import { Link } from "boltdocs/client";
 
 export const Footer = () => (
   <footer className="pt-24 px-6">
