@@ -35,7 +35,7 @@ export interface NavbarSocialsProps extends ComponentBase {
   link: string
 }
 
-export const NavbarRoot = ({
+export const Navbar = ({
   children,
   className,
   ...props
@@ -53,7 +53,7 @@ export const NavbarRoot = ({
   )
 }
 
-export const NavbarContent = ({ children, className }: ComponentBase) => {
+const NavbarContent = ({ children, className }: ComponentBase) => {
   return (
     <div
       className={cn(
@@ -66,7 +66,7 @@ export const NavbarContent = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const NavbarLeft = ({ children, className }: ComponentBase) => {
+const NavbarLeft = ({ children, className }: ComponentBase) => {
   return (
     <div
       className={cn(
@@ -79,7 +79,7 @@ export const NavbarLeft = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const NavbarRight = ({ children, className }: ComponentBase) => {
+const NavbarRight = ({ children, className }: ComponentBase) => {
   return (
     <div
       className={cn(
@@ -92,7 +92,7 @@ export const NavbarRight = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const NavbarCenter = ({ children, className }: ComponentBase) => {
+const NavbarCenter = ({ children, className }: ComponentBase) => {
   return (
     <div
       className={cn(
@@ -105,7 +105,7 @@ export const NavbarCenter = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const NavbarLogo = ({
+const NavbarLogo = ({
   src,
   alt,
   width = 24,
@@ -130,7 +130,7 @@ export const NavbarLogo = ({
   )
 }
 
-export const NavbarTitle = ({ children, className }: ComponentBase) => {
+const NavbarTitle = ({ children, className }: ComponentBase) => {
   return (
     <Link href="/">
       <span
@@ -145,7 +145,7 @@ export const NavbarTitle = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const NavbarLinks = ({ children, className }: ComponentBase) => {
+const NavbarLinks = ({ children, className }: ComponentBase) => {
   return (
     <nav
       className={cn(
@@ -158,7 +158,7 @@ export const NavbarLinks = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const NavbarLink = ({
+const NavbarLink = ({
   label,
   href,
   active,
@@ -188,7 +188,7 @@ export const NavbarLink = ({
   )
 }
 
-export const NavbarSearchTrigger = ({
+const NavbarSearchTrigger = ({
   className,
   onPress,
 }: NavbarSearchTriggerProps) => {
@@ -226,7 +226,7 @@ export const NavbarSearchTrigger = ({
   )
 }
 
-export const NavbarTheme = ({
+const NavbarTheme = ({
   className,
   theme,
   onThemeChange,
@@ -248,14 +248,14 @@ export const NavbarTheme = ({
   )
 }
 
-export const Icon = ({ name }: { name: BoltdocsSocialLink['icon'] }) => {
+const Icon = ({ name }: { name: BoltdocsSocialLink['icon'] }) => {
   if (name === 'github') return <IconsSocials.Github />
   if (name === 'discord') return <IconsSocials.Discord />
   if (name === 'x') return <IconsSocials.XSocial />
   if (name === 'bluesky') return <IconsSocials.Bluesky />
 }
 
-export const NavbarSocials = ({
+const NavbarSocials = ({
   icon,
   link,
   className,
@@ -277,7 +277,7 @@ export const NavbarSocials = ({
   )
 }
 
-export const NavbarSplit = ({ className }: ComponentBase) => {
+const NavbarSplit = ({ className }: ComponentBase) => {
   return (
     <Separator
       orientation="vertical"
@@ -286,18 +286,18 @@ export const NavbarSplit = ({ className }: ComponentBase) => {
   )
 }
 
-export default {
-  NavbarRoot,
-  NavbarLeft,
-  NavbarRight,
-  NavbarCenter,
-  NavbarLogo,
-  Title: NavbarTitle,
-  Links: NavbarLinks,
-  Link: NavbarLink,
-  SearchTrigger: NavbarSearchTrigger,
-  Theme: NavbarTheme,
-  Socials: NavbarSocials,
-  Split: NavbarSplit,
-  Content: NavbarContent,
-}
+Navbar.Root = Navbar
+Navbar.Left = NavbarLeft
+Navbar.Right = NavbarRight
+Navbar.Center = NavbarCenter
+Navbar.Logo = NavbarLogo
+Navbar.Title = NavbarTitle
+Navbar.Links = NavbarLinks
+Navbar.Link = NavbarLink
+Navbar.SearchTrigger = NavbarSearchTrigger
+Navbar.Theme = NavbarTheme
+Navbar.Socials = NavbarSocials
+Navbar.Split = NavbarSplit
+Navbar.Content = NavbarContent
+
+export default Navbar

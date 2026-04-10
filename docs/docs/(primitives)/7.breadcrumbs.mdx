@@ -17,33 +17,31 @@ The `Breadcrumbs` primitive provides a path-based navigation trail. It's built o
 Breadcrumbs are usually placed at the very top of the content area to help users understand where they are.
 
 ```tsx
-import {
-  BreadcrumbsRoot, BreadcrumbsItem, BreadcrumbsLink, BreadcrumbsSeparator
-} from 'boltdocs/primitives'
+import { PrimitiveBreadcrumbs } from 'boltdocs/client'
 ```
 
 ---
 
 ## API Reference
 
-### BreadcrumbsRoot
+### PrimitiveBreadcrumbs.Root
 The main container for the breadcrumb trail.
 
 <Field name="children" type="ReactNode">
   A list of `BreadcrumbsItem` components.
 </Field>
 
-### BreadcrumbsItem
+### PrimitiveBreadcrumbs.Item
 A single segment in the breadcrumb trail. It handles the list item (`<li>`) semantics.
 
-### BreadcrumbsLink
+### PrimitiveBreadcrumbs.Link
 The clickable part of the breadcrumb. It automatically highlights the current page and disables navigation for it.
 
 <Field name="href" type="string">
   The destination path. If omitted, it renders as a plain text label.
 </Field>
 
-### BreadcrumbsSeparator
+### PrimitiveBreadcrumbs.Separator
 The icon rendered between items (typically a `ChevronRight`).
 
 ---
@@ -53,10 +51,8 @@ The icon rendered between items (typically a `ChevronRight`).
 Using the `useBreadcrumbs` hook, you can automatically generate a trail based on the current page's grouping.
 
 ```tsx
-import { 
-  BreadcrumbsRoot, BreadcrumbsItem, BreadcrumbsLink, BreadcrumbsSeparator 
-} from 'boltdocs/primitives'
-import { useBreadcrumbs } from 'boltdocs/hooks'
+import { PrimitiveBreadcrumbs } from 'boltdocs/client'
+import { useBreadcrumbs } from 'boltdocs/client'
 
 export function CustomBreadcrumbs() {
   const { crumbs } = useBreadcrumbs()
@@ -64,19 +60,19 @@ export function CustomBreadcrumbs() {
   if (crumbs.length === 0) return null
 
   return (
-    <BreadcrumbsRoot>
+    <PrimitiveBreadcrumbs.Root>
       {crumbs.map((crumb, i) => (
-        <BreadcrumbsItem key={i}>
+        <PrimitiveBreadcrumbs.Item key={i}>
           {/* 1. Add separator before all items except the first one */}
-          {i > 0 && <BreadcrumbsSeparator />}
+          {i > 0 && <PrimitiveBreadcrumbs.Separator />}
           
           {/* 2. Render link or label */}
-          <BreadcrumbsLink href={crumb.href}>
+          <PrimitiveBreadcrumbs.Link href={crumb.href}>
             {crumb.label}
-          </BreadcrumbsLink>
-        </BreadcrumbsItem>
+          </PrimitiveBreadcrumbs.Link>
+        </PrimitiveBreadcrumbs.Item>
       ))}
-    </BreadcrumbsRoot>
+    </PrimitiveBreadcrumbs.Root>
   )
 }
 ```

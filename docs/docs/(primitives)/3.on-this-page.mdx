@@ -20,10 +20,8 @@ The table of contents is wrapped in two providers that handle the logic:
 
 ```tsx
 import {
-  OnThisPageRoot, OnThisPageHeader, OnThisPageContent,
-  OnThisPageList, OnThisPageItem, OnThisPageLink,
-  OnThisPageIndicator, AnchorProvider
-} from 'boltdocs/primitives'
+  PrimitiveOnThisPage, AnchorProvider, ScrollProvider
+} from 'boltdocs/client'
 ```
 
 ---
@@ -41,26 +39,26 @@ The logic provider. Wrap your TOC primitives with this.
   When `true`, only one heading can be active at a time.
 </Field>
 
-### OnThisPageRoot
+### PrimitiveOnThisPage.Root
 The main container. Usually sticky on the right side of the page.
 
-### OnThisPageHeader
+### PrimitiveOnThisPage.Header
 A styled heading for the TOC section (e.g., "On this page").
 
-### OnThisPageContent
+### PrimitiveOnThisPage.Content
 The scrollable container for the list of headings. Uses a custom scroll mask for a premium feel.
 
-### OnThisPageList
+### PrimitiveOnThisPage.List
 A `<ul>` container for the heading items.
 
-### OnThisPageItem
+### PrimitiveOnThisPage.Item
 A `<li>` wrapper that handles indentation based on the heading level (h2 vs h3).
 
 <Field name="level" type="number">
   The heading level (2 or 3).
 </Field>
 
-### OnThisPageLink
+### PrimitiveOnThisPage.Link
 A smart `<a>` tag that highlights when its corresponding heading is in view.
 
 <Field name="href" type="string" required>
@@ -78,8 +76,8 @@ A smart `<a>` tag that highlights when its corresponding heading is in view.
 Using the `AnchorProvider` and the `OnThisPage` primitives, you can build a custom TOC that perfectly fits your design.
 
 ```tsx
-import { AnchorProvider, OnThisPageRoot, OnThisPageLink } from 'boltdocs/primitives'
-import { useRoutes } from 'boltdocs/hooks'
+import { AnchorProvider, PrimitiveOnThisPage } from 'boltdocs/client'
+import { useRoutes } from 'boltdocs/client'
 
 export function CustomTOC() {
   const { currentRoute } = useRoutes()
@@ -87,17 +85,17 @@ export function CustomTOC() {
 
   return (
     <AnchorProvider toc={headings}>
-      <OnThisPageRoot>
+      <PrimitiveOnThisPage.Root>
         <span className="font-bold mb-4 block">Navigation</span>
         
         <div className="flex flex-col gap-2">
           {headings.map(h => (
-            <OnThisPageLink key={h.url} href={h.url}>
+            <PrimitiveOnThisPage.Link key={h.url} href={h.url}>
               {h.title}
-            </OnThisPageLink>
+            </PrimitiveOnThisPage.Link>
           ))}
         </div>
-      </OnThisPageRoot>
+      </PrimitiveOnThisPage.Root>
     </AnchorProvider>
   )
 }
@@ -110,7 +108,7 @@ export function CustomTOC() {
 If you are building a custom TOC and need to know which heading is currently active (e.g., to animate an indicator), use the `useActiveAnchor` hook.
 
 ```tsx
-import { useActiveAnchor } from 'boltdocs/primitives'
+import { useActiveAnchor } from 'boltdocs/client'
 
 function Indicator() {
   const activeId = useActiveAnchor()
@@ -128,17 +126,17 @@ function Indicator() {
 By wrapping `OnThisPageContent` with a `ScrollProvider`, the TOC list will automatically scroll to keep the active item in view. This is useful for very long pages with many headings.
 
 ```tsx
-import { ScrollProvider, OnThisPageContent } from 'boltdocs/primitives'
+import { ScrollProvider, PrimitiveOnThisPage } from 'boltdocs/client'
 
 function TOCBody() {
   const scrollRef = useRef(null)
   
   return (
-    <ScrollProvider containerRef={scrollRef}>
-       <OnThisPageContent ref={scrollRef}>
-          {/* list of headings */}
-       </OnThisPageContent>
-    </ScrollProvider>
+      <ScrollProvider containerRef={scrollRef}>
+         <PrimitiveOnThisPage.Content ref={scrollRef}>
+            {/* list of headings */}
+         </PrimitiveOnThisPage.Content>
+      </ScrollProvider>
   )
 }
 ```
@@ -149,12 +147,10 @@ function TOCBody() {
 
 ```tsx
 import {
-  AnchorProvider, ScrollProvider,
-  OnThisPageRoot, OnThisPageHeader, OnThisPageContent,
-  OnThisPageList, OnThisPageItem, OnThisPageLink, OnThisPageIndicator,
+  AnchorProvider, ScrollProvider, PrimitiveOnThisPage,
   useActiveAnchor,
-} from 'boltdocs/primitives'
-import { useRoutes } from 'boltdocs/hooks'
+} from 'boltdocs/client'
+import { useRoutes } from 'boltdocs/client'
 import { useRef } from 'react'
 
 function CustomToC() {
@@ -172,21 +168,20 @@ function CustomToC() {
   return (
     <AnchorProvider toc={toc} single>
       <ScrollProvider containerRef={scrollRef}>
-        <OnThisPageRoot>
-          <OnThisPageHeader>ON THIS PAGE</OnThisPageHeader>
-
-          <OnThisPageContent ref={scrollRef}>
-            <OnThisPageList>
+        <PrimitiveOnThisPage.Root>
+          <PrimitiveOnThisPage.Header>ON THIS PAGE</PrimitiveOnThisPage.Header>
+          <PrimitiveOnThisPage.Content ref={scrollRef}>
+            <PrimitiveOnThisPage.List>
               {toc.map((item) => (
-                <OnThisPageItem key={item.url} level={item.depth}>
-                  <OnThisPageLink href={item.url}>
+                <PrimitiveOnThisPage.Item key={item.url} level={item.depth}>
+                  <PrimitiveOnThisPage.Link href={item.url}>
                     {item.title}
-                  </OnThisPageLink>
-                </OnThisPageItem>
+                  </PrimitiveOnThisPage.Link>
+                </PrimitiveOnThisPage.Item>
               ))}
-            </OnThisPageList>
-          </OnThisPageContent>
-        </OnThisPageRoot>
+            </PrimitiveOnThisPage.List>
+          </PrimitiveOnThisPage.Content>
+        </PrimitiveOnThisPage.Root>
       </ScrollProvider>
     </AnchorProvider>
   )

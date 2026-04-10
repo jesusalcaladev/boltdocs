@@ -17,34 +17,32 @@ The `PageNav` primitive renders "Previous" and "Next" buttons at the bottom of a
 The page navigation consists of a root container and individual links that automatically handle the "Prev" and "Next" labels.
 
 ```tsx
-import { PageNavRoot, PageNavLink } from 'boltdocs/primitives'
+import { PrimitivePageNav } from 'boltdocs/client'
 ```
 
 ---
 
 ## API Reference
 
-### PageNavRoot
+### PrimitivePageNav.Root
 The main container, typically placed at the very end of the MDX content.
 
-<Field name="children" type="ReactNode">
-  Expected to contain two `PageNavLink` components.
-</Field>
-
-### PageNavLink
+### PrimitivePageNav.Link
 A specialized link button that displays a directional arrow and a page title.
 
-<Field name="type" type='"prev" | "next"' required>
+<Field name="direction" type='"prev" | "next"' required>
   Determines the arrow direction and the default label prefix.
 </Field>
 
-<Field name="href" type="string" required>
+<Field name="to" type="string" required>
   The destination path.
 </Field>
 
-<Field name="label" type="string" required>
-  The title of the target page.
-</Field>
+### PrimitivePageNav.Title
+A small uppercase label for the link (e.g., "PREVIOUS" or "NEXT").
+
+### PrimitivePageNav.Description
+The title of the target page.
 
 ---
 
@@ -53,8 +51,8 @@ A specialized link button that displays a directional arrow and a page title.
 Using the `usePageNav` hook, you can render the navigation section only when adjacent pages exist.
 
 ```tsx
-import { PageNavRoot, PageNavLink } from 'boltdocs/primitives'
-import { usePageNav } from 'boltdocs/hooks'
+import { PrimitivePageNav } from 'boltdocs/client'
+import { usePageNav } from 'boltdocs/client'
 
 export function CustomFooterNav() {
   const { prevPage, nextPage } = usePageNav()
@@ -62,23 +60,27 @@ export function CustomFooterNav() {
   if (!prevPage && !nextPage) return null
 
   return (
-    <PageNavRoot>
+    <PrimitivePageNav.Root>
       {prevPage && (
-        <PageNavLink 
-          type="prev" 
-          href={prevPage.path} 
-          label={prevPage.title} 
-        />
+        <PrimitivePageNav.Link 
+          direction="prev" 
+          to={prevPage.path}
+        >
+          <PrimitivePageNav.Title>Previous</PrimitivePageNav.Title>
+          <PrimitivePageNav.Description>{prevPage.title}</PrimitivePageNav.Description>
+        </PrimitivePageNav.Link>
       )}
       
       {nextPage && (
-        <PageNavLink 
-          type="next" 
-          href={nextPage.path} 
-          label={nextPage.title} 
-        />
+        <PrimitivePageNav.Link 
+          direction="next" 
+          to={nextPage.path}
+        >
+          <PrimitivePageNav.Title>Next</PrimitivePageNav.Title>
+          <PrimitivePageNav.Description>{nextPage.title}</PrimitivePageNav.Description>
+        </PrimitivePageNav.Link>
       )}
-    </PageNavRoot>
+    </PrimitivePageNav.Root>
   )
 }
 ```

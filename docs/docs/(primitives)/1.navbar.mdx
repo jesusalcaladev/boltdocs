@@ -17,19 +17,14 @@ The Navbar in Boltdocs is not a monolithic component but a set of **composable p
 Boltdocs splits the Navbar into several specialized sub-components that you assemble inside a `NavbarRoot`.
 
 ```tsx
-import {
-  NavbarRoot, NavbarContent, NavbarLeft, NavbarRight, NavbarCenter,
-  NavbarLogo, NavbarTitle, NavbarLinks, NavbarLink,
-  NavbarSearchTrigger, NavbarTheme, NavbarMenu, NavbarItem,
-  NavbarSocials, NavbarSplit
-} from 'boltdocs/primitives'
+import { PrimitiveNavbar } from 'boltdocs/client' 
 ```
 
 ---
 
 ## API Reference
 
-### NavbarRoot
+### PrimitiveNavbar.Root
 The main `<header>` container. It is `sticky` by default and handles the glassmorphism backdrop.
 
 <Field name="children" type="ReactNode">
@@ -40,16 +35,16 @@ The main `<header>` container. It is `sticky` by default and handles the glassmo
   Override default styles. Defaults: `sticky top-0 z-50 w-full border-b backdrop-blur-md`.
 </Field>
 
-### NavbarContent
+### PrimitiveNavbar.Content
 A max-width centered container (`mx-auto max-w-7xl`) that keeps content aligned with the rest of the page layout.
 
-### NavbarLeft, NavbarCenter, NavbarRight
+### PrimitiveNavbar.Left, PrimitiveNavbar.Center, PrimitiveNavbar.Right
 Layout slots using Flexbox to align content.
 - **Left**: Typically for Logo and Title.
 - **Center**: Typically for Navigation Links (hidden on mobile).
 - **Right**: Typically for Search, Theme Toggle, and Socials.
 
-### NavbarLogo
+### PrimitiveNavbar.Logo
 Renders the site logo as a link to the home page.
 
 <Field name="src" type="string" required>
@@ -64,7 +59,7 @@ Renders the site logo as a link to the home page.
   Width in pixels.
 </Field>
 
-### NavbarLink
+### PrimitiveNavbar.Link
 A smart link that knows its active state based on the current URL.
 
 <Field name="label" type="ReactNode" required>
@@ -83,14 +78,14 @@ A smart link that knows its active state based on the current URL.
   Use `"external"` to add an icon and `target="_blank"`.
 </Field>
 
-### NavbarSearchTrigger
+### PrimitiveNavbar.SearchTrigger
 The button that triggers the search modal. It includes platform-specific keyboard shortcuts (⌘K or Ctrl+K).
 
 <Field name="onPress" type="() => void" required>
   Callback to open your search implementation.
 </Field>
 
-### NavbarTheme
+### PrimitiveNavbar.Theme
 A pre-styled theme toggle with smooth icon transitions.
 
 <Field name="theme" type='"dark" | "light"' required>
@@ -109,30 +104,30 @@ If you want to create a bespoke navbar that looks nothing like the default, you 
 
 ```tsx
 import { 
-  NavbarRoot, NavbarContent, NavbarLeft, NavbarRight, NavbarLink 
-} from 'boltdocs/primitives'
-import { useNavbar, useSearch } from 'boltdocs/hooks'
+  PrimitiveNavbar 
+} from 'boltdocs/client'
+import { useNavbar, useSearch } from 'boltdocs/client'
 
 export function CustomNavbar() {
   const { title, logo, links } = useNavbar()
   const { setIsOpen } = useSearch()
 
   return (
-    <NavbarRoot>
-      <NavbarContent>
-        <NavbarLeft>
+    <PrimitiveNavbar.Root>
+      <PrimitiveNavbar.Content>
+        <PrimitiveNavbar.Left>
            <img src={logo} alt={title} className="h-8" />
            <span className="font-black italic">{title}</span>
-        </NavbarLeft>
+        </PrimitiveNavbar.Left>
 
-        <NavbarRight>
+        <PrimitiveNavbar.Right>
           {links.map(link => (
-            <NavbarLink key={link.href} {...link} />
+            <PrimitiveNavbar.Link key={link.href} {...link} />
           ))}
           <button onClick={() => setIsOpen(true)}>Search</button>
-        </NavbarRight>
-      </NavbarContent>
-    </NavbarRoot>
+        </PrimitiveNavbar.Right>
+      </PrimitiveNavbar.Content>
+    </PrimitiveNavbar.Root>
   )
 }
 ```

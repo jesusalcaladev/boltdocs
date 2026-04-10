@@ -66,26 +66,6 @@ You don't need to configure a router, set up a build pipeline, or wire up a sear
 
 ---
 
-## Architecture Overview
-
-Boltdocs is split into two main layers:
-
-| Layer | Package | What It Does |
-| :--- | :--- | :--- |
-| **Node** | `boltdocs` | Config resolution, file-system routing, MDX compilation, SSG, CLI, plugin orchestration |
-| **Client** | `boltdocs/client` | React components, hooks, layout primitives, theme system, search, state management |
-
-Additional entry points give you granular access:
-
-| Import | Purpose |
-| :--- | :--- |
-| `boltdocs/hooks` | All React hooks (`useRoutes`, `useI18n`, `useVersion`, etc.) |
-| `boltdocs/primitives` | Headless UI building blocks (Navbar, Sidebar, Popover, Tooltip, etc.) |
-| `boltdocs/mdx` | MDX components (Button, Card, Admonition, Table, etc.) |
-| `boltdocs/integrations` | Third-party integrations (CodeSandbox) |
-
----
-
 ## Next Steps
 
 Ready to get started? Head to the [Installation](/docs/guides/overview/installation) guide and have your first docs site running in under 60 seconds.

@@ -30,11 +30,11 @@ export function Navbar() {
   const hasTabs = themeConfig?.tabs && themeConfig.tabs.length > 0
 
   return (
-    <NavbarPrimitive.NavbarRoot className={hasTabs ? 'border-b-0' : ''}>
+    <NavbarPrimitive.Root className={hasTabs ? 'border-b-0' : ''}>
       <NavbarPrimitive.Content>
-        <NavbarPrimitive.NavbarLeft>
+        <NavbarPrimitive.Left>
           {logo && (
-            <NavbarPrimitive.NavbarLogo
+            <NavbarPrimitive.Logo
               src={logo}
               alt={logoProps?.alt || title}
               width={logoProps?.width ?? 24}
@@ -44,8 +44,8 @@ export function Navbar() {
           <NavbarPrimitive.Title>{title}</NavbarPrimitive.Title>
 
           {config.versions && currentVersion && <NavbarVersion />}
-        </NavbarPrimitive.NavbarLeft>
-        <NavbarPrimitive.NavbarCenter>
+        </NavbarPrimitive.Left>
+        <NavbarPrimitive.Center>
           <Suspense
             fallback={
               <div className="h-9 w-32 animate-pulse rounded-md bg-bg-surface" />
@@ -53,8 +53,8 @@ export function Navbar() {
           >
             <SearchDialog routes={routes || []} />
           </Suspense>
-        </NavbarPrimitive.NavbarCenter>
-        <NavbarPrimitive.NavbarRight>
+        </NavbarPrimitive.Center>
+        <NavbarPrimitive.Right>
           <NavbarPrimitive.Links>
             {links.map((link) => (
               <>
@@ -77,7 +77,7 @@ export function Navbar() {
               />
             ))}
           </div>
-        </NavbarPrimitive.NavbarRight>
+        </NavbarPrimitive.Right>
       </NavbarPrimitive.Content>
 
       {isDocs && hasTabs && themeConfig?.tabs && (
@@ -85,7 +85,7 @@ export function Navbar() {
           <Tabs tabs={themeConfig.tabs} routes={allRoutes || routes || []} />
         </div>
       )}
-    </NavbarPrimitive.NavbarRoot>
+    </NavbarPrimitive.Root>
   )
 }
 

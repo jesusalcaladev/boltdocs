@@ -17,24 +17,17 @@ The `SearchDialog` is a complex primitive that handles the search modal, input f
 The search functionality is split into the visual dialog primitives and the `useSearch` hook which manages the indexing and filtering logic.
 
 ```tsx
-import {
-  SearchDialogRoot, SearchDialogAutocomplete,
-  SearchDialogInput, SearchDialogList, SearchDialogItem
-} from 'boltdocs/primitives'
+import { SearchDialogPrimitive } from 'boltdocs/client'
 ```
 
 ---
 
 ## API Reference
 
-### SearchDialogRoot
+### SearchDialogPrimitive.Root
 ```tsx
-import {
-  SearchDialogRoot, SearchDialogAutocomplete, SearchDialogInput,
-  SearchDialogList, SearchDialogItemRoot, SearchDialogItemIcon,
-  SearchDialogItemTitle, SearchDialogItemBio,
-} from 'boltdocs/primitives'
-import { useSearch, useRoutes } from 'boltdocs/hooks'
+import { SearchDialogPrimitive } from 'boltdocs/client'
+import { useSearch, useRoutes } from 'boltdocs/client'
 import { useNavigate } from 'react-router-dom'
 
 function CustomSearch() {
@@ -43,11 +36,11 @@ function CustomSearch() {
   const navigate = useNavigate()
 
   return (
-    <SearchDialogRoot
+    <SearchDialogPrimitive.Root
       isOpen={search.isOpen}
       onOpenChange={search.setIsOpen}
     >
-      <SearchDialogAutocomplete
+      <SearchDialogPrimitive.Autocomplete
         onSelectionChange={(key) => {
           if (key) {
             navigate(String(key))
@@ -55,27 +48,27 @@ function CustomSearch() {
           }
         }}
       >
-        <SearchDialogInput {...search.input} />
+        <SearchDialogPrimitive.Input {...search.input} />
 
-        <SearchDialogList items={search.list}>
+        <SearchDialogPrimitive.List items={search.list}>
           {(item) => (
-            <SearchDialogItemRoot
+            <SearchDialogPrimitive.Item
               key={item.id}
               id={item.path}
               textValue={item.title}
             >
-              <SearchDialogItemIcon isHeading={item.isHeading} />
+              <SearchDialogPrimitive.Item.Icon isHeading={item.isHeading} />
               <div className="flex flex-col min-w-0 flex-1">
-                <SearchDialogItemTitle>{item.title}</SearchDialogItemTitle>
+                <SearchDialogPrimitive.Item.Title>{item.title}</SearchDialogPrimitive.Item.Title>
                 {item.bio && (
-                  <SearchDialogItemBio>{item.bio}</SearchDialogItemBio>
+                  <SearchDialogPrimitive.Item.Bio>{item.bio}</SearchDialogPrimitive.Item.Bio>
                 )}
               </div>
-            </SearchDialogItemRoot>
+            </SearchDialogPrimitive.Item>
           )}
-        </SearchDialogList>
-      </SearchDialogAutocomplete>
-    </SearchDialogRoot>
+        </SearchDialogPrimitive.List>
+      </SearchDialogPrimitive.Autocomplete>
+    </SearchDialogPrimitive.Root>
   )
 }
 ```

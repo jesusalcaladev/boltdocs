@@ -16,7 +16,7 @@ Boltdocs provides a set of core UI primitives that serve as the building blocks 
 A versatile button component with multiple variants.
 
 ```tsx
-import { Button } from 'boltdocs/primitives'
+import { PrimitiveButton } from 'boltdocs/client'
 ```
 
 <Field name="variant" type='"primary" | "secondary" | "ghost" | "danger"'>
@@ -37,7 +37,7 @@ import { Button } from 'boltdocs/primitives'
 A smart link that automatically handles internal (client-side) vs external navigation.
 
 ```tsx
-import { Link } from 'boltdocs/primitives'
+import { PrimitiveLink } from 'boltdocs/client'
 ```
 
 <Field name="href" type="string" required>
@@ -54,7 +54,7 @@ import { Link } from 'boltdocs/primitives'
 Floating UI elements for providing additional context.
 
 ```tsx
-import { Tooltip, Popover } from 'boltdocs/primitives'
+import { PrimitiveTooltip, PrimitivePopover } from 'boltdocs/client'
 ```
 
 ### Tooltip API
@@ -72,7 +72,7 @@ import { Tooltip, Popover } from 'boltdocs/primitives'
 A loading placeholder that mimics the layout of your final content.
 
 ```tsx
-import { Skeleton } from 'boltdocs/primitives'
+import { PrimitiveSkeleton } from 'boltdocs/client'
 ```
 
 <Field name="className" type="string">
@@ -85,16 +85,16 @@ import { Skeleton } from 'boltdocs/primitives'
 A high-level accessible dropdown menu.
 
 ```tsx
-import { Menu, MenuTrigger, MenuItem } from 'boltdocs/primitives'
+import { PrimitiveMenu } from 'boltdocs/client'
 ```
 
 ### Full Example
 ```tsx
-<MenuTrigger>
+<PrimitiveMenu.Trigger>
   <button>Options</button>
-  <Menu>
-    <MenuItem onAction={() => console.log('Edit')}>Edit</MenuItem>
-    <MenuItem onAction={() => console.log('Delete')}>Delete</MenuItem>
-  </Menu>
-</MenuTrigger>
+  <PrimitiveMenu.Root>
+    <PrimitiveMenu.Item onAction={() => console.log('Edit')}>Edit</PrimitiveMenu.Item>
+    <PrimitiveMenu.Item onAction={() => console.log('Delete')}>Delete</PrimitiveMenu.Item>
+  </PrimitiveMenu.Root>
+</PrimitiveMenu.Trigger>
 ```
