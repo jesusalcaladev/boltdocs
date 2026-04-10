@@ -55,10 +55,6 @@ These are the top-level properties of `BoltdocsConfig`.
 </Field>
 
 
-<Field name="integrations" type="BoltdocsIntegrationsConfig">
-  Settings for third-party integrations like CodeSandbox. See [Integrations Configuration](#integrations-configuration) below.
-</Field>
-
 <Field name="robots" type="BoltdocsRobotsConfig">
   Configuration for the auto-generated `robots.txt` file. See [Robots Configuration](#robots-configuration) below.
 </Field>
@@ -312,28 +308,6 @@ You can also pass a raw string if you prefer to write it manually:
 robots: 'User-agent: *\nAllow: /'
 ```
 
----
-
-## Integrations Configuration
-
-```ts title="boltdocs.config.ts"
-export default defineConfig({
-  integrations: {
-    sandbox: {
-      enable: true,
-      config: { /* default sandbox options */ },
-    },
-  },
-})
-```
-
-<Field name="sandbox.enable" type="boolean" defaultValue="false">
-  Whether to enable the "Open in Sandbox" button on code blocks.
-</Field>
-
-<Field name="sandbox.config" type="Record<string, unknown>">
-  Default options passed to all sandbox instances.
-</Field>
 
 ---
 

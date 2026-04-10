@@ -34,8 +34,6 @@ config.i18n?.locales         // { en: 'English', es: 'Español' }
 config.versions?.defaultVersion  // 'v2'
 config.versions?.versions        // [{ label: 'v2.0', path: '2' }]
 
-// Access integrations
-config.integrations?.sandbox?.enable  // true
 ```
 
 ---
@@ -62,5 +60,5 @@ function Footer() {
 ```
 
 <Tip>
-  The client-side config is a subset of the full Node config — it includes `theme`, `i18n`, `versions`, `integrations`, and `siteUrl`. Build-time-only fields like `docsDir` and `plugins` are not serialized.
+  The client-side config is a subset of the full Node config — it includes `theme`, `i18n`, `versions`, and `siteUrl`. Build-time-only fields like `docsDir` and `plugins` are not serialized.
 </Tip>
