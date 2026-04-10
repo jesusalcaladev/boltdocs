@@ -54,11 +54,13 @@ export function CodeBlock(props: CodeBlockProps) {
     hideSandbox = true,
     hideCopy = false,
     highlightedHtml,
+    'data-highlighted-html': dataHighlightedHtml,
     title,
     'data-lang': dataLang,
     plain = false,
     ...rest
   } = props
+  const effectiveHighlightedHtml = highlightedHtml || dataHighlightedHtml
   const config = useConfig()
   const globalSandbox = config?.integrations?.sandbox
   const isSandboxEnabled = !!globalSandbox?.enable && !hideSandbox
@@ -132,12 +134,12 @@ export function CodeBlock(props: CodeBlockProps) {
       </div>
 
       {/* Code Content */}
-      {highlightedHtml ? (
+      {effectiveHighlightedHtml ? (
         <div
           // @ts-ignore
           ref={preRef}
           className="shiki-wrapper [&>pre]:m-0! [&>pre]:rounded-none! [&>pre]:border-none! [&>pre]:bg-inherit! [&>pre>code]:grid! [&>pre>code]:p-5! [&>.shiki.shiki-themes]:bg-transparent!"
-          dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+          dangerouslySetInnerHTML={{ __html: effectiveHighlightedHtml }}
         />
       ) : (
         <pre

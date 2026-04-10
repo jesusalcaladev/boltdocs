@@ -56,7 +56,6 @@ export function boltdocsMdxPlugin(
       ...(extraRehypePlugins as any[]),
     ],
     jsxRuntime: 'automatic',
-    providerImportSource: '@mdx-js/react',
   }) as Plugin
 
   return {

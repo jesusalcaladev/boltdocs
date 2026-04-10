@@ -1,4 +1,3 @@
-import { MDXProvider } from '@mdx-js/react'
 import { useMdxComponents } from './mdx-components-context'
 
 /**
@@ -11,9 +10,6 @@ export function MdxPage({
   Component: React.ComponentType<any>
 }) {
   const allComponents = useMdxComponents()
-  return (
-    <MDXProvider components={allComponents as any}>
-      <Component />
-    </MDXProvider>
-  )
+
+  return <Component components={allComponents as any} />
 }
