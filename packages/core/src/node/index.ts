@@ -78,7 +78,7 @@ export type { BoltdocsPluginOptions }
 export { generateStaticPages } from './ssg'
 export type { SSGOptions } from './ssg'
 export type { RouteMeta } from './routes'
-export type { BoltdocsConfig, BoltdocsThemeConfig } from './config'
+export type { BoltdocsConfig, BoltdocsThemeConfig, BoltdocsPlugin } from './config'
 export { resolveConfig, defineConfig } from './config'
 
 export * from './plugins'

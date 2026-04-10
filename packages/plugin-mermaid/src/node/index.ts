@@ -1,4 +1,5 @@
 import { visit } from 'unist-util-visit'
+import type { BoltdocsPlugin } from 'boltdocs'
 
 /**
  * A Remark plugin that detects mermaid code blocks and transforms them
@@ -36,7 +37,7 @@ export function remarkMermaid() {
 /**
  * The standard Boltdocs Mermaid plugin.
  */
-export default function mermaidPlugin() {
+export default function mermaidPlugin(): BoltdocsPlugin {
   return {
     name: 'boltdocs-plugin-mermaid',
     version: '0.0.2',
