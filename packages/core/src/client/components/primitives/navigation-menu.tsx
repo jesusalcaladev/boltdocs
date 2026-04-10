@@ -13,8 +13,8 @@ export interface NavigationMenuLinkProps
   label: string
   description?: string
   children?:
-    | React.ReactNode
-    | ((opts: RAC.MenuItemRenderProps) => React.ReactNode)
+  | React.ReactNode
+  | ((opts: RAC.MenuItemRenderProps) => React.ReactNode)
 }
 
 export type NavigationMenuComponent = CompoundComponent<
@@ -26,7 +26,7 @@ export type NavigationMenuComponent = CompoundComponent<
   }
 >
 
-const NavigationMenuRoot = ({
+export const NavigationMenu = ({
   children,
   className,
   ...props
@@ -108,9 +108,7 @@ const NavigationMenuLink = ({
   )
 }
 
-export default {
-  NavigationMenuRoot,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink,
-}
+NavigationMenu.Root = NavigationMenu
+NavigationMenu.List = NavigationMenuList
+NavigationMenu.Item = NavigationMenuItem
+NavigationMenu.Link = NavigationMenuLink

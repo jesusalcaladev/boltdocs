@@ -19,7 +19,7 @@ export interface SearchDialogItemIconProps {
   className?: string
 }
 
-export const SearchDialogRoot = ({
+export const SearchDialog = ({
   children,
   isOpen,
   onOpenChange,
@@ -50,7 +50,7 @@ export const SearchDialogRoot = ({
   )
 }
 
-export const SearchDialogAutocomplete = <T extends object>({
+const SearchDialogAutocomplete = <T extends object>({
   children,
   className,
   onSelectionChange,
@@ -73,7 +73,7 @@ export const SearchDialogAutocomplete = <T extends object>({
   )
 }
 
-export const SearchDialogInput = ({
+const SearchDialogInput = ({
   className,
   ...props
 }: RAC.InputProps & { className?: string }) => {
@@ -98,7 +98,7 @@ export const SearchDialogInput = ({
   )
 }
 
-export const SearchDialogList = <T extends object>({
+const SearchDialogList = <T extends object>({
   children,
   className,
   ...props
@@ -113,7 +113,7 @@ export const SearchDialogList = <T extends object>({
   )
 }
 
-export const SearchDialogItemRoot = ({
+const SearchDialogItemRoot = ({
   children,
   className,
   ...props
@@ -142,7 +142,7 @@ export const SearchDialogItemRoot = ({
   )
 }
 
-export const SearchDialogItemIcon = ({
+const SearchDialogItemIcon = ({
   isHeading,
   className,
 }: SearchDialogItemIconProps) => {
@@ -153,7 +153,7 @@ export const SearchDialogItemIcon = ({
   )
 }
 
-export const SearchDialogItemTitle = ({
+const SearchDialogItemTitle = ({
   children,
   className,
 }: ComponentBase) => {
@@ -166,7 +166,7 @@ export const SearchDialogItemTitle = ({
   )
 }
 
-export const SearchDialogItemBio = ({ children, className }: ComponentBase) => {
+const SearchDialogItemBio = ({ children, className }: ComponentBase) => {
   return (
     <span
       className={cn(
@@ -179,14 +179,12 @@ export const SearchDialogItemBio = ({ children, className }: ComponentBase) => {
   )
 }
 
-export default {
-  Root: SearchDialogRoot,
-  Autocomplete: SearchDialogAutocomplete,
-  Input: SearchDialogInput,
-  List: SearchDialogList,
-  Item: Object.assign(SearchDialogItemRoot, {
-    Icon: SearchDialogItemIcon,
-    Title: SearchDialogItemTitle,
-    Bio: SearchDialogItemBio,
-  }),
-}
+SearchDialog.Root = SearchDialog
+SearchDialog.Autocomplete = SearchDialogAutocomplete
+SearchDialog.Input = SearchDialogInput
+SearchDialog.List = SearchDialogList
+SearchDialog.Item = Object.assign(SearchDialogItemRoot, {
+  Icon: SearchDialogItemIcon,
+  Title: SearchDialogItemTitle,
+  Bio: SearchDialogItemBio,
+})

@@ -42,12 +42,6 @@ export default defineConfig([
     platform: 'browser',
     entry: {
       'client/index': 'src/client/index.ts',
-      'client/types': 'src/client/types.ts',
-      'hooks/index': 'src/client/hooks/index.ts',
-      'primitives/index': 'src/client/components/primitives/index.ts',
-      'base-ui/index': 'src/client/components/ui-base/index.ts',
-      'mdx/index': 'src/client/components/mdx/index.ts',
-      'integrations/index': 'src/client/integrations/index.ts',
     },
   },
   // SSR Build (Needs Node platform for Server-Side Rendering)

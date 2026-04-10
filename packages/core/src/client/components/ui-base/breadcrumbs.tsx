@@ -1,10 +1,7 @@
 import { useBreadcrumbs } from '@hooks/use-breadcrumbs'
 import { Home } from 'lucide-react'
 import {
-  BreadcrumbsItem,
-  BreadcrumbsLink,
-  BreadcrumbsRoot,
-  BreadcrumbsSeparator,
+  Breadcrumbs as BreadcrumbsRoot,
 } from '@components/primitives/breadcrumbs'
 import { cn } from '@client/utils/cn'
 import { useConfig } from '@client/app/config-context'
@@ -19,25 +16,25 @@ export function Breadcrumbs() {
   if (!themeConfig?.breadcrumbs) return null
 
   return (
-    <BreadcrumbsRoot>
-      <BreadcrumbsItem>
-        <BreadcrumbsLink href="/">
+    <BreadcrumbsRoot.Root>
+      <BreadcrumbsRoot.Item>
+        <BreadcrumbsRoot.Link href="/">
           <Home size={14} />
-        </BreadcrumbsLink>
-      </BreadcrumbsItem>
+        </BreadcrumbsRoot.Link>
+      </BreadcrumbsRoot.Item>
       {crumbs.map((crumb, i) => (
-        <BreadcrumbsItem key={`crumb-${crumb.href}-${crumb.label}-${i}`}>
-          <BreadcrumbsSeparator />
-          <BreadcrumbsLink
+        <BreadcrumbsRoot.Item key={`crumb-${crumb.href}-${crumb.label}-${i}`}>
+          <BreadcrumbsRoot.Separator />
+          <BreadcrumbsRoot.Link
             href={crumb.href}
             className={cn({
               'font-medium text-text-main': crumb.href === activeRoute?.path,
             })}
           >
             {crumb.label}
-          </BreadcrumbsLink>
-        </BreadcrumbsItem>
+          </BreadcrumbsRoot.Link>
+        </BreadcrumbsRoot.Item>
       ))}
-    </BreadcrumbsRoot>
+    </BreadcrumbsRoot.Root>
   )
 }

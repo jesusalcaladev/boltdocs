@@ -10,6 +10,8 @@ export { useTheme } from '@client/app/theme-context'
 export { useRoutes } from '@client/hooks/use-routes'
 export { useMdxComponents } from '@client/app/mdx-components-context'
 
+// Hooks
+export * from '@hooks/index'
 // Composable layout building blocks
 export { DocsLayout } from '@components/docs-layout'
 export { DefaultLayout } from '@components/default-layout'
@@ -28,18 +30,8 @@ export { NotFound } from '@components/ui-base/not-found'
 export { Loading } from '@components/ui-base/loading'
 export { CodeBlock } from '@components/mdx/code-block'
 export { Video } from '@components/mdx/video'
-export {
-  defineSandbox,
-  openSandbox,
-  embedSandbox,
-} from '@integrations/codesandbox'
 
-export type {
-  SandboxOptions,
-  SandboxFile,
-  SandboxFiles,
-  SandboxEmbedOptions,
-} from './types'
+// MDX Components
 export {
   Button,
   Badge,
@@ -64,6 +56,7 @@ export {
   Link,
   Image,
 } from './components/mdx'
+
 export type {
   ButtonProps,
   BadgeProps,
@@ -81,3 +74,33 @@ export type {
   LinkProps,
   ImageProps,
 } from './components/mdx'
+
+// Primitives
+export { NavbarRoot as PrimitiveNavbar } from './components/primitives/navbar'
+export { NavigationMenu as PrimitiveNavigationMenu } from './components/primitives/navigation-menu'
+export { SearchDialog as SearchDialogPrimitive } from './components/primitives/search-dialog'
+export {
+  OnThisPage as PrimitiveOnThisPage,
+  AnchorProvider,
+  ScrollProvider,
+  useActiveAnchor,
+  useActiveAnchors,
+  useItems,
+} from './components/primitives/on-this-page'
+export { PageNav as PrimitivePageNav } from './components/primitives/page-nav'
+export { Tabs as PrimitiveTabs } from './components/primitives/tabs'
+export { Sidebar as PrimitiveSidebar } from './components/primitives/sidebar'
+export { Breadcrumbs as PrimitiveBreadcrumbs } from './components/primitives/breadcrumbs'
+export { Button as PrimitiveButton } from './components/primitives/button'
+export { ButtonGroup } from './components/primitives/button-group'
+export { Menu as PrimitiveMenu } from './components/primitives/menu'
+export { Popover as PrimitivePopover } from './components/primitives/popover'
+export { Tooltip as PrimitiveTooltip } from './components/primitives/tooltip'
+export {
+  Link as PrimitiveLink,
+  NavLink as PrimitiveNavLink,
+} from './components/primitives/link'
+export { Skeleton as PrimitiveSkeleton } from './components/primitives/skeleton'
+
+// Utilities
+export { cn } from './utils/cn'

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useSidebar } from '@hooks/use-sidebar'
-import SidebarPrimitive from '@components/primitives/sidebar'
+import { Sidebar as SidebarPrimitive } from '@components/primitives/sidebar'
 import { PoweredBy } from './powered-by'
 import * as LucideIcons from 'lucide-react'
 import type { ComponentRoute } from '@client/types'
@@ -41,7 +41,7 @@ function CollapsibleSidebarGroup({
   }, [hasActiveRoute])
 
   return (
-    <SidebarPrimitive.SidebarGroup
+    <SidebarPrimitive.Group
       title={group.title}
       isOpen={isOpen}
       onToggle={() => setIsOpen(!isOpen)}
@@ -51,7 +51,7 @@ function CollapsibleSidebarGroup({
           activePath ===
           (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
         return (
-          <SidebarPrimitive.SidebarLink
+          <SidebarPrimitive.Link
             key={route.path}
             label={route.title}
             href={route.path}
@@ -61,7 +61,7 @@ function CollapsibleSidebarGroup({
           />
         )
       })}
-    </SidebarPrimitive.SidebarGroup>
+    </SidebarPrimitive.Group>
   )
 }
 
@@ -76,15 +76,15 @@ export function Sidebar({
   const themeConfig = config.theme || {}
 
   return (
-    <SidebarPrimitive.SidebarRoot>
+    <SidebarPrimitive.Root>
       {ungrouped.length > 0 && (
-        <SidebarPrimitive.SidebarGroup className="mb-6">
+        <SidebarPrimitive.Group className="mb-6">
           {ungrouped.map((route) => {
             const isCurrent =
               activePath ===
               (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
             return (
-              <SidebarPrimitive.SidebarLink
+              <SidebarPrimitive.Link
                 key={route.path}
                 label={route.title}
                 href={route.path}
@@ -94,7 +94,7 @@ export function Sidebar({
               />
             )
           })}
-        </SidebarPrimitive.SidebarGroup>
+        </SidebarPrimitive.Group>
       )}
 
       {groups.map((group) => (
@@ -111,6 +111,6 @@ export function Sidebar({
           <PoweredBy />
         </div>
       )}
-    </SidebarPrimitive.SidebarRoot>
+    </SidebarPrimitive.Root>
   )
 }

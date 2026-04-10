@@ -14,7 +14,7 @@ export interface TooltipProps extends Omit<RAC.TooltipProps, 'children'> {
 }
 
 // Fixed type for TooltipContentProps to match RAC's internal expectations
-export interface TooltipContentProps extends RAC.TooltipProps {}
+export interface TooltipContentProps extends RAC.TooltipProps { }
 
 /**
  * Modern, accessible Tooltip component built with React Aria Components.
@@ -77,7 +77,5 @@ export const Tooltip = ({
   )
 }
 
-export default {
-  Tooltip,
-  TooltipContent,
-}
+Tooltip.Root = Tooltip
+Tooltip.Content = TooltipContent

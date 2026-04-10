@@ -1,4 +1,5 @@
-import OTP, {
+import {
+  OnThisPage as OTP,
   AnchorProvider,
   ScrollProvider,
   useActiveAnchor,
@@ -81,35 +82,35 @@ function OnThisPageInner({
   )
 
   return (
-    <OTP.OnThisPageRoot>
-      <OTP.OnThisPageHeader className="flex flex-row gap-x-2">
+    <OTP.Root>
+      <OTP.Header className="flex flex-row gap-x-2">
         <TextAlignStart size={16} />
         On this page
-      </OTP.OnThisPageHeader>
+      </OTP.Header>
       <ScrollProvider containerRef={scrollContainerRef}>
-        <OTP.OnThisPageContent
+        <OTP.Content
           className="max-h-[450px] boltdocs-otp-scroll-area"
           ref={scrollContainerRef}
         >
-          <OTP.OnThisPageIndicator style={indicatorStyle} />
+          <OTP.Indicator style={indicatorStyle} />
           <ul
             className="relative space-y-2 border-l border-border-subtle"
             ref={listRef}
           >
             {headings.map((h) => (
-              <OTP.OnThisPageItem key={h.id} level={h.level}>
-                <OTP.OnThisPageLink
+              <OTP.Item key={h.id} level={h.level}>
+                <OTP.Link
                   href={`#${h.id}`}
                   active={activeId === h.id}
                   onClick={(e) => handleClick(e, h.id)}
                   className="pl-4"
                 >
                   {h.text}
-                </OTP.OnThisPageLink>
-              </OTP.OnThisPageItem>
+                </OTP.Link>
+              </OTP.Item>
             ))}
           </ul>
-        </OTP.OnThisPageContent>
+        </OTP.Content>
       </ScrollProvider>
 
       {(editLink || communityHelp) && (
@@ -147,6 +148,6 @@ function OnThisPageInner({
           </ul>
         </div>
       )}
-    </OTP.OnThisPageRoot>
+    </OTP.Root>
   )
 }

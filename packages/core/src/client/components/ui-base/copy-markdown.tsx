@@ -4,8 +4,6 @@ import {
   Button,
   ButtonGroup,
   Menu,
-  MenuItem,
-  MenuTrigger,
   cn,
 } from '@client/components/primitives'
 
@@ -69,7 +67,7 @@ export function CopyMarkdown({ content, mdxRaw, config }: CopyMarkdownProps) {
           {copied ? 'Copied!' : buttonText}
         </Button>
 
-        <MenuTrigger placement="bottom end">
+        <Menu.Trigger placement="bottom end">
           <Button
             variant="ghost"
             isIconOnly
@@ -79,8 +77,8 @@ export function CopyMarkdown({ content, mdxRaw, config }: CopyMarkdownProps) {
               'transition-all duration-300 hover:bg-primary-500/5 hover:text-primary-500',
             )}
           />
-          <Menu className="w-52">
-            <MenuItem onAction={handleCopy}>
+          <Menu.Root className="w-52">
+            <Menu.Item onAction={handleCopy}>
               <Copy
                 size={16}
                 className="size-4 mt-0.5 text-text-muted group-hover:text-primary-500"
@@ -88,8 +86,8 @@ export function CopyMarkdown({ content, mdxRaw, config }: CopyMarkdownProps) {
               <span className="font-medium text-[0.8125rem]">
                 Copy Markdown
               </span>
-            </MenuItem>
-            <MenuItem onAction={handleOpenRaw}>
+            </Menu.Item>
+            <Menu.Item onAction={handleOpenRaw}>
               <ExternalLink
                 size={16}
                 className="size-4 mt-0.5 text-text-muted group-hover:text-primary-500"
@@ -97,9 +95,9 @@ export function CopyMarkdown({ content, mdxRaw, config }: CopyMarkdownProps) {
               <span className="font-medium text-[0.8125rem]">
                 View as Markdown
               </span>
-            </MenuItem>
-          </Menu>
-        </MenuTrigger>
+            </Menu.Item>
+          </Menu.Root>
+        </Menu.Trigger>
       </ButtonGroup>
     </div>
   )

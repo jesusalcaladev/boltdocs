@@ -8,7 +8,7 @@ export interface PageNavProps extends ComponentBase {
   direction: 'prev' | 'next'
 }
 
-export const PageNavRoot = ({ children, className }: ComponentBase) => {
+export const PageNav = ({ children, className }: ComponentBase) => {
   return (
     <nav
       className={cn(
@@ -21,7 +21,7 @@ export const PageNavRoot = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const PageNavLink = ({
+const PageNavLink = ({
   children,
   to,
   direction,
@@ -50,7 +50,7 @@ export const PageNavLink = ({
   )
 }
 
-export const PageNavTitle = ({ children, className }: ComponentBase) => {
+const PageNavTitle = ({ children, className }: ComponentBase) => {
   return (
     <span
       className={cn(
@@ -63,7 +63,7 @@ export const PageNavTitle = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const PageNavDescription = ({ children, className }: ComponentBase) => {
+const PageNavDescription = ({ children, className }: ComponentBase) => {
   return (
     <span
       className={cn('text-base font-bold text-text-main truncate', className)}
@@ -73,15 +73,12 @@ export const PageNavDescription = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const PageNavIcon = ({ children }: ComponentBase) => {
+const PageNavIcon = ({ children }: ComponentBase) => {
   return <>{children}</>
 }
 
-export default {
-  PageNavRoot,
-  PageNavLink: Object.assign(PageNavLink, {
-    Title: PageNavTitle,
-    Description: PageNavDescription,
-    Icon: PageNavIcon,
-  }),
-}
+PageNav.Root = PageNav
+PageNav.Link = PageNavLink
+PageNav.Title = PageNavTitle
+PageNav.Description = PageNavDescription
+PageNav.Icon = PageNavIcon

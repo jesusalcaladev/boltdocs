@@ -10,8 +10,8 @@ import React, {
   type RefObject,
 } from 'react'
 import scrollIntoView from 'scroll-into-view-if-needed'
-import { cn } from '../../utils/cn'
-import { useOnChange } from '../../utils/use-on-change'
+import { cn } from '@client/utils/cn'
+import { useOnChange } from '@client/utils/use-on-change'
 import type { ComponentBase } from './types'
 import { getItemId, Observer } from './helpers/observer'
 
@@ -150,7 +150,7 @@ export function AnchorProvider({
   return <ItemsContext.Provider value={items}>{children}</ItemsContext.Provider>
 }
 
-export const OnThisPageRoot = ({ children, className }: ComponentBase) => {
+export const OnThisPage = ({ children, className }: ComponentBase) => {
   return (
     <nav
       className={cn(
@@ -165,7 +165,7 @@ export const OnThisPageRoot = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const OnThisPageHeader = ({
+const OnThisPageHeader = ({
   children,
   className,
   ...props
@@ -183,7 +183,7 @@ export const OnThisPageHeader = ({
   )
 }
 
-export const OnThisPageContent = ({
+const OnThisPageContent = ({
   children,
   className,
   ref,
@@ -206,7 +206,7 @@ export const OnThisPageContent = ({
 
 OnThisPageContent.displayName = 'OnThisPageContent'
 
-export const OnThisPageList = ({ children, className }: ComponentBase) => {
+const OnThisPageList = ({ children, className }: ComponentBase) => {
   return (
     <ul
       className={cn(
@@ -219,7 +219,7 @@ export const OnThisPageList = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const OnThisPageItem = ({
+const OnThisPageItem = ({
   level,
   children,
   className,
@@ -227,7 +227,7 @@ export const OnThisPageItem = ({
   return <li className={cn(level === 3 && 'pl-3', className)}>{children}</li>
 }
 
-export const OnThisPageLink = ({
+const OnThisPageLink = ({
   children,
   href,
   active,
@@ -281,7 +281,7 @@ export const OnThisPageLink = ({
   )
 }
 
-export const OnThisPageIndicator = ({
+const OnThisPageIndicator = ({
   style,
   className,
 }: OnThisPageIndicatorProps) => {
@@ -296,12 +296,10 @@ export const OnThisPageIndicator = ({
   )
 }
 
-export default {
-  OnThisPageRoot,
-  OnThisPageHeader,
-  OnThisPageContent,
-  OnThisPageList,
-  OnThisPageItem,
-  OnThisPageLink,
-  OnThisPageIndicator,
-}
+OnThisPage.Root = OnThisPage
+OnThisPage.Header = OnThisPageHeader
+OnThisPage.Content = OnThisPageContent
+OnThisPage.List = OnThisPageList
+OnThisPage.Item = OnThisPageItem
+OnThisPage.Link = OnThisPageLink
+OnThisPage.Indicator = OnThisPageIndicator

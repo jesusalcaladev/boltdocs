@@ -53,7 +53,7 @@ const Badge = ({ badge }: { badge: ComponentRoute['badge'] }) => {
   )
 }
 
-export const SidebarRoot = ({ children, className }: ComponentBase) => {
+export const Sidebar = ({ children, className }: ComponentBase) => {
   return (
     <aside
       className={cn(
@@ -69,7 +69,7 @@ export const SidebarRoot = ({ children, className }: ComponentBase) => {
   )
 }
 
-export const SidebarGroup = ({
+const SidebarGroup = ({
   children,
   title,
   icon: Icon,
@@ -106,11 +106,11 @@ export const SidebarGroup = ({
   )
 }
 
-export const SidebarGroupItem = ({ children, className }: ComponentBase) => {
+const SidebarGroupItem = ({ children, className }: ComponentBase) => {
   return <div className={cn(className)}>{children}</div>
 }
 
-export const SidebarLink = ({
+const SidebarLink = ({
   label,
   href,
   active,
@@ -147,9 +147,7 @@ export const SidebarLink = ({
   )
 }
 
-export default {
-  SidebarRoot,
-  SidebarGroup,
-  SidebarGroupItem,
-  SidebarLink,
-}
+Sidebar.Root = Sidebar
+Sidebar.Group = SidebarGroup
+Sidebar.GroupItem = SidebarGroupItem
+Sidebar.Link = SidebarLink

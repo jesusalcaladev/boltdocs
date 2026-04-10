@@ -13,7 +13,7 @@ export interface TabsIndicatorProps extends ComponentBase {
   style?: React.CSSProperties
 }
 
-export const TabsRoot = ({
+export const Tabs = ({
   children,
   className = '',
   ...props
@@ -25,7 +25,7 @@ export const TabsRoot = ({
   )
 }
 
-export const TabsList = ({ children, className = '' }: ComponentBase) => {
+const TabsList = ({ children, className = '' }: ComponentBase) => {
   return (
     <div
       role="tablist"
@@ -39,7 +39,7 @@ export const TabsList = ({ children, className = '' }: ComponentBase) => {
   )
 }
 
-export const TabsItem = ({
+const TabsItem = ({
   children,
   id,
   selected,
@@ -62,11 +62,11 @@ export const TabsItem = ({
   )
 }
 
-export const TabsContent = ({ children, className = '' }: ComponentBase) => {
+const TabsContent = ({ children, className = '' }: ComponentBase) => {
   return <div className={cn('p-4 outline-none', className)}>{children}</div>
 }
 
-export const TabsIndicator = ({
+const TabsIndicator = ({
   className = '',
   style,
 }: TabsIndicatorProps) => {
@@ -81,10 +81,8 @@ export const TabsIndicator = ({
   )
 }
 
-export default {
-  TabsRoot,
-  TabsList,
-  TabsItem,
-  TabsContent,
-  TabsIndicator,
-}
+Tabs.Root = Tabs
+Tabs.List = TabsList
+Tabs.Item = TabsItem
+Tabs.Content = TabsContent
+Tabs.Indicator = TabsIndicator

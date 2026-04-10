@@ -1,5 +1,5 @@
 import { useTabs as useTabsHook } from '@hooks/use-tabs'
-import T from '@components/primitives/tabs'
+import { Tabs as T } from '@components/primitives/tabs'
 import { Link } from '@components/primitives/link'
 import type { BoltdocsTab, ComponentRoute } from '@client/types'
 import * as Icons from 'lucide-react'
@@ -35,7 +35,7 @@ export function Tabs({
 
   return (
     <div className="mx-auto max-w-(--breakpoint-3xl) px-4 md:px-6">
-      <T.TabsList className="border-none py-0">
+      <T.List className="border-none py-0">
         {tabs.map((tab, index) => {
           const isActive = index === activeIndex
           const firstRoute = routes.find(
@@ -50,19 +50,18 @@ export function Tabs({
               ref={(el: HTMLAnchorElement | null) => {
                 tabRefs.current[index] = el
               }}
-              className={`relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors outline-none ${
-                isActive
+              className={`relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors outline-none ${isActive
                   ? 'text-primary-500'
                   : 'text-text-muted hover:text-text-main'
-              }`}
+                }`}
             >
               {renderTabIcon(tab.icon)}
               <span>{getTranslated(tab.text, currentLocale)}</span>
             </Link>
           )
         })}
-        <T.TabsIndicator style={indicatorStyle} />
-      </T.TabsList>
+        <T.Indicator style={indicatorStyle} />
+      </T.List>
     </div>
   )
 }

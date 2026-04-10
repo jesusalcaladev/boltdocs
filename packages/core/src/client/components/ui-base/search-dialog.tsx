@@ -1,14 +1,7 @@
 import { useEffect, useCallback } from 'react'
 import { useSearch } from '@hooks/use-search'
 import {
-  SearchDialogAutocomplete,
-  SearchDialogInput,
-  SearchDialogItemBio,
-  SearchDialogItemIcon,
-  SearchDialogItemRoot,
-  SearchDialogItemTitle,
-  SearchDialogList,
-  SearchDialogRoot,
+  SearchDialog as SearchDialogPrimitive,
 } from '@components/primitives/search-dialog'
 import Navbar from '@components/primitives/navbar'
 import { useNavigate } from 'react-router-dom'
@@ -63,31 +56,31 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
     <>
       <Navbar.SearchTrigger onPress={() => setIsOpen(true)} />
 
-      <SearchDialogRoot isOpen={isOpen} onOpenChange={setIsOpen}>
-        <SearchDialogAutocomplete onSelectionChange={handleSelect}>
-          <SearchDialogInput
+      <SearchDialogPrimitive.Root isOpen={isOpen} onOpenChange={setIsOpen}>
+        <SearchDialogPrimitive.Autocomplete onSelectionChange={handleSelect}>
+          <SearchDialogPrimitive.Input
             value={query}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setQuery(e.target.value)
             }
           />
-          <SearchDialogList items={list as SearchResult[]}>
+          <SearchDialogPrimitive.List items={list as SearchResult[]}>
             {(item: SearchResult) => (
-              <SearchDialogItemRoot
+              <SearchDialogPrimitive.Item
                 key={item.id}
                 onPress={() => handleSelect(item.id)}
                 textValue={item.title}
               >
-                <SearchDialogItemIcon isHeading={item.isHeading} />
+                <SearchDialogPrimitive.Item.Icon isHeading={item.isHeading} />
                 <div className="flex flex-col justify-center gap-0.5">
-                  <SearchDialogItemTitle>{item.title}</SearchDialogItemTitle>
-                  <SearchDialogItemBio>{item.bio}</SearchDialogItemBio>
+                  <SearchDialogPrimitive.Item.Title>{item.title}</SearchDialogPrimitive.Item.Title>
+                  <SearchDialogPrimitive.Item.Bio>{item.bio}</SearchDialogPrimitive.Item.Bio>
                 </div>
-              </SearchDialogItemRoot>
+              </SearchDialogPrimitive.Item>
             )}
-          </SearchDialogList>
-        </SearchDialogAutocomplete>
-      </SearchDialogRoot>
+          </SearchDialogPrimitive.List>
+        </SearchDialogPrimitive.Autocomplete>
+      </SearchDialogPrimitive.Root>
     </>
   )
 }

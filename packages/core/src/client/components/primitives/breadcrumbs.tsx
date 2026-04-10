@@ -8,7 +8,7 @@ import { ChevronRight } from 'lucide-react'
 import { cn } from '../../utils/cn'
 import type { ComponentBase } from './types'
 
-export const BreadcrumbsRoot = ({
+export const Breadcrumbs = ({
   children,
   className,
   ...props
@@ -26,7 +26,7 @@ export const BreadcrumbsRoot = ({
   )
 }
 
-export const BreadcrumbsItem = ({
+const BreadcrumbsItem = ({
   children,
   className,
   ...props
@@ -41,7 +41,7 @@ export const BreadcrumbsItem = ({
   )
 }
 
-export const BreadcrumbsLink = ({
+const BreadcrumbsLink = ({
   children,
   href,
   className,
@@ -62,7 +62,7 @@ export const BreadcrumbsLink = ({
   )
 }
 
-export const BreadcrumbsSeparator = ({ className }: ComponentBase) => {
+const BreadcrumbsSeparator = ({ className }: ComponentBase) => {
   return (
     <ChevronRight
       size={14}
@@ -71,9 +71,9 @@ export const BreadcrumbsSeparator = ({ className }: ComponentBase) => {
   )
 }
 
-export default {
-  BreadcrumbsRoot,
-  BreadcrumbsItem,
-  BreadcrumbsLink,
-  BreadcrumbsSeparator,
-}
+
+
+Breadcrumbs.Root = Breadcrumbs
+Breadcrumbs.Item = BreadcrumbsItem
+Breadcrumbs.Link = BreadcrumbsLink
+Breadcrumbs.Separator = BreadcrumbsSeparator

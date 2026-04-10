@@ -13,7 +13,7 @@ export interface MenuTriggerProps extends RAC.MenuTriggerProps {
   placement?: PopoverProps['placement']
 }
 
-export function MenuTrigger(props: MenuTriggerProps) {
+function MenuTrigger(props: MenuTriggerProps) {
   const [trigger, menu] = (
     React.Children.toArray(props.children) as React.ReactElement[]
   ).slice(0, 2)
@@ -30,7 +30,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
 /**
  * SubmenuTrigger for nested menus.
  */
-export function SubmenuTrigger(props: RAC.SubmenuTriggerProps) {
+function SubmenuTrigger(props: RAC.SubmenuTriggerProps) {
   const [trigger, menu] = (
     React.Children.toArray(props.children) as React.ReactElement[]
   ).slice(0, 2)
@@ -64,7 +64,7 @@ export function Menu<T extends object>(props: RAC.MenuProps<T>) {
 /**
  * MenuItem with support for selection states and submenus.
  */
-export function MenuItem(props: RAC.MenuItemProps) {
+function MenuItem(props: RAC.MenuItemProps) {
   const textValue =
     props.textValue ||
     (typeof props.children === 'string' ? props.children : undefined)
@@ -123,7 +123,7 @@ export interface MenuSectionProps<T> extends RAC.MenuSectionProps<T> {
   title?: string
 }
 
-export function MenuSection<T extends object>({
+function MenuSection<T extends object>({
   title,
   ...props
 }: MenuSectionProps<T>) {
@@ -145,7 +145,7 @@ export function MenuSection<T extends object>({
 /**
  * MenuSeparator for visual division.
  */
-export function MenuSeparator(props: RAC.SeparatorProps) {
+function MenuSeparator(props: RAC.SeparatorProps) {
   return (
     <RAC.Separator
       {...props}
@@ -154,12 +154,9 @@ export function MenuSeparator(props: RAC.SeparatorProps) {
   )
 }
 
-// Default export for convenience
-export default {
-  Root: Menu,
-  Item: MenuItem,
-  Trigger: MenuTrigger,
-  SubTrigger: SubmenuTrigger,
-  Section: MenuSection,
-  Separator: MenuSeparator,
-}
+Menu.Root = Menu
+Menu.Item = MenuItem
+Menu.Trigger = MenuTrigger
+Menu.SubTrigger = SubmenuTrigger
+Menu.Section = MenuSection
+Menu.Separator = MenuSeparator
