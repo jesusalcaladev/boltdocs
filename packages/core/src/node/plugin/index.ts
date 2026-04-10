@@ -279,7 +279,6 @@ export function boltdocsPlugin(
                 event: 'boltdocs:config-update',
                 data: {
                   theme: config?.theme,
-                  integrations: config?.integrations,
                   i18n: config?.i18n,
                   versions: config?.versions,
                   siteUrl: config?.siteUrl,
@@ -342,7 +341,6 @@ export function boltdocsPlugin(
         if (id === '\0virtual:boltdocs-config') {
           const clientConfig = {
             theme: config?.theme,
-            integrations: config?.integrations,
             i18n: config?.i18n,
             versions: config?.versions,
             siteUrl: config?.siteUrl,
