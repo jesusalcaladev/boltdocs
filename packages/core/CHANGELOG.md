@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.5.2
+
+### Patch Changes
+
+- [`862634f`](https://github.com/bolt-docs/boltdocs/commit/862634fb0df4e10112877e05e31b12ce7a4f480e) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - removed sandbox integrations
+
 ## 2.5.1
 
 ### Patch Changes
