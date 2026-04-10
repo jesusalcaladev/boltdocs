@@ -108,9 +108,6 @@ importers:
 
   packages/core:
     dependencies:
-      '@mdx-js/react':
-        specifier: 3.1.1
-        version: 3.1.1(@types/react@19.2.14)(react@19.1.0)
       '@mdx-js/rollup':
         specifier: 3.1.1
         version: 3.1.1(rollup@4.59.0)
@@ -5912,12 +5909,6 @@ snapshots:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
-
-  '@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.1.0)':
-    dependencies:
-      '@types/mdx': 2.0.13
-      '@types/react': 19.2.14
-      react: 19.1.0
 
   '@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.4)':
     dependencies:
