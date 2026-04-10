@@ -9,7 +9,7 @@ export default defineConfig({
     description:
       'Building documentation for your project has never been easier, with boltdocs you can create beautiful documentation, 80% customizable, with 25+ components.',
     breadcrumbs: true,
-
+    ogImage: '/og-image.webp',
     codeTheme: {
       light: 'github-light',
       dark: 'github-dark',
@@ -34,10 +34,9 @@ export default defineConfig({
         href: '/docs/components/overview',
       },
       {
-        label: "Roadmap",
-        href: "/roadmap",
-        
-      }
+        label: 'Roadmap',
+        href: '/roadmap',
+      },
     ],
     editLink:
       'https://github.com/jesusalcaladev/boltdocs/edit/main/docs/docs/:path',
