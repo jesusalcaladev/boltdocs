@@ -81,42 +81,6 @@ export interface CreateBoltdocsAppOptions {
 }
 
 /**
- * Types for CodeSandbox integration.
- */
-export interface SandboxFile {
-  content: string | object
-  isBinary?: boolean
-}
-
-export type SandboxFiles = Record<string, SandboxFile>
-
-export interface SandboxOptions {
-  files?: SandboxFiles
-  dependencies?: Record<string, string>
-  devDependencies?: Record<string, string>
-  title?: string
-  description?: string
-  template?: string
-  /** The file path to open by default in the editor (e.g. `"src/App.tsx"`). */
-  entry?: string
-  /** Options for the embedded iframe view, used by `embedSandbox()`. */
-  embed?: SandboxEmbedOptions
-  /** Custom scripts for the package.json (e.g. `{ "start": "vite" }`). */
-  scripts?: Record<string, string>
-  /** Optional default theme configuration for the sandbox project. */
-  themeConfig?: Record<string, unknown>
-}
-
-export interface SandboxEmbedOptions {
-  /** Which panel to display: `"editor"`, `"preview"`, or `"split"`. */
-  view?: 'editor' | 'preview' | 'split'
-  /** Color theme: `"dark"` or `"light"`. */
-  theme?: 'dark' | 'light'
-  /** Whether to hide the navigation bar in the embed. */
-  hideNavigation?: boolean
-}
-
-/**
  * Tab configuration for the documentation site.
  */
 export interface BoltdocsTab {

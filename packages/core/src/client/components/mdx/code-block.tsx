@@ -4,7 +4,6 @@ import { cn } from '@client/utils/cn'
 import { useCodeBlock } from './hooks/use-code-block'
 import { useConfig } from '@client/app/config-context'
 import {
-  CodeSandbox,
   TypeScript,
   JavaScript,
   React as ReactIcon,
@@ -36,9 +35,7 @@ const langIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
 export interface CodeBlockProps {
   children?: React.ReactNode
   className?: string
-  sandbox?: boolean | any
   hideCopy?: boolean
-  hideSandbox?: boolean
   title?: string
   lang?: string
   highlightedHtml?: string
@@ -50,8 +47,6 @@ export interface CodeBlockProps {
 export function CodeBlock(props: CodeBlockProps) {
   const {
     children,
-    sandbox: localSandbox,
-    hideSandbox = true,
     hideCopy = false,
     highlightedHtml,
     'data-highlighted-html': dataHighlightedHtml,
@@ -62,8 +57,6 @@ export function CodeBlock(props: CodeBlockProps) {
   } = props
   const effectiveHighlightedHtml = highlightedHtml || dataHighlightedHtml
   const config = useConfig()
-  const globalSandbox = config?.integrations?.sandbox
-  const isSandboxEnabled = !!globalSandbox?.enable && !hideSandbox
   const lang = props.lang || dataLang || ''
   const {
     copied,
@@ -72,7 +65,6 @@ export function CodeBlock(props: CodeBlockProps) {
     isExpandable,
     preRef,
     handleCopy,
-    handleSandbox,
     shouldTruncate,
   } = useCodeBlock(props)
 
@@ -104,17 +96,6 @@ export function CodeBlock(props: CodeBlockProps) {
 
       {/* Toolbar */}
       <div className="absolute top-3 right-4 z-50 flex items-center gap-2 transition-all duration-300 opacity-0 group-hover:opacity-100">
-        {isSandboxEnabled && (
-          <Tooltip content="Open in CodeSandbox">
-            <RAC.Button
-              onPress={handleSandbox}
-              className="grid place-items-center w-8 h-8 bg-transparent text-text-muted outline-none cursor-pointer transition-all duration-200 hover:scale-115 hover:text-sky-400 active:scale-95 [&>svg]:w-5 [&>svg]:h-5 [&>svg]:stroke-2"
-              aria-label="Open in CodeSandbox"
-            >
-              <CodeSandbox size={20} />
-            </RAC.Button>
-          </Tooltip>
-        )}
         {!hideCopy && (
           <Tooltip content={copied ? 'Copied!' : 'Copy code'}>
             <RAC.Button

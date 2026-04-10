@@ -179,18 +179,6 @@ export const SecurityConfigSchema = z.object({
 })
 
 /**
- * Zod schema for integrations configuration.
- */
-export const IntegrationsConfigSchema = z.object({
-  sandbox: z
-    .object({
-      enable: z.boolean().optional(),
-      config: z.record(z.string(), z.unknown()).optional(),
-    })
-    .optional(),
-})
-
-/**
  * Root Zod schema for Boltdocs project configuration.
  */
 export const BoltdocsConfigSchema = z.object({
@@ -201,7 +189,6 @@ export const BoltdocsConfigSchema = z.object({
   i18n: I18nConfigSchema.optional(),
   versions: VersionsConfigSchema.optional(),
   plugins: z.array(BoltdocsPluginSchema).optional(),
-  integrations: IntegrationsConfigSchema.optional(),
   robots: RobotsConfigSchema.optional(),
   security: SecurityConfigSchema.optional(),
   vite: z.record(z.string(), z.unknown()).optional(),

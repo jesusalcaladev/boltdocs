@@ -199,19 +199,6 @@ export interface BoltdocsPlugin {
 }
 
 /**
- * Configuration for external integrations (e.g., CodeSandbox).
- */
-export interface BoltdocsIntegrationsConfig {
-  /** CodeSandbox integration settings */
-  sandbox?: {
-    /** Whether to enable the "Open in Sandbox" button in CodeBlocks */
-    enable?: boolean
-    /** Default options for the sandbox (files, dependencies, etc.) */
-    config?: Record<string, unknown>
-  }
-}
-
-/**
  * Configuration for security-related settings.
  */
 export interface BoltdocsSecurityConfig {
@@ -241,8 +228,6 @@ export interface BoltdocsConfig {
   versions?: BoltdocsVersionsConfig
   /** Custom plugins for extending functionality */
   plugins?: BoltdocsPlugin[]
-  /** External integrations configuration */
-  integrations?: BoltdocsIntegrationsConfig
   /** Configuration for the robots.txt file */
   robots?: BoltdocsRobotsConfig
   /** Security-related settings and headers */
@@ -373,7 +358,6 @@ export async function resolveConfig(
     versions: userConfig.versions,
     siteUrl: userConfig.siteUrl,
     plugins: userConfig.plugins || [],
-    integrations: userConfig.integrations,
     robots: userConfig.robots,
     security: userConfig.security,
     vite: userConfig.vite,

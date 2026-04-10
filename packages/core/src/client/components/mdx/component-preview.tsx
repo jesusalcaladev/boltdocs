@@ -1,4 +1,3 @@
-import type { SandboxOptions } from '../../types'
 import { CodeBlock } from './code-block'
 import { useComponentPreview } from './hooks/use-component-preview'
 
@@ -8,18 +7,14 @@ export interface ComponentPreviewProps {
   children?: string
   preview?: React.ReactNode
   hideCode?: boolean
-  hideSandbox?: boolean
   hideCopy?: boolean
-  sandboxOptions?: SandboxOptions
 }
 
 export function ComponentPreview(props: ComponentPreviewProps) {
   const {
     highlightedHtml,
     hideCode = false,
-    hideSandbox = false,
     hideCopy = false,
-    sandboxOptions = {},
   } = props
   const { initialCode, previewElement } = useComponentPreview(props)
 
@@ -32,9 +27,7 @@ export function ComponentPreview(props: ComponentPreviewProps) {
       {!hideCode && (
         <div className="border-t border-border-subtle">
           <CodeBlock
-            hideSandbox={hideSandbox}
             hideCopy={hideCopy}
-            title={sandboxOptions.title}
             lang="tsx"
             highlightedHtml={highlightedHtml}
             plain={true}
