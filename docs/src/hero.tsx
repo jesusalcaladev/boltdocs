@@ -7,7 +7,7 @@ export const Hero = () => (
     <div className="w-full mx-auto text-center relative z-10">
       <div className="inline-flex items-center gap-3 p-1 pr-4 rounded-full bg-white/3 border border-white/10 hover:border-primary-400/30 transition-all cursor-pointer group mb-10">
         <span className="px-3 py-1 rounded-full bg-linear-to-r from-primary-400 to-purple-700 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-primary-500/20">
-          v2.5.2
+          v2.5.3
         </span>
         <span className="text-sm font-bold text-text-main/60 group-hover:text-text-main transition-colors flex items-center gap-2">
           Available now!
