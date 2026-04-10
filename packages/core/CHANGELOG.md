@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.5.1
+
+### Patch Changes
+
+- [`6f47dae`](https://github.com/bolt-docs/boltdocs/commit/6f47dae6a572e1d2ec8c28e56c648ab2db7b96d5) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - repared error show visible CodeBlock & repared error components Plugins
+
 ## 2.5.0
 
 ### Minor Changes
