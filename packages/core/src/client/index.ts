@@ -76,7 +76,7 @@ export type {
 } from './components/mdx'
 
 // Primitives
-export { NavbarRoot as PrimitiveNavbar } from './components/primitives/navbar'
+export { Navbar as PrimitiveNavbar } from './components/primitives/navbar'
 export { NavigationMenu as PrimitiveNavigationMenu } from './components/primitives/navigation-menu'
 export { SearchDialog as SearchDialogPrimitive } from './components/primitives/search-dialog'
 export {
