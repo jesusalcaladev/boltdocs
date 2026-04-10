@@ -1,5 +1,15 @@
 # boltdocs
 
+## 2.5.0
+
+### Minor Changes
+
+- [`de41957`](https://github.com/bolt-docs/boltdocs/commit/de4195754bbb6dea90cbcd91e1ae3ddc398a8fdb) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - Updated imports to simples, support CPS, Support External-Page with file
+
+### Patch Changes
+
+- [`f54fc62`](https://github.com/bolt-docs/boltdocs/commit/f54fc62982411e893beeccb2ebcb20d7a4925bdd) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - export types of plugins, Config & theme
+
 ## 2.4.2
 
 ### Patch Changes
