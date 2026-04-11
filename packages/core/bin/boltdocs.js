@@ -9,4 +9,4 @@
  */
 
 // We use require because the core package is currently CommonJS.
-require('../dist/node/cli-entry.js')
+require('../dist/node/cli-entry.cjs')
