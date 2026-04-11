@@ -1,8 +1,8 @@
 import path from 'node:path'
 import fs from 'node:fs'
-import { getIndexCss } from './shared.js'
+import { getIndexCss, generateHomePage } from './shared.js'
 
-export function generateExternalTemplate(projectDir: string) {
+export function generateExternalTemplate(projectDir: string, projectName: string) {
   const srcDir = path.join(projectDir, 'src')
   fs.mkdirSync(srcDir, { recursive: true })
 
@@ -76,29 +76,10 @@ export const layout = ({ children }: { children: React.ReactNode }) => (
     externalPagesContent,
   )
 
-  const homePageContent = `import React from 'react'
-import { Button } from 'boltdocs/client'
-
-export default function HomePage() {
-  return (
-    <div className="hero-section">
-      <h1 className="hero-title text-center">External Pages</h1>
-      <p className="hero-subtitle text-center">
-        Boltdocs now supports standalone React pages and custom layouts outside the standard docs structure.
-      </p>
-      <div className="flex gap-4">
-        <a href="/docs" className="no-underline">
-          <Button className="text-lg px-10 py-4">Read Docs</Button>
-        </a>
-        <a href="/contact" className="no-underline">
-          <Button variant="ghost" className="text-lg px-10 py-4">External Page</Button>
-        </a>
-      </div>
-    </div>
+  fs.writeFileSync(
+    path.join(srcDir, 'home-page.tsx'),
+    generateHomePage(),
   )
-}
-`
-  fs.writeFileSync(path.join(srcDir, 'home-page.tsx'), homePageContent)
   fs.writeFileSync(path.join(projectDir, 'index.css'), getIndexCss())
 
   // Default docs

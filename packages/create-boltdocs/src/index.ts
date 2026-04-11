@@ -107,20 +107,20 @@ async function run() {
   fs.mkdirSync(projectDir, { recursive: true })
   console.log(`${green('✔')} Created project directory`)
 
-  // 2. Generate specific template
-  const configOptions: any = {}
+  // 2. Generate specific template (all templates now include home-page by default)
+  const configOptions: any = {
+    homePage: './src/home-page.tsx', // Always include home-page config
+  }
 
   if (response.template === 'empty') {
     generateEmptyTemplate(projectDir, response.projectName)
   } else if (response.template === 'i18n') {
     configOptions.i18n = true
-    configOptions.homePage = './src/home-page.tsx'
-    generateI18nTemplate(projectDir)
+    generateI18nTemplate(projectDir, response.projectName)
   } else if (response.template === 'external') {
-    generateExternalTemplate(projectDir)
+    generateExternalTemplate(projectDir, response.projectName)
   } else {
-    configOptions.homePage = './src/home-page.tsx'
-    generateBaseTemplate(projectDir)
+    generateBaseTemplate(projectDir, response.projectName)
   }
 
   console.log(`${green('✔')} Applied "${response.template}" preset`)

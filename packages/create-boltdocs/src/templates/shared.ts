@@ -9,18 +9,18 @@ export function getPackageJson(projectName: string) {
       build: 'boltdocs build',
       preview: 'boltdocs preview',
       doctor: 'boltdocs doctor',
-      'lint:md': 'markdownlint-cli2 "**/*.{md,mdx}"',
-      'lint:md:fix': 'markdownlint-cli2 --fix "**/*.{md,mdx}"',
+      'lint:md': 'markdownlint-cli2 "docs/**/*.{md,mdx}"',
+      'lint:md:fix': 'markdownlint-cli2 --fix "docs/**/*.{md,mdx}"',
     },
     dependencies: {
-      react: '^19.0.0',
-      'react-dom': '^19.0.0',
+      react: '19.2.5',
+      'react-dom': '19.2.5',
       boltdocs: 'latest',
     },
     devDependencies: {
       typescript: '^5.7.0',
-      '@types/react': '^19.0.0',
-      '@types/react-dom': '^19.0.0',
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
       'markdownlint-cli2': '^0.22.0',
       vite: '^7.0.0',
       tailwindcss: '^4.0.0',
@@ -124,7 +124,7 @@ export default defineConfig({${homePageConfig}${i18nConfig}
 }
 
 export function getIndexCss() {
-  return `@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+  return `
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 
 @import "tailwindcss";
@@ -135,34 +135,6 @@ export function getIndexCss() {
   inside node_modules for class usage and generate the necessary CSS.
 */
 @source "./node_modules/boltdocs/src/client";
-
-.hero-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 8rem 2rem;
-  text-align: center;
-}
-
-.hero-title {
-  font-size: 4.5rem;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-400) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 1.5rem;
-}
-
-.hero-subtitle {
-  font-size: 1.5rem;
-  color: var(--color-muted);
-  max-width: 48rem;
-  margin-bottom: 3rem;
-  line-height: 1.6;
-}
 `
 }
 
@@ -179,7 +151,6 @@ export function getLayoutPage() {
   CopyMarkdown,
   useRoutes,
   useConfig,
-  useMdxComponents,
   useLocation
 } from 'boltdocs/client'
 
@@ -187,46 +158,45 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { routes: filteredRoutes, allRoutes, currentRoute } = useRoutes()
   const { pathname } = useLocation()
   const config = useConfig()
-  const mdxComponents = useMdxComponents()
-  const CopyMarkdownComp = (mdxComponents.CopyMarkdown as any) || CopyMarkdown
 
-  const isHome = pathname === '/' || pathname === ''
+  const isDocs = pathname.startsWith('/docs')
 
   return (
     <DocsLayout>
-      {/* Modern Spotlight Gradients */}
       <Head
-        siteTitle={config.theme?.title || 'Boltdocs'}
-        siteDescription={config.theme?.description || ''}
+        siteTitle={config.theme?.title}
+        siteDescription={config.theme?.description}
         routes={allRoutes}
       />
       <Navbar />
 
       <DocsLayout.Body>
-        {!isHome && <Sidebar routes={filteredRoutes} config={config} />}
+        {isDocs && <Sidebar routes={filteredRoutes} config={config} />}
 
         <DocsLayout.Content>
-          {!isHome && (
-            <DocsLayout.ContentHeader>
-              <Breadcrumbs />
-              <CopyMarkdownComp
-                mdxRaw={currentRoute?._rawContent}
-                route={currentRoute}
-                config={config.theme?.copyMarkdown}
-              />
-            </DocsLayout.ContentHeader>
-          )}
+          <DocsLayout.ContentMdx>
+            {isDocs && (
+              <DocsLayout.ContentHeader>
+                <Breadcrumbs />
+                <CopyMarkdown
+                  mdxRaw={currentRoute?._rawContent}
+                  route={currentRoute}
+                  config={config.theme?.copyMarkdown}
+                />
+              </DocsLayout.ContentHeader>
+            )}
 
-          <ErrorBoundary>{children}</ErrorBoundary>
+            <ErrorBoundary>{children}</ErrorBoundary>
 
-          {!isHome && (
-            <DocsLayout.ContentFooter>
-              <PageNav />
-            </DocsLayout.ContentFooter>
-          )}
+            {isDocs && (
+              <DocsLayout.ContentFooter>
+                <PageNav />
+              </DocsLayout.ContentFooter>
+            )}
+          </DocsLayout.ContentMdx>
         </DocsLayout.Content>
 
-        {!isHome && (
+        {isDocs && (
           <OnThisPage
             headings={currentRoute?.headings}
             editLink={config.theme?.editLink}
@@ -238,6 +208,65 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </DocsLayout>
   )
 }
+`
+}
 
+export function generateHomePage(): string {
+  return `
+  import { Button, Cards, Card } from 'boltdocs/client'
+import { time } from 'node:console';
+
+const features = [
+  {
+    title: 'Fast and Lightweight',
+    description: 'Boltdocs is built with performance in mind, ensuring your documentation loads quickly and efficiently.',
+    icon: '⚡',
+    href: "https://boltdocs.vercel.app/docs/guides/overview/introduction"
+  },
+  {
+    title: "I18n & Versioning Support",
+    description: "Easily manage multiple languages and versions of your documentation with built-in support.",
+    icon: '🌐',
+    href: 'https://boltdocs.vercel.app/docs/guides/core-concepts/i18n'
+  },
+  {
+    title: 'Customizable',
+    description: 'Tailor your documentation site to your needs with flexible customization options.',
+    icon: '🎨',
+    href: 'https://boltdocs.vercel.app/docs/guides/customization/theme'
+
+  },
+  {
+    title: "plugins",
+    description: "Extend Boltdocs' functionality with a growing ecosystem of plugins.",
+    icon: '🔌',
+    href: 'https://boltdocs.vercel.app/docs/plugins'
+  }
+]
+
+export default function HomePage() {
+  return (
+    <div className="w-full h-screen flex flex-col items-center pt-10 gap-6">
+      <header className='flex flex-col items-center'>
+        <h1 className="text-4xl font-bold text-center">Powerful Documentation</h1>
+        <p className="text-center">
+          Your minimal documentation site is ready. Start building something amazing.
+        </p>
+        <div className="flex gap-4">
+          <Button href="/docs">
+            Get Started
+          </Button>
+        </div>
+      </header>
+      <Cards className='mx-auto w-[60%]' cols={2}>
+        {features.map((feature, index) => (
+          <Card href={feature.href} key={index} title={feature.title} icon={feature.icon}>
+            <p>{feature.description}</p>
+          </Card>
+        ))}
+      </Cards>
+    </div>
+  );
+}
 `
 }
