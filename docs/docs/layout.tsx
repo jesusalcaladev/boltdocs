@@ -22,7 +22,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <DocsLayout>
-      {/* Modern Spotlight Gradients */}
       <Head
         siteTitle={config.theme?.title}
         siteDescription={config.theme?.description}
