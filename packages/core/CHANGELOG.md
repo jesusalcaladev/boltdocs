@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.5.5
+
+### Patch Changes
+
+- [`c31cfe3`](https://github.com/bolt-docs/boltdocs/commit/c31cfe3777e77b4ef0290aa726696b493f9c51db) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - repared error use-external
+
 ## 2.5.4
 
 ### Patch Changes
