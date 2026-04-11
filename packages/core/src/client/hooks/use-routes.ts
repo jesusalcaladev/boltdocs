@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { useConfig } from '@client/app/config-context'
 import { usePreload } from '@client/app/preload'
-import { useBoltdocsStore } from '../store/use-boltdocs-store'
+import { useBoltdocsStore } from '../store/boltdocs-context'
 
 /**
  * Hook to access the framework's routing state.

@@ -54,6 +54,13 @@ export async function createViteConfig(
         homePage: config.homePage,
       }),
     ],
+    resolve: {
+      alias: {
+        'use-sync-external-store/shim/index.js': 'react',
+        'use-sync-external-store/shim': 'react',
+        'use-sync-external-store': 'react',
+      },
+    },
     server: {
       headers: {
         ...securityHeaders,

@@ -35,7 +35,7 @@ export function DefaultLayout({ children }: LayoutProps) {
   const mdxComponents = useMdxComponents()
   const CopyMarkdownComp = (mdxComponents.CopyMarkdown as any) || CopyMarkdown
 
-  const isHome = pathname === '/' || pathname === ''
+  const isDocs = pathname.startsWith('/docs')
 
   return (
     <DocsLayout>
@@ -51,30 +51,32 @@ export function DefaultLayout({ children }: LayoutProps) {
       <Navbar />
 
       <DocsLayout.Body>
-        {!isHome && <Sidebar routes={filteredRoutes} config={config} />}
+        {isDocs && <Sidebar routes={filteredRoutes} config={config} />}
 
         <DocsLayout.Content>
-          {!isHome && (
-            <DocsLayout.ContentHeader>
-              <Breadcrumbs />
-              <CopyMarkdownComp
-                mdxRaw={currentRoute?._rawContent}
-                route={currentRoute}
-                config={config.theme?.copyMarkdown}
-              />
-            </DocsLayout.ContentHeader>
-          )}
+          <DocsLayout.ContentMdx>
+            {isDocs && (
+              <DocsLayout.ContentHeader>
+                <Breadcrumbs />
+                <CopyMarkdownComp
+                  mdxRaw={currentRoute?._rawContent}
+                  route={currentRoute}
+                  config={config.theme?.copyMarkdown}
+                />
+              </DocsLayout.ContentHeader>
+            )}
 
-          <ErrorBoundary>{children}</ErrorBoundary>
+            <ErrorBoundary>{children}</ErrorBoundary>
 
-          {!isHome && (
-            <DocsLayout.ContentFooter>
-              <PageNav />
-            </DocsLayout.ContentFooter>
-          )}
+            {isDocs && (
+              <DocsLayout.ContentFooter>
+                <PageNav />
+              </DocsLayout.ContentFooter>
+            )}
+          </DocsLayout.ContentMdx>
         </DocsLayout.Content>
 
-        {!isHome && (
+        {isDocs && (
           <OnThisPage
             headings={currentRoute?.headings}
             editLink={config.theme?.editLink}

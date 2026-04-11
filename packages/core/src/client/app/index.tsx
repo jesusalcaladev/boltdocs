@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import ReactDOM from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { NotFound } from '@components/ui-base/not-found'
 import { ThemeProvider } from './theme-context'
@@ -20,7 +20,8 @@ import { mdxComponentsDefault } from './mdx-component'
 import virtualCustomComponents from 'virtual:boltdocs-mdx-components'
 import { useRoutes } from '../hooks/use-routes'
 import { useLocation } from 'react-router-dom'
-import { useBoltdocsStore } from '../store/use-boltdocs-store'
+import { useBoltdocsStore } from '../store/boltdocs-context'
+import { BoltdocsProvider } from '../store/boltdocs-context'
 
 /**
  * Updates the HTML lang and dir attributes based on the current locale configuration.
@@ -180,15 +181,16 @@ export function AppShell({
   const LoadingFallback = allComponents.Loading as React.ComponentType
 
   return (
-    <ThemeProvider>
-      <MdxComponentsProvider components={allComponents}>
-        <ConfigContext.Provider value={config}>
-          <BoltdocsRouterProvider>
-            <PreloadProvider routes={routesInfo} modules={modules}>
-              <ScrollHandler />
-              <StoreSync />
-              <I18nUpdater />
-              <Routes>
+    <BoltdocsProvider>
+      <ThemeProvider>
+        <MdxComponentsProvider components={allComponents}>
+          <ConfigContext.Provider value={config}>
+            <BoltdocsRouterProvider>
+              <PreloadProvider routes={routesInfo} modules={modules}>
+                <ScrollHandler />
+                <StoreSync />
+                <I18nUpdater />
+                <Routes>
                 <Route key="docs-layout" element={<DocsLayout />}>
                   {resolvedRoutes.map((route) => (
                     <Route
@@ -274,6 +276,7 @@ export function AppShell({
         </ConfigContext.Provider>
       </MdxComponentsProvider>
     </ThemeProvider>
+    </BoltdocsProvider>
   )
 }
 
@@ -341,5 +344,5 @@ export function createBoltdocsApp(options: CreateBoltdocsAppOptions) {
   // real client-side component tree (components are lazy/dynamic).
   // Clear any SSG placeholder content before mounting.
   container.innerHTML = ''
-  ReactDOM.createRoot(container as HTMLElement).render(app)
+  createRoot(container as HTMLElement).render(app)
 }

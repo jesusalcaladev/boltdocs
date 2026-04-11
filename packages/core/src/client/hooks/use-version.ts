@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { getBaseFilePath } from '@client/utils/get-base-file-path'
 import { useRoutes } from './use-routes'
-import { useBoltdocsStore } from '../store/use-boltdocs-store'
+import { useBoltdocsStore } from '../store/boltdocs-context'
 
 export interface VersionOption {
   key: string
