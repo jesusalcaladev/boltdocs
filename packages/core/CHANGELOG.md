@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.5.4
+
+### Patch Changes
+
+- [`7477d85`](https://github.com/bolt-docs/boltdocs/commit/7477d85ee486af85cdae0ca26aba67ae9071cce9) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - fix: added use-async-external-store with in optimizeDeps
+
 ## 2.5.3
 
 ### Patch Changes
