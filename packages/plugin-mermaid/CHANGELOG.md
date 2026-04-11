@@ -1,5 +1,11 @@
 # @bdocs/plugin-mermaid
 
+## 0.1.1
+
+### Patch Changes
+
+- [`516b92e`](https://github.com/bolt-docs/boltdocs/commit/516b92e98adf93828c4429e464c8baaacf8fcfec) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - fix: reduce space packages
+
 ## 0.1.0
 
 ### Minor Changes
