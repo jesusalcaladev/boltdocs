@@ -8,6 +8,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/node/index.d.ts",
@@ -22,8 +25,8 @@
     "./style.css": "./dist/client/index.css"
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch"
+    "build": "tsdown --config-loader unrun",
+    "dev": "tsdown --watch --config-loader unrun"
   },
   "packageManager": "pnpm@10.30.2",
   "author": "",
@@ -34,15 +37,15 @@
     "unist-util-visit": "^5.0.0"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "vite": "^5.0.0 || ^6.0.0 || ^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.3.2",
     "@types/react": "^18.3.18",
     "boltdocs": "workspace:*",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.21.7",
     "typescript": "^5.9.3"
   }
 }
