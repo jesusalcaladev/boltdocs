@@ -88,15 +88,20 @@ export function boltdocsPlugin(
         }
 
         return {
+          resolve: {
+            alias: [
+              {
+                find: /^(.*)\/?use-sync-external-store\/shim(?:.*)$/,
+                replacement: '\0virtual:boltdocs-usesync-shim',
+              },
+              {
+                find: /^(.*)\/?use-sync-external-store$/,
+                replacement: '\0virtual:boltdocs-usesync-shim',
+              },
+            ]
+          },
           optimizeDeps: {
-            include: [
-              'react',
-              'react-dom',
-              'use-sync-external-store/shim',
-              'use-sync-external-store/shim/index.js',
-              'use-sync-external-store/with-selector',
-              'use-sync-external-store'
-            ],
+            include: ['react', 'react-dom'],
             exclude: [
               'boltdocs',
               'boltdocs/client',
@@ -338,9 +343,18 @@ export function boltdocsPlugin(
         ) {
           return '\0' + id
         }
+        
+        // --- Intercept use-sync-external-store imports to fix React 19 ESM bugs ---
+        // Exclude with-selector as it's not exported by react directly
+        if ((id.includes('use-sync-external-store/shim') || id === 'use-sync-external-store' || id.endsWith('use-sync-external-store/index.js')) && !id.includes('with-selector')) {
+          return '\0virtual:boltdocs-usesync-shim'
+        }
       },
 
       async load(id) {
+        if (id === '\0virtual:boltdocs-usesync-shim') {
+          return `import * as React from 'react';\nexport const useSyncExternalStore = React.useSyncExternalStore;\nexport default React.useSyncExternalStore;`
+        }
         if (id === '\0virtual:boltdocs-routes') {
           const routes = await generateRoutes(docsDir, config)
           return `export default ${JSON.stringify(routes, null, 2)};`
