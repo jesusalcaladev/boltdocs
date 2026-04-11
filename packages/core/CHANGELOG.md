@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.5.6
+
+### Patch Changes
+
+- [`5236e13`](https://github.com/bolt-docs/boltdocs/commit/5236e1379f94699bbbb176826b6eabb4dbb8faa7) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - fix: repared error in mode developer
+
 ## 2.5.5
 
 ### Patch Changes
