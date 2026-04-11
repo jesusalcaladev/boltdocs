@@ -89,7 +89,14 @@ export function boltdocsPlugin(
 
         return {
           optimizeDeps: {
-            include: ['react', 'react-dom'],
+            include: [
+              'react',
+              'react-dom',
+              'use-sync-external-store/shim',
+              'use-sync-external-store/shim/index.js',
+              'use-sync-external-store/with-selector',
+              'use-sync-external-store'
+            ],
             exclude: [
               'boltdocs',
               'boltdocs/client',
