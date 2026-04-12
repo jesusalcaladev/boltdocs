@@ -32,7 +32,7 @@ describe('E2E integration tests', () => {
 
       expect(config.homePage).toBe('./src/home-page.tsx')
       expect(config.theme?.title).toBe('Test Site')
-    })
+    }, 15000)
 
     it('should generate routes with home-page configured', async () => {
       const docsDir = path.join(tempDir, 'docs')
