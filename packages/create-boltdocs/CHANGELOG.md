@@ -1,5 +1,11 @@
 # create-boltdocs
 
+## 0.2.0
+
+### Minor Changes
+
+- [`6706448`](https://github.com/bolt-docs/boltdocs/commit/6706448b285db9de0f5aad3025d8f16a2c783532) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - updated packages & support new folder-structure
+
 ## 0.1.0
 
 ### Minor Changes
