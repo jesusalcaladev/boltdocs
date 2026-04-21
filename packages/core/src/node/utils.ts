@@ -6,10 +6,7 @@ import {
   ALLOWED_PATH_CHARS,
   MAX_FRONTMATTER_SIZE,
 } from './security/constants'
-import {
-  FrontmatterSchema,
-  type FrontmatterData,
-} from './schema/frontmatter'
+import { FrontmatterSchema, type FrontmatterData } from './schema/frontmatter'
 
 export {
   MAX_PATH_LENGTH,
@@ -97,10 +94,14 @@ export function parseFrontmatter(filePath: string): {
 
     // Security: Check frontmatter size
     if (rawMatter && rawMatter.length > MAX_FRONTMATTER_SIZE) {
-      logSecurityEvent('FRONTMATTER_TOO_LARGE', 'Frontmatter block exceeds size limit', {
-        size: rawMatter.length,
-        file: filePath,
-      })
+      logSecurityEvent(
+        'FRONTMATTER_TOO_LARGE',
+        'Frontmatter block exceeds size limit',
+        {
+          size: rawMatter.length,
+          file: filePath,
+        },
+      )
       throw new ValidationError(
         `Security breach: Frontmatter size exceeds limit of ${MAX_FRONTMATTER_SIZE} bytes`,
       )
@@ -113,7 +114,9 @@ export function parseFrontmatter(filePath: string): {
       // or we can be strict as requested.
       // The task says "Integrar validación de esquema con Zod".
       // Let's log it.
-      console.warn(`[VALIDATION][${filePath}] Invalid frontmatter fields detected.`)
+      console.warn(
+        `[VALIDATION][${filePath}] Invalid frontmatter fields detected.`,
+      )
     }
 
     // Explicitly allow only known fields from the schema for security (unless we use passthrough)
@@ -121,9 +124,12 @@ export function parseFrontmatter(filePath: string): {
 
     // Sanitization: Clean metadata fields
     const sanitizedData: any = { ...validatedData }
-    if (sanitizedData.title) sanitizedData.title = stripHtmlTags(sanitizedData.title).trim()
+    if (sanitizedData.title)
+      sanitizedData.title = stripHtmlTags(sanitizedData.title).trim()
     if (sanitizedData.description)
-      sanitizedData.description = stripHtmlTags(sanitizedData.description).trim()
+      sanitizedData.description = stripHtmlTags(
+        sanitizedData.description,
+      ).trim()
 
     return { data: sanitizedData, content }
   } catch (e) {
@@ -236,7 +242,17 @@ export function sanitizeHtml(html: string): string {
       'blockquote',
       'hr',
     ],
-    ALLOWED_ATTR: ['href', 'title', 'target', 'class', 'id', 'src', 'alt', 'width', 'height'],
+    ALLOWED_ATTR: [
+      'href',
+      'title',
+      'target',
+      'class',
+      'id',
+      'src',
+      'alt',
+      'width',
+      'height',
+    ],
     FORCE_BODY: true,
   })
 }
@@ -246,14 +262,22 @@ DOMPurify.addHook('afterSanitizeAttributes', (node) => {
   // Check for href
   if (node.hasAttribute('href')) {
     const href = node.getAttribute('href')?.toLowerCase() || ''
-    if (href.startsWith('javascript:') || href.startsWith('data:') || href.startsWith('vbscript:')) {
+    if (
+      href.startsWith('javascript:') ||
+      href.startsWith('data:') ||
+      href.startsWith('vbscript:')
+    ) {
       node.removeAttribute('href')
     }
   }
   // Check for src
   if (node.hasAttribute('src')) {
     const src = node.getAttribute('src')?.toLowerCase() || ''
-    if (src.startsWith('javascript:') || src.startsWith('data:') || src.startsWith('vbscript:')) {
+    if (
+      src.startsWith('javascript:') ||
+      src.startsWith('data:') ||
+      src.startsWith('vbscript:')
+    ) {
       node.removeAttribute('src')
     }
   }
@@ -335,9 +359,13 @@ export function logSecurityEvent(
 
   // Simple redaction logic for potential system paths
   for (const key in redactedDetails) {
-    if (typeof redactedDetails[key] === 'string' && redactedDetails[key].includes(':')) {
+    if (
+      typeof redactedDetails[key] === 'string' &&
+      redactedDetails[key].includes(':')
+    ) {
       // Very basic redaction: just keep the filename part if it looks like a path
-      redactedDetails[key] = redactedDetails[key].split(/[\\/]/).pop() || redactedDetails[key]
+      redactedDetails[key] =
+        redactedDetails[key].split(/[\\/]/).pop() || redactedDetails[key]
     }
   }
 

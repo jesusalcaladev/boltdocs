@@ -1,4 +1,4 @@
-import { useConfig } from '@client/app/config-context'
+import { useConfig } from '../app/config-context'
 import type { LinkProps as RouterLinkProps } from 'react-router-dom'
 import { useRoutes } from './use-routes'
 

@@ -5,14 +5,14 @@ import type { BoltdocsConfig } from '../config'
  * Permissions that a plugin can request to access specific Boltdocs capabilities.
  */
 export type PluginPermission =
-  | 'fs:read'      // Read filesystem
-  | 'fs:write'     // Write filesystem
-  | 'vite:config'  // Modify Vite config
-  | 'mdx:remark'   // Add remark plugins
-  | 'mdx:rehype'   // Add rehype plugins
-  | 'components'   // Register MDX components
-  | 'hooks:build'  // Access build lifecycle hooks
-  | 'hooks:dev'    // Access dev lifecycle hooks
+  | 'fs:read' // Read filesystem
+  | 'fs:write' // Write filesystem
+  | 'vite:config' // Modify Vite config
+  | 'mdx:remark' // Add remark plugins
+  | 'mdx:rehype' // Add rehype plugins
+  | 'components' // Register MDX components
+  | 'hooks:build' // Access build lifecycle hooks
+  | 'hooks:dev' // Access dev lifecycle hooks
 
 /**
  * Shared context injected into every plugin lifecycle hook.

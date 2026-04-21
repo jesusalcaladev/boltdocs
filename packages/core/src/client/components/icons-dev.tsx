@@ -1,6 +1,4 @@
-import type { SVGProps } from 'react'
-
-type WrapperProps = SVGProps<SVGSVGElement> & {
+type WrapperProps = React.SVGProps<SVGSVGElement> & {
   size?: number
 }
 

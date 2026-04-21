@@ -12,19 +12,19 @@ export function ScrollHandler() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used as a trigger for scroll-to-top on navigation
   useLayoutEffect(() => {
     const container = document.querySelector('.boltdocs-content') || window
-    
+
     // Helper to get scroll top
     const getScrollTop = () => {
       if (container === window) return window.scrollY
       return (container as HTMLElement).scrollTop
     }
-    
+
     // Helper to scroll
     const scrollTo = (top: number, behavior: ScrollBehavior = 'auto') => {
       if (container === window) {
         window.scrollTo({ top, behavior })
       } else {
-        (container as HTMLElement).scrollTo({ top, behavior })
+        ;(container as HTMLElement).scrollTo({ top, behavior })
       }
     }
 
@@ -33,7 +33,10 @@ export function ScrollHandler() {
       const element = document.getElementById(id)
       if (element) {
         const offset = 80
-        const containerTop = container === window ? 0 : (container as HTMLElement).getBoundingClientRect().top
+        const containerTop =
+          container === window
+            ? 0
+            : (container as HTMLElement).getBoundingClientRect().top
         const elementRect = element.getBoundingClientRect().top
         const elementPosition = elementRect - containerTop
         const offsetPosition = elementPosition - offset + getScrollTop()

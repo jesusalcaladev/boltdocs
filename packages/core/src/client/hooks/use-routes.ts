@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
-import { useConfig } from '@client/app/config-context'
-import { usePreload } from '@client/app/preload'
-import { useBoltdocsStore } from '../store/boltdocs-context'
+import { useConfig } from '../app/config-context'
+import { useRoutesContext } from '../app/routes-context'
+import { useBoltdocsContext } from '../store/boltdocs-context'
 
 /**
  * Hook to access the framework's routing state.
@@ -9,17 +9,25 @@ import { useBoltdocsStore } from '../store/boltdocs-context'
  * version and locale.
  */
 export function useRoutes() {
-  const { routes: allRoutes } = usePreload()
+  const { routes: allRoutes } = useRoutesContext()
   const config = useConfig()
   const location = useLocation()
 
   // Use Zustand store for active state
-  const currentLocaleStore = useBoltdocsStore((s) => s.currentLocale)
-  const currentVersionStore = useBoltdocsStore((s) => s.currentVersion)
-  const hasHydrated = useBoltdocsStore((s) => s.hasHydrated)
+  const {
+    hasHydrated,
+    currentLocale: currentLocaleStore,
+    currentVersion: currentVersionStore,
+  } = useBoltdocsContext()
+
+  const normalize = (p: string) =>
+    p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p
+  const currentPath = normalize(location.pathname)
 
   // Find the current route matching the pathname
-  const currentRoute = allRoutes.find((r) => r.path === location.pathname)
+  const currentRoute = allRoutes?.find?.(
+    (r) => normalize(r.path) === currentPath,
+  )
 
   // Derive current locale and version
   // Priority: URL (currentRoute) > Zustand Store (Persistence) > Config Default
@@ -36,7 +44,7 @@ export function useRoutes() {
     : undefined
 
   // Filter routes to those matching the current version and locale
-  const routes = allRoutes.filter((r) => {
+  const routes = allRoutes?.filter?.((r) => {
     const localeMatch = config.i18n
       ? (r.locale || config.i18n.defaultLocale) === currentLocale
       : true
@@ -53,7 +61,7 @@ export function useRoutes() {
       const isCurrentRoutePrefixed = !!currentRoute?.locale
       const isRoutePrefixed = !!r.locale
 
-      const hasAlternate = allRoutes.some(
+      const hasAlternate = allRoutes?.some?.(
         (alt) =>
           alt !== r &&
           alt.filePath === r.filePath &&
@@ -78,7 +86,7 @@ export function useRoutes() {
     config.i18n?.locales[currentLocale as string] ||
     currentLocale
 
-  const currentVersionConfig = config.versions?.versions.find(
+  const currentVersionConfig = config.versions?.versions?.find?.(
     (v) => v.path === currentVersion,
   )
   const currentVersionLabel = currentVersionConfig?.label || currentVersion

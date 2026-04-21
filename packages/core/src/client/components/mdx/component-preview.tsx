@@ -11,11 +11,7 @@ export interface ComponentPreviewProps {
 }
 
 export function ComponentPreview(props: ComponentPreviewProps) {
-  const {
-    highlightedHtml,
-    hideCode = false,
-    hideCopy = false,
-  } = props
+  const { highlightedHtml, hideCode = false, hideCopy = false } = props
   const { initialCode, previewElement } = useComponentPreview(props)
 
   return (

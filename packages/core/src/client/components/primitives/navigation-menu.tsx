@@ -1,6 +1,6 @@
 import * as RAC from 'react-aria-components'
 import { ChevronDown } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import type { ComponentBase, CompoundComponent } from './types'
 
 export interface NavigationMenuItemProps extends ComponentBase {
@@ -13,8 +13,8 @@ export interface NavigationMenuLinkProps
   label: string
   description?: string
   children?:
-  | React.ReactNode
-  | ((opts: RAC.MenuItemRenderProps) => React.ReactNode)
+    | React.ReactNode
+    | ((opts: RAC.MenuItemRenderProps) => React.ReactNode)
 }
 
 export type NavigationMenuComponent = CompoundComponent<

@@ -1,24 +1,40 @@
+import { createRequire } from 'node:module'
+import { pathToFileURL } from 'node:url'
 import { type Plugin, type ResolvedConfig, loadEnv } from 'vite'
 import { generateRoutes, invalidateRouteCache, invalidateFile } from '../routes'
+import { adaptRoutesForSSG } from '../routes/route-adapter'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import { resolveConfig, type BoltdocsConfig, CONFIG_FILES } from '../config'
-import { generateStaticPages } from '../ssg'
 import { normalizePath, isDocFile } from '../utils'
-import path from 'path'
+import { generateSitemap } from '../seo/sitemap'
+import { generateRobotsTxt } from '../seo/robots'
+import path from 'node:path'
+import fs from 'node:fs'
 import type { BoltdocsPluginOptions } from './types'
 import { generateEntryCode } from './entry'
 import { injectHtmlMeta, getHtmlTemplate } from './html'
-import { generateRobotsTxt } from '../ssg/robots'
 import { generateSearchData } from '../search'
 import { SECURITY_HEADERS } from '../security/headers'
 import { getCSPHeader } from '../security/csp'
-import fs from 'fs'
 import {
   PluginLifecycleManager,
   validatePlugins,
   PluginSandbox,
   type SecureBoltdocsPlugin,
 } from '../plugins'
+
+const _require = createRequire(import.meta.url)
+
+/**
+ * Resolve a package to its absolute path to enforce singleton in monorepo
+ */
+function resolveSingleton(id: string) {
+  try {
+    return normalizePath(_require.resolve(id))
+  } catch (e) {
+    return undefined
+  }
+}
 
 export * from './types'
 
@@ -39,6 +55,7 @@ export function boltdocsPlugin(
   const normalizedDocsDir = normalizePath(docsDir)
   let config: BoltdocsConfig = passedConfig!
   let viteConfig: ResolvedConfig
+  let rawUserConfig: any
   let isBuild = false
   let lifecycle: PluginLifecycleManager
 
@@ -51,6 +68,7 @@ export function boltdocsPlugin(
       enforce: 'pre',
 
       async config(userConfig, env) {
+        rawUserConfig = userConfig
         isBuild = env.command === 'build'
 
         // Load env variables and inject into process.env so they are available in boltdocs.config.js
@@ -88,15 +106,92 @@ export function boltdocsPlugin(
         }
 
         return {
-          optimizeDeps: {
-            include: ['react', 'react-dom', 'react-dom/client'],
-            exclude: [
-              'boltdocs',
-              'boltdocs/client',
-            ],
+          // @ts-ignore - @bdocs/ssg options
+          ssgOptions: {
+            entry: 'boltdocs/entry',
+            htmlEntry: 'index.html',
+            dirStyle: 'nested',
+            includeAllRoutes: true,
+            mock: true,
+            script: 'async',
+            beastiesOptions: {
+              preload: 'media',
+            },
+            onFinished: async (outDir: string) => {
+              const routes = await generateRoutes(docsDir, config)
+              const ssgRoutes = adaptRoutesForSSG(routes)
+
+              const sitemap = generateSitemap(ssgRoutes, config)
+              if (sitemap) {
+                fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemap)
+              }
+
+              const robots = generateRobotsTxt(config)
+              fs.writeFileSync(path.join(outDir, 'robots.txt'), robots)
+            },
           },
-          resolve: {
-            dedupe: ['react', 'react-dom'],
+          build: {
+            ssrManifest: isBuild,
+          },
+          async config() {
+            // Find the core package root and source directory robustly
+            let packageRoot = __dirname
+            while (
+              packageRoot !== path.parse(packageRoot).root &&
+              !fs.existsSync(path.join(packageRoot, 'package.json'))
+            ) {
+              packageRoot = path.dirname(packageRoot)
+            }
+
+            // If we found a package.json, verify it's the boltdocs package
+            if (fs.existsSync(path.join(packageRoot, 'package.json'))) {
+              const pkg = JSON.parse(
+                fs.readFileSync(
+                  path.join(packageRoot, 'package.json'),
+                  'utf-8',
+                ),
+              )
+              if (pkg.name !== 'boltdocs') {
+                // Keep looking if it's not our package (e.g. monorepo root)
+                let parentDir = path.dirname(packageRoot)
+                while (parentDir !== path.parse(parentDir).root) {
+                  if (fs.existsSync(path.join(parentDir, 'package.json'))) {
+                    const parentPkg = JSON.parse(
+                      fs.readFileSync(
+                        path.join(parentDir, 'package.json'),
+                        'utf-8',
+                      ),
+                    )
+                    if (parentPkg.name === 'boltdocs') {
+                      packageRoot = parentDir
+                      break
+                    }
+                  }
+                  parentDir = path.dirname(parentDir)
+                }
+              }
+            }
+
+            return {
+              optimizeDeps: {
+                include: ['react', 'react-dom', 'react-router-dom'],
+                exclude: ['boltdocs', 'boltdocs/client'],
+              },
+              resolve: {
+                alias: [
+                  // Virtual entries (Keep these as they are truly virtual and generated)
+                  {
+                    find: 'boltdocs/entry',
+                    replacement: normalizePath(
+                      path.resolve(
+                        options.root || process.cwd(),
+                        'boltdocs-entry.cjs',
+                      ),
+                    ),
+                  },
+                ],
+              },
+            }
           },
         }
       },
@@ -127,13 +222,11 @@ export function boltdocsPlugin(
           next()
         })
 
-        // Serve robots.txt from config
         server.middlewares.use((req, res, next) => {
           if (req.url === '/robots.txt') {
-            const robots = generateRobotsTxt(config)
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'text/plain')
-            res.end(robots)
+            // robots.txt generation will be handled by the SSG pipeline after build
+            // in dev, we just return a default or let it 404
+            next()
             return
           }
           next()
@@ -221,7 +314,7 @@ export function boltdocsPlugin(
               )
             ) {
               const mod = server.moduleGraph.getModuleById(
-                '\0virtual:boltdocs-mdx-components',
+                '\0virtual:boltdocs-mdx-components.tsx',
               )
               if (mod) server.moduleGraph.invalidateModule(mod)
               server.ws.send({ type: 'full-reload' })
@@ -230,10 +323,11 @@ export function boltdocsPlugin(
 
             // If layout.tsx/jsx file changes, invalidate the virtual module
             if (
-              compExtensions.some((ext) => normalized.endsWith(`layout.${ext}`))
+              normalized.endsWith('layout.tsx') ||
+              normalized.endsWith('layout.jsx')
             ) {
               const mod = server.moduleGraph.getModuleById(
-                '\0virtual:boltdocs-layout',
+                '\0virtual:boltdocs-layout.tsx',
               )
               if (mod) server.moduleGraph.invalidateModule(mod)
               server.ws.send({ type: 'full-reload' })
@@ -266,7 +360,7 @@ export function boltdocsPlugin(
               config = await resolveConfig(docsDir)
 
               const configMod = server.moduleGraph.getModuleById(
-                '\0virtual:boltdocs-config',
+                '\0virtual:boltdocs-config.ts',
               )
               if (configMod) server.moduleGraph.invalidateModule(configMod)
 
@@ -284,26 +378,18 @@ export function boltdocsPlugin(
               invalidateFile(file)
             }
 
-            // Regenerate and push to client
-            // Optimization: generateRoutes is mostly incremental thanks to docCache
-            // We only force a full disk scan on add/unlink events
-            const newRoutes = await generateRoutes(
-              docsDir,
-              config,
-              '/docs',
-              type !== 'change',
-            )
-
             const routesMod = server.moduleGraph.getModuleById(
-              '\0virtual:boltdocs-routes',
+              '\0virtual:boltdocs-routes.ts',
             )
             if (routesMod) server.moduleGraph.invalidateModule(routesMod)
 
-            server.ws.send({
-              type: 'custom',
-              event: 'boltdocs:routes-update',
-              data: newRoutes,
-            })
+            const configMod = server.moduleGraph.getModuleById(
+              '\0virtual:boltdocs-config.ts',
+            )
+            if (configMod) server.moduleGraph.invalidateModule(configMod)
+
+            // For SSG stability, we prefer a full-reload on route/config changes
+            server.ws.send({ type: 'full-reload' })
           } catch (e) {
             console.error(`[boltdocs] HMR error during ${type} event:`, e)
           }
@@ -317,24 +403,85 @@ export function boltdocsPlugin(
       },
 
       resolveId(id) {
+        const root = viteConfig?.root || process.cwd()
         if (
-          id === 'virtual:boltdocs-routes' ||
-          id === 'virtual:boltdocs-config' ||
+          id.includes('boltdocs-entry.mjs') ||
           id === 'virtual:boltdocs-entry' ||
-          id === 'virtual:boltdocs-mdx-components' ||
-          id === 'virtual:boltdocs-layout' ||
-          id === 'virtual:boltdocs-search'
+          id === 'boltdocs-entry' ||
+          id === '\0virtual:boltdocs-entry'
         ) {
+          return normalizePath(path.resolve(root, 'boltdocs-entry.mjs'))
+        }
+        if (
+          id.includes('boltdocs-client.mjs') ||
+          id === 'virtual:boltdocs-client' ||
+          id === 'boltdocs-client' ||
+          id === '\0virtual:boltdocs-client.ts'
+        ) {
+          return normalizePath(path.resolve(root, 'boltdocs-client.mjs'))
+        }
+
+        // 3. Handle Virtual modules
+        if (id.startsWith('virtual:boltdocs-')) {
           return '\0' + id
         }
+        if (id.startsWith('\0virtual:boltdocs-')) {
+          return id
+        }
+
+        return null
       },
 
       async load(id) {
-        if (id === '\0virtual:boltdocs-routes') {
-          const routes = await generateRoutes(docsDir, config)
-          return `export default ${JSON.stringify(routes, null, 2)};`
+        if (
+          id.includes('boltdocs-entry.mjs') ||
+          id === '\0virtual:boltdocs-entry'
+        ) {
+          return generateEntryCode(options, config)
         }
-        if (id === '\0virtual:boltdocs-config') {
+
+        if (
+          id.includes('boltdocs-client.mjs') ||
+          id === '\0virtual:boltdocs-client.ts' ||
+          id === 'virtual:boltdocs-client'
+        ) {
+          // Find the package root
+          let currentDir = __dirname
+          let packageRoot = currentDir
+          while (currentDir !== path.parse(currentDir).root) {
+            if (fs.existsSync(path.join(currentDir, 'package.json'))) {
+              const pkg = JSON.parse(
+                fs.readFileSync(path.join(currentDir, 'package.json'), 'utf-8'),
+              )
+              if (pkg.name === 'boltdocs') {
+                packageRoot = currentDir
+                break
+              }
+            }
+            currentDir = path.dirname(currentDir)
+          }
+
+          const srcPath = path.join(packageRoot, 'src/client/index.ts')
+          const distPath = path.join(packageRoot, 'dist/client/index.js')
+
+          let filePath = fs.existsSync(srcPath) ? srcPath : distPath
+
+          const normalized = normalizePath(filePath)
+          console.log(`[boltdocs] Loading boltdocs/client from: ${normalized}`)
+          return `export * from '${normalized}';`
+        }
+
+        if (!id.startsWith('\0virtual:boltdocs-')) return
+
+        const nameWithExt = id.replace('\0virtual:boltdocs-', '')
+        const name = nameWithExt.replace(/\.tsx?$/, '')
+
+        if (name === 'routes') {
+          const routes = await generateRoutes(docsDir, config)
+          const ssgRoutes = adaptRoutesForSSG(routes)
+          return `export default ${JSON.stringify(ssgRoutes, null, 2)};`
+        }
+        if (name === 'config') {
           const clientConfig = {
             theme: config?.theme,
             i18n: config?.i18n,
@@ -344,11 +491,11 @@ export function boltdocsPlugin(
           }
           return `export default ${JSON.stringify(clientConfig, null, 2)};`
         }
-        if (id === '\0virtual:boltdocs-entry') {
+        if (name === 'entry') {
           const code = generateEntryCode(options, config)
           return code
         }
-        if (id === '\0virtual:boltdocs-mdx-components') {
+        if (name === 'mdx-components') {
           const extensions = ['tsx', 'ts', 'jsx', 'js']
           let userMdxPath = null
 
@@ -370,7 +517,7 @@ export * from '${normalizedPath}';`
 
           return `export default {};`
         }
-        if (id === '\0virtual:boltdocs-layout') {
+        if (name === 'layout') {
           const extensions = ['tsx', 'jsx']
           let userLayoutPath = null
 
@@ -389,14 +536,56 @@ export default UserLayout;`
           }
 
           // No user layout — return the built-in default
-          return `import { DefaultLayout } from 'boltdocs/client';
+          const defaultLayoutPath = normalizePath(
+            path.resolve(
+              __dirname,
+              '../../client/components/default-layout.tsx',
+            ),
+          )
+          return `import { DefaultLayout } from '${defaultLayoutPath}';
 export default DefaultLayout;`
         }
 
-        if (id === '\0virtual:boltdocs-search') {
+        if (name === 'search') {
           const routes = await generateRoutes(docsDir, config)
           const searchData = generateSearchData(routes)
           return `export default ${JSON.stringify(searchData, null, 2)};`
+        }
+
+        if (name === 'client') {
+          // Determine the client path relative to the core package root.
+          // We start from __dirname and look for 'src/client/index.ts' or 'dist/client/index.ts'
+          // going up until we find it or reach the workspace root.
+          let currentDir = __dirname
+          let clientPath = ''
+
+          while (currentDir && currentDir !== path.parse(currentDir).root) {
+            const srcPath = path.join(currentDir, 'src/client/index.ts')
+            const distPath = path.join(currentDir, 'dist/client/index.mjs')
+            const directPath = path.join(currentDir, 'client/index.ts')
+
+            if (fs.existsSync(srcPath)) {
+              clientPath = normalizePath(srcPath)
+              break
+            }
+            if (fs.existsSync(distPath)) {
+              clientPath = normalizePath(distPath)
+              break
+            }
+            if (fs.existsSync(directPath)) {
+              clientPath = normalizePath(directPath)
+              break
+            }
+            currentDir = path.dirname(currentDir)
+          }
+
+          if (!clientPath) {
+            throw new Error(
+              `[boltdocs] Could not resolve boltdocs/client entry point starting from ${__dirname}`,
+            )
+          }
+
+          return `export * from '${clientPath}';`
         }
       },
 
@@ -408,16 +597,7 @@ export default DefaultLayout;`
       },
 
       async closeBundle() {
-        if (!isBuild) return
-        const outDir = viteConfig?.build?.outDir
-          ? path.resolve(viteConfig.root, viteConfig.build.outDir)
-          : path.resolve(process.cwd(), 'dist')
-
-        const docsDirName = path.basename(docsDir || 'docs')
-        await generateStaticPages({ docsDir, docsDirName, outDir, config })
-
-        const { flushCache } = await import('../cache')
-        await flushCache()
+        if (!isBuild || viteConfig?.build?.ssr) return
 
         await lifecycle?.runHook('afterBuild')
         await lifecycle?.runHook('buildEnd')

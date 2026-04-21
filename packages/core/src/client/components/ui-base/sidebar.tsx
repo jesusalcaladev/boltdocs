@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useSidebar } from '@hooks/use-sidebar'
-import { Sidebar as SidebarPrimitive } from '@components/primitives/sidebar'
+import { useSidebar } from '../../hooks/use-sidebar'
+import { Sidebar as SidebarPrimitive } from '../primitives/sidebar'
 import { PoweredBy } from './powered-by'
 import * as LucideIcons from 'lucide-react'
-import type { ComponentRoute } from '@client/types'
-import type { BoltdocsConfig } from '@node/config'
+import type { ComponentRoute } from '../../types'
+import type { BoltdocsConfig } from '../../../node/config'
 
 function getIcon(iconName?: string): React.ElementType | undefined {
   if (!iconName) return undefined

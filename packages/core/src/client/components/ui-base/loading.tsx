@@ -1,5 +1,5 @@
-import { cn } from '@client/utils/cn'
-import { Skeleton } from '@primitives/skeleton'
+import { cn } from '../../utils/cn'
+import { Skeleton } from '../primitives/skeleton'
 
 /**
  * A premium loading component that only skeletons the markdown content area.

@@ -41,7 +41,9 @@ export function parseDocFile(
     decodedFile = decodeURIComponent(file)
   } catch {
     const fileName = path.basename(file)
-    logSecurityEvent('ENCODING_ERROR', 'Invalid character encoding', { file: fileName })
+    logSecurityEvent('ENCODING_ERROR', 'Invalid character encoding', {
+      file: fileName,
+    })
     throw new EncodingSecurityError(
       `Security breach: Invalid characters or encoding in path: ${fileName}`,
     )
@@ -72,9 +74,13 @@ export function parseDocFile(
     !ALLOWED_PATH_CHARS.test(relativePath)
   ) {
     const fileName = path.basename(file)
-    logSecurityEvent('PATH_TRAVERSAL_ATTEMPT', 'Path traversal or invalid characters detected', {
-      path: relativePath,
-    })
+    logSecurityEvent(
+      'PATH_TRAVERSAL_ATTEMPT',
+      'Path traversal or invalid characters detected',
+      {
+        path: relativePath,
+      },
+    )
     throw new PathTraversalError(
       `Security breach: File is outside of docs directory, contains null bytes, or invalid characters: ${fileName}`,
     )

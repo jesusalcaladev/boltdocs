@@ -1,6 +1,6 @@
 import * as RAC from 'react-aria-components'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import type { ComponentBase } from './types'
 
 export interface PageNavProps extends ComponentBase {
@@ -21,12 +21,7 @@ export const PageNav = ({ children, className }: ComponentBase) => {
   )
 }
 
-const PageNavLink = ({
-  children,
-  to,
-  direction,
-  className,
-}: PageNavProps) => {
+const PageNavLink = ({ children, to, direction, className }: PageNavProps) => {
   const isNext = direction === 'next'
   return (
     <RAC.Link

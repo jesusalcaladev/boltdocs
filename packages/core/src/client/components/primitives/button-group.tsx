@@ -1,4 +1,4 @@
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import type { ComponentBase } from './types'
 
 export interface ButtonGroupProps extends ComponentBase {

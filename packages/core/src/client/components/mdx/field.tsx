@@ -1,4 +1,4 @@
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 
 export interface FieldProps {
   name: string

@@ -1,5 +1,4 @@
-import type React from 'react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../utils/cn'
 import { useLocation } from '../hooks'
 
 /**

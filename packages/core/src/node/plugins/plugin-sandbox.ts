@@ -13,7 +13,7 @@ export class PluginSandbox {
    */
   public static checkPermission(
     plugin: SecureBoltdocsPlugin,
-    permission: PluginPermission
+    permission: PluginPermission,
   ): void {
     if (!hasPermission(plugin, permission)) {
       throw new PluginPermissionError(plugin.name, permission)
@@ -26,9 +26,15 @@ export class PluginSandbox {
    */
   public static getSanitizedCapabilities(plugin: SecureBoltdocsPlugin) {
     return {
-      remarkPlugins: hasPermission(plugin, 'mdx:remark') ? plugin.remarkPlugins : [],
-      rehypePlugins: hasPermission(plugin, 'mdx:rehype') ? plugin.rehypePlugins : [],
-      vitePlugins: hasPermission(plugin, 'vite:config') ? plugin.vitePlugins : [],
+      remarkPlugins: hasPermission(plugin, 'mdx:remark')
+        ? plugin.remarkPlugins
+        : [],
+      rehypePlugins: hasPermission(plugin, 'mdx:rehype')
+        ? plugin.rehypePlugins
+        : [],
+      vitePlugins: hasPermission(plugin, 'vite:config')
+        ? plugin.vitePlugins
+        : [],
       components: hasPermission(plugin, 'components') ? plugin.components : {},
     }
   }
@@ -40,7 +46,7 @@ export class PluginSandbox {
     plugin: SecureBoltdocsPlugin,
     requiredPermission: PluginPermission,
     hookName: string,
-    action: () => Promise<T> | T
+    action: () => Promise<T> | T,
   ): Promise<T | undefined> {
     try {
       this.checkPermission(plugin, requiredPermission)
@@ -48,10 +54,12 @@ export class PluginSandbox {
     } catch (error) {
       if (error instanceof PluginPermissionError) {
         // Log skip instead of failing hard for permissions in some contexts
-        console.warn(`[boltdocs] Skipping hook '${hookName}' for plugin '${plugin.name}': ${error.message}`)
+        console.warn(
+          `[boltdocs] Skipping hook '${hookName}' for plugin '${plugin.name}': ${error.message}`,
+        )
         return undefined
       }
-      
+
       // Re-throw other errors to be caught by the LifecycleManager
       throw error
     }

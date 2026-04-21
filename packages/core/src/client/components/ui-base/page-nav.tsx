@@ -1,5 +1,5 @@
-import { usePageNav } from '@hooks/use-page-nav'
-import { PageNav as PageNavPrimitive } from '@components/primitives/page-nav'
+import { usePageNav } from '../../hooks/use-page-nav'
+import { PageNav as PageNavPrimitive } from '../primitives/page-nav'
 
 /**
  * Component to display the previous and next page navigation buttons.
@@ -14,9 +14,7 @@ export function PageNav() {
     <PageNavPrimitive.Root className="animate-in fade-in slide-in-from-bottom-4 duration-700">
       {prevPage ? (
         <PageNavPrimitive.Link to={prevPage.path} direction="prev">
-          <PageNavPrimitive.Title>
-            Previous
-          </PageNavPrimitive.Title>
+          <PageNavPrimitive.Title>Previous</PageNavPrimitive.Title>
           <PageNavPrimitive.Description>
             {prevPage.title}
           </PageNavPrimitive.Description>
@@ -27,9 +25,7 @@ export function PageNav() {
 
       {nextPage && (
         <PageNavPrimitive.Link to={nextPage.path} direction="next">
-          <PageNavPrimitive.Title>
-            Next
-          </PageNavPrimitive.Title>
+          <PageNavPrimitive.Title>Next</PageNavPrimitive.Title>
           <PageNavPrimitive.Description>
             {nextPage.title}
           </PageNavPrimitive.Description>

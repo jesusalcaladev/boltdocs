@@ -6,7 +6,7 @@ import {
   type ComponentPropsWithoutRef,
 } from 'react'
 import { Check, ChevronRight, Circle } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 const listVariants = cva('my-6 transition-all duration-200', {

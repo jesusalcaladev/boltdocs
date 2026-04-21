@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react'
-import { Link } from '@components/primitives/link'
+import { Link } from '../primitives/link'
 
 export function NotFound() {
   return (

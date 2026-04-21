@@ -1,5 +1,5 @@
-import { useConfig } from '@client/app/config-context'
-import { copyToClipboard } from '@client/utils/copy-clipboard'
+import { useConfig } from '../../../app/config-context'
+import { copyToClipboard } from '../../../utils/copy-clipboard'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { CodeBlockProps } from '../code-block'
 

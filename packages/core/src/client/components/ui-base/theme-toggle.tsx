@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Sun, Moon, Monitor } from 'lucide-react'
-import { useTheme } from '@client/app/theme-context'
+import { useTheme } from '../../app/theme-context'
 import { Button } from 'react-aria-components'
-import { Menu } from '@components/primitives/menu'
+import { Menu } from '../primitives/menu'
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()

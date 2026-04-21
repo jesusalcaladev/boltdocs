@@ -1,5 +1,5 @@
-import path from 'path'
-import fs from 'fs'
+import path from 'node:path'
+import fs from 'node:fs'
 import { loadConfigFromFile, type Plugin as VitePlugin } from 'vite'
 import { BoltdocsConfigSchema } from './schema/config'
 import { ValidationError } from './errors'

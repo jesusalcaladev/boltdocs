@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   use,
   useEffect,
@@ -10,8 +10,8 @@ import React, {
   type RefObject,
 } from 'react'
 import scrollIntoView from 'scroll-into-view-if-needed'
-import { cn } from '@client/utils/cn'
-import { useOnChange } from '@client/utils/use-on-change'
+import { cn } from '../../utils/cn'
+import { useOnChange } from '../../utils/use-on-change'
 import type { ComponentBase } from './types'
 import { getItemId, Observer } from './helpers/observer'
 
@@ -165,11 +165,7 @@ export const OnThisPage = ({ children, className }: ComponentBase) => {
   )
 }
 
-const OnThisPageHeader = ({
-  children,
-  className,
-  ...props
-}: ComponentBase) => {
+const OnThisPageHeader = ({ children, className, ...props }: ComponentBase) => {
   return (
     <div
       className={cn(

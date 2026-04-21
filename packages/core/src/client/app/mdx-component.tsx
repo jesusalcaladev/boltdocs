@@ -1,6 +1,5 @@
-import type React from 'react'
 import { Link as LucideLink } from 'lucide-react'
-import * as MdxComponents from '@components/mdx'
+import * as MdxComponents from '../components/mdx'
 
 const Heading = ({
   level,
@@ -25,7 +24,7 @@ const Heading = ({
   )
 }
 
-import { Loading } from '@components/ui-base/loading'
+import { Loading } from '../components/ui-base/loading'
 
 export const mdxComponentsDefault = {
   ...MdxComponents,

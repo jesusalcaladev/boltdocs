@@ -5,9 +5,11 @@ import { boltdocsPlugin } from './plugin/index'
 import { boltdocsMdxPlugin } from './mdx/index'
 import { SECURITY_HEADERS } from './security/headers'
 import { getCSPHeader } from './security/csp'
-import type { BoltdocsPluginOptions } from './plugin/index'
-
 import { resolveConfig } from './config'
+import path from 'node:path'
+import { normalizePath } from 'vite'
+export { generateEntryCode } from './plugin/entry'
+import type { BoltdocsPluginOptions } from './plugin/index'
 
 export default async function boltdocs(
   options?: BoltdocsPluginOptions,
@@ -46,20 +48,53 @@ export async function createViteConfig(
   const viteConfig: InlineConfig = {
     root,
     mode,
+    oxc: {
+      jsx: {
+        development: !isProd,
+        runtime: 'automatic',
+        importSource: 'react',
+      },
+    },
+    optimizeDeps: {
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react-helmet-async',
+        'react-router-dom',
+      ],
+      rolldownOptions: {},
+    },
+    build: {
+      rolldownOptions: {},
+    },
     plugins: [
       react(),
       tailwindcss(),
       await boltdocs({
-        docsDir: config.docsDir,
-        homePage: config.homePage,
+        ...config,
+        root,
       }),
     ],
     resolve: {
       alias: {
-        'use-sync-external-store/shim/index.js': 'react',
-        'use-sync-external-store/shim': 'react',
-        'use-sync-external-store': 'react',
+        'boltdocs/entry': normalizePath(
+          path.resolve(root, 'boltdocs-entry.mjs'),
+        ),
+        'boltdocs/client': normalizePath(
+          path.resolve(root, 'boltdocs-client.mjs'),
+        ),
       },
+      dedupe: [
+        'react',
+        'react-dom',
+        'react-router-dom',
+        'react-helmet-async',
+        '@bdocs/ssg',
+      ],
+    },
+    ssr: {
+      noExternal: ['boltdocs', /@bdocs\/(?!ssg).*/, 'react-helmet-async'],
     },
     server: {
       headers: {
@@ -81,11 +116,12 @@ export async function createViteConfig(
   return viteConfig
 }
 
-export type { BoltdocsPluginOptions }
-export { generateStaticPages } from './ssg'
-export type { SSGOptions } from './ssg'
 export type { RouteMeta } from './routes'
-export type { BoltdocsConfig, BoltdocsThemeConfig, BoltdocsPlugin } from './config'
+export type {
+  BoltdocsConfig,
+  BoltdocsThemeConfig,
+  BoltdocsPlugin,
+} from './config'
 export { resolveConfig, defineConfig } from './config'
-
+export type { BoltdocsPluginOptions }
 export * from './plugins'

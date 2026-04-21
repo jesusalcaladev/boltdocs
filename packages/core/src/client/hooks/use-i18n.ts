@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { getBaseFilePath } from '@client/utils/get-base-file-path'
+import { getBaseFilePath } from '../utils/get-base-file-path'
 import { useRoutes } from './use-routes'
-import { useBoltdocsStore } from '../store/boltdocs-context'
+import { useBoltdocsContext } from '../store/boltdocs-context'
 
 export interface LocaleOption {
   key: string
@@ -25,7 +25,7 @@ export function useI18n(): UseI18nReturn {
   const routeContext = useRoutes()
   const { allRoutes, currentRoute, currentLocale, config } = routeContext
   const i18n = config.i18n
-  const setLocale = useBoltdocsStore((s) => s.setLocale)
+  const { setLocale } = useBoltdocsContext()
 
   const handleLocaleChange = (locale: string) => {
     if (!i18n || locale === currentLocale) return

@@ -8,5 +8,5 @@
  * even before the 'dist' folder has been built.
  */
 
-// We use require because the core package is currently CommonJS.
-require('../dist/node/cli-entry.cjs')
+// We use dynamic import because the core package is now ESM.
+import('../dist/node/cli-entry.mjs')

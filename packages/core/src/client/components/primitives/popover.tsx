@@ -1,7 +1,7 @@
 'use client'
 
 import * as RAC from 'react-aria-components'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 
 export interface PopoverProps extends Omit<RAC.PopoverProps, 'children'> {
   children: React.ReactNode

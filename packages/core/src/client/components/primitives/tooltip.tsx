@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import * as RAC from 'react-aria-components'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 
 export interface TooltipProps extends Omit<RAC.TooltipProps, 'children'> {
   /** The content to show inside the tooltip */
@@ -14,7 +14,7 @@ export interface TooltipProps extends Omit<RAC.TooltipProps, 'children'> {
 }
 
 // Fixed type for TooltipContentProps to match RAC's internal expectations
-export interface TooltipContentProps extends RAC.TooltipProps { }
+export interface TooltipContentProps extends RAC.TooltipProps {}
 
 /**
  * Modern, accessible Tooltip component built with React Aria Components.

@@ -3,10 +3,10 @@ import {
   AnchorProvider,
   ScrollProvider,
   useActiveAnchor,
-} from '@components/primitives/on-this-page'
-import React, { useRef, useEffect, useState, useCallback } from 'react'
-import { useOnThisPage } from '@hooks/use-onthispage'
-import type { OnThisPageProps } from '@client/types'
+} from '../primitives/on-this-page'
+import { useRef, useEffect, useState, useCallback, useMemo } from 'react'
+import { useOnThisPage } from '../../hooks/use-onthispage'
+import type { OnThisPageProps } from '../../types'
 import { Pencil, CircleHelp, TextAlignStart } from 'lucide-react'
 
 export function OnThisPage({
@@ -17,7 +17,7 @@ export function OnThisPage({
 }: OnThisPageProps) {
   const { headings } = useOnThisPage(rawHeadings)
 
-  const toc = React.useMemo(
+  const toc = useMemo(
     () =>
       headings.map((h) => ({ title: h.text, url: `#${h.id}`, depth: h.level })),
     [headings],

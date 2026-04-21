@@ -1,97 +1,84 @@
-import { createContext, use, useEffect, useState } from 'react'
+import { createContext, use, useState, useEffect } from 'react'
 
-type Theme = 'light' | 'dark' | 'system'
+export type Theme = 'light' | 'dark' | 'system'
+export type ResolvedTheme = 'light' | 'dark'
 
 interface ThemeContextType {
   theme: Theme
-  resolvedTheme: 'light' | 'dark'
+  resolvedTheme: ResolvedTheme
   setTheme: (theme: Theme) => void
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+const THEME_CONTEXT_SYMBOL = Symbol.for('__BDOCS_THEME_CONTEXT__')
+const THEME_INSTANCE_SYMBOL = Symbol.for('__BDOCS_THEME_INSTANCE__')
+
+const ThemeContext =
+  (globalThis as any)[THEME_CONTEXT_SYMBOL] ||
+  ((globalThis as any)[THEME_CONTEXT_SYMBOL] = createContext<
+    ThemeContextType | undefined
+  >(undefined))
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('system')
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark')
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark')
   const [mounted, setMounted] = useState(false)
 
   // Initialize theme from localStorage and set internal resolved theme
   useEffect(() => {
-    setMounted(true)
-    const stored = localStorage.getItem('boltdocs-theme') as Theme | null
-    const initialTheme =
-      stored === 'light' || stored === 'dark' || stored === 'system'
-        ? stored
-        : 'system'
-
+    const savedTheme = localStorage.getItem('boltdocs-theme') as Theme | null
+    const initialTheme = savedTheme || 'system'
     setThemeState(initialTheme)
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-    const updateResolved = (currentTheme: Theme, isDark: boolean) => {
-      if (currentTheme === 'system') {
-        setResolvedTheme(isDark ? 'dark' : 'light')
-      } else {
-        setResolvedTheme(currentTheme as 'light' | 'dark')
-      }
-    }
-
-    updateResolved(initialTheme, mediaQuery.matches)
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      // Re-read current theme state from some stable ref would be better, but we can capture it
-      // actually, the second useEffect will handle the source of truth,
-      // but this listener ensures 'system' updates instantly.
-      setResolvedTheme((prevResolved) => {
-        const currentTheme =
-          (localStorage.getItem('boltdocs-theme') as Theme) || 'system'
-        if (currentTheme === 'system') {
-          return e.matches ? 'dark' : 'light'
-        }
-        return prevResolved
-      })
-    }
-
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
+    const root = window.document.documentElement
+    const isDark =
+      initialTheme === 'dark' ||
+      (initialTheme === 'system' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    root.classList.toggle('dark', isDark)
+    setResolvedTheme(isDark ? 'dark' : 'light')
+    setMounted(true)
   }, [])
-
-  // Sync with DOM and resolved theme when theme preference changes
-  useEffect(() => {
-    if (!mounted) return
-
-    const isSystemDark = window.matchMedia(
-      '(prefers-color-scheme: dark)',
-    ).matches
-    const nextResolved =
-      theme === 'system' ? (isSystemDark ? 'dark' : 'light') : theme
-
-    setResolvedTheme(nextResolved as 'light' | 'dark')
-
-    const root = document.documentElement
-    if (nextResolved === 'light') {
-      root.classList.add('theme-light')
-      root.dataset.theme = 'light'
-    } else {
-      root.classList.remove('theme-light')
-      root.dataset.theme = 'dark'
-    }
-  }, [theme, mounted])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
     localStorage.setItem('boltdocs-theme', newTheme)
+
+    const root = window.document.documentElement
+    const isDark =
+      newTheme === 'dark' ||
+      (newTheme === 'system' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    root.classList.toggle('dark', isDark)
+    setResolvedTheme(isDark ? 'dark' : 'light')
   }
 
-  return (
-    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  )
+  const value = { theme, resolvedTheme, setTheme }
+
+  // Sync with global registry
+  if (typeof globalThis !== 'undefined') {
+    ;(globalThis as any)[THEME_INSTANCE_SYMBOL] = value
+  }
+
+  // Prevent hydration mismatch
+  if (!mounted) {
+    return null
+  }
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {
   const context = use(ThemeContext)
+
+  // Fallback to global registry for dual-package hazards
+  if (
+    !context &&
+    typeof globalThis !== 'undefined' &&
+    (globalThis as any)[THEME_INSTANCE_SYMBOL]
+  ) {
+    return (globalThis as any)[THEME_INSTANCE_SYMBOL] as ThemeContextType
+  }
+
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider')
   }

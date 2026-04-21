@@ -1,11 +1,9 @@
 import { useEffect, useCallback } from 'react'
-import { useSearch } from '@hooks/use-search'
-import {
-  SearchDialog as SearchDialogPrimitive,
-} from '@components/primitives/search-dialog'
-import Navbar from '@components/primitives/navbar'
+import { useSearch } from '../../hooks/use-search'
+import { SearchDialog as SearchDialogPrimitive } from '../primitives/search-dialog'
+import Navbar from '../primitives/navbar'
 import { useNavigate } from 'react-router-dom'
-import type { ComponentRoute } from '@client/types'
+import type { ComponentRoute } from '../../types'
 interface SearchResult {
   id: string
   title: string
@@ -73,8 +71,12 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
               >
                 <SearchDialogPrimitive.Item.Icon isHeading={item.isHeading} />
                 <div className="flex flex-col justify-center gap-0.5">
-                  <SearchDialogPrimitive.Item.Title>{item.title}</SearchDialogPrimitive.Item.Title>
-                  <SearchDialogPrimitive.Item.Bio>{item.bio}</SearchDialogPrimitive.Item.Bio>
+                  <SearchDialogPrimitive.Item.Title>
+                    {item.title}
+                  </SearchDialogPrimitive.Item.Title>
+                  <SearchDialogPrimitive.Item.Bio>
+                    {item.bio}
+                  </SearchDialogPrimitive.Item.Bio>
                 </div>
               </SearchDialogPrimitive.Item>
             )}

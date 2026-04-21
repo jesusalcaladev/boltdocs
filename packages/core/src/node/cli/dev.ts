@@ -1,4 +1,4 @@
-import { createServer } from 'vite'
+import { createServer } from '@bdocs/ssg/node'
 import { createViteConfig } from '../index'
 import * as ui from './ui'
 

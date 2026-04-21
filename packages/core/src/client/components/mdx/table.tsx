@@ -8,7 +8,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 
 export interface TableProps {
   headers?: string[]

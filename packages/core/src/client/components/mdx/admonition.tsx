@@ -7,7 +7,7 @@ import {
   Zap,
   Flame,
 } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import { cva } from 'class-variance-authority'
 import type { VariantProps } from 'class-variance-authority'
 

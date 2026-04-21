@@ -12,7 +12,7 @@ export function Head({ siteTitle, siteDescription, routes }: HeadProps) {
 
   useEffect(() => {
     // Find the current route's metadata
-    const currentRoute = routes.find((r) => r.path === location.pathname)
+    const currentRoute = routes?.find?.((r) => r.path === location.pathname)
     const pageTitle = currentRoute?.title
     const pageDescription = currentRoute?.description || siteDescription || ''
 

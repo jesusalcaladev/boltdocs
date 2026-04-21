@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react'
-import type { ComponentRoute, BoltdocsTab } from '@client/types'
+import type { ComponentRoute, BoltdocsTab } from '../types'
 
 export function useTabs(
   tabs: BoltdocsTab[] = [],
@@ -14,7 +14,11 @@ export function useTabs(
     width: 0,
   })
 
-  const activeRoute = routes.find((r) => r.path === location.pathname)
+  const normalize = (p: string) =>
+    p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p
+  const currentPath = normalize(location.pathname)
+
+  const activeRoute = routes.find((r) => normalize(r.path) === currentPath)
   const activeTabId = activeRoute?.tab?.toLowerCase()
   const activeIndex = tabs.findIndex(
     (tab) => tab.id.toLowerCase() === activeTabId,

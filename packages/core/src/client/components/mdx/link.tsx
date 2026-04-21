@@ -1,8 +1,8 @@
 import {
   Link as LinkPrimitive,
   type LinkProps as LinkPrimitiveProps,
-} from '@components/primitives/link'
-import { cn } from '@client/utils/cn'
+} from '../primitives/link'
+import { cn } from '../../utils/cn'
 
 export type LinkProps = LinkPrimitiveProps & {
   to: string

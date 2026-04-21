@@ -1,12 +1,11 @@
-import React from 'react'
 import {
   Link as RACLink,
   type LinkProps as RACLinkProps,
 } from 'react-aria-components'
 import { useLocation } from 'react-router-dom'
-import { useLocalizedTo } from '@hooks/use-localized-to'
-import { usePreload } from '@client/app/preload'
-import { cn } from '@client/utils/cn'
+import { useLocalizedTo } from '../../hooks/use-localized-to'
+import { cn } from '../../utils/cn'
+import { forwardRef } from 'react'
 
 export interface LinkProps extends RACLinkProps {
   /** Should prefetch the page on hover? Default 'hover' */
@@ -20,46 +19,29 @@ export interface LinkProps extends RACLinkProps {
  * It uses the global navigation configuration from BoltdocsRouterProvider
  * to handle seamless client-side transitions.
  */
-export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-  (props, ref) => {
-    const { href, prefetch = 'hover', onMouseEnter, onFocus, ...rest } = props
+export const Link = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
+  const { href, prefetch = 'hover', onMouseEnter, onFocus, ...rest } = props
 
-    const localizedHref = useLocalizedTo(href ?? '')
-    const { preload } = usePreload()
+  const localizedHref = useLocalizedTo(href ?? '')
 
-    const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-      onMouseEnter?.(e)
-      if (
-        prefetch === 'hover' &&
-        typeof localizedHref === 'string' &&
-        localizedHref.startsWith('/')
-      ) {
-        preload(localizedHref)
-      }
-    }
+  const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    onMouseEnter?.(e)
+  }
 
-    const handleFocus = (e: React.FocusEvent) => {
-      onFocus?.(e as any)
-      if (
-        prefetch === 'hover' &&
-        typeof localizedHref === 'string' &&
-        localizedHref.startsWith('/')
-      ) {
-        preload(localizedHref)
-      }
-    }
+  const handleFocus = (e: React.FocusEvent) => {
+    onFocus?.(e as any)
+  }
 
-    return (
-      <RACLink
-        {...rest}
-        ref={ref}
-        href={localizedHref as string}
-        onMouseEnter={handleMouseEnter}
-        onFocus={handleFocus as any}
-      />
-    )
-  },
-)
+  return (
+    <RACLink
+      {...rest}
+      ref={ref}
+      href={localizedHref as string}
+      onMouseEnter={handleMouseEnter}
+      onFocus={handleFocus as any}
+    />
+  )
+})
 Link.displayName = 'Link'
 
 /**
@@ -90,7 +72,7 @@ export interface NavLinkProps
  * It combines the Link primitive with path matching logic to determine
  * if the link is currently active based on the browser's location.
  */
-export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
+export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(
   (props, ref) => {
     const { href, end = false, className, children, ...rest } = props
     const location = useLocation()

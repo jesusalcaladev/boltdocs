@@ -1,6 +1,6 @@
 import * as RAC from 'react-aria-components'
 import { Search, Hash, FileText, CornerDownLeft } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import type { ComponentBase } from './types'
 
 export interface SearchDialogProps extends ComponentBase {
@@ -153,10 +153,7 @@ const SearchDialogItemIcon = ({
   )
 }
 
-const SearchDialogItemTitle = ({
-  children,
-  className,
-}: ComponentBase) => {
+const SearchDialogItemTitle = ({ children, className }: ComponentBase) => {
   return (
     <span
       className={cn('block font-medium truncate flex-1 text-sm', className)}

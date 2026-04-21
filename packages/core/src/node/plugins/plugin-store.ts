@@ -37,10 +37,11 @@ export class BoltdocsPluginStore implements PluginStore {
   public set(pluginName: string, key: string, value: unknown): void {
     const nsKey = this.getNamespaceKey(pluginName, key)
     // We also store a clone to ensure the store state is immutable from the outside
-    const storedValue = typeof value === 'object' && value !== null 
-      ? JSON.parse(JSON.stringify(value)) 
-      : value
-    
+    const storedValue =
+      typeof value === 'object' && value !== null
+        ? JSON.parse(JSON.stringify(value))
+        : value
+
     this.data.set(nsKey, storedValue)
   }
 

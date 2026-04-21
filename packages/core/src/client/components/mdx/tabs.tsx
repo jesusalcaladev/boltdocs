@@ -1,7 +1,7 @@
 import { Children, isValidElement, useMemo } from 'react'
 import * as RAC from 'react-aria-components'
 import { useTabs } from './hooks/useTabs'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import { CodeBlock } from './code-block'
 import { cva } from 'class-variance-authority'
 

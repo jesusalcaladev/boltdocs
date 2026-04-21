@@ -26,11 +26,7 @@ export const Breadcrumbs = ({
   )
 }
 
-const BreadcrumbsItem = ({
-  children,
-  className,
-  ...props
-}: ComponentBase) => {
+const BreadcrumbsItem = ({ children, className, ...props }: ComponentBase) => {
   return (
     <Breadcrumb
       className={cn('flex items-center mb-0 gap-1.5', className)}
@@ -70,8 +66,6 @@ const BreadcrumbsSeparator = ({ className }: ComponentBase) => {
     />
   )
 }
-
-
 
 Breadcrumbs.Root = Breadcrumbs
 Breadcrumbs.Item = BreadcrumbsItem

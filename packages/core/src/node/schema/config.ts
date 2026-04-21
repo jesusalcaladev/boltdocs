@@ -50,7 +50,9 @@ export const BoltdocsPluginSchema = z.object({
  */
 export const ThemeConfigSchema = z.object({
   title: z.union([z.string(), z.record(z.string(), z.string())]).optional(),
-  description: z.union([z.string(), z.record(z.string(), z.string())]).optional(),
+  description: z
+    .union([z.string(), z.record(z.string(), z.string())])
+    .optional(),
   logo: z
     .union([
       z.string(),
@@ -85,9 +87,12 @@ export const ThemeConfigSchema = z.object({
   socialLinks: z.array(SocialLinkSchema).optional(),
   footer: FooterConfigSchema.optional(),
   breadcrumbs: z.boolean().optional(),
-  editLink: z.string().refine(val => !val || val.includes(':path'), {
-    message: "editLink must contain ':path' placeholder if specified"
-  }).optional(),
+  editLink: z
+    .string()
+    .refine((val) => !val || val.includes(':path'), {
+      message: "editLink must contain ':path' placeholder if specified",
+    })
+    .optional(),
   communityHelp: z.string().url().optional(),
   version: z.string().max(50).optional(),
   githubRepo: z.string().max(100).optional(),

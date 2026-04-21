@@ -2,9 +2,9 @@ import { type ReactNode, useState, useEffect } from 'react'
 import { Separator, ToggleButton, Link, cn } from './index'
 import { Button as ButtonRAC } from 'react-aria-components'
 import { Search, Sun, Moon, ExternalLink } from 'lucide-react'
-import * as IconsSocials from '@components/icons-dev'
+import * as IconsSocials from '../icons-dev'
 import type { ComponentBase } from './types'
-import type { BoltdocsSocialLink } from '@node/config'
+import type { BoltdocsSocialLink } from '../../../node/config'
 
 export interface NavbarLinkProps extends Omit<ComponentBase, 'children'> {
   label: ReactNode
@@ -35,11 +35,7 @@ export interface NavbarSocialsProps extends ComponentBase {
   link: string
 }
 
-export const Navbar = ({
-  children,
-  className,
-  ...props
-}: ComponentBase) => {
+export const Navbar = ({ children, className, ...props }: ComponentBase) => {
   return (
     <header
       className={cn(
@@ -226,11 +222,7 @@ const NavbarSearchTrigger = ({
   )
 }
 
-const NavbarTheme = ({
-  className,
-  theme,
-  onThemeChange,
-}: NavbarThemeProps) => {
+const NavbarTheme = ({ className, theme, onThemeChange }: NavbarThemeProps) => {
   return (
     <ToggleButton
       isSelected={theme === 'dark'}
@@ -255,11 +247,7 @@ const Icon = ({ name }: { name: BoltdocsSocialLink['icon'] }) => {
   if (name === 'bluesky') return <IconsSocials.Bluesky />
 }
 
-const NavbarSocials = ({
-  icon,
-  link,
-  className,
-}: NavbarSocialsProps) => {
+const NavbarSocials = ({ icon, link, className }: NavbarSocialsProps) => {
   return (
     <Link
       href={link}

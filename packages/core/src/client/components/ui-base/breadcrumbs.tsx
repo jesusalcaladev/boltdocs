@@ -1,10 +1,8 @@
-import { useBreadcrumbs } from '@hooks/use-breadcrumbs'
+import { useBreadcrumbs } from '../../hooks/use-breadcrumbs'
 import { Home } from 'lucide-react'
-import {
-  Breadcrumbs as BreadcrumbsRoot,
-} from '@components/primitives/breadcrumbs'
-import { cn } from '@client/utils/cn'
-import { useConfig } from '@client/app/config-context'
+import { Breadcrumbs as BreadcrumbsRoot } from '../primitives/breadcrumbs'
+import { cn } from '../../utils/cn'
+import { useConfig } from '../../app/config-context'
 
 export function Breadcrumbs() {
   const { crumbs, activeRoute } = useBreadcrumbs()

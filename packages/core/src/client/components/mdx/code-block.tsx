@@ -1,8 +1,8 @@
 import * as RAC from 'react-aria-components'
 import { Copy, Check, File } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import { useCodeBlock } from './hooks/use-code-block'
-import { useConfig } from '@client/app/config-context'
+import { useConfig } from '../../app/config-context'
 import {
   TypeScript,
   JavaScript,
@@ -13,8 +13,9 @@ import {
   Markdown,
   Shell,
   Yaml,
-} from '@components/icons-dev'
-import { Tooltip } from '@components/primitives/tooltip'
+  yml as YamlIcon,
+} from '../icons-dev'
+import { Tooltip } from '../primitives/tooltip'
 
 const langIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   ts: TypeScript,

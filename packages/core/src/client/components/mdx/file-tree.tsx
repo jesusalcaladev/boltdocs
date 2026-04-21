@@ -8,7 +8,7 @@ import {
   FileImage,
   ChevronRight,
 } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 
 import {
   TypeScript,
@@ -20,14 +20,17 @@ import {
   Markdown,
   Shell,
   Yaml,
-} from '@components/icons-dev'
+} from '../icons-dev'
 
 // --- Constants & Types ---
 
 const ICON_SIZE = 16
 const STROKE_WIDTH = 2
 
-const FILE_EXTENSION_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
+const FILE_EXTENSION_MAP: Record<
+  string,
+  React.ComponentType<{ size?: number }>
+> = {
   ts: TypeScript,
   tsx: ReactIcon,
   js: JavaScript,

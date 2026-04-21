@@ -27,6 +27,11 @@ export function getHtmlTemplate(config: BoltdocsConfig): string {
  * @returns {string} The modified HTML string with injected tags
  */
 export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
+  // If the input HTML is empty or invalid, start with the default template
+  if (!html || !html.includes('<body') || !html.includes('<head')) {
+    html = getHtmlTemplate(config)
+  }
+
   const theme = config.theme
   const title = theme?.title || 'Boltdocs'
   const description = theme?.description || ''

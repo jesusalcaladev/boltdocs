@@ -1,7 +1,7 @@
 import type { MouseEvent as ReactMouseEvent } from 'react'
 import { useCallback, useRef } from 'react'
 import * as RAC from 'react-aria-components'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import { cva } from 'class-variance-authority'
 import type { VariantProps } from 'class-variance-authority'
 

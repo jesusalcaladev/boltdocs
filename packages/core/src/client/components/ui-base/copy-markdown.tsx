@@ -1,13 +1,8 @@
 import { useState } from 'react'
 import { Copy, Check, ExternalLink, ChevronDown } from 'lucide-react'
-import {
-  Button,
-  ButtonGroup,
-  Menu,
-  cn,
-} from '@client/components/primitives'
+import { Button, ButtonGroup, Menu, cn } from '../../components/primitives'
 
-import type { ComponentRoute } from '@client/types'
+import type { ComponentRoute } from '../../types'
 
 export interface CopyMarkdownProps {
   content?: string

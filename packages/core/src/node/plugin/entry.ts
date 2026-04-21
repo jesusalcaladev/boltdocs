@@ -63,25 +63,37 @@ const ${name} = _comp_${name}.default || _comp_${name}['${name}'] || _comp_${nam
     : ''
 
   return `
-import { createBoltdocsApp as _createApp } from 'boltdocs/client';
-import _routes from 'virtual:boltdocs-routes';
-import _config from 'virtual:boltdocs-config';
-import _user_mdx_components from 'virtual:boltdocs-mdx-components';
+import { ViteReactSSG } from '@bdocs/ssg';
+import { createRoutes } from 'boltdocs/client';
+import _routes from 'virtual:boltdocs-routes.ts';
+import _config from 'virtual:boltdocs-config.ts';
+import _user_mdx_components from 'virtual:boltdocs-mdx-components.tsx';
+import _Layout from 'virtual:boltdocs-layout.tsx';
 ${cssImport}
 ${homeImport}
 ${componentImports}
 ${externalModuleImport}
 
-_createApp({
-  target: '#root',
-  routes: _routes,
-  docsDirName: '${docsDirName}',
-  config: _config,
-  modules: import.meta.glob('/${docsDirName}/**/*.{md,mdx}'),
-  hot: import.meta.hot,
-  ${homeOption}
-  ${externalOption}
-  components: { ${componentMap}${componentMap ? ', ' : ''} ...(_user_mdx_components || {}) },
-});
+const mdxModules = import.meta.glob('/${docsDirName}/**/*.{md,mdx}', { eager: true });
+
+export const createRoot = ViteReactSSG(
+  {
+    routes: createRoutes({
+      routesData: _routes,
+      config: _config,
+      mdxModules,
+      Layout: _Layout,
+      ${homeOption}
+      ${externalOption}
+      components: { ${componentMap}${componentMap ? ', ' : ''} ...(_user_mdx_components || {}) },
+    }),
+  },
+  ({ isClient }) => {
+    // Boltdocs initialization hook
+    if (isClient) {
+      // Client-side initialization
+    }
+  },
+);
 `
 }

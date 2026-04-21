@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom'
-import { useConfig } from '@client/app/config-context'
+import { useConfig } from '../app/config-context'
 import type { ComponentRoute } from '../types'
 
 export function useSidebar(routes: ComponentRoute[]) {

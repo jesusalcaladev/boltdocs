@@ -1,10 +1,10 @@
-import { useTabs as useTabsHook } from '@hooks/use-tabs'
-import { Tabs as T } from '@components/primitives/tabs'
-import { Link } from '@components/primitives/link'
-import type { BoltdocsTab, ComponentRoute } from '@client/types'
+import { useTabs as useTabsHook } from '../../hooks/use-tabs'
+import { Tabs as T } from '../primitives/tabs'
+import { Link } from '../primitives/link'
+import type { BoltdocsTab, ComponentRoute } from '../../types'
 import * as Icons from 'lucide-react'
-import { getTranslated } from '@client/utils/i18n'
-import { useRoutes } from '@hooks/use-routes'
+import { getTranslated } from '../../utils/i18n'
+import { useRoutes } from '../../hooks/use-routes'
 
 export function Tabs({
   tabs,
@@ -50,10 +50,11 @@ export function Tabs({
               ref={(el: HTMLAnchorElement | null) => {
                 tabRefs.current[index] = el
               }}
-              className={`relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors outline-none ${isActive
+              className={`relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors outline-none ${
+                isActive
                   ? 'text-primary-500'
                   : 'text-text-muted hover:text-text-main'
-                }`}
+              }`}
             >
               {renderTabIcon(tab.icon)}
               <span>{getTranslated(tab.text, currentLocale)}</span>

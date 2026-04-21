@@ -1,4 +1,4 @@
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import type { ComponentBase } from './types'
 
 export interface TabsItemProps extends ComponentBase {
@@ -13,11 +13,7 @@ export interface TabsIndicatorProps extends ComponentBase {
   style?: React.CSSProperties
 }
 
-export const Tabs = ({
-  children,
-  className = '',
-  ...props
-}: ComponentBase) => {
+export const Tabs = ({ children, className = '', ...props }: ComponentBase) => {
   return (
     <div className={cn('w-full', className)} {...props}>
       {children}
@@ -66,10 +62,7 @@ const TabsContent = ({ children, className = '' }: ComponentBase) => {
   return <div className={cn('p-4 outline-none', className)}>{children}</div>
 }
 
-const TabsIndicator = ({
-  className = '',
-  style,
-}: TabsIndicatorProps) => {
+const TabsIndicator = ({ className = '', style }: TabsIndicatorProps) => {
   return (
     <div
       className={cn(

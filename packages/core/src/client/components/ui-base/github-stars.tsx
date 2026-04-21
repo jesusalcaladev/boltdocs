@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getStarsRepo } from '@client/utils/github'
-import { Github } from '@components/icons-dev'
+import { getStarsRepo } from '../../utils/github'
+import { Github } from '../icons-dev'
 
 export function GithubStars({ repo }: { repo: string }) {
   const [stars, setStars] = useState<string | null>(null)

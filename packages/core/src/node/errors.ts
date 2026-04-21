@@ -3,10 +3,10 @@
  */
 export class SecurityViolationError extends Error {
   constructor(message: string) {
-    super(message);
-    this.name = 'SecurityViolationError';
+    super(message)
+    this.name = 'SecurityViolationError'
     // Ensure the prototype is set correctly for instanceof checks in older TS versions
-    Object.setPrototypeOf(this, SecurityViolationError.prototype);
+    Object.setPrototypeOf(this, SecurityViolationError.prototype)
   }
 }
 
@@ -15,9 +15,9 @@ export class SecurityViolationError extends Error {
  */
 export class PathTraversalError extends SecurityViolationError {
   constructor(message: string) {
-    super(message);
-    this.name = 'PathTraversalError';
-    Object.setPrototypeOf(this, PathTraversalError.prototype);
+    super(message)
+    this.name = 'PathTraversalError'
+    Object.setPrototypeOf(this, PathTraversalError.prototype)
   }
 }
 
@@ -26,9 +26,9 @@ export class PathTraversalError extends SecurityViolationError {
  */
 export class EncodingSecurityError extends SecurityViolationError {
   constructor(message: string) {
-    super(message);
-    this.name = 'EncodingSecurityError';
-    Object.setPrototypeOf(this, EncodingSecurityError.prototype);
+    super(message)
+    this.name = 'EncodingSecurityError'
+    Object.setPrototypeOf(this, EncodingSecurityError.prototype)
   }
 }
 
@@ -37,8 +37,8 @@ export class EncodingSecurityError extends SecurityViolationError {
  */
 export class ValidationError extends SecurityViolationError {
   constructor(message: string) {
-    super(message);
-    this.name = 'ValidationError';
-    Object.setPrototypeOf(this, ValidationError.prototype);
+    super(message)
+    this.name = 'ValidationError'
+    Object.setPrototypeOf(this, ValidationError.prototype)
   }
 }

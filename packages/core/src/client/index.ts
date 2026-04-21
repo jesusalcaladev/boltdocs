@@ -1,35 +1,34 @@
 export type { BoltdocsConfig, BoltdocsThemeConfig } from '../node/config'
 export type {
   ComponentRoute,
-  CreateBoltdocsAppOptions,
   LayoutProps,
 } from './types'
-export { createBoltdocsApp } from './app'
-export { useConfig } from '@client/app/config-context'
-export { useTheme } from '@client/app/theme-context'
-export { useRoutes } from '@client/hooks/use-routes'
-export { useMdxComponents } from '@client/app/mdx-components-context'
+export * from './ssg'
+export { useConfig } from './app/config-context'
+export { useTheme } from './app/theme-context'
+export { useRoutes } from './hooks/use-routes'
+export { useMdxComponents } from './app/mdx-components-context'
 
 // Hooks
-export * from '@hooks/index'
+export * from './hooks/index'
 // Composable layout building blocks
-export { DocsLayout } from '@components/docs-layout'
-export { DefaultLayout } from '@components/default-layout'
+export { DocsLayout } from './components/docs-layout'
+export { DefaultLayout } from './components/default-layout'
 
 // Default UI components (for use in custom layout.tsx)
-export { Navbar } from '@components/ui-base/navbar'
-export { Sidebar } from '@components/ui-base/sidebar'
-export { OnThisPage } from '@components/ui-base/on-this-page'
-export { Head } from '@components/ui-base/head'
-export { Breadcrumbs } from '@components/ui-base/breadcrumbs'
-export { PageNav } from '@components/ui-base/page-nav'
-export { ErrorBoundary } from '@components/ui-base/error-boundary'
-export { CopyMarkdown } from '@components/ui-base/copy-markdown'
+export { Navbar } from './components/ui-base/navbar'
+export { Sidebar } from './components/ui-base/sidebar'
+export { OnThisPage } from './components/ui-base/on-this-page'
+export { Head } from './components/ui-base/head'
+export { Breadcrumbs } from './components/ui-base/breadcrumbs'
+export { PageNav } from './components/ui-base/page-nav'
+export { ErrorBoundary } from './components/ui-base/error-boundary'
+export { CopyMarkdown } from './components/ui-base/copy-markdown'
 
-export { NotFound } from '@components/ui-base/not-found'
-export { Loading } from '@components/ui-base/loading'
-export { CodeBlock } from '@components/mdx/code-block'
-export { Video } from '@components/mdx/video'
+export { NotFound } from './components/ui-base/not-found'
+export { Loading } from './components/ui-base/loading'
+export { CodeBlock } from './components/mdx/code-block'
+export { Video } from './components/mdx/video'
 
 // MDX Components
 export {

@@ -1,9 +1,9 @@
 import { Link } from './link'
 import * as RAC from 'react-aria-components'
 import { ChevronRight } from 'lucide-react'
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 import type { ComponentBase } from './types'
-import type { ComponentRoute } from '@client/types'
+import type { ComponentRoute } from '../../types'
 
 export interface SidebarGroupProps extends ComponentBase {
   title?: string

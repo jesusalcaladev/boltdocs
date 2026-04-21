@@ -32,7 +32,8 @@ export function rehypeShiki(config?: BoltdocsConfig) {
         const code = codeNode.children[0]?.value || ''
 
         // Extract title from meta string (e.g., ```ts title="app.ts")
-        const meta: string = codeNode.data?.meta || codeNode.properties?.metastring || ''
+        const meta: string =
+          codeNode.data?.meta || codeNode.properties?.metastring || ''
         const titleMatch = meta.match(/title\s*=\s*"([^"]*)"/)
         const title = titleMatch ? titleMatch[1] : undefined
 

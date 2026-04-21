@@ -1,11 +1,10 @@
 'use client'
 
 import { Check, ChevronRight, Dot } from 'lucide-react'
-import React from 'react'
 import * as RAC from 'react-aria-components'
+import { Children } from 'react'
 import { Popover, type PopoverProps } from './popover'
-import { cn } from '@client/utils/cn'
-
+import { cn } from '../../utils/cn'
 /**
  * MenuTrigger wraps a trigger (usually a Button) and a Menu.
  */
@@ -15,7 +14,7 @@ export interface MenuTriggerProps extends RAC.MenuTriggerProps {
 
 function MenuTrigger(props: MenuTriggerProps) {
   const [trigger, menu] = (
-    React.Children.toArray(props.children) as React.ReactElement[]
+    Children.toArray(props.children) as React.ReactElement[]
   ).slice(0, 2)
   return (
     <RAC.MenuTrigger {...props}>
@@ -32,7 +31,7 @@ function MenuTrigger(props: MenuTriggerProps) {
  */
 function SubmenuTrigger(props: RAC.SubmenuTriggerProps) {
   const [trigger, menu] = (
-    React.Children.toArray(props.children) as React.ReactElement[]
+    Children.toArray(props.children) as React.ReactElement[]
   ).slice(0, 2)
   return (
     <RAC.SubmenuTrigger {...props}>

@@ -1,4 +1,4 @@
-import { cn } from '@client/utils/cn'
+import { cn } from '../../utils/cn'
 
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'rect' | 'circle'

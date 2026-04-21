@@ -1,8 +1,8 @@
 import { useLocation } from 'react-router-dom'
-import { useConfig } from '@client/app/config-context'
-import { useTheme } from '@client/app/theme-context'
-import type { NavbarLink } from '@client/types'
-import { getTranslated } from '@client/utils/i18n'
+import { useConfig } from '../app/config-context'
+import { useTheme } from '../app/theme-context'
+import type { NavbarLink } from '../types'
+import { getTranslated } from '../utils/i18n'
 import { useRoutes } from './use-routes'
 
 export function useNavbar() {
