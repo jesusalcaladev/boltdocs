@@ -57,9 +57,7 @@ export function Navbar() {
         <NavbarPrimitive.Right>
           <NavbarPrimitive.Links>
             {links.map((link) => (
-              <>
-                <NavbarLinkItem key={link.href} link={link} />
-              </>
+              <NavbarLinkItem key={link.href} link={link} />
             ))}
           </NavbarPrimitive.Links>
           {config.i18n && currentLocale && <NavbarI18n />}
