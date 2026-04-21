@@ -7,7 +7,7 @@ import { useRoutes } from './use-routes'
 
 export function useNavbar() {
   const config = useConfig()
-  const { theme } = useTheme()
+  const { theme, resolvedTheme } = useTheme()
   const location = useLocation()
   const { currentLocale } = useRoutes()
 
@@ -67,11 +67,13 @@ export function useNavbar() {
   })
 
   const logo = themeConfig.logo
+  // Use resolvedTheme so 'system' correctly maps to 'dark' or 'light'
+  // based on the OS preference, instead of always falling back to 'light'.
   const logoSrc = !logo
     ? null
     : typeof logo === 'string'
       ? logo
-      : theme === 'dark'
+      : resolvedTheme === 'dark'
         ? (logo as any).dark
         : (logo as any).light
 

@@ -99,7 +99,7 @@
 }
 
 :root[data-theme="dark"],
-:root:not(.theme-light) {
+:root.dark {
   --color-bg-main: var(--color-neutral-950);
   --color-bg-surface: var(--color-neutral-900);
   --color-bg-muted: var(--color-neutral-800);
@@ -378,11 +378,11 @@
     color: var(--shiki-light);
   }
   :root[data-theme="dark"] .shiki-wrapper .shiki.shiki-themes,
-  :root:not(.theme-light) .shiki-wrapper .shiki.shiki-themes {
+  :root.dark .shiki-wrapper .shiki.shiki-themes {
     color: var(--shiki-dark) !important;
   }
   :root[data-theme="dark"] .shiki-wrapper .shiki.shiki-themes span,
-  :root:not(.theme-light) .shiki-wrapper .shiki.shiki-themes span {
+  :root.dark .shiki-wrapper .shiki.shiki-themes span {
     color: var(--shiki-dark) !important;
   }
 }

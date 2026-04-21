@@ -21,34 +21,38 @@ const ThemeContext =
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('system')
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark')
-  const [mounted, setMounted] = useState(false)
 
-  // Initialize theme from localStorage and set internal resolved theme
   useEffect(() => {
     const savedTheme = localStorage.getItem('boltdocs-theme') as Theme | null
-    const initialTheme = savedTheme || 'system'
-    setThemeState(initialTheme)
+    if (savedTheme) setThemeState(savedTheme)
 
-    const root = window.document.documentElement
-    const isDark =
-      initialTheme === 'dark' ||
-      (initialTheme === 'system' &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    root.classList.toggle('dark', isDark)
-    setResolvedTheme(isDark ? 'dark' : 'light')
-    setMounted(true)
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+    const update = () => {
+      const currentTheme = (localStorage.getItem('boltdocs-theme') as Theme) || 'system'
+      const isDark =
+        currentTheme === 'dark' ||
+        (currentTheme === 'system' && mediaQuery.matches)
+
+      window.document.documentElement.classList.toggle('dark', isDark)
+      setResolvedTheme(isDark ? 'dark' : 'light')
+    }
+
+    update()
+    mediaQuery.addEventListener('change', update)
+    return () => mediaQuery.removeEventListener('change', update)
   }, [])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
     localStorage.setItem('boltdocs-theme', newTheme)
 
-    const root = window.document.documentElement
     const isDark =
       newTheme === 'dark' ||
       (newTheme === 'system' &&
         window.matchMedia('(prefers-color-scheme: dark)').matches)
-    root.classList.toggle('dark', isDark)
+
+    window.document.documentElement.classList.toggle('dark', isDark)
     setResolvedTheme(isDark ? 'dark' : 'light')
   }
 
@@ -56,12 +60,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Sync with global registry
   if (typeof globalThis !== 'undefined') {
-    ;(globalThis as any)[THEME_INSTANCE_SYMBOL] = value
-  }
-
-  // Prevent hydration mismatch
-  if (!mounted) {
-    return null
+    ; (globalThis as any)[THEME_INSTANCE_SYMBOL] = value
   }
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
@@ -82,5 +81,5 @@ export function useTheme() {
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider')
   }
-  return context
+  return context as ThemeContextType
 }
