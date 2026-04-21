@@ -3,12 +3,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 2rem 0;
-  padding: 1.5rem;
-  background-color: var(--ld-surface);
-  border: 1px solid var(--ld-border-subtle);
-  border-radius: var(--ld-radius-md);
+  margin: 2.5rem 0;
+  padding: 2rem;
+  background-color: var(--color-bg-surface, rgba(0, 0, 0, 0.02));
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl, 1rem);
   overflow-x: auto;
+}
+
+:root[data-theme="dark"] .mermaid-container {
+  background-color: var(--color-bg-surface, rgba(255, 255, 255, 0.02));
 }
 
 .mermaid-container svg {
@@ -17,12 +21,12 @@
 }
 
 .mermaid-error {
-  color: #ef4444;
-  font-family: var(--ld-font-mono);
+  color: var(--color-red-500);
+  font-family: var(--font-mono);
   font-size: 0.875rem;
-  padding: 1rem;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  background-color: rgba(239, 68, 68, 0.1);
-  border-radius: var(--ld-radius-sm);
+  padding: 1.5rem;
+  border: 1px solid var(--color-red-500);
+  background-color: color-mix(in srgb, var(--color-red-500), transparent 90%);
+  border-radius: var(--radius-lg);
   text-align: center;
 }
