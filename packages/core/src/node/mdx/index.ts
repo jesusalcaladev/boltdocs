@@ -13,8 +13,6 @@ import { remarkCodeMeta } from './remark-code-meta'
 import { PluginSandbox } from '../plugins'
 
 let mdxCacheLoaded = false
-let hits = 0
-let total = 0
 
 /**
  * Configures the MDX compiler for Vite using `@mdx-js/rollup`.
@@ -63,8 +61,6 @@ export function boltdocsMdxPlugin(
     name: 'vite-plugin-boltdocs-mdx',
 
     async buildStart() {
-      hits = 0
-      total = 0
       if (!mdxCacheLoaded) {
         mdxCache.load()
         mdxCacheLoaded = true
@@ -82,15 +78,12 @@ export function boltdocsMdxPlugin(
         return baseMdxPlugin.transform?.call(this, code, id, options)
       }
 
-      console.log(`[boltdocs] Transforming MDX: ${id}`)
-      total++
       // Create a cache key based on path, content, and plugin version
       const contentHash = crypto.createHash('md5').update(code).digest('hex')
       const cacheKey = `${id}:${contentHash}:${MDX_PLUGIN_VERSION}`
 
       const cached = mdxCache.get(cacheKey)
       if (cached) {
-        hits++
         return { code: cached, map: null }
       }
 
@@ -105,11 +98,6 @@ export function boltdocsMdxPlugin(
     },
 
     async buildEnd() {
-      if (total > 0) {
-        console.log(
-          `[boltdocs] MDX Cache Performance: ${hits}/${total} hits (${Math.round((hits / total) * 100) || 0}%)`,
-        )
-      }
       mdxCache.save()
       await mdxCache.flush()
       // @ts-ignore

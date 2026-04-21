@@ -467,7 +467,6 @@ export function boltdocsPlugin(
           let filePath = fs.existsSync(srcPath) ? srcPath : distPath
 
           const normalized = normalizePath(filePath)
-          console.log(`[boltdocs] Loading boltdocs/client from: ${normalized}`)
           return `export * from '${normalized}';`
         }
 

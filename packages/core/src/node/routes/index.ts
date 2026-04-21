@@ -33,8 +33,6 @@ export async function generateRoutes(
   basePath: string = '/docs',
   forceScan: boolean = true,
 ): Promise<RouteMeta[]> {
-  const start = performance.now()
-
   // Load persistent cache
   docCache.load()
 
@@ -166,11 +164,6 @@ export async function generateRoutes(
   }
 
   const sorted = sortRoutes(finalRoutes)
-
-  const duration = performance.now() - start
-  console.log(
-    `[boltdocs] Route generation: ${duration.toFixed(2)}ms (${files.length} files, ${cacheHits} cache hits)`,
-  )
 
   return sorted
 }
