@@ -83,7 +83,7 @@ const SidebarGroup = ({
         <RAC.Button
           onPress={onToggle}
           className={cn(
-            'flex w-full items-center justify-between px-2 py-1.5 text-xs font-bold uppercase tracking-wider outline-none cursor-pointer',
+            'flex w-full items-center justify-between px-2 py-1.5 text-xs font-bold tracking-wider outline-none cursor-pointer',
             'text-text-muted hover:text-text-main transition-colors',
             'focus-visible:ring-2 focus-visible:ring-primary-500/30 rounded-md',
           )}
