@@ -3,13 +3,17 @@ import { useSidebar } from '../../hooks/use-sidebar'
 import { Sidebar as SidebarPrimitive } from '../primitives/sidebar'
 import { PoweredBy } from './powered-by'
 import * as LucideIcons from 'lucide-react'
+import virtualIcons from 'virtual:boltdocs-icons'
 import type { ComponentRoute } from '../../types'
 import type { BoltdocsConfig } from '../../../node/config'
 
 function getIcon(iconName?: string): React.ElementType | undefined {
   if (!iconName) return undefined
-  const icons = LucideIcons as unknown as Record<string, React.ElementType>
-  const IconComponent = icons[iconName]
+  const icons = { ...LucideIcons, ...virtualIcons } as unknown as Record<
+    string,
+    React.ElementType
+  >
+  const IconComponent = icons[iconName] || icons[iconName + 'Icon']
   return IconComponent || undefined
 }
 

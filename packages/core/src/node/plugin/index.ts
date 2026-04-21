@@ -287,11 +287,16 @@ export function boltdocsPlugin(
           path.resolve(docsDir, `pages-external/index.${ext}`),
         )
 
+        const iconsPaths = mdxCompExtensions.map((ext) =>
+          path.resolve(docsDir, `icons.${ext}`),
+        )
+
         server.watcher.add([
           ...configPaths,
           ...mdxCompPaths,
           ...layoutCompPaths,
           ...extPagesPaths,
+          ...iconsPaths,
         ])
 
         const handleFileEvent = async (
@@ -315,6 +320,20 @@ export function boltdocsPlugin(
             ) {
               const mod = server.moduleGraph.getModuleById(
                 '\0virtual:boltdocs-mdx-components.tsx',
+              )
+              if (mod) server.moduleGraph.invalidateModule(mod)
+              server.ws.send({ type: 'full-reload' })
+              return
+            }
+
+            // If icons file changes, invalidate the virtual module
+            if (
+              mdxCompExtensions.some((ext) =>
+                normalized.endsWith(`icons.${ext}`),
+              )
+            ) {
+              const mod = server.moduleGraph.getModuleById(
+                '\0virtual:boltdocs-icons.tsx',
               )
               if (mod) server.moduleGraph.invalidateModule(mod)
               server.ws.send({ type: 'full-reload' })
@@ -543,6 +562,26 @@ export default UserLayout;`
           )
           return `import { DefaultLayout } from '${defaultLayoutPath}';
 export default DefaultLayout;`
+        }
+
+        if (name === 'icons') {
+          const extensions = ['tsx', 'jsx', 'ts', 'js']
+          let userIconsPath = null
+
+          for (const ext of extensions) {
+            const p = path.resolve(docsDir, `icons.${ext}`)
+            if (fs.existsSync(p)) {
+              userIconsPath = p
+              break
+            }
+          }
+
+          if (userIconsPath) {
+            const normalizedPath = normalizePath(userIconsPath)
+            return `import * as icons from '${normalizedPath}';\nexport default icons;`
+          }
+
+          return `export default {};`
         }
 
         if (name === 'search') {

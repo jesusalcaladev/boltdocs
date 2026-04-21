@@ -84,6 +84,15 @@ export const ThemeConfigSchema = z.object({
       ),
     )
     .optional(),
+  sidebarGroups: z
+    .record(
+      z.string(),
+      z.object({
+        title: z.string().optional(),
+        icon: z.string().optional(),
+      }),
+    )
+    .optional(),
   socialLinks: z.array(SocialLinkSchema).optional(),
   footer: FooterConfigSchema.optional(),
   breadcrumbs: z.boolean().optional(),

@@ -112,7 +112,6 @@ export async function generateRoutes(
         entry = {
           title: capitalize(p.relativeDir),
           position: p.inferredGroupPosition,
-          icon: p.route.icon,
         }
         groupMeta.set(p.relativeDir, entry)
       } else {
@@ -121,9 +120,6 @@ export async function generateRoutes(
           p.inferredGroupPosition !== undefined
         ) {
           entry.position = p.inferredGroupPosition
-        }
-        if (!entry.icon && p.route.icon) {
-          entry.icon = p.route.icon
         }
       }
     }
@@ -137,6 +133,24 @@ export async function generateRoutes(
       if (p.groupMeta.position !== undefined)
         entry.position = p.groupMeta.position
       if (p.groupMeta.icon) entry.icon = p.groupMeta.icon
+    }
+  }
+
+  // Override with boltdocs.config.ts sidebarGroups configurations
+  if (config?.theme?.sidebarGroups) {
+    for (const [groupName, groupConfig] of Object.entries(
+      config.theme.sidebarGroups,
+    )) {
+      const entry = groupMeta.get(groupName)
+      if (entry) {
+        if (groupConfig.title) entry.title = groupConfig.title
+        if (groupConfig.icon) entry.icon = groupConfig.icon
+      } else {
+        groupMeta.set(groupName, {
+          title: groupConfig.title || capitalize(groupName),
+          icon: groupConfig.icon,
+        })
+      }
     }
   }
 

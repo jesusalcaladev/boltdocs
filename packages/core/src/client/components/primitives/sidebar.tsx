@@ -84,8 +84,8 @@ const SidebarGroup = ({
       {title && (
         <div
           className={cn(
-            'flex w-full items-center justify-between px-2 py-1.5 text-xs font-medium tracking-wider',
-            'text-text-muted',
+            'flex w-full items-center justify-between px-2 py-1.5 text-sm font-semibold',
+            'text-text-main',
           )}
         >
           <div className="flex items-center gap-2">
@@ -118,9 +118,10 @@ const SidebarLink = ({
         'group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none',
         'transition-all duration-200 ease-in-out',
         'focus-visible:ring-2 focus-visible:ring-primary-500/30',
-        active
-          ? 'bg-primary-500/10 text-primary-500 font-medium'
-          : 'text-text-muted hover:bg-bg-surface hover:text-text-main hover:translate-x-1',
+        {
+          'bg-primary-500/10 text-primary-500 font-medium': active,
+          'text-text-muted hover:bg-bg-muted hover:text-text-main': !active,
+        },
         className,
       )}
     >

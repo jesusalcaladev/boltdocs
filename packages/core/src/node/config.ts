@@ -53,6 +53,8 @@ export interface BoltdocsThemeConfig {
   }>
   /** Items to display in the sidebar, organized optionally by group URLs */
   sidebar?: Record<string, Array<{ text: string; link: string }>>
+  /** Global configuration for sidebar groups (titles and icons) */
+  sidebarGroups?: Record<string, { title?: string; icon?: string }>
   /** Social links to display in the navigation bar */
   socialLinks?: BoltdocsSocialLink[]
   /** Site footer configuration */
@@ -319,6 +321,7 @@ export async function resolveConfig(
     ogImage: userConfig.ogImage,
     navbar: userConfig.navbar,
     sidebar: userConfig.sidebar,
+    sidebarGroups: userConfig.theme?.sidebarGroups,
     socialLinks: userConfig.socialLinks,
     footer: userConfig.footer,
     githubRepo: userConfig.githubRepo,
