@@ -1,10 +1,7 @@
 import type { ReactNode } from 'react'
 import type { ViteReactSSGClientOptions, ViteReactSSGContext } from '../types'
-import React from 'react'
-import * as HelmetModule from 'react-helmet-async'
-const { HelmetProvider } = (
-  (HelmetModule as any).default?.HelmetProvider ? (HelmetModule as any).default : HelmetModule
-) as typeof HelmetModule
+import * as _helmet from 'react-helmet-async'
+const { HelmetProvider } = _helmet
 import { hydrate, render } from '../pollfill/react-helper'
 import { documentReady } from '../utils/document-ready'
 import { deserializeState } from '../utils/state'

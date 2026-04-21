@@ -4,11 +4,8 @@ import type {
   ViteReactSSGClientOptions,
   ViteReactSSGContext,
 } from '../types'
-import React from 'react'
-import * as HelmetModule from 'react-helmet-async'
-const { HelmetProvider } = (
-  (HelmetModule as any).default?.HelmetProvider ? (HelmetModule as any).default : HelmetModule
-) as typeof HelmetModule
+import * as _helmet from 'react-helmet-async'
+const { HelmetProvider } = _helmet
 import {
   createBrowserRouter,
   matchRoutes,
@@ -16,7 +13,7 @@ import {
 } from 'react-router-dom'
 import { hydrate, render } from '../pollfill/react-helper'
 import { documentReady } from '../utils/document-ready'
-import { joinUrlSegments, stripBase, withLeadingSlash } from '../utils/path'
+import { joinUrlSegments, withLeadingSlash } from '../utils/path'
 import { convertRoutesToDataRoutes } from '../utils/remix-router'
 import { deserializeState } from '../utils/state'
 
@@ -50,17 +47,17 @@ export function ViteReactSSG(
     const createRouter = routerOptions.customCreateRouter ?? createBrowserRouter
     const browserRouter = client
       ? createRouter(
-          convertRoutesToDataRoutes(
-            routerOptions.routes,
-            transformStaticLoaderRoute,
-          ),
-          { future: routerFeature },
-        )
+        convertRoutesToDataRoutes(
+          routerOptions.routes,
+          transformStaticLoaderRoute,
+        ),
+        { future: routerFeature },
+      )
       : undefined
 
     const appRenderCallbacks: Function[] = []
     const onSSRAppRendered = client
-      ? () => {}
+      ? () => { }
       : (cb: Function) => appRenderCallbacks.push(cb)
     const triggerOnSSRAppRendered = () => {
       return Promise.all(appRenderCallbacks.map(cb => cb()))
@@ -137,7 +134,7 @@ export function ViteReactSSG(
       const { router } = context
       const app = (
         <HelmetProvider>
-          <RouterProvider router={router!} future={{ v7_startTransition }} />
+          <RouterProvider router={router!} />
         </HelmetProvider>
       )
       const isSSR
