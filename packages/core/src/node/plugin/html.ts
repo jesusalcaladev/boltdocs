@@ -71,14 +71,11 @@ export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
       (function() {
         try {
           var stored = localStorage.getItem("boltdocs-theme");
-          var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-          if (theme === "light") {
-            document.documentElement.classList.add("theme-light");
-            document.documentElement.dataset.theme = "light";
-          } else {
-            document.documentElement.classList.remove("theme-light");
-            document.documentElement.dataset.theme = "dark";
-          }
+          var isDark =
+            stored === "dark" ||
+            (stored !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", isDark);
+          document.documentElement.dataset.theme = isDark ? "dark" : "light";
         } catch (e) {}
       })();
     </script>
