@@ -90,6 +90,8 @@
   }
 }
 
+@variant dark (&:where(.dark, .dark *));
+
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -111,6 +113,7 @@
   --color-code-bg: var(--color-neutral-900);
   --color-code-text: var(--color-neutral-200);
 }
+
 
 @layer base {
   *,

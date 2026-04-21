@@ -25,13 +25,13 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 const admonitionVariants = cva('py-4 px-4 rounded-lg flex items-center gap-3 border-[1px] flex-row', {
   variants: {
     type: {
-      note: 'border-primary-900 bg-primary-500/5 text-primary-400',
-      tip: 'border-emerald-900 bg-emerald-500/5 text-emerald-500',
-      info: 'border-sky-900 bg-sky-500/5 text-sky-500',
-      warning: 'border-amber-900 bg-amber-500/5 text-amber-500',
-      danger: 'border-red-900 bg-red-500/5 text-red-500',
-      important: 'border-orange-900 bg-orange-500/5 text-orange-500',
-      caution: 'border-yellow-900 bg-yellow-500/5 text-yellow-500',
+      note: 'border-primary-200 dark:border-primary-800 bg-primary-500/5 text-primary-400',
+      tip: 'border-emerald-200 dark:border-emerald-800 bg-emerald-500/5 text-emerald-500',
+      info: 'border-sky-200 dark:border-sky-800 bg-sky-500/5 text-sky-500',
+      warning: 'border-amber-200 dark:border-amber-800 bg-amber-500/5 text-amber-500',
+      danger: 'border-red-200 dark:border-red-800/70 bg-red-500/5 text-red-500',
+      important: 'border-orange-200 dark:border-orange-800/70 bg-orange-500/5 text-orange-500',
+      caution: 'border-yellow-200 dark:border-yellow-800/70 bg-yellow-500/5 text-yellow-500',
     },
   },
   defaultVariants: {

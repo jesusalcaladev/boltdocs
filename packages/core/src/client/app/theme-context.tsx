@@ -11,6 +11,7 @@ interface ThemeContextType {
 
 const THEME_CONTEXT_SYMBOL = Symbol.for('__BDOCS_THEME_CONTEXT__')
 const THEME_INSTANCE_SYMBOL = Symbol.for('__BDOCS_THEME_INSTANCE__')
+const THEME_EVENT = 'boltdocs-theme-change'
 
 const ThemeContext =
   (globalThis as any)[THEME_CONTEXT_SYMBOL] ||
@@ -22,45 +23,53 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('system')
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark')
 
+  const applyTheme = (targetTheme: Theme) => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const isDark =
+      targetTheme === 'dark' ||
+      (targetTheme === 'system' && mediaQuery.matches)
+
+    const root = window.document.documentElement
+    root.classList.toggle('dark', isDark)
+    root.dataset.theme = isDark ? 'dark' : 'light'
+    setResolvedTheme(isDark ? 'dark' : 'light')
+  }
+
   useEffect(() => {
     const savedTheme = localStorage.getItem('boltdocs-theme') as Theme | null
-    if (savedTheme) setThemeState(savedTheme)
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-    const update = () => {
-      const currentTheme = (localStorage.getItem('boltdocs-theme') as Theme) || 'system'
-      const isDark =
-        currentTheme === 'dark' ||
-        (currentTheme === 'system' && mediaQuery.matches)
-
-      window.document.documentElement.classList.toggle('dark', isDark)
-      setResolvedTheme(isDark ? 'dark' : 'light')
+    if (savedTheme) {
+      setThemeState(savedTheme)
+      applyTheme(savedTheme)
+    } else {
+      applyTheme('system')
     }
 
-    update()
-    mediaQuery.addEventListener('change', update)
-    return () => mediaQuery.removeEventListener('change', update)
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const listener = () => {
+      const current = (localStorage.getItem('boltdocs-theme') as Theme) || 'system'
+      if (current === 'system') applyTheme('system')
+    }
+
+    mediaQuery.addEventListener('change', listener)
+    return () => mediaQuery.removeEventListener('change', listener)
   }, [])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
     localStorage.setItem('boltdocs-theme', newTheme)
-
-    const isDark =
-      newTheme === 'dark' ||
-      (newTheme === 'system' &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-
-    window.document.documentElement.classList.toggle('dark', isDark)
-    setResolvedTheme(isDark ? 'dark' : 'light')
+    applyTheme(newTheme)
+    
+    // Notify external listeners (dual-package hazard)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(THEME_EVENT, { detail: newTheme }))
+    }
   }
 
   const value = { theme, resolvedTheme, setTheme }
 
   // Sync with global registry
   if (typeof globalThis !== 'undefined') {
-    ; (globalThis as any)[THEME_INSTANCE_SYMBOL] = value
+    ;(globalThis as any)[THEME_INSTANCE_SYMBOL] = value
   }
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
@@ -68,6 +77,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const context = use(ThemeContext)
+  const [, forceUpdate] = useState({})
+
+  useEffect(() => {
+    if (context) return
+    
+    const handler = () => forceUpdate({})
+    window.addEventListener(THEME_EVENT, handler)
+    return () => window.removeEventListener(THEME_EVENT, handler)
+  }, [context])
 
   // Fallback to global registry for dual-package hazards
   if (
