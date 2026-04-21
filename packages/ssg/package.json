@@ -1,0 +1,129 @@
+{
+  "name": "@bdocs/ssg",
+  "type": "module",
+  "version": "0.0.1",
+  "packageManager": "pnpm@10.28.2",
+  "description": "A Vite plugin for static site generation (SSG) with React.",
+  "license": "MIT",
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "ssg",
+    "ssr",
+    "react"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./node": {
+      "types": "./dist/node.d.mts",
+      "import": "./dist/node.mjs"
+    },
+    "./single-page": {
+      "types": "./dist/client/single-page.d.mts",
+      "import": "./dist/client/single-page.mjs"
+    },
+    "./style-collectors/styled-components": {
+      "types": "./dist/style-collectors/styled-components.d.mts",
+      "import": "./dist/style-collectors/styled-components.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "node": [
+        "./dist/node.d.mts"
+      ],
+      "single-page": [
+        "./dist/client/single-page.d.mts"
+      ],
+      "style-collectors/styled-components": [
+        "./dist/style-collectors/styled-components.d.mts"
+      ]
+    }
+  },
+  "bin": {
+    "vite-react-ssg": "bin/vite-react-ssg.js"
+  },
+  "files": [
+    "*.d.ts",
+    "bin",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown --config-loader unrun",
+    "dev": "tsdown --watch --config-loader unrun",
+    "lint": "eslint .",
+    "test": "pnpm -r build && vitest run",
+    "prepublishOnly": "nr build",
+    "release": "bumpp && npm publish",
+    "start": "esno src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "beasties": "^0.4.2",
+    "critters": "^0.0.24",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0",
+    "styled-components": "^6.0.0",
+    "vite": "^7.0.0 || ^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "beasties": {
+      "optional": true
+    },
+    "critters": {
+      "optional": true
+    },
+    "prettier": {
+      "optional": true
+    },
+    "react-router-dom": {
+      "optional": true
+    },
+    "styled-components": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "fs-extra": "^11.3.4",
+    "html5parser": "^2.0.2",
+    "jsdom": "^24.1.3",
+    "kolorist": "^1.8.0",
+    "p-queue": "^9.1.2",
+    "react-helmet-async": "^2.0.1",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@ririd/eslint-config": "^2.1.1",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/yargs": "^17.0.35",
+    "@vitejs/plugin-react-swc": "^3.11.0",
+    "beasties": "^0.4.2",
+    "bumpp": "^10.4.1",
+    "critters": "^0.0.25",
+    "eslint": "^9.39.4",
+    "esno": "^4.8.0",
+    "fast-glob": "^3.3.2",
+    "prettier": "^3.8.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0",
+    "rimraf": "^5.0.1",
+    "styled-components": "6.0.5",
+    "tsdown": "^0.21.9",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0",
+    "vitest": "^3.0.0"
+  }
+}
