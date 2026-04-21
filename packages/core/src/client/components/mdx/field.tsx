@@ -34,12 +34,12 @@ export function Field({
             {name}
           </code>
           {type && (
-            <span className="rounded-md bg-bg-muted/80 border border-border-subtle px-2 py-0.5 text-[11px] font-semibold text-text-muted uppercase tracking-wider shadow-sm">
+            <span className="rounded-md bg-bg-muted/80 border border-border-subtle px-2 py-0.5 text-[11px] font-semibold text-text-muted uppercase shadow-sm">
               {type}
             </span>
           )}
           {required && (
-            <div className="flex items-center gap-1.5 rounded-full bg-red-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-400 border border-red-500/20 shadow-sm">
+            <div className="flex items-center gap-1.5 rounded-full bg-red-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase text-red-400 border border-red-500/20 shadow-sm">
               <span className="h-1 w-1 rounded-full bg-red-400 animate-pulse" />
               Required
             </div>

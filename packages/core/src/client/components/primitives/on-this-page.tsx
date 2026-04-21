@@ -169,7 +169,7 @@ const OnThisPageHeader = ({ children, className, ...props }: ComponentBase) => {
   return (
     <div
       className={cn(
-        'mb-4 text-xs font-bold uppercase tracking-wider text-text-main',
+        'mb-4 text-xs font-bold text-text-main',
         className,
       )}
       {...props}

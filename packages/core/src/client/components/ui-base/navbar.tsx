@@ -145,7 +145,7 @@ function NavbarI18n() {
       >
         <div className="flex items-center gap-1.5">
           <Languages className="w-3.5 h-3.5 text-primary-500" />
-          <span className="font-bold text-[0.75rem] tracking-wider uppercase opacity-90">
+          <span className="font-bold text-[0.75rem] uppercase opacity-90">
             {currentLocale || 'en'}
           </span>
         </div>

@@ -115,7 +115,7 @@ function OnThisPageInner({
 
       {(editLink || communityHelp) && (
         <div className="mt-8 pt-8 border-t border-border-subtle space-y-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-text-main">
+          <p className="text-xs font-bold uppercase text-text-main">
             Need help?
           </p>
           <ul className="space-y-3">

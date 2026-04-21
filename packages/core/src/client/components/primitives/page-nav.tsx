@@ -49,7 +49,7 @@ const PageNavTitle = ({ children, className }: ComponentBase) => {
   return (
     <span
       className={cn(
-        'text-xs font-medium uppercase tracking-wider text-text-muted',
+        'text-xs font-medium uppercase text-text-muted',
         className,
       )}
     >
