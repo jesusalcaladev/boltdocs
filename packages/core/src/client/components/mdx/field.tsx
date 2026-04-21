@@ -23,14 +23,13 @@ export function Field({
     <article
       className={cn(
         'group relative my-6 rounded-xl border border-border-subtle bg-bg-surface p-5 transition-all duration-300',
-        'hover:border-primary-500/30 hover:shadow-lg hover:shadow-primary-500/5',
         className,
       )}
       id={id}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div className="flex flex-wrap items-center gap-2.5">
-          <code className="inline-flex items-center rounded-md bg-primary-500/10 px-2.5 py-1 font-mono text-sm font-bold text-primary-400 border border-primary-500/20 shadow-sm transition-colors group-hover:bg-primary-500/15">
+          <code className="inline-flex items-center rounded-md bg-primary-500/10 px-2.5 py-1 font-mono text-sm font-bold text-primary-400 border border-primary-500/20 shadow-sm transition-colors">
             {name}
           </code>
           {type && (
