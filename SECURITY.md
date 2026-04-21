@@ -15,7 +15,7 @@ We take the security of Boltdocs seriously. If you believe you have found a secu
 
 **Please do not report security vulnerabilities via public GitHub issues.**
 
-Instead, please send an email to **security@boltdocs.dev** (Note: replace with your actual security contact).
+Instead, please send an email to **jesusalcalarojas@gmail.com** (Note: replace with your actual security contact).
 
 Provide a detailed description of the vulnerability, including:
 
