@@ -8,7 +8,7 @@ import { ConfigContext } from '../app/config-context'
 import { ScrollHandler } from '../app/scroll-handler'
 import { mdxComponentsDefault } from '../app/mdx-component'
 import { RoutesProvider } from '../app/routes-context'
-import type { BoltdocsConfig } from '../../node/config'
+import type { BoltdocsConfig } from '../../shared/types'
 import type { ComponentRoute } from '../types'
 
 import virtualCustomComponents from 'virtual:boltdocs-mdx-components'

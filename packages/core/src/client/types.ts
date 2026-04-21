@@ -1,4 +1,4 @@
-export type { BoltdocsConfig } from '../node/config'
+export type { BoltdocsConfig } from '../shared/types'
 
 /**
  * Metadata provided by the server for a specific route.

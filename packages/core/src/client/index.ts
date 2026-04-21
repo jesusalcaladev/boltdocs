@@ -1,4 +1,5 @@
-export type { BoltdocsConfig, BoltdocsThemeConfig } from '../node/config'
+export type { BoltdocsConfig, BoltdocsThemeConfig } from '../shared/types'
+export { defineConfig } from '../shared/config-utils'
 export type {
   ComponentRoute,
   LayoutProps,

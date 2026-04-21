@@ -5,7 +5,7 @@ import { PoweredBy } from './powered-by'
 import * as LucideIcons from 'lucide-react'
 import virtualIcons from 'virtual:boltdocs-icons'
 import type { ComponentRoute } from '../../types'
-import type { BoltdocsConfig } from '../../../node/config'
+import type { BoltdocsConfig } from '../../../shared/types'
 
 function getIcon(iconName?: string): React.ElementType | undefined {
   if (!iconName) return undefined

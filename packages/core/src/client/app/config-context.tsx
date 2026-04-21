@@ -1,5 +1,5 @@
 import { createContext, use } from 'react'
-import type { BoltdocsConfig } from '../../node/config'
+import type { BoltdocsConfig } from '../../shared/types'
 
 /**
  * Context for the global documentation configuration.

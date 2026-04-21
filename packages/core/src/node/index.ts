@@ -122,6 +122,7 @@ export type {
   BoltdocsThemeConfig,
   BoltdocsPlugin,
 } from './config'
-export { resolveConfig, defineConfig } from './config'
+export { resolveConfig } from './config'
+export { defineConfig } from '../shared/config-utils'
 export type { BoltdocsPluginOptions }
 export * from './plugins'

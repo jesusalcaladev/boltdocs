@@ -4,7 +4,7 @@ import { Button as ButtonRAC } from 'react-aria-components'
 import { Search, Sun, Moon, ExternalLink } from 'lucide-react'
 import * as IconsSocials from '../icons-dev'
 import type { ComponentBase } from './types'
-import type { BoltdocsSocialLink } from '../../../node/config'
+import type { BoltdocsSocialLink } from '../../../shared/types'
 
 export interface NavbarLinkProps extends Omit<ComponentBase, 'children'> {
   label: ReactNode

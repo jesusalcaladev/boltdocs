@@ -1,4 +1,3 @@
-import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
 import { type Plugin, type ResolvedConfig, loadEnv } from 'vite'
 import { generateRoutes, invalidateRouteCache, invalidateFile } from '../routes'
@@ -23,18 +22,27 @@ import {
   type SecureBoltdocsPlugin,
 } from '../plugins'
 
-const _require = createRequire(import.meta.url)
+// Internal import to avoid top-level side effects
+import * as _node_module from 'node:module'
 
 /**
  * Resolve a package to its absolute path to enforce singleton in monorepo
  */
 function resolveSingleton(id: string) {
+  // Only attempt to use node:module in a Node environment
+  if (typeof process === 'undefined' || !process.versions?.node) {
+    return undefined
+  }
+
   try {
+    const { createRequire } = _node_module
+    const _require = createRequire(import.meta.url)
     return normalizePath(_require.resolve(id))
   } catch (e) {
     return undefined
   }
 }
+
 
 export * from './types'
 
