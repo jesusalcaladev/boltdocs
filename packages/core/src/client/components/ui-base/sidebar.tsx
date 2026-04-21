@@ -13,7 +13,62 @@ function getIcon(iconName?: string): React.ElementType | undefined {
   return IconComponent || undefined
 }
 
-function CollapsibleSidebarGroup({
+function SidebarSubRouteGroup({
+  route,
+  activePath,
+  getIcon,
+}: {
+  route: ComponentRoute
+  activePath: string
+  getIcon: (iconName?: string) => React.ElementType | undefined
+}) {
+  const isCurrent =
+    activePath ===
+    (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+
+  const hasActiveSubRoute = useMemo(
+    () => route.subRoutes?.some((r) => r.path === activePath),
+    [route.subRoutes, activePath],
+  )
+
+  const [isOpen, setIsOpen] = useState(hasActiveSubRoute || isCurrent)
+
+  useEffect(() => {
+    if (hasActiveSubRoute || isCurrent) {
+      setIsOpen(true)
+    }
+  }, [hasActiveSubRoute, isCurrent])
+
+  return (
+    <SidebarPrimitive.SubGroup
+      label={route.title}
+      href={route.path}
+      active={isCurrent}
+      icon={getIcon(route.icon)}
+      badge={route.badge}
+      isOpen={isOpen}
+      onToggle={() => setIsOpen(!isOpen)}
+    >
+      {route.subRoutes?.map((subRoute: ComponentRoute) => {
+        const isSubCurrent =
+          activePath ===
+          (subRoute.path.endsWith('/') ? subRoute.path.slice(0, -1) : subRoute.path)
+        return (
+          <SidebarPrimitive.Link
+            key={subRoute.path}
+            label={subRoute.title}
+            href={subRoute.path}
+            active={isSubCurrent}
+            icon={getIcon(subRoute.icon)}
+            badge={subRoute.badge}
+          />
+        )
+      })}
+    </SidebarPrimitive.SubGroup>
+  )
+}
+
+function SidebarGroupSection({
   group,
   activePath,
   getIcon,
@@ -27,26 +82,20 @@ function CollapsibleSidebarGroup({
   activePath: string
   getIcon: (iconName?: string) => React.ElementType | undefined
 }) {
-  const hasActiveRoute = useMemo(
-    () => group.routes.some((r) => r.path === activePath),
-    [group.routes, activePath],
-  )
-
-  const [isOpen, setIsOpen] = useState(true)
-
-  useEffect(() => {
-    if (hasActiveRoute) {
-      setIsOpen(true)
-    }
-  }, [hasActiveRoute])
-
   return (
-    <SidebarPrimitive.Group
-      title={group.title}
-      isOpen={isOpen}
-      onToggle={() => setIsOpen(!isOpen)}
-    >
+    <SidebarPrimitive.Group title={group.title} icon={getIcon(group.icon)}>
       {group.routes.map((route: ComponentRoute) => {
+        if (route.subRoutes && route.subRoutes.length > 0) {
+          return (
+            <SidebarSubRouteGroup
+              key={route.path}
+              route={route}
+              activePath={activePath}
+              getIcon={getIcon}
+            />
+          )
+        }
+
         const isCurrent =
           activePath ===
           (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
@@ -98,7 +147,7 @@ export function Sidebar({
       )}
 
       {groups.map((group) => (
-        <CollapsibleSidebarGroup
+        <SidebarGroupSection
           key={group.slug}
           group={group}
           activePath={activePath}

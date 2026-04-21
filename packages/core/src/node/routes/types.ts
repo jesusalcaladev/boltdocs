@@ -23,6 +23,8 @@ export interface RouteMeta {
   groupPosition?: number
   /** Optional icon for the route's group */
   groupIcon?: string
+  /** The sub-route group this route belongs to (from folders starting with _) */
+  subRouteGroup?: string
   /** Extracted markdown headings for search indexing */
   headings?: { level: number; text: string; id: string }[]
   /** The locale this route belongs to, if i18n is configured */

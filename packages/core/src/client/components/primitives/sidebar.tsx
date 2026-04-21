@@ -8,8 +8,12 @@ import type { ComponentRoute } from '../../types'
 export interface SidebarGroupProps extends ComponentBase {
   title?: string
   icon?: React.ElementType
+}
+
+export interface SidebarSubGroupProps extends SidebarLinkProps {
   isOpen?: boolean
   onToggle?: () => void
+  children?: React.ReactNode
 }
 
 export interface SidebarLinkProps extends ComponentBase {
@@ -73,35 +77,24 @@ const SidebarGroup = ({
   children,
   title,
   icon: Icon,
-  isOpen = true,
-  onToggle,
   className,
 }: SidebarGroupProps) => {
   return (
     <div className={cn('space-y-1', className)}>
       {title && (
-        <RAC.Button
-          onPress={onToggle}
+        <div
           className={cn(
-            'flex w-full items-center justify-between px-2 py-1.5 text-xs font-bold tracking-wider outline-none cursor-pointer',
-            'text-text-muted hover:text-text-main transition-colors',
-            'focus-visible:ring-2 focus-visible:ring-primary-500/30 rounded-md',
+            'flex w-full items-center justify-between px-2 py-1.5 text-xs font-medium tracking-wider',
+            'text-text-muted',
           )}
         >
           <div className="flex items-center gap-2">
             {Icon && <Icon size={14} />}
             {title}
           </div>
-          <ChevronRight
-            size={14}
-            className={cn(
-              'transition-transform duration-200',
-              isOpen && 'rotate-90',
-            )}
-          />
-        </RAC.Button>
+        </div>
       )}
-      {isOpen && <div className="space-y-0.5">{children}</div>}
+      {children && <div className="space-y-0.5">{children}</div>}
     </div>
   )
 }
@@ -147,7 +140,71 @@ const SidebarLink = ({
   )
 }
 
+const SidebarSubGroup = ({
+  label,
+  href,
+  active,
+  icon: Icon,
+  badge,
+  className,
+  isOpen = false,
+  onToggle,
+  children,
+}: SidebarSubGroupProps) => {
+  return (
+    <div className="space-y-0.5">
+      <div className="flex items-center w-full">
+        <Link
+          href={href}
+          className={cn(
+            'group flex flex-1 items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none',
+            'transition-all duration-200 ease-in-out',
+            'focus-visible:ring-2 focus-visible:ring-primary-500/30',
+            active
+              ? 'bg-primary-500/10 text-primary-500 font-medium'
+              : 'text-text-muted hover:bg-bg-surface hover:text-text-main hover:translate-x-1',
+            className,
+          )}
+        >
+          {Icon && (
+            <Icon
+              size={16}
+              className={cn(
+                active
+                  ? 'text-primary-500'
+                  : 'text-text-muted group-hover:text-text-main',
+              )}
+            />
+          )}
+          <span className="truncate">{label}</span>
+          {badge && <Badge badge={badge} />}
+        </Link>
+        {children && (
+          <RAC.Button
+            onPress={onToggle}
+            className="flex items-center justify-center p-1.5 ml-1 rounded-md text-text-muted hover:bg-bg-surface hover:text-text-main transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 cursor-pointer"
+          >
+            <ChevronRight
+              size={16}
+              className={cn(
+                'transition-transform duration-200',
+                isOpen && 'rotate-90',
+              )}
+            />
+          </RAC.Button>
+        )}
+      </div>
+      {isOpen && children && (
+        <div className="pl-4 ml-[7px] border-l border-border-subtle/50 space-y-0.5 mt-0.5">
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}
+
 Sidebar.Root = Sidebar
 Sidebar.Group = SidebarGroup
+Sidebar.SubGroup = SidebarSubGroup
 Sidebar.GroupItem = SidebarGroupItem
 Sidebar.Link = SidebarLink

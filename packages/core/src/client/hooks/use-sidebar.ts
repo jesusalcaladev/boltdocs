@@ -41,7 +41,53 @@ export function useSidebar(routes: ComponentRoute[]) {
     }
   }
 
-  const groups = Array.from(groupsMap.values())
+  const groups = Array.from(groupsMap.values()).map((group) => {
+    const subRouteParents = new Map<string, ComponentRoute>()
+    const subRouteChildren = new Map<string, ComponentRoute[]>()
+
+    // First pass: Categorize as parent or child
+    for (const route of group.routes) {
+      if (route.subRouteGroup) {
+        const isParent =
+          route.path.endsWith(`/${route.subRouteGroup}`) ||
+          route.path.endsWith(`/${route.subRouteGroup}/`)
+
+        if (isParent && !subRouteParents.has(route.subRouteGroup)) {
+          subRouteParents.set(route.subRouteGroup, route)
+        } else {
+          if (!subRouteChildren.has(route.subRouteGroup)) {
+            subRouteChildren.set(route.subRouteGroup, [])
+          }
+          subRouteChildren.get(route.subRouteGroup)!.push(route)
+        }
+      }
+    }
+
+    const finalRoutes: ComponentRoute[] = []
+    const seenSubGroups = new Set<string>()
+
+    // Second pass: Assemble maintaining mostly original order
+    for (const route of group.routes) {
+      if (route.subRouteGroup) {
+        if (!seenSubGroups.has(route.subRouteGroup)) {
+          seenSubGroups.add(route.subRouteGroup)
+          const parent = subRouteParents.get(route.subRouteGroup)
+          const children = subRouteChildren.get(route.subRouteGroup) || []
+
+          if (parent) {
+            finalRoutes.push({ ...parent, subRoutes: children })
+          } else {
+            // Fallback
+            finalRoutes.push(...children)
+          }
+        }
+      } else {
+        finalRoutes.push(route)
+      }
+    }
+
+    return { ...group, routes: finalRoutes }
+  })
 
   return {
     groups,

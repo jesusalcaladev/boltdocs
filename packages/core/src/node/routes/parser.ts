@@ -127,6 +127,22 @@ export function parseDocFile(
     }
   }
 
+  // Level 4: Check for sub-routes (_prefix)
+  let subRouteGroup: string | undefined
+  const cleanParts = parts.map((p) => {
+    const noNum = stripNumberPrefix(p)
+    if (noNum.startsWith('_') && noNum !== '_') {
+      subRouteGroup = noNum.substring(1)
+      const prefix = p.substring(0, p.length - noNum.length)
+      return prefix + noNum.substring(1)
+    }
+    return p
+  })
+
+  // We need to keep `cleanParts` logic to ensure `parts` logic downwards doesn't break, 
+  // but replacing parts array directly so file names, clean paths use the stripped names.
+  parts = cleanParts
+
   const cleanRelativePath = parts.join('/')
 
   let cleanRoutePath: string
@@ -164,7 +180,7 @@ export function parseDocFile(
   const rawDirName = parts.length >= 2 ? parts[0] : undefined
   const cleanDirName = rawDirName ? stripNumberPrefix(rawDirName) : undefined
 
-  const isGroupIndex = parts.length >= 2 && /^index\.mdx?$/.test(cleanFileName)
+  const isGroupIndex = parts.length === 2 && /^index\.mdx?$/.test(cleanFileName)
 
   const slugger = new GithubSlugger()
   const headings: { level: number; text: string; id: string }[] = []
@@ -227,6 +243,7 @@ export function parseDocFile(
       badge: sanitizedBadge,
       icon,
       tab: inferredTab,
+      subRouteGroup,
       _content: plainText,
       _rawContent: content,
     },

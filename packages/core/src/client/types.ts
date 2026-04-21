@@ -37,6 +37,10 @@ export interface ComponentRoute {
   badge?: string | { text: 'updated' | 'new' | 'deprecated'; expires?: string }
   /** Optional icon for the route's group */
   groupIcon?: string
+  /** The sub-route group this route belongs to (from folders starting with _) */
+  subRouteGroup?: string
+  /** The nested sub-routes if this route acts as the parent of a subRouteGroup */
+  subRoutes?: ComponentRoute[]
   /** The extracted plain-text content of the page for search indexing */
   _content?: string
   /** The raw markdown content of the page */

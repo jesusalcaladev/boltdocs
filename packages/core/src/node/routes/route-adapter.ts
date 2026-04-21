@@ -21,6 +21,7 @@ export interface SSGRouteData {
   groupTitle?: string
   groupPosition?: number
   groupIcon?: string
+  subRouteGroup?: string
 }
 
 /**
@@ -47,5 +48,6 @@ export function adaptRoutesForSSG(routes: RouteMeta[]): SSGRouteData[] {
     groupTitle: route.groupTitle,
     groupPosition: route.groupPosition,
     groupIcon: route.groupIcon,
+    subRouteGroup: route.subRouteGroup,
   }))
 }
