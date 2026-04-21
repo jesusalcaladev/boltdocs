@@ -15,15 +15,18 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./node": {
       "types": "./dist/node.d.mts",
-      "import": "./dist/node.mjs"
+      "import": "./dist/node.mjs",
+      "require": "./dist/node.cjs"
     },
     "./single-page": {
       "types": "./dist/client/single-page.d.mts",
-      "import": "./dist/client/single-page.mjs"
+      "import": "./dist/client/single-page.mjs",
+      "require": "./dist/client/single-page.cjs"
     },
     "./style-collectors/styled-components": {
       "types": "./dist/style-collectors/styled-components.d.mts",
@@ -57,12 +60,10 @@
   "scripts": {
     "build": "tsdown --config-loader unrun",
     "dev": "tsdown --watch --config-loader unrun",
-    "lint": "eslint .",
-    "test": "pnpm -r build && vitest run",
-    "prepublishOnly": "nr build",
-    "release": "bumpp && npm publish",
-    "start": "esno src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "test": "vitest run",
+    "format": "pnpm exec biome format --write",
+    "lint": "pnpm exec biome lint --write",
+    "check": "pnpm exec biome check --write"
   },
   "peerDependencies": {
     "beasties": "^0.4.2",

@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsdown'
 
 const commonConfig = {
-  format: ['esm'],
+  format: ['esm', 'cjs'],
   dts: true,
   clean: false,
   minify: true,

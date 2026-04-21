@@ -5,10 +5,9 @@ import type { StaticHandlerContext } from 'react-router-dom'
 import type { Connect } from 'vite'
 import type { IRouterAdapter } from './interface'
 import type { ViteReactSSGContext } from '~/types'
-import * as HelmetModule from 'react-helmet-async'
-const { HelmetProvider } = (
-  (HelmetModule as any).default?.HelmetProvider ? (HelmetModule as any).default : HelmetModule
-) as typeof HelmetModule
+import { createRequire } from 'node:module'
+const _require = createRequire(import.meta.url)
+const { HelmetProvider } = _require('react-helmet-async')
 import { fromNodeRequest, stripDataParam, toNodeRequest } from '~/pollfill/node-adapter'
 import { withLeadingSlash } from '~/utils/path'
 import { convertRoutesToDataRoutes } from '~/utils/remix-router'

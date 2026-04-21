@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
-import React from 'react'
 import * as ReactDOM from 'react-dom'
+import * as React from 'react'
 
 export interface RootType {
   render: (container: ReactElement) => void

@@ -5,7 +5,7 @@ export default defineConfig({
     'node/index': 'src/node/index.ts',
     'client/index': 'src/client/index.ts',
   },
-  format: ['cjs', 'esm'],
+  format: ['esm'],
   dts: true,
   clean: true,
   tsconfig: './tsconfig.json',
