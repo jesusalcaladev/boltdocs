@@ -271,7 +271,6 @@
     border-radius: var(--radius-lg);
     margin: 2rem 0;
     display: block;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
   }
   .boltdocs-page table {
     width: 100%;
