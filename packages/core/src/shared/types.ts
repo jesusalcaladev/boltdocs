@@ -131,6 +131,17 @@ export interface BoltdocsSecurityConfig {
 }
 
 /**
+ * Configuration for SEO.
+ */
+export interface BoltdocsSeoConfig {
+  metatags?: Record<string, string>
+  indexing?: 'all' | 'public'
+  thumbnails?: {
+    background?: string
+  }
+}
+
+/**
  * The root configuration object for Boltdocs.
  */
 export interface BoltdocsConfig {
@@ -144,5 +155,6 @@ export interface BoltdocsConfig {
   plugins?: BoltdocsPlugin[]
   robots?: BoltdocsRobotsConfig
   security?: BoltdocsSecurityConfig
+  seo?: BoltdocsSeoConfig
   vite?: any // Avoid pulling in entire Vite types here
 }

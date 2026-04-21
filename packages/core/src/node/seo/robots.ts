@@ -10,6 +10,34 @@ export function generateRobotsTxt(config: BoltdocsConfig): string {
   const siteUrl = config.siteUrl || ''
   const sitemapUrl = siteUrl ? `${siteUrl.replace(/\/$/, '')}/sitemap.xml` : ''
 
+  const isPrivate = config.seo?.indexing !== 'all' && config.seo?.indexing !== 'public'
+
+  if (isPrivate && config.seo?.indexing) {
+    return [
+      'User-agent: *',
+      'Disallow: /',
+    ].filter(Boolean).join('\n')
+  }
+
+  // Support advanced robots configurations
+  if (typeof config.robots === 'string') {
+    return config.robots
+  } else if (config.robots && typeof config.robots === 'object') {
+    const rules = config.robots.rules || []
+    return rules.map(rule => {
+      let r = `User-agent: ${rule.userAgent}\n`
+      if (rule.allow) {
+        if (Array.isArray(rule.allow)) r += rule.allow.map(a => `Allow: ${a}`).join('\n') + '\n'
+        else r += `Allow: ${rule.allow}\n`
+      }
+      if (rule.disallow) {
+        if (Array.isArray(rule.disallow)) r += rule.disallow.map(d => `Disallow: ${d}`).join('\n') + '\n'
+        else r += `Disallow: ${rule.disallow}\n`
+      }
+      return r.trim()
+    }).join('\n\n') + (sitemapUrl ? `\n\nSitemap: ${sitemapUrl}` : '')
+  }
+
   return [
     'User-agent: *',
     'Allow: /',

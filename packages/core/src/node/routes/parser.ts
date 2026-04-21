@@ -229,6 +229,22 @@ export function parseDocFile(
   // Extract full content as plain text for search indexing
   const plainText = parseContentToPlainText(content)
 
+  // Extract Extended SEO Frontmatter
+  const seo: Record<string, any> = {}
+  const seoPrefixes = ['og:', 'twitter:', 'article:', 'music:', 'video:', 'profile:', 'book:']
+  const explicitSeoKeys = ['noindex', 'robots', 'canonical', 'keywords', 'author']
+  
+  for (const key of Object.keys(data)) {
+    if (explicitSeoKeys.includes(key) || seoPrefixes.some((prefix) => key.startsWith(prefix))) {
+      seo[key] = data[key]
+    }
+  }
+
+  // Handle hidden pages equivalent to noindex
+  if (data.hidden === true && seo.noindex === undefined) {
+    seo.noindex = true
+  }
+
   return {
     route: {
       path: finalPath,
@@ -246,6 +262,7 @@ export function parseDocFile(
       subRouteGroup,
       _content: plainText,
       _rawContent: content,
+      seo: Object.keys(seo).length > 0 ? seo : undefined,
     },
     relativeDir: cleanDirName,
     isGroupIndex,

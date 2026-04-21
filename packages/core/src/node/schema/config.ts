@@ -193,6 +193,19 @@ export const SecurityConfigSchema = z.object({
 })
 
 /**
+ * Zod schema for SEO configuration.
+ */
+export const BoltdocsSeoConfigSchema = z.object({
+  metatags: z.record(z.string(), z.string()).optional(),
+  indexing: z.enum(['all', 'public']).optional(),
+  thumbnails: z
+    .object({
+      background: z.string().optional(),
+    })
+    .optional(),
+})
+
+/**
  * Root Zod schema for Boltdocs project configuration.
  */
 export const BoltdocsConfigSchema = z.object({
@@ -205,5 +218,6 @@ export const BoltdocsConfigSchema = z.object({
   plugins: z.array(BoltdocsPluginSchema).optional(),
   robots: RobotsConfigSchema.optional(),
   security: SecurityConfigSchema.optional(),
+  seo: BoltdocsSeoConfigSchema.optional(),
   vite: z.record(z.string(), z.unknown()).optional(),
 })

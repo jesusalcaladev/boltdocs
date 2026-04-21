@@ -41,6 +41,8 @@ export interface RouteMeta {
   _content?: string
   /** The raw markdown content of the page */
   _rawContent?: string
+  /** Extracted SEO and Open Graph metadata from frontmatter */
+  seo?: Record<string, any>
 }
 
 /**

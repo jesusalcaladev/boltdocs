@@ -1,69 +1,75 @@
-import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
+import { useConfig } from '../../app/config-context'
 
 interface HeadProps {
   siteTitle: string
   siteDescription?: string
-  routes: Array<{ path: string; title: string; description?: string }>
+  routes: Array<{ path: string; title: string; description?: string; seo?: Record<string, any> }>
 }
 
 export function Head({ siteTitle, siteDescription, routes }: HeadProps) {
   const location = useLocation()
+  const config = useConfig()
 
-  useEffect(() => {
-    // Find the current route's metadata
-    const currentRoute = routes?.find?.((r) => r.path === location.pathname)
-    const pageTitle = currentRoute?.title
-    const pageDescription = currentRoute?.description || siteDescription || ''
+  // Find the current route's metadata
+  const currentRoute = routes?.find?.((r) => r.path === location.pathname)
+  const pageTitle = currentRoute?.title
+  const pageDescription = currentRoute?.description || siteDescription || ''
+  
+  const finalTitle = pageTitle ? `${pageTitle} | ${siteTitle}` : siteTitle
 
-    // Update document title
-    document.title = pageTitle ? `${pageTitle} | ${siteTitle}` : siteTitle
+  const seo = currentRoute?.seo || {}
 
-    // Update or create meta description
-    let metaDesc = document.querySelector(
-      'meta[name="description"]',
-    ) as HTMLMetaElement | null
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta')
-      metaDesc.name = 'description'
-      document.head.appendChild(metaDesc)
-    }
-    metaDesc.content = pageDescription
+  // Merge custom global metatags
+  const globalMetatags = config?.seo?.metatags || {}
+  
+  // Calculate specific ones
+  const defaultOgImage = config?.theme?.ogImage || config?.seo?.thumbnails?.background
+  const ogImage = seo['og:image'] || defaultOgImage
 
-    // Update OG tags
-    setMetaTag('property', 'og:title', document.title)
-    setMetaTag('property', 'og:description', pageDescription)
-    setMetaTag('property', 'og:type', 'article')
-    setMetaTag('property', 'og:url', window.location.href)
+  return (
+    <Helmet>
+      <title>{finalTitle}</title>
+      <meta name="description" content={pageDescription} />
 
-    // Twitter card
-    setMetaTag('name', 'twitter:card', 'summary')
-    setMetaTag('name', 'twitter:title', document.title)
-    setMetaTag('name', 'twitter:description', pageDescription)
+      {/* Default OG Tags */}
+      <meta property="og:title" content={finalTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content="article" />
+      {/* Canonical URL for both <link> and og:url */}
+      {typeof window !== 'undefined' && <meta property="og:url" content={window.location.href} />}
+      {typeof window !== 'undefined' && <link rel="canonical" href={window.location.origin + location.pathname} />}
 
-    // Canonical URL
-    let canonical = document.querySelector(
-      'link[rel="canonical"]',
-    ) as HTMLLinkElement | null
-    if (!canonical) {
-      canonical = document.createElement('link')
-      canonical.rel = 'canonical'
-      document.head.appendChild(canonical)
-    }
-    canonical.href = window.location.origin + location.pathname
-  }, [location.pathname, siteTitle, siteDescription, routes])
+      {/* Default Twitter Card */}
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content={finalTitle} />
+      <meta name="twitter:description" content={pageDescription} />
+      {ogImage && <meta name="twitter:image" content={ogImage} />}
+      {ogImage && <meta property="og:image" content={ogImage} />}
 
-  return null // This component only manages <head>, no visual output
-}
+      {/* Generator */}
+      <meta name="generator" content="Boltdocs" />
 
-function setMetaTag(attr: 'name' | 'property', key: string, content: string) {
-  let tag = document.querySelector(
-    `meta[${attr}="${key}"]`,
-  ) as HTMLMetaElement | null
-  if (!tag) {
-    tag = document.createElement('meta')
-    tag.setAttribute(attr, key)
-    document.head.appendChild(tag)
-  }
-  tag.content = content
+      {/* User-defined global metatags */}
+      {Object.entries(globalMetatags).map(([key, value]) => {
+        const isProperty = key.startsWith('og:') || key.startsWith('music:') || key.startsWith('video:') || key.startsWith('article:') || key.startsWith('book:') || key.startsWith('profile:')
+        return isProperty 
+          ? <meta key={key} property={key} content={value as string} />
+          : <meta key={key} name={key} content={value as string} />
+      })}
+
+      {/* Page granular SEO tags (override global) */}
+      {Object.entries(seo).map(([key, value]) => {
+        if (key === 'noindex' && value === true) return <meta key="noindex" name="robots" content="noindex" />
+        if (key === 'robots') return <meta key="robots" name="robots" content={value as string} />
+        if (key === 'canonical') return <link key="canonical" rel="canonical" href={value as string} />
+        
+        const isProperty = key.startsWith('og:') || key.startsWith('music:') || key.startsWith('video:') || key.startsWith('article:') || key.startsWith('book:') || key.startsWith('profile:')
+        return isProperty 
+          ? <meta key={key} property={key} content={value as string} />
+          : <meta key={key} name={key} content={value as string} />
+      })}
+    </Helmet>
+  )
 }
