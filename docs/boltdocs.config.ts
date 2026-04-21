@@ -7,7 +7,7 @@ export default defineConfig({
   theme: {
     title: 'boltdocs',
     description:
-      'Building documentation for your project has never been easier, with boltdocs you can create beautiful documentation, 80% customizable, with 25+ components.',
+      'Building documentation for your project has never been easier, with boltdocs you can create beautiful documentation, 80% customizable, with 15+ components.',
     breadcrumbs: true,
     ogImage: '/og-image.webp',
     codeTheme: {
@@ -38,6 +38,20 @@ export default defineConfig({
         href: '/roadmap',
       },
     ],
+    sidebarGroups: {
+      "overview": {
+        icon: 'BookOpen'
+      },
+      "core-concepts": {
+        icon: 'Rocket',
+      },
+      "customization": {
+        icon: 'Settings',
+      },
+      "performance": {
+        icon: 'Zap',
+      },
+    },
     editLink:
       'https://github.com/jesusalcaladev/boltdocs/edit/main/docs/docs/:path',
     githubRepo: 'jesusalcaladev/boltdocs',

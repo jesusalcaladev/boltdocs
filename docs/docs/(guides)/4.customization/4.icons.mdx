@@ -1,0 +1,107 @@
+---
+title: "Icons & Groups"
+description: "Learn how to assign icons to your pages, sidebar groups, and how to inject custom SVG layouts."
+---
+
+import { FileTree, Card, Cards, Note, Tip, Warning } from 'boltdocs/client'
+import { PlusCircle, Search, Rocket } from 'lucide-react'
+
+# Icons & Sidebar Groups
+
+Boltdocs automatically maps [Lucide React](https://lucide.dev/) icons throughout your documentation. You can assign these icons to individual files, folders, or UI components just by specifying the Icon's exact string name (e.g., `Rocket`).
+
+---
+
+## 1. Setting Icons
+
+### Route Icons (Frontmatter)
+To add an icon to a single page, define it in your `mdx` file's frontmatter:
+
+```mdx
+---
+title: "Quick Start"
+---
+# Content goes here
+```
+
+### Group Icons (Index File)
+To add an icon to a parent Sidebar Group or Sub-Route (the collapsible folder), the best approach is to define it in the **index file** for that group.
+
+<FileTree>
+- docs/
+  - guides/
+    - index.mdx       # Here we add group title & icon
+    - deployment.md   # inner file
+</FileTree>
+
+**`guides/index.mdx`**:
+```mdx
+---
+title: "Guides"
+groupTitle: "My Guides"
+---
+This folder will now have its title customized in the Sidebar hierarchy!
+```
+
+---
+
+## 2. Using Global Configuration
+If you don't want to create an `index.mdx` inside every folder just to provide a title and icon to a sidebar group, you can globally configure your sidebar groups via `boltdocs.config.ts`.
+
+Add `sidebarGroups` to your `theme` configuration. The keys represent your folder's name (without numerical prefixes):
+
+```tsx
+// boltdocs.config.ts
+import { defineConfig } from 'boltdocs/config'
+
+export default defineConfig({
+  theme: {
+    sidebarGroups: {
+      "guides": {
+        title: "Platform Guides",
+        icon: "Library"
+      },
+      "api": {
+        title: "API Reference",
+        icon: "Code"
+      }
+    }
+  }
+})
+```
+
+<Tip>
+Global Configuration acts as a fallback or override depending on how your documentation hierarchy is laid out, guaranteeing a pristine uniform experience without polluting your workspace with empty index files.
+</Tip>
+
+---
+
+## 3. Injecting Custom SVG Icons
+Boltdocs resolves `Lucide` icons by default. To introduce **your own brand icons** seamlessly into the Boltdocs syntax, you can create a special virtual entry file inside your `docs` directory: `icons.tsx`.
+
+1. Create a native `icons.tsx` (or `.ts`, `.js`) in the root of your `docsDir`.
+2. Export all your functional React / SVG components.
+
+```tsx
+// docs/icons.tsx
+import React from 'react'
+
+export const CustomDiscord = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+    {/* your paths */}
+  </svg>
+)
+
+export const CustomBrandIcon = () => (
+  // Any valid React Component!
+  <svg ...></svg>
+)
+```
+
+Now, anywhere in your markdown frontmatter or `boltdocs.config.ts` file, you can reference your custom icons by name exactly as normal! The core `getIcon` hook automatically merges `Lucide-React` with your injection overriding duplicate keys!
+
+```mdx
+---
+title: "Discord Community"
+---
+```

@@ -1,7 +1,6 @@
 ---
 title: "File-System Routing"
 description: "How Boltdocs transforms your folder structure into browser routes."
-icon: Route
 ---
 
 import { FileTree, Card, Cards, Note, Tip, Warning } from 'boltdocs/client'
@@ -49,6 +48,9 @@ The routing pipeline works like this:
   </Card>
   <Card title="Tab Directories" icon={<Layers />}>
     Wrap a folder name in parentheses — `(guides)/` — to associate it with a navigation tab. The parenthesized name is removed from the URL.
+  </Card>
+  <Card title="Sub-routes" icon={<Folder />}>
+    Prefix a folder with an underscore — `_integration/` — to group inner pages as a collapsible section in the sidebar. The underscore is removed from the URL.
   </Card>
 </Cards>
 
@@ -132,6 +134,31 @@ The parenthesized part (`guides`, `api`) is stripped from the URL and used only 
 
 ---
 
+## Sub-routes (Expansible Groups)
+
+If you want a group of routes to appear nested and collapsible under a parent route in the sidebar, you can prefix the folder name with an underscore `_`:
+
+<FileTree>
+- docs/
+  - introduction/
+    - index.mdx         # → /docs/introduction
+  - guides/
+    - _integration/
+      - index.mdx       # → /docs/guides/integration
+      - stripe.mdx      # → /docs/guides/integration/stripe
+      - paypal.mdx      # → /docs/guides/integration/paypal
+  - api/
+    - index.mdx         # → /docs/api
+</FileTree>
+
+In this scenario:
+1. The **underscore is removed** from the final URL path. 
+2. The `index.mdx` file (`/docs/guides/integration`) becomes a fully clickable parent link in the sidebar.
+3. The rest of the pages (`stripe.mdx`, `paypal.mdx`) appear underneath it as indented sub-routes.
+4. An interactive toggle (chevron) will appear next to the "Integration" link, allowing users to collapse or expand its sub-routes.
+
+---
+
 ## Index Files
 
 When a directory contains an `index.mdx` file, it serves two purposes:
@@ -145,7 +172,6 @@ When a directory contains an `index.mdx` file, it serves two purposes:
 title: "Welcome"
 groupTitle: "Getting Started"
 groupPosition: 1
-icon: Sparkles
 ---
 ```
 
