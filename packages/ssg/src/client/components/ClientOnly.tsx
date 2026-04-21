@@ -1,4 +1,4 @@
-import React, { isValidElement } from 'react'
+import { isValidElement } from 'react'
 import useIsBrowser from '../hooks/useIsClient'
 
 // Similar comp to the one described here:
