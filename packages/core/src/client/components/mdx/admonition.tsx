@@ -21,26 +21,17 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   caution: <Zap size={18} />,
 }
 
-const LABEL_MAP: Record<string, string> = {
-  note: 'Note',
-  tip: 'Tip',
-  info: 'Info',
-  warning: 'Warning',
-  danger: 'Danger',
-  important: 'Important',
-  caution: 'Caution',
-}
 
-const admonitionVariants = cva('py-4 px-4 rounded-lg', {
+const admonitionVariants = cva('py-4 px-4 rounded-lg flex items-center gap-3 border-[1px] flex-row', {
   variants: {
     type: {
-      note: 'border-primary-400 bg-primary-500/5 text-primary-400',
-      tip: 'border-emerald-500 bg-emerald-500/5 text-emerald-500',
-      info: 'border-sky-500 bg-sky-500/5 text-sky-500',
-      warning: 'border-amber-500 bg-amber-500/5 text-amber-500',
-      danger: 'border-red-500 bg-red-500/5 text-red-500',
-      important: 'border-orange-500 bg-orange-500/5 text-orange-500',
-      caution: 'border-yellow-500 bg-yellow-500/5 text-yellow-500',
+      note: 'border-primary-900 bg-primary-500/5 text-primary-400',
+      tip: 'border-emerald-900 bg-emerald-500/5 text-emerald-500',
+      info: 'border-sky-900 bg-sky-500/5 text-sky-500',
+      warning: 'border-amber-900 bg-amber-500/5 text-amber-500',
+      danger: 'border-red-900 bg-red-500/5 text-red-500',
+      important: 'border-orange-900 bg-orange-500/5 text-orange-500',
+      caution: 'border-yellow-900 bg-yellow-500/5 text-yellow-500',
     },
   },
   defaultVariants: {
@@ -51,7 +42,7 @@ type AdmonitionVariants = VariantProps<typeof admonitionVariants>
 
 export interface AdmonitionProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    AdmonitionVariants {
+  AdmonitionVariants {
   title?: string
   children: React.ReactNode
 }
@@ -69,14 +60,7 @@ export function Admonition({
       role={type === 'warning' || type === 'danger' ? 'alert' : 'note'}
       {...rest}
     >
-      <div className="flex items-center flex-row gap-2 mb-2">
-        <span className={cn('shrink-0', admonitionVariants({ type }))}>
-          {ICON_MAP[type as keyof typeof ICON_MAP]}
-        </span>
-        <span className="text-sm font-bold tracking-tight text-text-main">
-          {title || LABEL_MAP[type as keyof typeof LABEL_MAP]}
-        </span>
-      </div>
+      {ICON_MAP[type as keyof typeof ICON_MAP]}
       <div className="text-sm text-text-muted leading-relaxed [&>p]:m-0 [&>p]:mb-2 [&>p:last-child]:mb-0">
         {children}
       </div>
