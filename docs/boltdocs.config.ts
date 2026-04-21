@@ -4,6 +4,12 @@ import mermaidPlugin from '@bdocs/plugin-mermaid'
 export default defineConfig({
   plugins: [mermaidPlugin()],
   siteUrl: 'https://boltdocs.vercel.app/',
+  seo: {
+    indexing: 'all',
+    thumbnails: {
+      background: '/og-image.webp'
+    }
+  },
   theme: {
     title: 'boltdocs',
     description:
