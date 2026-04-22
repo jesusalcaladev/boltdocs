@@ -24,18 +24,31 @@ export function generateRobotsTxt(config: BoltdocsConfig): string {
     return config.robots
   } else if (config.robots && typeof config.robots === 'object') {
     const rules = config.robots.rules || []
-    return rules.map(rule => {
-      let r = `User-agent: ${rule.userAgent}\n`
-      if (rule.allow) {
-        if (Array.isArray(rule.allow)) r += rule.allow.map(a => `Allow: ${a}`).join('\n') + '\n'
-        else r += `Allow: ${rule.allow}\n`
-      }
-      if (rule.disallow) {
-        if (Array.isArray(rule.disallow)) r += rule.disallow.map(d => `Disallow: ${d}`).join('\n') + '\n'
-        else r += `Disallow: ${rule.disallow}\n`
-      }
-      return r.trim()
-    }).join('\n\n') + (sitemapUrl ? `\n\nSitemap: ${sitemapUrl}` : '')
+    const sitemaps = config.robots.sitemaps || []
+
+    const robotsContent = rules
+      .map((rule) => {
+        let r = `User-agent: ${rule.userAgent}\n`
+        if (rule.allow) {
+          if (Array.isArray(rule.allow))
+            r += rule.allow.map((a) => `Allow: ${a}`).join('\n') + '\n'
+          else r += `Allow: ${rule.allow}\n`
+        }
+        if (rule.disallow) {
+          if (Array.isArray(rule.disallow))
+            r += rule.disallow.map((d) => `Disallow: ${d}`).join('\n') + '\n'
+          else r += `Disallow: ${rule.disallow}\n`
+        }
+        return r.trim()
+      })
+      .join('\n\n')
+
+    const allSitemaps = [...(sitemapUrl ? [sitemapUrl] : []), ...sitemaps]
+    const sitemapsContent = allSitemaps
+      .map((s) => `Sitemap: ${s}`)
+      .join('\n')
+
+    return `${robotsContent}${sitemapsContent ? `\n\n${sitemapsContent}` : ''}`
   }
 
   return [
