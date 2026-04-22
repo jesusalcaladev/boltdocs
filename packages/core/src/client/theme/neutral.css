@@ -90,7 +90,9 @@
   }
 }
 
-@variant dark (&:where(.dark, .dark *));
+@variant dark 
+(
+&:where(.dark, .dark *));
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -102,8 +104,8 @@
 
 :root[data-theme="dark"],
 :root.dark {
-  --color-bg-main: var(--color-neutral-950);
-  --color-bg-surface: var(--color-neutral-900);
+  --color-bg-main: var(--color-neutral-900);
+  --color-bg-surface: var(--color-neutral-800);
   --color-bg-muted: var(--color-neutral-800);
   --color-text-main: var(--color-neutral-50);
   --color-text-muted: var(--color-neutral-400);
