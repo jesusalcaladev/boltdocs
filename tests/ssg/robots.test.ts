@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateRobotsTxt } from '../../packages/core/src/node/ssg/robots'
+import { generateRobotsTxt } from '../../packages/core/src/node/seo/robots'
 
 describe('ssg robots.txt', () => {
   it('should return string robots config directly', () => {

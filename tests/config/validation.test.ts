@@ -1,27 +1,24 @@
 import { describe, it, expect, vi } from 'vitest'
-import { resolveConfig } from '../../packages/core/src/node/config'
 import path from 'path'
 import fs from 'fs'
 
 // Mock Vite's loadConfigFromFile
-vi.mock('vite', async () => {
-  const actual = await vi.importActual('vite')
-  return {
-    ...actual,
-    loadConfigFromFile: vi.fn(),
-  }
-})
+vi.mock('vite', () => ({
+  loadConfigFromFile: vi.fn(),
+}))
 
-// Mock fs to bypass file existence check
-vi.mock('fs', async () => {
-  const actual = await vi.importActual('fs') as any
+import { resolveConfig } from '../../packages/core/src/node/config'
+
+// Mock node:fs to bypass file existence check
+vi.mock('node:fs', async (importOriginal) => {
+  const actual = await importOriginal() as any
   return {
     ...actual,
     default: {
       ...actual.default,
-      existsSync: vi.fn((p) => p.includes('boltdocs.config.') || actual.existsSync(p)),
+      existsSync: vi.fn().mockReturnValue(true),
     },
-    existsSync: vi.fn((p) => p.includes('boltdocs.config.') || actual.existsSync(p)),
+    existsSync: vi.fn().mockReturnValue(true),
   }
 })
 

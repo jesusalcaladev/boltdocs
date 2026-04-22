@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateSitemap } from '../../packages/core/src/node/ssg/sitemap'
+import { generateSitemap } from '../../packages/core/src/node/seo/sitemap'
 
 describe('generateSitemap', () => {
   it('should generate a valid XML sitemap with default base URL', () => {

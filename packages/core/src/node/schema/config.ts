@@ -106,7 +106,6 @@ export const ThemeConfigSchema = z.object({
   version: z.string().max(50).optional(),
   githubRepo: z.string().max(100).optional(),
   favicon: z.string().optional(),
-  ogImage: z.string().optional(),
   poweredBy: z.boolean().optional(),
   tabs: z
     .array(

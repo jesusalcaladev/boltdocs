@@ -70,18 +70,6 @@ describe('plugin html', () => {
       expect(result).toContain('<meta property="og:type" content="website">')
     })
 
-    it('should inject OpenGraph image when provided', () => {
-      const config = {
-        theme: {
-          title: 'Site',
-          ogImage: 'https://example.com/og.png',
-        },
-      }
-      const result = injectHtmlMeta(baseHtml, config as any)
-
-      expect(result).toContain('<meta property="og:image" content="https://example.com/og.png">')
-      expect(result).toContain('<meta name="twitter:image" content="https://example.com/og.png">')
-    })
 
     it('should inject Twitter card meta tags', () => {
       const config = {
@@ -201,19 +189,5 @@ describe('plugin html', () => {
       expect(result).toContain('<meta name="description" content="">')
     })
 
-    it('should handle both favicon and ogImage', () => {
-      const config = {
-        theme: {
-          title: 'Full Site',
-          description: 'Full Desc',
-          favicon: '/favicon.png',
-          ogImage: '/og.png',
-        },
-      }
-      const result = injectHtmlMeta(baseHtml, config as any)
-
-      expect(result).toContain('<link rel="icon" href="/favicon.png">')
-      expect(result).toContain('<meta property="og:image" content="/og.png">')
-    })
   })
 })

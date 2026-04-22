@@ -4,10 +4,6 @@ import { loadConfigFromFile } from 'vite'
 import { BoltdocsConfigSchema } from './schema/config'
 import { ValidationError } from './errors'
 import type {
-  PluginLifecycleHooks,
-  PluginPermission,
-} from './plugins/plugin-types'
-import type {
   BoltdocsConfig,
   BoltdocsThemeConfig,
   BoltdocsI18nConfig,
@@ -49,9 +45,8 @@ export const CONFIG_FILES = [
  */
 interface RawUserConfig
   extends Partial<BoltdocsConfig>,
-    Partial<BoltdocsThemeConfig> {
+  Partial<BoltdocsThemeConfig> {
   favicon?: string
-  ogImage?: string
   security?: BoltdocsSecurityConfig
 }
 
@@ -114,7 +109,6 @@ export async function resolveConfig(
     description: userConfig.description,
     logo: userConfig.logo,
     favicon: userConfig.favicon,
-    ogImage: userConfig.ogImage,
     navbar: userConfig.navbar,
     sidebar: userConfig.sidebar,
     sidebarGroups: userConfig.theme?.sidebarGroups,

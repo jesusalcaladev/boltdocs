@@ -51,16 +51,10 @@ export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
     `<meta name="description" content="${description}">`,
     `<meta property="og:title" content="${title}">`,
     `<meta property="og:description" content="${description}">`,
-    theme?.ogImage
-      ? `<meta property="og:image" content="${theme.ogImage}">`
-      : '',
     `<meta property="og:type" content="website">`,
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${title}">`,
     `<meta name="twitter:description" content="${description}">`,
-    theme?.ogImage
-      ? `<meta name="twitter:image" content="${theme.ogImage}">`
-      : '',
     `<meta name="generator" content="Boltdocs">`,
   ]
     .filter(Boolean)
