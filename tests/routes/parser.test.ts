@@ -419,6 +419,83 @@ describe('parseDocFile', () => {
     })
   })
 
+  describe('seo extraction', () => {
+    it('should extract top-level SEO tags (og:, twitter:)', () => {
+      ;(utils.parseFrontmatter as any).mockReturnValue({
+        data: {
+          'og:title': 'Social Title',
+          'twitter:card': 'summary_large_image',
+          'robots': 'noindex',
+        },
+        content: '# Content',
+      })
+
+      const result = parseDocFile('C:\\docs\\test.md', docsDir, basePath)
+
+      expect(result.route.seo).toEqual({
+        'og:title': 'Social Title',
+        'twitter:card': 'summary_large_image',
+        'robots': 'noindex',
+      })
+    })
+
+    it('should extract nested seo object', () => {
+      ;(utils.parseFrontmatter as any).mockReturnValue({
+        data: {
+          seo: {
+            'og:image': '/custom-og.png',
+            'canonical': 'https://example.com/custom',
+          },
+        },
+        content: '# Content',
+      })
+
+      const result = parseDocFile('C:\\docs\\test.md', docsDir, basePath)
+
+      expect(result.route.seo).toEqual({
+        'og:image': '/custom-og.png',
+        'canonical': 'https://example.com/custom',
+      })
+    })
+
+    it('should merge nested seo object with top-level tags', () => {
+      ;(utils.parseFrontmatter as any).mockReturnValue({
+        data: {
+          'og:title': 'Top Level',
+          seo: {
+            'og:title': 'Nested',
+            'og:image': '/image.png',
+          },
+        },
+        content: '# Content',
+      })
+
+      const result = parseDocFile('C:\\docs\\test.md', docsDir, basePath)
+
+      // Top level keys processed after nested, so they should override if conflict
+      // In our implementation: 
+      // 1. Assign nested
+      // 2. Loop top level and assign
+      expect(result.route.seo).toEqual({
+        'og:title': 'Top Level',
+        'og:image': '/image.png',
+      })
+    })
+
+    it('should set noindex: true if hidden: true is provided', () => {
+      ;(utils.parseFrontmatter as any).mockReturnValue({
+        data: { hidden: true },
+        content: '# Content',
+      })
+
+      const result = parseDocFile('C:\\docs\\test.md', docsDir, basePath)
+
+      expect(result.route.seo).toEqual({
+        noindex: true,
+      })
+    })
+  })
+
   describe('security', () => {
     it('should throw an error if the file is outside the docs directory', () => {
       const filePath = 'C:\\outside\\file.md'
