@@ -16,19 +16,20 @@ export function Head({ siteTitle, siteDescription, routes }: HeadProps) {
   const currentRoute = routes?.find?.((r) => r.path === location.pathname)
   const pageTitle = currentRoute?.title
   const pageDescription = currentRoute?.description || siteDescription || ''
-  
+
   const finalTitle = pageTitle ? `${pageTitle} | ${siteTitle}` : siteTitle
 
   const seo = currentRoute?.seo || {}
 
   // Merge custom global metatags
   const globalMetatags = config?.seo?.metatags || {}
-  
+
   // Calculate specific ones
-  const defaultOgImage = config?.theme?.ogImage || config?.seo?.thumbnails?.background
+  const defaultOgImage = config?.seo?.thumbnails?.background
   const ogImage = seo['og:image'] || defaultOgImage
 
   return (
+    // @ts-ignore
     <Helmet>
       <title>{finalTitle}</title>
       <meta name="description" content={pageDescription} />
@@ -54,7 +55,7 @@ export function Head({ siteTitle, siteDescription, routes }: HeadProps) {
       {/* User-defined global metatags */}
       {Object.entries(globalMetatags).map(([key, value]) => {
         const isProperty = key.startsWith('og:') || key.startsWith('music:') || key.startsWith('video:') || key.startsWith('article:') || key.startsWith('book:') || key.startsWith('profile:')
-        return isProperty 
+        return isProperty
           ? <meta key={key} property={key} content={value as string} />
           : <meta key={key} name={key} content={value as string} />
       })}
@@ -64,9 +65,9 @@ export function Head({ siteTitle, siteDescription, routes }: HeadProps) {
         if (key === 'noindex' && value === true) return <meta key="noindex" name="robots" content="noindex" />
         if (key === 'robots') return <meta key="robots" name="robots" content={value as string} />
         if (key === 'canonical') return <link key="canonical" rel="canonical" href={value as string} />
-        
+
         const isProperty = key.startsWith('og:') || key.startsWith('music:') || key.startsWith('video:') || key.startsWith('article:') || key.startsWith('book:') || key.startsWith('profile:')
-        return isProperty 
+        return isProperty
           ? <meta key={key} property={key} content={value as string} />
           : <meta key={key} name={key} content={value as string} />
       })}
