@@ -1,5 +1,6 @@
 import type { BoltdocsConfig } from '../config'
 import type { SSGRouteData } from '../routes/route-adapter'
+import { escapeXml } from '../utils'
 
 /**
  * Generates an XML sitemap for search engines to crawl all documentation routes.
@@ -32,7 +33,7 @@ export function generateSitemap(
       const normalizedPath = route.path.startsWith('/')
         ? route.path
         : `/${route.path}`
-      const loc = `${siteUrl}${normalizedPath}`
+      const loc = escapeXml(`${siteUrl}${normalizedPath}`)
 
       return `  <url>
     <loc>${loc}</loc>
