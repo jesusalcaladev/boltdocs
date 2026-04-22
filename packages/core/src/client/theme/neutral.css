@@ -296,41 +296,6 @@
   .boltdocs-page tr:hover td {
     background-color: var(--color-bg-surface);
   }
-  .boltdocs-page :not(pre) > code {
-    background-color: var(--color-bg-surface);
-    padding: 0.15rem 0.45rem;
-    border-radius: 5px;
-    font-family: var(--font-mono);
-    font-size: 0.85em;
-    color: var(--color-primary-400);
-    border: 1px solid var(--color-border-subtle);
-  }
-  .boltdocs-page pre {
-    margin: 1.5rem 0;
-    border-radius: var(--radius-md);
-    overflow-x: auto;
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    line-height: 1.7;
-    background-color: var(--color-code-bg);
-    color: var(--color-code-text);
-    border: 1px solid var(--color-border-subtle);
-  }
-  .boltdocs-page pre > code {
-    display: grid;
-    padding: 1rem;
-    background-color: transparent;
-    border: none;
-    color: inherit;
-    font-size: inherit;
-  }
-  .boltdocs-page pre > code .line {
-    padding: 0 1.25rem;
-  }
-  .boltdocs-page pre > code .line.highlighted {
-    background-color: oklch(0.6 0.22 280 / 10%);
-    border-left: 2px solid var(--color-primary-500);
-  }
 
   @media (max-width: 768px) {
     .boltdocs-page h1 {
@@ -371,20 +336,91 @@
     opacity: 1;
   }
 
-  /* ═══ Shiki Dual Theme ═══ */
-  .shiki-wrapper .shiki.shiki-themes {
+  /* ═══ Shiki Styles ═══ */
+  
+  /* Shiki Light/Dark Mode */
+  :root .shiki,
+  :root .shiki span {
+    font-family: var(--font-mono);
+    font-size: 12px !important;
     background-color: transparent !important;
-    color: var(--shiki-light) !important;
   }
-  .shiki-wrapper .shiki.shiki-themes span {
-    color: var(--shiki-light);
-  }
-  :root[data-theme="dark"] .shiki-wrapper .shiki.shiki-themes,
-  :root.dark .shiki-wrapper .shiki.shiki-themes {
+
+  :root.dark .shiki,
+  :root.dark .shiki span {
     color: var(--shiki-dark) !important;
   }
-  :root[data-theme="dark"] .shiki-wrapper .shiki.shiki-themes span,
-  :root.dark .shiki-wrapper .shiki.shiki-themes span {
-    color: var(--shiki-dark) !important;
+
+  /* Base Shiki Pre & Span Styles */
+  pre.shiki {
+    @apply py-2 text-[12px] leading-[1.6];
+  }
+
+  pre.shiki span.line {
+    @apply relative block px-4 py-0;
+    min-height: 1.6em;
+  }
+
+  /* Shiki Word Wrap */
+  pre.shiki-word-wrap {
+    @apply whitespace-pre-wrap break-words;
+  }
+
+  pre.shiki-word-wrap span.line {
+    @apply block w-full;
+  }
+
+  /* Shiki Line Numbers */
+  pre.shiki-line-numbers code {
+    counter-reset: step;
+    counter-increment: step 0;
+  }
+
+  pre.shiki-line-numbers .line {
+    @apply pl-12!; 
+  }
+
+  /* Hide the last line if it is completely empty to avoid extra numbers */
+  pre.shiki-line-numbers .line:last-child:empty,
+  pre.shiki-line-numbers .line:last-child:has(> :empty) {
+     display: none;
+  }
+
+  pre.shiki-line-numbers .line::before {
+    counter-increment: step;
+    content: counter(step);
+    @apply absolute left-0 top-0 inline-flex w-10 justify-end pr-3;
+    @apply text-[11px] text-text-muted opacity-30 select-none;
+    line-height: inherit; /* Sync with line text */
+  }
+
+  /* Shiki Highlight */
+  pre span.shiki-line-highlight {
+    @apply relative z-0 inline-block w-full;
+    &::after {
+      content: "";
+      @apply absolute top-0 left-0 -z-10 h-full w-full border-l-2 border-primary-500 bg-primary-500/10! opacity-100;
+    }
+  }
+
+  /* Shiki Notation Diff */
+  pre.has-diff span.line.diff {
+    @apply relative inline-block w-full;
+  }
+
+  pre.has-diff span.line.diff.add {
+    @apply bg-emerald-500/10! dark:bg-emerald-500/10!;
+    &::before {
+      content: "+";
+      @apply absolute left-2 text-emerald-500 font-bold;
+    }
+  }
+
+  pre.has-diff span.line.diff.remove {
+    @apply bg-danger-500/10! opacity-70;
+    &::before {
+      content: "-";
+      @apply absolute left-2 text-danger-500 font-bold;
+    }
   }
 }

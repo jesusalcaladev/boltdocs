@@ -1,47 +1,65 @@
-import { createHighlighter } from 'shiki'
-import type { Highlighter } from 'shiki'
+import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
+import {
+  type HighlighterCore,
+  type RegexEngine,
+  createHighlighterCore,
+} from "shiki/core";
 
-let shikiHighlighter: Highlighter | null = null
+// Themes:
+import githubLight from "@shikijs/themes/github-light";
+import githubDark from "@shikijs/themes/github-dark";
 
-/**
- * Retrieves or initializes the Shiki highlighter instance.
- * Supports dual-theme configurations (light/dark).
- *
- * @param codeTheme - Theme configuration (string for single, object for dual).
- * @returns A promise resolving to the highlighter instance.
- */
-export async function getShikiHighlighter(codeTheme: any) {
-  if (shikiHighlighter) return shikiHighlighter
+// Languages:
+import html from "@shikijs/langs/html";
+import js from "@shikijs/langs/js";
+import ts from "@shikijs/langs/ts";
+import tsx from "@shikijs/langs/tsx";
+import css from "@shikijs/langs/css";
+import json from "@shikijs/langs/json";
+import bash from "@shikijs/langs/bash";
+import markdown from "@shikijs/langs/markdown";
+import mdx from "@shikijs/langs/mdx";
+import yaml from '@shikijs/langs/yaml'
 
-  const themes =
-    typeof codeTheme === 'object'
-      ? [codeTheme.light, codeTheme.dark]
-      : [codeTheme ?? 'github-dark']
+let jsEngine: RegexEngine | null = null;
+let highlighter: Promise<HighlighterCore> | null = null;
 
-  // Fallbacks for standard themes
-  ;['github-light', 'github-dark'].forEach((t) => {
-    if (!themes.includes(t)) themes.push(t)
-  })
+const ThemesDefault = {
+  light: "github-light",
+  dark: "github-dark",
+};
 
-  // Initialize with a core set of languages first to speed up boot
-  shikiHighlighter = await createHighlighter({
-    themes,
-    langs: [
-      'tsx',
-      'jsx',
-      'ts',
-      'js',
-      'json',
-      'md',
-      'mdx',
-      'css',
-      'html',
-      'bash',
-      'sh',
-      'yaml',
-      'yml',
+type Languages = "html" | "js" | "ts" | "tsx" | "css" | "bash" | "json" | "markdown" | "mdx" | "yaml";
+
+const getJsEngine = (): RegexEngine => {
+  jsEngine ??= createJavaScriptRegexEngine();
+  return jsEngine;
+};
+
+const highlight = async (codeTheme: any): Promise<HighlighterCore> => {
+  if (highlighter) return highlighter;
+
+  highlighter = createHighlighterCore({
+    themes: [
+      (githubLight as any).default || githubLight,
+      (githubDark as any).default || githubDark,
     ],
-  })
+    langs: [
+      bash, 
+      js, 
+      ts, 
+      tsx, 
+      css, 
+      markdown, 
+      mdx, 
+      html, 
+      json, 
+      yaml
+    ],
+    engine: getJsEngine(),
+  });
 
-  return shikiHighlighter
-}
+  return highlighter;
+};
+
+export { highlight, type Languages };

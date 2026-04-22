@@ -1,8 +1,9 @@
-import * as RAC from 'react-aria-components'
+import { Button } from 'react-aria-components'
 import { Copy, Check, File } from 'lucide-react'
 import { cn } from '../../utils/cn'
+import { reactToText } from '../../utils/react-to-text'
 import { useCodeBlock } from './hooks/use-code-block'
-import { useConfig } from '../../app/config-context'
+import * as CodePrimitive from '../primitives/code-block'
 import {
   TypeScript,
   JavaScript,
@@ -13,7 +14,6 @@ import {
   Markdown,
   Shell,
   Yaml,
-  yml as YamlIcon,
 } from '../icons-dev'
 import { Tooltip } from '../primitives/tooltip'
 
@@ -41,8 +41,30 @@ export interface CodeBlockProps {
   lang?: string
   highlightedHtml?: string
   'data-lang'?: string
+  'data-title'?: string
   plain?: boolean
   [key: string]: any
+}
+
+const CopyButton = ({ copied, handleCopy }: { copied: boolean; handleCopy: () => void }) => {
+  return (
+    <Tooltip content={copied ? 'Copied!' : 'Copy code'}>
+      {/* @ts-ignore */}
+      <Button
+        onPress={handleCopy}
+        className={cn(
+          'grid place-items-center size-8 bg-transparent outline-none cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 [&>svg]:size-4 [&>svg]:stroke-2',
+          copied
+            ? 'text-emerald-400'
+            : 'text-text-muted hover:text-text-main',
+        )}
+        aria-label="Copy code"
+      >
+        {/* @ts-ignore */}
+        {copied ? <Check size={20} /> : <Copy size={20} />}
+      </Button>
+    </Tooltip>
+  )
 }
 
 export function CodeBlock(props: CodeBlockProps) {
@@ -52,13 +74,16 @@ export function CodeBlock(props: CodeBlockProps) {
     highlightedHtml,
     'data-highlighted-html': dataHighlightedHtml,
     title,
+    'data-title': dataTitle,
     'data-lang': dataLang,
     plain = false,
     ...rest
   } = props
+
   const effectiveHighlightedHtml = highlightedHtml || dataHighlightedHtml
-  const config = useConfig()
+  const effectiveTitle = title || dataTitle
   const lang = props.lang || dataLang || ''
+
   const {
     copied,
     isExpanded,
@@ -72,84 +97,63 @@ export function CodeBlock(props: CodeBlockProps) {
   const LangIcon = langIconMap[lang]
 
   return (
-    <div
-      className={cn(
-        'group relative overflow-hidden bg-(--color-code-bg)',
-        'contain-layout contain-paint', // Optimization: isolate code block rendering
-        {
-          'my-6 rounded-lg border border-border-subtle': !plain,
-          '[&>pre]:max-h-62.5 [&>pre]:overflow-hidden': shouldTruncate,
-        },
-        props.className,
-      )}
-    >
-      {/* Title Header */}
-      {title && (
-        <div className="flex items-center gap-2 border-b border-border-subtle bg-bg-surface/50 px-4 py-2 text-[13px] font-medium text-text-muted">
-          {LangIcon ? (
-            <LangIcon size={14} />
-          ) : (
-            <File size={14} className="opacity-60" />
-          )}
-          <span>{title}</span>
-        </div>
+    <CodePrimitive.CodeBlock plain={plain} className={props.className}>
+      {(effectiveTitle || !hideCopy) && (
+        <CodePrimitive.CodeBlockHeader>
+          <CodePrimitive.CodeBlockGroup>
+            {effectiveTitle && (
+              <>
+                {LangIcon ? (
+                  <LangIcon size={14} />
+                ) : (
+                  // @ts-ignore
+                  <File size={14} className="opacity-60" />
+                )}
+                <span>{effectiveTitle}</span>
+              </>
+            )}
+          </CodePrimitive.CodeBlockGroup>
+          {!hideCopy && <CopyButton copied={copied} handleCopy={handleCopy} />}
+        </CodePrimitive.CodeBlockHeader>
       )}
 
-      {/* Toolbar */}
-      <div className="absolute top-3 right-4 z-50 flex items-center gap-2 transition-all duration-300 opacity-0 group-hover:opacity-100">
-        {!hideCopy && (
-          <Tooltip content={copied ? 'Copied!' : 'Copy code'}>
-            <RAC.Button
-              onPress={handleCopy}
-              className={cn(
-                'grid place-items-center size-8 bg-transparent outline-none cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 [&>svg]:size-4 [&>svg]:stroke-2',
-                copied
-                  ? 'text-emerald-400'
-                  : 'text-text-muted hover:text-text-main',
-              )}
-              aria-label="Copy code"
-            >
-              {copied ? <Check size={20} /> : <Copy size={20} />}
-            </RAC.Button>
-          </Tooltip>
-        )}
-      </div>
-
-      {/* Code Content */}
-      {effectiveHighlightedHtml ? (
-        <div
-          // @ts-ignore
-          ref={preRef}
-          className="shiki-wrapper [&>pre]:m-0! [&>pre]:rounded-none! [&>pre]:border-none! [&>pre]:bg-inherit! [&>pre>code]:grid! [&>pre>code]:p-5! [&>.shiki.shiki-themes]:bg-transparent!"
-          dangerouslySetInnerHTML={{ __html: effectiveHighlightedHtml }}
-        />
-      ) : (
-        <pre
-          ref={preRef}
-          className="m-0! rounded-none! border-none! bg-inherit! font-mono text-[0.8125rem] leading-[1.7]"
-          {...rest}
-        >
-          {children}
-        </pre>
-      )}
-
-      {/* Expand/Collapse */}
-      {isExpandable && (
-        <div
-          className={cn(
-            shouldTruncate
-              ? 'absolute bottom-0 inset-x-0 h-24 bg-linear-to-t from-(--color-code-bg) to-transparent flex items-end justify-center pb-4 z-10'
-              : 'relative flex justify-center py-4',
-          )}
-        >
-          <RAC.Button
-            onPress={() => setIsExpanded(!isExpanded)}
-            className="rounded-full bg-bg-surface border border-border-subtle px-5 py-2 text-[0.8125rem] font-medium text-text-main outline-none cursor-pointer transition-all hover:bg-border-subtle hover:-translate-y-px backdrop-blur-md"
+      <CodePrimitive.CodeBlockContent shouldTruncate={shouldTruncate}>
+        {effectiveHighlightedHtml ? (
+          <div
+            // @ts-ignore
+            ref={preRef}
+            className="shiki-wrapper [&>pre]:m-0! [&>pre]:rounded-none! [&>pre]:border-none! [&>pre]:bg-inherit! [&>pre>code]:grid! [&>pre>code]:p-5! [&>.shiki.shiki-themes]:bg-transparent!"
+            dangerouslySetInnerHTML={{ __html: effectiveHighlightedHtml }}
+          />
+        ) : (
+          <pre
+            ref={preRef}
+            className="m-0! p-5! rounded-none! border-none! bg-inherit! font-mono text-[0.8125rem] leading-[1.7] overflow-x-auto"
+            {...rest}
           >
-            {isExpanded ? 'Show less' : 'Expand code'}
-          </RAC.Button>
-        </div>
-      )}
-    </div>
+            {reactToText(children)}
+          </pre>
+        )}
+
+        {/* Expand/Collapse Trigger */}
+        {isExpandable && (
+          <div
+            className={cn(
+              shouldTruncate
+                ? 'absolute bottom-0 inset-x-0 h-24 bg-linear-to-t from-(--color-code-bg) to-transparent flex items-end justify-center pb-4 z-10'
+                : 'relative flex justify-center py-4',
+            )}
+          >
+            {/* @ts-ignore */}
+            <Button
+              onPress={() => setIsExpanded(!isExpanded)}
+              className="rounded-full bg-bg-surface border border-border-subtle px-5 py-2 text-[0.8125rem] font-medium text-text-main outline-none cursor-pointer transition-all hover:bg-border-subtle hover:-translate-y-px backdrop-blur-md"
+            >
+              {isExpanded ? 'Show less' : 'Expand code'}
+            </Button>
+          </div>
+        )}
+      </CodePrimitive.CodeBlockContent>
+    </CodePrimitive.CodeBlock>
   )
 }

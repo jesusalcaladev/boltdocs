@@ -3,7 +3,7 @@ import { TransformCache } from '../cache'
 /**
  * Version identifier for the MDX plugin to invalidate cache if logic changes.
  */
-export const MDX_PLUGIN_VERSION = 'v4'
+export const MDX_PLUGIN_VERSION = 'v120'
 
 /**
  * Persistent cache for MDX transformations.

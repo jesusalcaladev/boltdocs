@@ -1,25 +1,15 @@
 import { visit } from 'unist-util-visit'
 import type { BoltdocsConfig } from '../config'
-import { getShikiHighlighter } from './highlighter'
+import { ShikiAdapter } from './shiki-adapter'
 
 /**
  * Custom remark plugin to highlight code in ComponentPreview components.
- * This runs before rehype, ensuring that the 'highlightedHtml' prop is correctly
- * attached to the MDX component as a JSX attribute.
- *
- * Supports both string literals and MDX expression values (template literals)
- * for the 'code' attribute.
- *
- * @param config - The Boltdocs configuration
- * @returns A remark plugin function
  */
 export function remarkShiki(config?: BoltdocsConfig) {
+  const adapter = new ShikiAdapter(config)
+
   return async (tree: any) => {
-    const codeTheme = config?.theme?.codeTheme ?? {
-      light: 'github-light',
-      dark: 'github-dark',
-    }
-    const highlighter = await getShikiHighlighter(codeTheme)
+    const highlighter = await adapter.getHighlighter()
 
     visit(tree, ['mdxJsxFlowElement', 'mdxJsxTextElement'], (node: any) => {
       if (node.name !== 'ComponentPreview') return
@@ -38,16 +28,23 @@ export function remarkShiki(config?: BoltdocsConfig) {
 
       if (!code) return
 
-      const options: any =
-        typeof codeTheme === 'object'
-          ? {
-              themes: { light: codeTheme.light, dark: codeTheme.dark },
-              lang: 'tsx',
-            }
-          : { theme: codeTheme, lang: 'tsx' }
+      // Extract props that should act as meta
+      const lineNumbersAttr = node.attributes?.find((a: any) => a.name === 'lineNumbers' || a.name === 'showLineNumbers')
+      const wordWrapAttr = node.attributes?.find((a: any) => a.name === 'wordWrap' || a.name === 'word-wrap')
+      const titleAttr = node.attributes?.find((a: any) => a.name === 'title')
 
+      // Build a fake raw meta string for the adapter
+      let rawMeta = ''
+      if (lineNumbersAttr) rawMeta += ' lineNumbers'
+      if (wordWrapAttr) rawMeta += ' wordWrap'
+      if (titleAttr && typeof titleAttr.value === 'string') {
+        rawMeta += ` title="${titleAttr.value}"`
+      }
+
+      const options = adapter.getOptions('tsx', rawMeta)
       const html = highlighter.codeToHtml(code, options)
 
+      // Inject the highlighted HTML back into the component props
       node.attributes = (node.attributes ?? []).filter(
         (a: any) => a.name !== 'highlightedHtml',
       )
