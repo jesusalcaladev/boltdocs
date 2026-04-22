@@ -22,14 +22,14 @@ export interface BoltdocsThemeConfig {
   title?: string | Record<string, string>
   description?: string | Record<string, string>
   logo?:
-    | string
-    | {
-        dark: string
-        light: string
-        alt?: string
-        width?: number
-        height?: number
-      }
+  | string
+  | {
+    dark: string
+    light: string
+    alt?: string
+    width?: number
+    height?: number
+  }
   navbar?: Array<{
     label: string | Record<string, string>
     href: string
@@ -44,16 +44,27 @@ export interface BoltdocsThemeConfig {
   version?: string
   githubRepo?: string
   favicon?: string
-  ogImage?: string
   poweredBy?: boolean
   tabs?: Array<{
     id: string
     text: string | Record<string, string>
     icon?: string
   }>
-  codeTheme?: string | { light: string; dark: string }
+  codeTheme?: ShikiTheme | { light: ShikiTheme; dark: ShikiTheme }
   copyMarkdown?: boolean | { text?: string; icon?: string }
 }
+
+/**
+ * List of supported syntax highlighting themes.
+ */
+export type ShikiTheme =
+  | 'github-dark'
+  | 'github-light'
+  | 'tokyo-night'
+  | 'dracula'
+  | 'nord'
+  | 'one-dark-pro'
+  | 'one-light'
 
 /**
  * Configuration for the robots.txt file.
@@ -61,13 +72,13 @@ export interface BoltdocsThemeConfig {
 export type BoltdocsRobotsConfig =
   | string
   | {
-      rules?: Array<{
-        userAgent: string
-        allow?: string | string[]
-        disallow?: string | string[]
-      }>
-      sitemaps?: string[]
-    }
+    rules?: Array<{
+      userAgent: string
+      allow?: string | string[]
+      disallow?: string | string[]
+    }>
+    sitemaps?: string[]
+  }
 
 /**
  * Configuration for a specific locale.

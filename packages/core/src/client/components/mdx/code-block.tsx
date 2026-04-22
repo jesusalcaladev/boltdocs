@@ -14,6 +14,8 @@ import {
   Markdown,
   Shell,
   Yaml,
+  Rust,
+  BracketsRed,
 } from '../icons-dev'
 import { Tooltip } from '../primitives/tooltip'
 
@@ -31,6 +33,9 @@ const langIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   sh: Shell,
   yaml: Yaml,
   yml: Yaml,
+  rs: Rust,
+  rust: Rust,
+  toml: BracketsRed
 }
 
 export interface CodeBlockProps {

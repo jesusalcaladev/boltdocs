@@ -15,7 +15,6 @@ export default defineConfig({
     description:
       'Building documentation for your project has never been easier, with boltdocs you can create beautiful documentation, 80% customizable, with 15+ components.',
     breadcrumbs: true,
-    ogImage: '/og-image.webp',
     codeTheme: {
       light: 'github-light',
       dark: 'github-dark',
