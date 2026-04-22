@@ -231,11 +231,34 @@ export function parseDocFile(
 
   // Extract Extended SEO Frontmatter
   const seo: Record<string, any> = {}
-  const seoPrefixes = ['og:', 'twitter:', 'article:', 'music:', 'video:', 'profile:', 'book:']
-  const explicitSeoKeys = ['noindex', 'robots', 'canonical', 'keywords', 'author']
-  
+  const seoPrefixes = [
+    'og:',
+    'twitter:',
+    'article:',
+    'music:',
+    'video:',
+    'profile:',
+    'book:',
+  ]
+  const explicitSeoKeys = [
+    'noindex',
+    'robots',
+    'canonical',
+    'keywords',
+    'author',
+  ]
+
+  // 1. Support nested seo object: { seo: { 'og:title': ... } }
+  if (data.seo && typeof data.seo === 'object') {
+    Object.assign(seo, data.seo)
+  }
+
+  // 2. Support top-level keys: { 'og:title': ... }
   for (const key of Object.keys(data)) {
-    if (explicitSeoKeys.includes(key) || seoPrefixes.some((prefix) => key.startsWith(prefix))) {
+    if (
+      explicitSeoKeys.includes(key) ||
+      seoPrefixes.some((prefix) => key.startsWith(prefix))
+    ) {
       seo[key] = data[key]
     }
   }
