@@ -91,11 +91,19 @@ export async function createViteConfig(
             path.resolve(root, 'boltdocs-client.mjs'),
           ),
         },
-        // Fix for React 19 + use-sync-external-store shim (common in react-aria)
         {
-          find: /^use-sync-external-store\/shim$/,
-          replacement: 'virtual:boltdocs-shim-fix',
+          find: 'use-sync-external-store/shim/index.js',
+          replacement: "react",
         },
+        {
+          find: 'use-sync-external-store/shim',
+          replacement: "react"
+        },
+        {
+
+          find: 'use-sync-external-store',
+          replacement: 'react',
+        }
       ],
       dedupe: [
         'react',

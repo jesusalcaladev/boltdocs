@@ -25,25 +25,6 @@ import {
 // Internal import to avoid top-level side effects
 import * as _node_module from 'node:module'
 
-/**
- * Resolve a package to its absolute path to enforce singleton in monorepo
- */
-function resolveSingleton(id: string) {
-  // Only attempt to use node:module in a Node environment
-  if (typeof process === 'undefined' || !process.versions?.node) {
-    return undefined
-  }
-
-  try {
-    const { createRequire } = _node_module
-    const _require = createRequire(import.meta.url)
-    return normalizePath(_require.resolve(id))
-  } catch (e) {
-    return undefined
-  }
-}
-
-
 export * from './types'
 
 /**
@@ -182,22 +163,17 @@ export function boltdocsPlugin(
 
             return {
               optimizeDeps: {
-                include: ['react', 'react-dom', 'react-router-dom'],
+                include: [
+                  'react',
+                  'react-dom',
+                  'react-dom/client',
+                  'react-router-dom',
+                  'react-helmet-async',
+                ],
                 exclude: ['boltdocs', 'boltdocs/client'],
               },
               resolve: {
-                alias: [
-                  // Virtual entries (Keep these as they are truly virtual and generated)
-                  {
-                    find: 'boltdocs/entry',
-                    replacement: normalizePath(
-                      path.resolve(
-                        options.root || process.cwd(),
-                        'boltdocs-entry.cjs',
-                      ),
-                    ),
-                  },
-                ],
+                dedupe: ['react', 'react-dom'],
               },
             }
           },
@@ -562,12 +538,6 @@ export default UserLayout;`
           }
 
           throw new Error(`[Boltdocs] Layout file not found. A 'layout.tsx' or 'layout.jsx' file is mandatory in your docs directory. Please create one to define your site structure.`)
-        }
-
-        if (name === 'shim-fix') {
-          return `import { useSyncExternalStore } from 'react';
-export { useSyncExternalStore };
-export default useSyncExternalStore;`
         }
 
         if (name === 'icons') {
