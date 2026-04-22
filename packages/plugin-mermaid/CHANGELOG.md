@@ -1,5 +1,12 @@
 # @bdocs/plugin-mermaid
 
+## 0.2.0
+
+### Minor Changes
+
+- [`6a6d829`](https://github.com/bolt-docs/boltdocs/commit/6a6d82941328c1f2c016781d8d0f004d3a890237) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - Support theme dark/light
+  Support error rendering
+
 ## 0.1.1
 
 ### Patch Changes

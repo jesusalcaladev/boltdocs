@@ -1,5 +1,22 @@
 # boltdocs
 
+## 2.6.0
+
+### Minor Changes
+
+- [`6a6d829`](https://github.com/bolt-docs/boltdocs/commit/6a6d82941328c1f2c016781d8d0f004d3a890237) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - feat: new engine ssg
+  feat: line-number & word-wrap in code-block
+  feat: support languagues rust & toml
+  fix: removed ogImage
+  feat: support seo granular configuration in frontmatter & config
+  fix: removed shadow image
+  fix: support detect xml in sitemap
+  fix: removed hover in field
+  style: updated Admonition styles
+  fix: removed style uppercase in sidebar & onthispage
+  fix: repared warning each child of react key
+  feat: support icons external
+
 ## 2.5.6
 
 ### Patch Changes
