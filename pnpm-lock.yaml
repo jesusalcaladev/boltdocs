@@ -3954,7 +3954,7 @@ packages:
     resolution: {integrity: sha512-LShSxJP0KTmd101b6DRyGBj57LZxSDYWKitQNW/mi8GRMvZb078Uf9+pveax1DrVL89vm7mWe+TovdI/UDOuPw==}
 
   boltdocs@file:packages/core/boltdocs-2.6.0.tgz:
-    resolution: {integrity: sha512-t1BRm/KDOL/jORbHkArznYq9Jj8qGHVXxcLkkIEfgJ2QcPZYKY8RRVvoUhuCjQhUKbY/n6dd/sb40HmicNg34g==, tarball: file:packages/core/boltdocs-2.6.0.tgz}
+    resolution: {integrity: sha512-DgZANfkZrneabYnw2/u14SeqTsmvZ4j2naGlcC2xKAB2qvZueA66r+bBuqQkEp4Ra6xQLYfDQ1Up0rdv5umdYg==, tarball: file:packages/core/boltdocs-2.6.0.tgz}
     version: 2.6.0
     hasBin: true
     peerDependencies:
