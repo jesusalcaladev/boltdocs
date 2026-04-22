@@ -16,8 +16,10 @@ export const homePage = HomePage;
 //  pricing: PricingPage
 // };
 
-export const layout = ({ children }: { children: React.ReactNode }) => <div className='pb-10'>
+export const layout = ({ children }: { children: React.ReactNode }) => <div>
   <Navbar />
-  {children}
-  <Footer />
+  <div className='w-[90%] mx-auto px-10'>
+    {children}
+    <Footer />
+  </div>
 </div>;

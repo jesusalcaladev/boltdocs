@@ -1,5 +1,5 @@
 {
-    "name": "boltdocs-projcet",
+    "name": "boltdocs-project",
     "version": "0.0.1",
     "private": true,
     "type": "module",
@@ -18,7 +18,7 @@
         "@tailwindcss/vite": "^4.2.2",
         "@types/react": "^19.1.0",
         "@types/react-dom": "^19.1.0",
-        "boltdocs": "file:..\\..\\packages\\core\\boltdocs-2.6.0.tgz",
+        "boltdocs": "2.6.1",
         "tailwindcss": "^4.2.2",
         "typescript": "^5.0.0"
     }
