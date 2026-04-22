@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-aria-components'
 import { BoltdocsProvider, useBoltdocsContext } from '../store/boltdocs-context'
 import { ThemeProvider } from '../app/theme-context'
 import { MdxComponentsProvider } from '../app/mdx-components-context'
+import { HelmetProvider } from 'react-helmet-async'
 import { ConfigContext } from '../app/config-context'
 import { ScrollHandler } from '../app/scroll-handler'
 import { mdxComponentsDefault } from '../app/mdx-component'
@@ -104,21 +105,23 @@ export function BoltdocsShell({
   const navigate = useNavigate()
 
   return (
-    <BoltdocsProvider>
-      <ThemeProvider>
-        <MdxComponentsProvider components={allComponents}>
-          <ConfigContext.Provider value={config}>
-            <RoutesProvider routes={routes}>
-              <RouterProvider navigate={navigate}>
-                <ScrollHandler />
-                <StoreSync config={config} />
-                <I18nUpdater config={config} />
-                <Outlet />
-              </RouterProvider>
-            </RoutesProvider>
-          </ConfigContext.Provider>
-        </MdxComponentsProvider>
-      </ThemeProvider>
-    </BoltdocsProvider>
+    <HelmetProvider>
+      <BoltdocsProvider>
+        <ThemeProvider>
+          <MdxComponentsProvider components={allComponents}>
+            <ConfigContext.Provider value={config}>
+              <RoutesProvider routes={routes}>
+                <RouterProvider navigate={navigate}>
+                  <ScrollHandler />
+                  <StoreSync config={config} />
+                  <I18nUpdater config={config} />
+                  <Outlet />
+                </RouterProvider>
+              </RoutesProvider>
+            </ConfigContext.Provider>
+          </MdxComponentsProvider>
+        </ThemeProvider>
+      </BoltdocsProvider>
+    </HelmetProvider>
   )
 }
