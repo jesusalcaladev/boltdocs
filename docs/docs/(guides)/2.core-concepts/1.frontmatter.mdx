@@ -69,6 +69,20 @@ These fields configure the appearance and behavior of individual pages.
   When `expires` is set and the date has passed, the badge is automatically hidden.
 </Field>
 
+<Field name="seo" type="Record<string, any>">
+  Provide granular SEO overrides for this specific page. This allows you to set OpenGraph tags, Twitter cards, or indexing instructions that differ from the global defaults.
+
+  ```yaml
+  seo:
+    'og:image': /images/custom-og.png
+    'twitter:card': summary_large_image
+    'noindex': true # Prevent this page from being indexed by search engines
+    'robots': 'nofollow, noindex'
+  ```
+
+  These values are injected as `<meta>` tags in the page `<head>`.
+</Field>
+
 ---
 
 ## Group Fields
