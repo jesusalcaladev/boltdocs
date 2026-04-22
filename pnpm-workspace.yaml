@@ -2,7 +2,7 @@ packages:
   - packages/*
   - docs
   - tests/*
-  - poc-ssg
+  - examples/*
 
 onlyBuiltDependencies:
   - sharp

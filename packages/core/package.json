@@ -31,7 +31,8 @@
   "files": [
     "dist",
     "bin",
-    "src/client"
+    "src/client",
+    "src/shared"
   ],
   "scripts": {
     "build": "tsdown --config-loader unrun",

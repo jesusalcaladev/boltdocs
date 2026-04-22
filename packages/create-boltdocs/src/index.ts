@@ -2,22 +2,10 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { execSync } from 'node:child_process'
 import prompts from 'prompts'
 import picocolors from 'picocolors'
-import {
-  getPackageJson,
-  gitignoreContent,
-  markdownlintContent,
-  markdownlintignoreContent,
-  getBoltdocsConfig,
-  getLogoLight,
-  getLogoDark,
-} from './templates/shared.js'
-import { generateEmptyTemplate } from './templates/empty.js'
-import { generateBaseTemplate } from './templates/base.js'
-import { generateI18nTemplate } from './templates/i18n.js'
-import { generateExternalTemplate } from './templates/external.js'
 
 const { green, yellow, bold, cyan, magenta, blue, red, dim } = picocolors
 
@@ -27,6 +15,31 @@ function getPackageManager() {
   if (userAgent?.includes('yarn')) return 'yarn'
   if (userAgent?.includes('bun')) return 'bun'
   return 'npm'
+}
+
+/**
+ * Recursively copies a directory and replaces placeholders in text files.
+ */
+function copy(src: string, dest: string, replacements: Record<string, string>) {
+  const stat = fs.statSync(src)
+  if (stat.isDirectory()) {
+    fs.mkdirSync(dest, { recursive: true })
+    for (const file of fs.readdirSync(src)) {
+      copy(path.resolve(src, file), path.resolve(dest, file), replacements)
+    }
+  } else {
+    // Only replace placeholders in text files
+    const isTextFile = !/\.(png|jpg|jpeg|gif|webp|ico|pdf|zip|gz)$/i.test(src)
+    if (isTextFile) {
+      let content = fs.readFileSync(src, 'utf-8')
+      for (const [key, value] of Object.entries(replacements)) {
+        content = content.replace(new RegExp(`{{${key}}}`, 'g'), value)
+      }
+      fs.writeFileSync(dest, content)
+    } else {
+      fs.copyFileSync(src, dest)
+    }
+  }
 }
 
 async function run() {
@@ -42,7 +55,7 @@ async function run() {
  |____/ \\___/|_____| |_| |____/ \\___/ \\____|____/`),
     ),
   )
-  console.log(dim(`\n  v0.0.2 - The modern documentation framework\n`))
+  console.log(dim(`\n  v0.0.4 - The modern documentation framework\n`))
 
   const response = await prompts([
     {
@@ -57,11 +70,6 @@ async function run() {
       message: 'Select a project preset:',
       choices: [
         {
-          title: cyan('Empty'),
-          description: 'Minimal documentation setup.',
-          value: 'empty',
-        },
-        {
           title: magenta('Base'),
           description: 'Hero and custom components.',
           value: 'base',
@@ -71,13 +79,8 @@ async function run() {
           description: 'Multi-language support (EN/ES).',
           value: 'i18n',
         },
-        {
-          title: blue('External'),
-          description: 'Custom routes and external layouts.',
-          value: 'external',
-        },
       ],
-      initial: 1,
+      initial: 0,
     },
     {
       type: 'confirm',
@@ -103,57 +106,28 @@ async function run() {
 
   console.log(dim(`\nBuilding your documentation site...\n`))
 
-  // 1. Create project structure
-  fs.mkdirSync(projectDir, { recursive: true })
-  console.log(`${green('✔')} Created project directory`)
+  // 1. Resolve template directory
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const templateDir = path.resolve(__dirname, 'templates', response.template)
 
-  // 2. Generate specific template (all templates now include home-page by default)
-  const configOptions: any = {
-    homePage: './src/home-page.tsx', // Always include home-page config
+  if (!fs.existsSync(templateDir)) {
+    console.error(red(`\nError: Template "${response.template}" not found at ${templateDir}`))
+    process.exit(1)
   }
 
-  if (response.template === 'empty') {
-    generateEmptyTemplate(projectDir, response.projectName)
-  } else if (response.template === 'i18n') {
-    configOptions.i18n = true
-    generateI18nTemplate(projectDir, response.projectName)
-  } else if (response.template === 'external') {
-    generateExternalTemplate(projectDir, response.projectName)
-  } else {
-    generateBaseTemplate(projectDir, response.projectName)
+  // 2. Copy template and replace placeholders
+  try {
+    copy(templateDir, projectDir, {
+      name: response.projectName,
+      title: response.projectName
+    })
+    console.log(`${green('✔')} Created project structure and applied "${response.template}" preset`)
+  } catch (error) {
+    console.error(red(`\nError copying template: ${error instanceof Error ? error.message : String(error)}`))
+    process.exit(1)
   }
 
-  console.log(`${green('✔')} Applied "${response.template}" preset`)
-
-  // 3. Write configuration files
-  fs.writeFileSync(
-    path.join(projectDir, 'package.json'),
-    JSON.stringify(getPackageJson(response.projectName), null, 2),
-  )
-  fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent)
-  fs.writeFileSync(path.join(projectDir, '.npmignore'), gitignoreContent)
-  fs.writeFileSync(
-    path.join(projectDir, '.markdownlint.yaml'),
-    markdownlintContent,
-  )
-  fs.writeFileSync(
-    path.join(projectDir, '.markdownlintignore'),
-    markdownlintignoreContent,
-  )
-  fs.writeFileSync(
-    path.join(projectDir, 'boltdocs.config.ts'),
-    getBoltdocsConfig(response.projectName, configOptions),
-  )
-
-  // 4. Create public directory and logos
-  const publicDir = path.join(projectDir, 'public')
-  fs.mkdirSync(publicDir, { recursive: true })
-  fs.writeFileSync(path.join(publicDir, 'logo-light.svg'), getLogoLight())
-  fs.writeFileSync(path.join(publicDir, 'logo-dark.svg'), getLogoDark())
-
-  console.log(`${green('✔')} Finalized configuration and assets`)
-
-  // 5. Install dependencies if requested
+  // 3. Install dependencies if requested
   if (response.install) {
     console.log(cyan(`\nInstalling dependencies with ${pkgManager}...\n`))
     try {

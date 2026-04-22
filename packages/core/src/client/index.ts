@@ -1,5 +1,3 @@
-export type { BoltdocsConfig, BoltdocsThemeConfig } from '../shared/types'
-export { defineConfig } from '../shared/config-utils'
 export type {
   ComponentRoute,
   LayoutProps,
@@ -14,7 +12,6 @@ export { useMdxComponents } from './app/mdx-components-context'
 export * from './hooks/index'
 // Composable layout building blocks
 export { DocsLayout } from './components/docs-layout'
-export { DefaultLayout } from './components/default-layout'
 
 // Default UI components (for use in custom layout.tsx)
 export { Navbar } from './components/ui-base/navbar'
@@ -104,3 +101,4 @@ export { Skeleton as PrimitiveSkeleton } from './components/primitives/skeleton'
 
 // Utilities
 export { cn } from './utils/cn'
+export { getTranslated } from './utils/i18n'

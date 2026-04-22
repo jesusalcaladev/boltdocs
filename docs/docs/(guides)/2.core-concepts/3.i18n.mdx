@@ -166,17 +166,19 @@ function LanguagePicker() {
 }
 ```
 
-### `useLocalizedTo(path)`
+### `getTranslated(value, locale)`
 
-Automatically prefixes a path with the current version and locale:
+A helper function to resolve a string from a multi-language configuration object. This is useful when manually handling fields that accept both strings and locale-specific objects.
 
 ```tsx
-import { useLocalizedTo } from 'boltdocs/hooks'
+import { getTranslated, useI18n } from 'boltdocs/client'
 
-function MyLink() {
-  const localizedPath = useLocalizedTo('/docs/getting-started')
-  // If locale is 'es' and version is 'v2':
-  // → '/docs/v2/es/getting-started'
+function MyComponent({ titleConfig }) {
+  const { currentLocale } = useI18n()
+  // titleConfig: { en: 'Hello', es: 'Hola' }
+  const title = getTranslated(titleConfig, currentLocale)
+  
+  return <h1>{title}</h1>
 }
 ```
 

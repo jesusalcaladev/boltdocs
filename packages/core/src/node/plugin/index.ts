@@ -561,15 +561,13 @@ export * from '${normalizedPath}';`
 export default UserLayout;`
           }
 
-          // No user layout — return the built-in default
-          const defaultLayoutPath = normalizePath(
-            path.resolve(
-              __dirname,
-              '../../client/components/default-layout.tsx',
-            ),
-          )
-          return `import { DefaultLayout } from '${defaultLayoutPath}';
-export default DefaultLayout;`
+          throw new Error(`[Boltdocs] Layout file not found. A 'layout.tsx' or 'layout.jsx' file is mandatory in your docs directory. Please create one to define your site structure.`)
+        }
+
+        if (name === 'shim-fix') {
+          return `import { useSyncExternalStore } from 'react';
+export { useSyncExternalStore };
+export default useSyncExternalStore;`
         }
 
         if (name === 'icons') {

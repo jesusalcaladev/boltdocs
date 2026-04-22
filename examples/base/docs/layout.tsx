@@ -1,37 +1,30 @@
-import { DocsLayout } from './docs-layout'
-import { Navbar } from './ui-base/navbar'
-import { Sidebar } from './ui-base/sidebar'
-import { OnThisPage } from './ui-base/on-this-page'
-import { Head } from './ui-base/head'
-import { Breadcrumbs } from './ui-base/breadcrumbs'
-import { PageNav } from './ui-base/page-nav'
-import { ErrorBoundary } from './ui-base/error-boundary'
-import { CopyMarkdown } from './ui-base/copy-markdown'
-import { useRoutes } from '../hooks/use-routes'
-import { useConfig } from '../app/config-context'
-import { useMdxComponents } from '../app/mdx-components-context'
-import { useLocation } from 'react-router-dom'
-import { getTranslated } from '../utils/i18n'
+import { 
+  DocsLayout, 
+  Navbar, 
+  Sidebar, 
+  OnThisPage, 
+  Head, 
+  Breadcrumbs, 
+  PageNav, 
+  ErrorBoundary, 
+  CopyMarkdown, 
+  useRoutes, 
+  useConfig, 
+  useMdxComponents,
+  useLocation
+} from 'boltdocs/client'
 
-export interface LayoutProps {
-  children: React.ReactNode
-}
-
-/**
- * The built-in default layout for Boltdocs.
- * Users who create their own `layout.tsx` can import the same building blocks
- * and rearrange, wrap, or replace any section.
- */
-export function DefaultLayout({ children }: LayoutProps) {
-  const {
-    routes: filteredRoutes,
-    allRoutes,
-    currentRoute,
-    currentLocale,
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const { 
+    routes: filteredRoutes, 
+    allRoutes, 
+    currentRoute 
   } = useRoutes()
   const { pathname } = useLocation()
   const config = useConfig()
   const mdxComponents = useMdxComponents()
+  
+  // Allow CopyMarkdown override via mdx-components.tsx
   const CopyMarkdownComp = (mdxComponents.CopyMarkdown as any) || CopyMarkdown
 
   const isDocs = pathname.startsWith('/docs')
@@ -39,12 +32,8 @@ export function DefaultLayout({ children }: LayoutProps) {
   return (
     <DocsLayout>
       <Head
-        siteTitle={
-          getTranslated(config.theme?.title, currentLocale) || 'Boltdocs'
-        }
-        siteDescription={
-          getTranslated(config.theme?.description, currentLocale) || ''
-        }
+        siteTitle={config.theme?.title || 'Boltdocs'}
+        siteDescription={config.theme?.description || ''}
         routes={allRoutes}
       />
       <Navbar />

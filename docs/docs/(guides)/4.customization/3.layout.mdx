@@ -14,42 +14,14 @@ Boltdocs ships with a `DefaultLayout` that arranges the navbar, sidebar, content
 
 ## How It Works
 
-Boltdocs uses a virtual module (`virtual:boltdocs-layout`) to resolve the layout component. The resolution order is:
+Boltdocs requires a layout file to define the structure of your site. This gives you full control over how your documentation is presented:
 
-1. **Your `layout.tsx`** — If `docs/layout.tsx` (or `.jsx`) exists, Boltdocs uses it.
-2. **`DefaultLayout`** — If no custom layout exists, the built-in layout is used.
+1. **Mandatory File: `layout.tsx`** — Boltdocs expects a `layout.tsx` (or `.jsx`) file in the root of your `docs/` directory.
+2. **Customization** — You can use the built-in building blocks to recreate the standard look or build something entirely unique.
 
 <Note>
-  Changes to `layout.tsx` are picked up automatically by HMR. Save the file and the browser updates instantly.
+  If this file is missing, Boltdocs will throw an error during build and development. All new projects created via `create-boltdocs` come with a standard layout file ready to go.
 </Note>
-
----
-
-## Creating a Custom Layout
-
-Create a `layout.tsx` file inside your `docs/` directory:
-
-<FileTree>
-- docs/
-  - layout.tsx             # Your custom layout
-  - mdx-components.tsx     # Optional MDX overrides
-  - (guides)/
-    - ...
-</FileTree>
-
-Your layout must be a React component that receives `children` (the rendered MDX content):
-
-```tsx
-// docs/layout.tsx
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div>
-      {/* Your custom layout here */}
-      {children}
-    </div>
-  )
-}
-```
 
 ---
 

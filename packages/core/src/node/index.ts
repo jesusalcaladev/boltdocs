@@ -62,6 +62,7 @@ export async function createViteConfig(
         'react-dom/client',
         'react-helmet-async',
         'react-router-dom',
+        'use-sync-external-store/shim',
       ],
       rolldownOptions: {},
     },
@@ -77,14 +78,25 @@ export async function createViteConfig(
       }),
     ],
     resolve: {
-      alias: {
-        'boltdocs/entry': normalizePath(
-          path.resolve(root, 'boltdocs-entry.mjs'),
-        ),
-        'boltdocs/client': normalizePath(
-          path.resolve(root, 'boltdocs-client.mjs'),
-        ),
-      },
+      alias: [
+        {
+          find: 'boltdocs/entry',
+          replacement: normalizePath(
+            path.resolve(root, 'boltdocs-entry.mjs'),
+          ),
+        },
+        {
+          find: 'boltdocs/client',
+          replacement: normalizePath(
+            path.resolve(root, 'boltdocs-client.mjs'),
+          ),
+        },
+        // Fix for React 19 + use-sync-external-store shim (common in react-aria)
+        {
+          find: /^use-sync-external-store\/shim$/,
+          replacement: 'virtual:boltdocs-shim-fix',
+        },
+      ],
       dedupe: [
         'react',
         'react-dom',
@@ -94,7 +106,14 @@ export async function createViteConfig(
       ],
     },
     ssr: {
-      noExternal: ['boltdocs', /@bdocs\/(?!ssg).*/, 'react-helmet-async'],
+      noExternal: [
+        'boltdocs',
+        /@bdocs\/(?!ssg).*/,
+        'react-helmet-async',
+        'react-aria-components',
+        '@react-aria/collections',
+        '@react-aria/utils',
+      ],
     },
     server: {
       headers: {
@@ -124,5 +143,6 @@ export type {
 } from './config'
 export { resolveConfig } from './config'
 export { defineConfig } from '../shared/config-utils'
+export { normalizePath, sanitizeFilename } from './utils'
 export type { BoltdocsPluginOptions }
 export * from './plugins'
