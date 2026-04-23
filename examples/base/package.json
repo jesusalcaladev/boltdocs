@@ -18,7 +18,7 @@
         "@tailwindcss/vite": "^4.2.2",
         "@types/react": "^19.1.0",
         "@types/react-dom": "^19.1.0",
-        "boltdocs": "2.6.1",
+        "boltdocs": "latest",
         "tailwindcss": "^4.2.2",
         "typescript": "^5.0.0"
     }
