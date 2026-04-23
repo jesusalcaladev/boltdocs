@@ -1,5 +1,11 @@
 # boltdocs
 
+## 2.6.1
+
+### Patch Changes
+
+- [`bdc7634`](https://github.com/bolt-docs/boltdocs/commit/bdc7634239ba5e220a4b1fe2792aaa66e6944e46) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - fix: error in developer in build
+
 ## 2.6.0
 
 ### Minor Changes
