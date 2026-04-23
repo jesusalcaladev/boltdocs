@@ -136,7 +136,7 @@ importers:
         specifier: ^19.1.0
         version: 19.2.3(@types/react@19.2.14)
       boltdocs:
-        specifier: 2.6.0
+        specifier: latest
         version: 2.6.0(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.3.2)(beasties@0.4.2)(esbuild@0.25.12)(jiti@2.6.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(rollup@4.60.1)(styled-components@6.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
       tailwindcss:
         specifier: ^4.2.2
