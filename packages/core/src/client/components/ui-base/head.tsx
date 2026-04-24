@@ -1,11 +1,19 @@
 import { useLocation } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import type { ComponentType, ReactNode } from 'react'
+import * as ReactHelmetAsync from 'react-helmet-async'
 import { useConfig } from '../../app/config-context'
+
+type HelmetModule = {
+  Helmet?: ComponentType<{ children?: ReactNode }>
+  default?: { Helmet?: ComponentType<{ children?: ReactNode }> }
+}
+const helmetModule = ReactHelmetAsync as unknown as HelmetModule
+const Helmet = helmetModule.Helmet || helmetModule.default?.Helmet || (({ children }) => <>{children}</>)
 
 interface HeadProps {
   siteTitle: string
   siteDescription?: string
-  routes: Array<{ path: string; title: string; description?: string; seo?: Record<string, any> }>
+  routes: Array<{ path: string; title: string; description?: string; seo?: Record<string, unknown> }>
 }
 
 export function Head({ siteTitle, siteDescription, routes }: HeadProps) {
@@ -29,7 +37,6 @@ export function Head({ siteTitle, siteDescription, routes }: HeadProps) {
   const ogImage = seo['og:image'] || defaultOgImage
 
   return (
-    // @ts-ignore
     <Helmet>
       <title>{finalTitle}</title>
       <meta name="description" content={pageDescription} />

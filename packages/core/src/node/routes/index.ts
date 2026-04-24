@@ -254,17 +254,20 @@ function computeLocalizedPath(
   const cached = localizedPathCache.get(cacheKey)
   if (cached) return cached
 
-  let prefix = basePath
+  const normalizedBasePath = basePath.startsWith('/') ? basePath : '/' + basePath
+  let prefix = normalizedBasePath
   if (config?.versions) {
     const vPrefix = config.versions.prefix || ''
     for (const vConfig of config.versions.versions) {
       const fullVPath = vPrefix + vConfig.path
-      if (path.startsWith(`${basePath}/${fullVPath}`)) {
-        prefix += '/' + fullVPath
+      const versionSearchPrefix = `${normalizedBasePath}/${fullVPath}`
+      if (path.startsWith(versionSearchPrefix)) {
+        prefix = versionSearchPrefix
         break
       }
-      if (path.startsWith(`${basePath}/${vConfig.path}`)) {
-        prefix += '/' + vConfig.path
+      const simpleVersionSearchPrefix = `${normalizedBasePath}/${vConfig.path}`
+      if (path.startsWith(simpleVersionSearchPrefix)) {
+        prefix = simpleVersionSearchPrefix
         break
       }
     }
@@ -285,7 +288,7 @@ function computeLocalizedPath(
   } else if (pathAfterVersion === '/' || pathAfterVersion === '') {
     pathAfterVersion = '/' + targetLocale
   } else {
-    // Ensure pathAfterVersion starts with a slash if not already
+    // Regular route without locale segment
     const pathPrefix = pathAfterVersion.startsWith('/') ? '' : '/'
     pathAfterVersion = '/' + targetLocale + pathPrefix + pathAfterVersion
   }

@@ -1,10 +1,11 @@
 import { useEffect, useMemo } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { RouterProvider } from 'react-aria-components'
 import { BoltdocsProvider, useBoltdocsContext } from '../store/boltdocs-context'
 import { ThemeProvider } from '../app/theme-context'
 import { MdxComponentsProvider } from '../app/mdx-components-context'
-import { HelmetProvider } from 'react-helmet-async'
+import * as ReactHelmetAsync from 'react-helmet-async'
 import { ConfigContext } from '../app/config-context'
 import { ScrollHandler } from '../app/scroll-handler'
 import { mdxComponentsDefault } from '../app/mdx-component'
@@ -13,6 +14,16 @@ import type { BoltdocsConfig } from '../../shared/types'
 import type { ComponentRoute } from '../types'
 
 import virtualCustomComponents from 'virtual:boltdocs-mdx-components'
+
+type HelmetProviderModule = {
+  HelmetProvider?: ComponentType<{ children?: ReactNode }>
+  default?: { HelmetProvider?: ComponentType<{ children?: ReactNode }> }
+}
+const helmetProviderModule = ReactHelmetAsync as unknown as HelmetProviderModule
+const HelmetProvider =
+  helmetProviderModule.HelmetProvider
+  || helmetProviderModule.default?.HelmetProvider
+  || (({ children }) => <>{children}</>)
 
 /**
  * Updates the HTML lang and dir attributes based on the current locale configuration.
@@ -60,12 +71,15 @@ function StoreSync({ config }: { config: BoltdocsConfig }) {
     }
 
     // 2. Locale detection
-    if (
-      config.i18n &&
-      parts.length > cIdx &&
-      config.i18n.locales[parts[cIdx]]
-    ) {
-      detectedLocale = parts[cIdx]
+    if (config.i18n && parts.length > cIdx) {
+      const potentialLocale = parts[cIdx]
+      const isLocale = Array.isArray(config.i18n.locales)
+        ? config.i18n.locales.includes(potentialLocale)
+        : !!config.i18n.locales[potentialLocale]
+
+      if (isLocale) {
+        detectedLocale = potentialLocale
+      }
     } else if (config.i18n && parts.length === 0) {
       detectedLocale = currentLocale || config.i18n.defaultLocale
     }
@@ -103,25 +117,43 @@ export function BoltdocsShell({
   )
 
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  
+  const currentPath = useMemo(() => {
+    const p = pathname || '/'
+    return p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p
+  }, [pathname])
+
+  const currentRoute = useMemo(() => 
+    routes.find((r) => {
+      const rp = r.path === '' ? '/' : r.path
+      const normalize = (path: string) => path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path
+      return normalize(rp) === currentPath
+    }),
+    [routes, currentPath]
+  )
 
   return (
     <HelmetProvider>
-      <BoltdocsProvider>
+      <RoutesProvider routes={routes}>
         <ThemeProvider>
           <MdxComponentsProvider components={allComponents}>
             <ConfigContext.Provider value={config}>
-              <RoutesProvider routes={routes}>
-                <RouterProvider navigate={navigate}>
-                  <ScrollHandler />
+              <RouterProvider navigate={navigate}>
+                <ScrollHandler />
+                <BoltdocsProvider
+                  initialLocale={currentRoute?.locale}
+                  initialVersion={currentRoute?.version}
+                >
                   <StoreSync config={config} />
                   <I18nUpdater config={config} />
                   <Outlet />
-                </RouterProvider>
-              </RoutesProvider>
+                </BoltdocsProvider>
+              </RouterProvider>
             </ConfigContext.Provider>
           </MdxComponentsProvider>
         </ThemeProvider>
-      </BoltdocsProvider>
+      </RoutesProvider>
     </HelmetProvider>
   )
 }

@@ -147,7 +147,14 @@ export async function resolveConfig(
       ...defaults.theme,
       ...cleanThemeConfig,
     },
-    i18n: userConfig.i18n,
+    i18n: userConfig.i18n
+      ? {
+        ...userConfig.i18n,
+        locales: Array.isArray(userConfig.i18n.locales)
+          ? Object.fromEntries(userConfig.i18n.locales.map((l) => [l, l]))
+          : userConfig.i18n.locales,
+      }
+      : undefined,
     versions: userConfig.versions,
     siteUrl: userConfig.siteUrl,
     plugins: userConfig.plugins || [],

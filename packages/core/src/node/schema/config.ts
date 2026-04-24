@@ -154,7 +154,14 @@ export const RobotsConfigSchema = z.union([
  */
 export const I18nConfigSchema = z.object({
   defaultLocale: z.string(),
-  locales: z.record(z.string(), z.string()),
+  locales: z
+    .union([z.record(z.string(), z.string()), z.array(z.string())])
+    .transform((val) => {
+      if (Array.isArray(val)) {
+        return Object.fromEntries(val.map((l) => [l, l]))
+      }
+      return val
+    }),
   localeConfigs: z
     .record(
       z.string(),

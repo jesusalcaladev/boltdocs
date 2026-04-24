@@ -111,7 +111,11 @@ export function parseDocFile(
   // Level 2: Check for locale
   if (config?.i18n && parts.length > 0) {
     const potentialLocale = parts[0]
-    if (config.i18n.locales[potentialLocale]) {
+    const isLocale = Array.isArray(config.i18n.locales)
+      ? config.i18n.locales.includes(potentialLocale)
+      : !!config.i18n.locales[potentialLocale]
+
+    if (isLocale) {
       locale = potentialLocale
       parts = parts.slice(1)
     }

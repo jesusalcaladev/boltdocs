@@ -23,11 +23,21 @@ function findModuleKey(
   filePath: string,
 ): string | undefined {
   const normalizedFilePath = filePath.replace(/\\/g, '/')
-  return Object.keys(modules).find(
-    (key) =>
-      key.endsWith(`/${normalizedFilePath}`) ||
-      key.endsWith(normalizedFilePath),
-  )
+  const keys = Object.keys(modules)
+  if (keys.length === 0) return undefined
+
+  // Detect docs directory from keys (e.g., "/docs/...")
+  const firstKey = keys[0].replace(/\\/g, '/')
+  const parts = firstKey.split('/').filter(Boolean)
+  const docsDirName = parts[0] || 'docs'
+
+  const targetKey = `/${docsDirName}/${normalizedFilePath}`
+  const targetKeyAlt = `./${docsDirName}/${normalizedFilePath}`
+
+  return keys.find((key) => {
+    const k = key.replace(/\\/g, '/')
+    return k === targetKey || k === targetKeyAlt || k.endsWith(targetKey)
+  })
 }
 
 export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
@@ -52,6 +62,8 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
     const p = path.startsWith('/') ? path : `/${path}`
     return `${b}${p}` || '/'
   }
+
+  const allMetadata: ComponentRoute[] = [...routesData]
 
   // 1. Documentation routes
   const docRoutes: RouteRecord[] = routesData.map((route) => {
@@ -86,16 +98,26 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
 
   // 2. Home page route
   if (HomePage) {
-    const homePaths = [withBase('/')]
+    const homeConfigs = [{ path: withBase('/'), locale: config.i18n?.defaultLocale }]
     if (config.i18n) {
       Object.keys(config.i18n.locales).forEach((locale) => {
-        homePaths.push(withBase(`/${locale}`))
+        if (locale !== config.i18n?.defaultLocale) {
+          homeConfigs.push({ path: withBase(`/${locale}`), locale })
+        }
       })
     }
 
-    homePaths.forEach((path) => {
+    homeConfigs.forEach(({ path, locale }) => {
       // Avoid duplicate routes if documentation also maps to '/'
       if (!children.find((r) => r.path === path)) {
+        allMetadata.push({
+          path,
+          locale,
+          title: 'Home',
+          filePath: '',
+          headings: [],
+        } as any)
+
         children.push({
           path,
           element: (
@@ -103,6 +125,10 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
               <HomePage />
             </EffectiveExternalLayout>
           ),
+          loader: async () => ({
+            path,
+            locale,
+          }),
           getStaticPaths: () => [path],
         })
       }
@@ -114,6 +140,14 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
     Object.entries(externalPages).forEach(([rawPath, ExtComponent]) => {
       const path = withBase(rawPath)
       if (!children.find((r) => r.path === path)) {
+        allMetadata.push({
+          path,
+          locale: config.i18n?.defaultLocale,
+          title: rawPath,
+          filePath: '',
+          headings: [],
+        } as any)
+
         children.push({
           path,
           element: (
@@ -121,6 +155,10 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
               <ExtComponent />
             </EffectiveExternalLayout>
           ),
+          loader: async () => ({
+            path,
+            locale: config.i18n?.defaultLocale,
+          }),
           getStaticPaths: () => [path],
         })
 
@@ -131,6 +169,14 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
               `/${locale}${rawPath === '/' ? '' : rawPath}`,
             )
             if (!children.find((r) => r.path === localePath)) {
+              allMetadata.push({
+                path: localePath,
+                locale,
+                title: rawPath,
+                filePath: '',
+                headings: [],
+              } as any)
+
               children.push({
                 path: localePath,
                 element: (
@@ -138,6 +184,10 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
                     <ExtComponent />
                   </EffectiveExternalLayout>
                 ),
+                loader: async () => ({
+                  path: localePath,
+                  locale,
+                }),
                 getStaticPaths: () => [localePath],
               })
             }
@@ -156,10 +206,6 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
       </EffectiveExternalLayout>
     ),
   })
-
-  // --- 5. Construct Metadata for UI Providers ---
-  // We need to pass the full metadata to BoltdocsShell so that Sidebar/Tabs can work.
-  const allMetadata: ComponentRoute[] = [...routesData]
 
   // Wrap everything in the Boltdocs shell (providers)
   return [

@@ -18,17 +18,36 @@ const BoltdocsContext =
     BoltdocsState | undefined
   >(undefined))
 
-export function BoltdocsProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocale] = useState('')
-  const [version, setVersion] = useState('')
+export function BoltdocsProvider({
+  children,
+  initialLocale = '',
+  initialVersion = '',
+}: {
+  children: React.ReactNode
+  initialLocale?: string
+  initialVersion?: string
+}) {
+  const getInitialState = () => {
+    if (typeof window === 'undefined')
+      return { locale: initialLocale, version: initialVersion }
+    const parts = window.location.pathname.split('/').filter(Boolean)
+    let locale = initialLocale
+    let version = initialVersion
+    // ...
+    return { locale, version }
+  }
+
+  const initialState = getInitialState()
+  const [locale, setLocale] = useState(initialState.locale)
+  const [version, setVersion] = useState(initialState.version)
   const [hasHydrated, setHasHydrated] = useState(false)
 
   const value = useMemo(
     () => ({
       currentLocale: locale,
       currentVersion: version,
-      setLocale,
-      setVersion,
+      setLocale: (l: string) => setLocale(l || ''),
+      setVersion: (v: string) => setVersion(v || ''),
       hasHydrated,
       setHasHydrated,
     }),
