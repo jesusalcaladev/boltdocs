@@ -8,9 +8,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.mjs",
   "bin": {
-    "create-boltdocs": "./dist/index.js"
+    "create-boltdocs": "./dist/index.mjs"
   },
   "scripts": {
     "build": "tsdown --config-loader unrun",
