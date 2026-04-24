@@ -1,113 +1,90 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import path from 'path'
 import fs from 'fs'
-
-// Mock Vite's loadConfigFromFile
-vi.mock('vite', () => ({
-  loadConfigFromFile: vi.fn(),
-}))
+import os from 'os'
 
 import { resolveConfig } from '../../packages/core/src/node/config'
 
-// Mock node:fs to bypass file existence check
-vi.mock('node:fs', async (importOriginal) => {
-  const actual = await importOriginal() as any
-  return {
-    ...actual,
-    default: {
-      ...actual.default,
-      existsSync: vi.fn().mockReturnValue(true),
-    },
-    existsSync: vi.fn().mockReturnValue(true),
-  }
-})
-
 describe('Configuration Validation', () => {
-  const docsDir = 'docs'
-  const root = path.resolve(__dirname, '../../')
+  let tempProjectDir: string
+  let docsDir: string
+
+  beforeEach(() => {
+    tempProjectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'boltdocs-validation-test-'))
+    docsDir = path.join(tempProjectDir, 'docs')
+    fs.mkdirSync(docsDir, { recursive: true })
+  })
+
+  afterEach(() => {
+    if (fs.existsSync(tempProjectDir)) {
+      fs.rmSync(tempProjectDir, { recursive: true, force: true })
+    }
+  })
 
   it('should validate a correct configuration', async () => {
-    const { loadConfigFromFile } = await import('vite')
-    vi.mocked(loadConfigFromFile).mockResolvedValue({
-      path: 'boltdocs.config.ts',
-      config: {
+    fs.writeFileSync(
+      path.join(tempProjectDir, 'boltdocs.config.ts'),
+      `export default {
         siteUrl: 'https://example.com',
-        theme: {
-          title: 'Test Site',
-        },
-      } as any,
-      dependencies: [],
-    })
+        theme: { title: 'Test Site' }
+      }`,
+    )
 
-    const config = await resolveConfig(docsDir, root)
+    const config = await resolveConfig(docsDir, tempProjectDir)
     expect(config.siteUrl).toBe('https://example.com')
     expect(config.theme?.title).toBe('Test Site')
   })
 
   it('should throw an error for invalid siteUrl', async () => {
-    const { loadConfigFromFile } = await import('vite')
-    vi.mocked(loadConfigFromFile).mockResolvedValue({
-      path: 'boltdocs.config.ts',
-      config: {
-        siteUrl: 'not-a-url',
-      } as any,
-      dependencies: [],
-    })
+    fs.writeFileSync(
+      path.join(tempProjectDir, 'boltdocs.config.ts'),
+      `export default { siteUrl: 'not-a-url' }`,
+    )
 
-    await expect(resolveConfig(docsDir, root)).rejects.toThrow(/Invalid Boltdocs configuration/)
-    await expect(resolveConfig(docsDir, root)).rejects.toThrow(/siteUrl/)
+    await expect(resolveConfig(docsDir, tempProjectDir)).rejects.toThrow(/Invalid Boltdocs configuration/)
+    await expect(resolveConfig(docsDir, tempProjectDir)).rejects.toThrow(/siteUrl/)
   })
 
   it('should validate social links correctly', async () => {
-    const { loadConfigFromFile } = await import('vite')
-    vi.mocked(loadConfigFromFile).mockResolvedValue({
-      path: 'boltdocs.config.ts',
-      config: {
+    fs.writeFileSync(
+      path.join(tempProjectDir, 'boltdocs.config.ts'),
+      `export default {
         theme: {
-          socialLinks: [
-            { icon: 'github', link: 'https://github.com/test' }
-          ]
+          socialLinks: [{ icon: 'github', link: 'https://github.com/test' }]
         }
-      } as any,
-      dependencies: [],
-    })
+      }`,
+    )
 
-    const config = await resolveConfig(docsDir, root)
+    const config = await resolveConfig(docsDir, tempProjectDir)
     expect(config.theme?.socialLinks?.[0].icon).toBe('github')
   })
 
   it('should throw error for invalid social link URL', async () => {
-    const { loadConfigFromFile } = await import('vite')
-    vi.mocked(loadConfigFromFile).mockResolvedValue({
-      path: 'boltdocs.config.ts',
-      config: {
+    fs.writeFileSync(
+      path.join(tempProjectDir, 'boltdocs.config.ts'),
+      `export default {
         theme: {
-          socialLinks: [
-            { icon: 'github', link: 'invalid-url' }
-          ]
+          socialLinks: [{ icon: 'github', link: 'invalid-url' }]
         }
-      } as any,
-      dependencies: [],
-    })
+      }`,
+    )
 
-    await expect(resolveConfig(docsDir, root)).rejects.toThrow(/socialLinks\.0\.link/)
+    await expect(resolveConfig(docsDir, tempProjectDir)).rejects.toThrow(/socialLinks\.0\.link/)
   })
 
   it('should allow route groups in sidebar config (regression check for earlier fix)', async () => {
-    const { loadConfigFromFile } = await import('vite')
-    vi.mocked(loadConfigFromFile).mockResolvedValue({
-      path: 'boltdocs.config.ts',
-      config: {
+    fs.writeFileSync(
+      path.join(tempProjectDir, 'boltdocs.config.ts'),
+      `export default {
         theme: {
           sidebar: {
             '(guides)': [{ text: 'Intro', link: '/intro' }]
           }
         }
-      } as any,
-      dependencies: [],
-    })
+      }`,
+    )
 
-    const config = await resolveConfig(docsDir, root)
+    const config = await resolveConfig(docsDir, tempProjectDir)
     expect(config.theme?.sidebar?.['(guides)']).toBeDefined()
   })
 })

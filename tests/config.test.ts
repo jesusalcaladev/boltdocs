@@ -314,6 +314,23 @@ describe('config', () => {
       const config = await resolveConfig(tempProjectDir, tempProjectDir)
       expect(config.i18n?.localeConfigs?.ar?.direction).toBe('rtl')
     })
+    
+    it('should normalize locales array to record', async () => {
+      const configPath = path.resolve(tempProjectDir, 'boltdocs.config.ts')
+      fs.writeFileSync(
+        configPath,
+        `export default { 
+          i18n: {
+            defaultLocale: 'en',
+            locales: ['en', 'es']
+          }
+        };`,
+      )
+
+      const config = await resolveConfig(tempProjectDir, tempProjectDir)
+      expect(config.i18n?.defaultLocale).toBe('en')
+      expect(config.i18n?.locales).toEqual({ en: 'en', es: 'es' })
+    })
   })
 
   describe('versions configuration', () => {

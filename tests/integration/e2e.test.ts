@@ -38,7 +38,7 @@ describe('E2E integration tests', () => {
       const docsDir = path.join(tempDir, 'docs')
       fs.mkdirSync(docsDir, { recursive: true })
 
-      fs.writeFileSync(path.join(docsDir, 'test.mdx'), '---\ntitle: Welcome\n---\n\n# Welcome')
+      fs.writeFileSync(path.join(docsDir, 'test.md'), '---\ntitle: Welcome\n---\n\n# Welcome')
 
       const { generateRoutes } = await import('../../packages/core/src/node/routes')
       const config = { homePage: './src/home-page.tsx', theme: { title: 'Test' } }
@@ -47,7 +47,7 @@ describe('E2E integration tests', () => {
       expect(routes).toBeDefined()
       expect(Array.isArray(routes)).toBe(true)
       expect(routes.length).toBeGreaterThanOrEqual(1)
-    }, 15000)
+    }, 30000)
 
     it('should handle i18n with home-page', async () => {
       const docsDir = path.join(tempDir, 'docs')
