@@ -2,13 +2,9 @@ import { defineConfig } from 'boltdocs'
 
 export default defineConfig({
   siteUrl: 'https://my-docs.com/',
-  i18n:{
+  i18n: {
     locales: ['en', 'es'],
     defaultLocale: 'en',
-    dir:{
-      en: 'ltr',
-      es: 'rtl'
-    }
   },
   theme: {
     title: '{{title}}',
