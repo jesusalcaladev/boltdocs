@@ -5,7 +5,7 @@ import { boltdocsPlugin } from './plugin/index'
 import { boltdocsMdxPlugin } from './mdx/index'
 import { SECURITY_HEADERS } from './security/headers'
 import { getCSPHeader } from './security/csp'
-import { resolveConfig } from './config'
+import { resolveConfig, resolveConfigAndGenerateTypes } from './config'
 import path from 'node:path'
 import { normalizePath } from 'vite'
 export { generateEntryCode } from './plugin/entry'
@@ -15,7 +15,7 @@ export default async function boltdocs(
   options?: BoltdocsPluginOptions,
 ): Promise<Plugin[]> {
   const docsDir = options?.docsDir || 'docs'
-  const config = await resolveConfig(docsDir)
+  const config = await resolveConfigAndGenerateTypes(docsDir)
 
   // Merge options with config
   const mergedOptions: BoltdocsPluginOptions = {
@@ -34,7 +34,7 @@ export async function createViteConfig(
   root: string,
   mode: 'development' | 'production' = 'development',
 ): Promise<InlineConfig> {
-  const config = await resolveConfig('docs', root)
+  const config = await resolveConfigAndGenerateTypes('docs', root)
   const isProd = mode === 'production'
 
   // Prepare security headers

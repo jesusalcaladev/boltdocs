@@ -95,7 +95,7 @@ export function useRoutes() {
     ? Object.entries(config.i18n.locales).map(([key, defaultLabel]) => {
         const localeConfig = config.i18n?.localeConfigs?.[key]
         return {
-          key,
+          key: key as import('../../shared/types').BoltdocsTypes['Locale'],
           label: localeConfig?.label || defaultLabel,
           isCurrent: key === currentLocale,
         }
@@ -104,7 +104,7 @@ export function useRoutes() {
 
   const availableVersions = config.versions
     ? config.versions.versions.map((v) => ({
-        key: v.path,
+        key: v.path as import('../../shared/types').BoltdocsTypes['Version'],
         label: v.label,
         isCurrent: v.path === currentVersion,
       }))
@@ -114,10 +114,10 @@ export function useRoutes() {
     routes,
     allRoutes,
     currentRoute,
-    currentLocale,
+    currentLocale: currentLocale as import('../../shared/types').BoltdocsTypes['Locale'],
     currentLocaleLabel,
     availableLocales,
-    currentVersion,
+    currentVersion: currentVersion as import('../../shared/types').BoltdocsTypes['Version'],
     currentVersionLabel,
     availableVersions,
     config,

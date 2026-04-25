@@ -2,19 +2,20 @@ import { useNavigate } from 'react-router-dom'
 import { getBaseFilePath } from '../utils/get-base-file-path'
 import { useRoutes } from './use-routes'
 import { useBoltdocsContext } from '../store/boltdocs-context'
+import type { BoltdocsTypes } from '../../shared/types'
 
 export interface VersionOption {
-  key: string
+  key: BoltdocsTypes['Version']
   label: string
   value: string
   isCurrent: boolean
 }
 
 export interface UseVersionReturn {
-  currentVersion: string | undefined
+  currentVersion: BoltdocsTypes['Version'] | undefined
   currentVersionLabel: string | undefined
   availableVersions: VersionOption[]
-  handleVersionChange: (version: string) => void
+  handleVersionChange: (version: BoltdocsTypes['Version']) => void
 }
 
 /**

@@ -2,19 +2,20 @@ import { useNavigate } from 'react-router-dom'
 import { getBaseFilePath } from '../utils/get-base-file-path'
 import { useRoutes } from './use-routes'
 import { useBoltdocsContext } from '../store/boltdocs-context'
+import type { BoltdocsTypes } from '../../shared/types'
 
 export interface LocaleOption {
-  key: string
+  key: BoltdocsTypes['Locale']
   label: string
   value: string
   isCurrent: boolean
 }
 
 export interface UseI18nReturn {
-  currentLocale: string | undefined
+  currentLocale: BoltdocsTypes['Locale'] | undefined
   currentLocaleLabel: string | undefined
   availableLocales: LocaleOption[]
-  handleLocaleChange: (locale: string) => void
+  handleLocaleChange: (locale: BoltdocsTypes['Locale']) => void
 }
 
 /**

@@ -101,9 +101,7 @@ export function createRoutes(options: CreateRoutesOptions): RouteRecord[] {
     const homeConfigs = [{ path: withBase('/'), locale: config.i18n?.defaultLocale }]
     if (config.i18n) {
       Object.keys(config.i18n.locales).forEach((locale) => {
-        if (locale !== config.i18n?.defaultLocale) {
-          homeConfigs.push({ path: withBase(`/${locale}`), locale })
-        }
+        homeConfigs.push({ path: withBase(`/${locale}`), locale })
       })
     }
 

@@ -169,3 +169,12 @@ export interface BoltdocsConfig {
   seo?: BoltdocsSeoConfig
   vite?: any // Avoid pulling in entire Vite types here
 }
+
+/**
+ * Global interface for Boltdocs types that can be augmented by generated code.
+ * This allows for strictly typed locales and versions based on the project configuration.
+ */
+export interface BoltdocsTypes {
+  Locale: string
+  Version: string
+}

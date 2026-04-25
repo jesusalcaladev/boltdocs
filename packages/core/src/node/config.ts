@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import { loadConfigFromFile } from 'vite'
 import { BoltdocsConfigSchema } from './schema/config'
 import { ValidationError } from './errors'
+import { generateProjectTypes } from './types-generator'
 import type {
   BoltdocsConfig,
   BoltdocsThemeConfig,
@@ -179,4 +180,16 @@ export async function resolveConfig(
   }
 
   return validation.data as BoltdocsConfig
+}
+
+/**
+ * Resolves the configuration and generates project-specific types.
+ */
+export async function resolveConfigAndGenerateTypes(
+  docsDir: string,
+  root: string = process.cwd(),
+): Promise<BoltdocsConfig> {
+  const config = await resolveConfig(docsDir, root)
+  generateProjectTypes(config, root)
+  return config
 }

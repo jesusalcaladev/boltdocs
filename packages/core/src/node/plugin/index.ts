@@ -1,9 +1,8 @@
-import { pathToFileURL } from 'node:url'
 import { type Plugin, type ResolvedConfig, loadEnv } from 'vite'
 import { generateRoutes, invalidateRouteCache, invalidateFile } from '../routes'
 import { adaptRoutesForSSG } from '../routes/route-adapter'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
-import { resolveConfig, type BoltdocsConfig, CONFIG_FILES } from '../config'
+import { resolveConfigAndGenerateTypes, type BoltdocsConfig, CONFIG_FILES } from '../config'
 import { normalizePath, isDocFile } from '../utils'
 import { generateSitemap } from '../seo/sitemap'
 import { generateRobotsTxt } from '../seo/robots'
@@ -67,7 +66,7 @@ export function boltdocsPlugin(
 
         // Resolve config async if not already passed
         if (!config) {
-          config = await resolveConfig(docsDir)
+          config = await resolveConfigAndGenerateTypes(docsDir)
         }
 
         // --- NEW: Secure Plugin Initialization ---
@@ -360,7 +359,7 @@ export function boltdocsPlugin(
             if (type === 'add' || type === 'unlink') {
               invalidateRouteCache()
               // Re-resolve config as it might affect versions/routes
-              config = await resolveConfig(docsDir)
+              config = await resolveConfigAndGenerateTypes(docsDir)
 
               const configMod = server.moduleGraph.getModuleById(
                 '\0virtual:boltdocs-config.ts',
