@@ -74,6 +74,7 @@ export async function createViteConfig(
       tailwindcss(),
       await boltdocs({
         ...config,
+        // @ts-ignore
         root,
       }),
     ],
@@ -114,6 +115,15 @@ export async function createViteConfig(
       ],
     },
     ssr: {
+      optimizeDeps: {
+        include: [
+          'react',
+          'react-dom',
+          'react/jsx-runtime',
+          'react/jsx-dev-runtime',
+          ...(config.vite?.ssr?.optimizeDeps?.include || []),
+        ],
+      },
       noExternal: [
         'boltdocs',
         /@bdocs\/(?!ssg).*/,

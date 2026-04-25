@@ -95,7 +95,7 @@ export interface BoltdocsLocaleConfig {
  */
 export interface BoltdocsI18nConfig {
   defaultLocale: string
-  locales: Record<string, string>
+  locales: string[] | Record<string, string>
   localeConfigs?: Record<string, BoltdocsLocaleConfig>
 }
 
