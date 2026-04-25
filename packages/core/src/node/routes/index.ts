@@ -97,9 +97,11 @@ export async function generateRoutes(
   // 3. OPTIMIZED METADATA COLLECTION
   const groupMeta = new Map<
     string,
-    { title: string; position?: number; icon?: string }
+    { title: string | Record<string, string>; position?: number; icon?: string }
   >()
   const groupIndexFiles: ParsedDocFile[] = []
+
+  const defaultLocale = config?.i18n?.defaultLocale || ''
 
   for (const p of parsed) {
     if (p.isGroupIndex && p.relativeDir) {
@@ -107,13 +109,16 @@ export async function generateRoutes(
     }
 
     if (p.relativeDir) {
-      let entry = groupMeta.get(p.relativeDir)
+      const locale = p.route.locale || defaultLocale
+      const groupKey = `${locale}:${p.relativeDir}`
+
+      let entry = groupMeta.get(groupKey)
       if (!entry) {
         entry = {
           title: capitalize(p.relativeDir),
           position: p.inferredGroupPosition,
         }
-        groupMeta.set(p.relativeDir, entry)
+        groupMeta.set(groupKey, entry)
       } else {
         if (
           entry.position === undefined &&
@@ -127,7 +132,9 @@ export async function generateRoutes(
 
   // Override with explicit group index metadata
   for (const p of groupIndexFiles) {
-    const entry = groupMeta.get(p.relativeDir!)!
+    const locale = p.route.locale || defaultLocale
+    const groupKey = `${locale}:${p.relativeDir!}`
+    const entry = groupMeta.get(groupKey)!
     if (p.groupMeta) {
       entry.title = p.groupMeta.title
       if (p.groupMeta.position !== undefined)
@@ -138,18 +145,35 @@ export async function generateRoutes(
 
   // Override with boltdocs.config.ts sidebarGroups configurations
   if (config?.theme?.sidebarGroups) {
+    const allLocales = config.i18n
+      ? Object.keys(config.i18n.locales)
+      : [defaultLocale]
+
     for (const [groupName, groupConfig] of Object.entries(
       config.theme.sidebarGroups,
     )) {
-      const entry = groupMeta.get(groupName)
-      if (entry) {
-        if (groupConfig.title) entry.title = groupConfig.title
-        if (groupConfig.icon) entry.icon = groupConfig.icon
-      } else {
-        groupMeta.set(groupName, {
-          title: groupConfig.title || capitalize(groupName),
-          icon: groupConfig.icon,
-        })
+      for (const locale of allLocales) {
+        const groupKey = `${locale}:${groupName}`
+        let entry = groupMeta.get(groupKey)
+
+        // Resolve title for this locale
+        let resolvedTitle: string | undefined
+        if (typeof groupConfig.title === 'string') {
+          resolvedTitle = groupConfig.title
+        } else if (groupConfig.title) {
+          resolvedTitle =
+            groupConfig.title[locale] || groupConfig.title[defaultLocale]
+        }
+
+        if (entry) {
+          if (resolvedTitle) entry.title = resolvedTitle
+          if (groupConfig.icon) entry.icon = groupConfig.icon
+        } else {
+          groupMeta.set(groupKey, {
+            title: resolvedTitle || capitalize(groupName),
+            icon: groupConfig.icon,
+          })
+        }
       }
     }
   }
@@ -159,12 +183,23 @@ export async function generateRoutes(
   for (let i = 0; i < parsed.length; i++) {
     const p = parsed[i]
     const dir = p.relativeDir
-    const meta = dir ? groupMeta.get(dir) : undefined
+    const locale = p.route.locale || defaultLocale
+    const groupKey = dir ? `${locale}:${dir}` : undefined
+    const meta = groupKey ? groupMeta.get(groupKey) : undefined
+
+    let groupTitle: string | undefined
+    if (meta) {
+      if (typeof meta.title === 'string') {
+        groupTitle = meta.title
+      } else {
+        groupTitle = meta.title[locale] || meta.title[defaultLocale]
+      }
+    }
 
     routes[i] = {
       ...p.route,
       group: dir,
-      groupTitle: meta?.title || (dir ? capitalize(dir) : undefined),
+      groupTitle: groupTitle || (dir ? capitalize(dir) : undefined),
       groupPosition: meta?.position,
       groupIcon: meta?.icon,
     }

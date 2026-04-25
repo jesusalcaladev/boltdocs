@@ -35,7 +35,7 @@ export interface BoltdocsThemeConfig {
     href: string
   }>
   sidebar?: Record<string, Array<{ text: string; link: string }>>
-  sidebarGroups?: Record<string, { title?: string; icon?: string }>
+  sidebarGroups?: Record<string, { title?: string | Record<string, string>; icon?: string }>
   socialLinks?: BoltdocsSocialLink[]
   footer?: BoltdocsFooterConfig
   breadcrumbs?: boolean

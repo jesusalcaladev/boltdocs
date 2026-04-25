@@ -54,10 +54,7 @@ export function useLocalizedTo(to: RouterLinkProps['to']) {
   }
 
   if (i18n && activeLocale) {
-    // Only prefix if it's NOT the default locale (cleaner URLs)
-    if (activeLocale !== i18n.defaultLocale) {
-      resultParts.push(activeLocale)
-    }
+    resultParts.push(activeLocale)
   }
 
   resultParts.push(...routeContent)

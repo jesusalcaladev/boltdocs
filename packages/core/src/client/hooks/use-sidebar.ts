@@ -26,6 +26,9 @@ export function useSidebar(routes: ComponentRoute[]) {
   >()
 
   for (const route of filteredRoutes) {
+    // Skip home pages or external pages from the sidebar if they are not explicitly grouped
+    if (!route.filePath && !route.group) continue
+
     if (!route.group) {
       ungrouped.push(route)
     } else {

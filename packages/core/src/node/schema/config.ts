@@ -88,7 +88,7 @@ export const ThemeConfigSchema = z.object({
     .record(
       z.string(),
       z.object({
-        title: z.string().optional(),
+        title: z.union([z.string(), z.record(z.string(), z.string())]).optional(),
         icon: z.string().optional(),
       }),
     )
