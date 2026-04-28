@@ -9,7 +9,6 @@ const writeFile = promisify(fs.writeFile)
 const readFile = promisify(fs.readFile)
 const mkdir = promisify(fs.mkdir)
 const rename = promisify(fs.rename)
-const unlink = promisify(fs.unlink)
 
 /**
  * Configuration constants for the caching system.
@@ -32,7 +31,7 @@ const DEFAULT_COMPRESS = process.env.BOLTDOCS_CACHE_COMPRESS !== '0'
  */
 class LRUCache<K, V> {
   private cache = new Map<K, V>()
-  constructor(private limit: number) {}
+  constructor(private limit: number) { }
 
   get(key: K): V | undefined {
     const val = this.cache.get(key)

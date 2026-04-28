@@ -2,6 +2,7 @@ export type {
   ComponentRoute,
   LayoutProps,
 } from './types'
+export type { BoltdocsLocale, BoltdocsVersion, BoltdocsTypes } from '../shared/types'
 export * from './ssg'
 export { useConfig } from './app/config-context'
 export { useTheme } from './app/theme-context'

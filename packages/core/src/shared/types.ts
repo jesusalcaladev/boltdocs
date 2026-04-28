@@ -171,10 +171,17 @@ export interface BoltdocsConfig {
 }
 
 /**
- * Global interface for Boltdocs types that can be augmented by generated code.
+ * Global namespace for Boltdocs types that can be augmented by generated code.
  * This allows for strictly typed locales and versions based on the project configuration.
  */
-export interface BoltdocsTypes {
-  Locale: string
-  Version: string
+declare global {
+  namespace Boltdocs {
+    interface Types {}
+  }
 }
+
+export type BoltdocsTypes = Boltdocs.Types
+
+export type BoltdocsLocale = Boltdocs.Types extends { Locale: infer L } ? L : string
+export type BoltdocsVersion = Boltdocs.Types extends { Version: infer V } ? V : string
+
