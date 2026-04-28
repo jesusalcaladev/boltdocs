@@ -35,9 +35,21 @@ export function useVersion(): UseVersionReturn {
     // Update store
     setVersion(version)
 
-    let targetPath = `/docs/${version}`
+    // If we are on the home page or a path that doesn't belong to the documentation,
+    // we stay on the current page.
+    const localePaths = config.i18n ? Object.keys(config.i18n.locales).map(l => `/${l}`) : []
+    const isHome = !currentRoute || 
+                   currentRoute.path === '/' || 
+                   currentRoute.path === config.base || 
+                   currentRoute.path === '' ||
+                   localePaths.includes(currentRoute.path)
+    
+    if (isHome) {
+      return
+    }
 
     if (currentRoute) {
+      let targetPath = `/docs/${version}`
       const baseFile = getBaseFilePath(
         currentRoute.filePath,
         currentRoute.version,
@@ -64,9 +76,9 @@ export function useVersion(): UseVersionReturn {
           ? versionIndexRoute.path
           : `/docs/${version}${currentLocale ? `/${currentLocale}` : ''}`
       }
+      
+      navigate(targetPath)
     }
-
-    navigate(targetPath)
   }
 
   const availableVersions = routeContext.availableVersions.map((v) => ({
