@@ -1,5 +1,11 @@
 # create-boltdocs
 
+## 0.2.1
+
+### Patch Changes
+
+- [`b1eb43c`](https://github.com/bolt-docs/boltdocs/commit/b1eb43c8ece876f5e0e01b0c8d2db5a7ae4c4f7a) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - feat: - types - updated package.json - updated file structure
+
 ## 0.2.0
 
 ### Minor Changes
