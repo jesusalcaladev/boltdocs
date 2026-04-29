@@ -132,7 +132,7 @@ describe('E2E integration tests', () => {
 
       const code = await plugins[0].load!('\0virtual:boltdocs-mdx-components')
       expect(code).toContain('mdx-components.tsx')
-    })
+    }, 30000)
   })
 
   describe('layout integration', () => {

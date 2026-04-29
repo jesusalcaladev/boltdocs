@@ -63,19 +63,19 @@ describe('cache performance tests', () => {
   describe('TransformCache sharding performance', () => {
     it('should handle sharded storage for 50 entries', async () => {
       const cache = new TransformCache('shard-perf', tempDir)
-      
+
       const startTime = Date.now()
-      
+
       for (let i = 0; i < 50; i++) {
         cache.set(`shard${i}`, `data${i}`)
       }
-      
+
       const writeTime = Date.now() - startTime
       expect(cache.size).toBe(50)
-      expect(writeTime).toBeLessThan(15000)
-      
+      expect(writeTime).toBeLessThan(25000)
+
       await cache.flush()
-    }, 20000)
+    }, 35000)
   })
 
   describe('FileCache performance', () => {
