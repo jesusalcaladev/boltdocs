@@ -1,5 +1,13 @@
 # boltdocs
 
+## 2.6.2
+
+### Patch Changes
+
+- [`2960c55`](https://github.com/bolt-docs/boltdocs/commit/2960c5523040723f2389568b5e72866875617789) Thanks [@jesusalcaladev](https://github.com/jesusalcaladev)! - fix: repared bug collision pages & navigation
+  fix: repared bug 404 when switch version in home
+  feat: support types-generator for better autocomplete
+
 ## 2.6.1
 
 ### Patch Changes
