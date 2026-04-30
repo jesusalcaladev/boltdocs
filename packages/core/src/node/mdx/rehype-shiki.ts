@@ -29,6 +29,12 @@ export function rehypeShiki(config?: BoltdocsConfig) {
         const options = adapter.getOptions(lang, meta)
         const html = highlighter.codeToHtml(code, options)
 
+        // Parse title to pass to CodeBlock
+        const titleMatch = meta.match(/title=(["'])(.*?)\1/)
+        if (titleMatch) {
+          node.properties['data-title'] = titleMatch[2]
+        }
+
         // Inject highlighted HTML and mark as highlighted for CodeBlock component
         node.properties['data-highlighted'] = 'true'
         node.properties['data-highlighted-html'] = html
