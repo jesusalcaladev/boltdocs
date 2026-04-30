@@ -77,4 +77,9 @@ export default defineConfig({
     ],
     sitemaps: ['https://boltdocs.vercel.app/sitemap.xml'],
   },
+  integrations: {
+    ga4: {
+      measurementId: 'G-WRBYHMBDYQ'
+    }
+  }
 })
