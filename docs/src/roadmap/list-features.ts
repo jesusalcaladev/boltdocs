@@ -28,9 +28,9 @@ export const FEATURES: Feature[] = [
     category: 'Core',
   },
   {
-    name: 'Gtag Integration',
+    name: 'Google Analytics 4',
     description: 'Support for google analytics',
-    status: 'in-progress',
+    status: 'completed',
     category: 'Integrations',
   },
   {
