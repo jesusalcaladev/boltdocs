@@ -14,6 +14,7 @@ export interface SSGRouteData {
   icon?: string
   headings: Array<{ level: number; text: string; id: string }>
   _content: string
+  _rawContent?: string
   locale?: string
   version?: string
   tab?: string
@@ -42,6 +43,7 @@ export function adaptRoutesForSSG(routes: RouteMeta[]): SSGRouteData[] {
     icon: route.icon,
     headings: route.headings || [],
     _content: route._content || '',
+    _rawContent: route._rawContent || '',
     locale: route.locale,
     version: route.version,
     tab: route.tab,
