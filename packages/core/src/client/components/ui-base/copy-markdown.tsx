@@ -46,8 +46,8 @@ export function CopyMarkdown({ content, mdxRaw, config }: CopyMarkdownProps) {
   if (!isEnabled || !displayContent) return null
 
   return (
-    <div className="relative inline-flex z-100 flex-shrink-0 w-max translate-y-0 active:translate-y-px transition-transform duration-200">
-      <ButtonGroup className="rounded-xl border border-border-subtle bg-bg-surface/40 backdrop-blur-md transition-all duration-300 hover:border-primary-500/50 hover:shadow-lg hover:shadow-primary-500/5 group overflow-hidden">
+    <div className="relative inline-flex z-100 shrink-0 w-max translate-y-0 active:translate-y-px transition-transform duration-200">
+      <ButtonGroup className="rounded-xl border border-border-subtle bg-bg-surface/40 backdrop-blur-md transition-all duration-300 hover:border-primary-500/50 group overflow-hidden">
         <Button
           variant="ghost"
           onPress={handleCopy}
