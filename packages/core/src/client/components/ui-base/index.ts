@@ -1,3 +1,4 @@
+export { Banner } from './banner'
 export { Breadcrumbs } from './breadcrumbs'
 export { CopyMarkdown } from './copy-markdown'
 export type { CopyMarkdownProps } from './copy-markdown'
