@@ -1,0 +1,48 @@
+---
+title: Google Analytics 4
+description: How to integrate Google Analytics 4 (GA4) in your documentation to measure visits and traffic easily and natively.
+---
+
+# Google Analytics 4 (GA4)
+
+Boltdocs comes with native support for **Google Analytics 4**. This means you can start collecting metrics for visits, interactions, and traffic on your documentation without having to touch HTML code or worry about routing.
+
+Once configured, Boltdocs will automatically inject the official Google scripts (`gtag.js`) directly into your pages.
+
+## Quick Setup
+
+To enable GA4, you only need to add your **Measurement ID** (which usually starts with `G-`) to your `boltdocs.config.ts` file under the `integrations` section.
+
+```ts title="boltdocs.config.ts"
+import { defineConfig } from 'boltdocs'
+
+export default defineConfig({
+  // ... rest of your configuration
+  integrations: {
+    ga4: {
+      measurementId: 'G-XXXXXXXXXX'
+    }
+  }
+})
+```
+
+And that's it! On your next production build, the analytics scripts will be active.
+
+## Testing in Development
+
+By default, **Boltdocs only injects the Google Analytics tracking code when you build for production** (`pnpm run build`). This prevents you from flooding your analytics reports with false data while writing and testing documentation in your local environment.
+
+If for any reason you need to verify that the injection is working in your local environment (development), you can add the `debug: true` property:
+
+```ts title="boltdocs.config.ts"
+  integrations: {
+    ga4: {
+      measurementId: 'G-XXXXXXXXXX',
+      debug: true // Remember to remove this or set it to false in production if you don't need it!
+    }
+  }
+```
+
+<Note>
+ Boltdocs uses React and features smooth navigation. Don't worry about logging page views on every click; GA4 has "Enhanced Measurement" enabled by default, which will automatically detect route changes in your browser and log a new page view every time a user navigates through your documentation.
+</Note>

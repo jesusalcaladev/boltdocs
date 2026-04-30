@@ -56,6 +56,9 @@ export default defineConfig({
       "performance": {
         icon: 'Zap',
       },
+      "integrations": {
+        icon: 'PlugZap',
+      },
     },
     editLink:
       'https://github.com/jesusalcaladev/boltdocs/edit/main/docs/docs/:path',
