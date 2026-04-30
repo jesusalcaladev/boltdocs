@@ -1,0 +1,67 @@
+---
+title: Banner
+description: A customizable, dismissible banner component for global announcements and alerts.
+badge: New
+---
+
+The `Banner` component is used to display important notifications, announcements (such as new releases), or global alerts across your application.
+
+## Basic Usage
+
+The banner is designed to be highly customizable. You can inject text, links, and icons by passing them as `children`.
+
+```tsx
+import { Banner } from 'boltdocs/client'
+
+// Simple banner example
+<Banner className="bg-[#0ae448] text-black">
+  <span>Check out our new <a href="https://boltdocs.vercel.app" target="_blank" className="underline font-bold">blog post</a>!</span>
+</Banner>
+```
+
+## Dismissible Banner
+
+If you want users to be able to close the banner and not see it again on future visits, you can use the `dismissible` property along with a unique `id`. The dismissed state will be automatically saved in the user's browser `localStorage`.
+
+```tsx
+<Banner 
+  className="bg-[#0ae448] text-black" 
+  dismissible 
+>
+  <span>📢 New version available!</span>
+</Banner>
+```
+
+## Recommended Usage in Boltdocs
+
+If you want the banner to appear on **external pages** (like the home page, roadmap, etc.) but **NOT** inside the documentation (to avoid distracting users while they read), the best practice is to add it to the `pages-external/index.tsx` layout.
+
+Edit your `docs/docs/pages-external/index.tsx` file as follows:
+
+```tsx title="docs/docs/pages-external/index.tsx"
+import { Navbar, Banner } from 'boltdocs/client';
+import { Footer } from '../../src/footer';
+// ...other imports
+
+export const layout = ({ children }: { children: React.ReactNode }) => (
+  <div className='pb-10'>
+    {/* The Banner will be displayed above the Navbar on all external pages */}
+    <Banner className="bg-[#0ae448] text-black" dismissible id="gsap-promo">
+      <span>Check out <a href="https://boltdocs.vercel.app" className="underline font-bold">our new blog post</a>!</span>
+    </Banner>
+    
+    <Navbar />
+    {children}
+    <Footer />
+  </div>
+);
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `dismissible` | `boolean` | `false` | If `true`, shows an "X" button that allows the user to dismiss the banner. |
+| `id` | `string` | `'boltdocs-banner'` | Unique identifier used to save the dismissed state in `localStorage`. Required if you want to have multiple independent banners over time. |
+| `className` | `string` | `''` | Additional CSS classes (Tailwind) to customize the appearance (background color, text, etc.). |
+| `children` | `ReactNode` | `-` | Inner content of the banner (text, HTML, icons). |
