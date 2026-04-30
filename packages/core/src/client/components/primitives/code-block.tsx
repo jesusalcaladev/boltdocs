@@ -44,7 +44,6 @@ const CodeBlockHeader = ({
         <div
             className={cn(
                 "flex h-9 items-center justify-between px-4 py-1.5",
-                "border-b border-border-subtle bg-bg-surface/50",
                 "text-[13px] font-medium text-text-muted",
                 className,
             )}
