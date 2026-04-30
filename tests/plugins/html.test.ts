@@ -189,5 +189,38 @@ describe('plugin html', () => {
       expect(result).toContain('<meta name="description" content="">')
     })
 
+    describe('Google Analytics 4', () => {
+      const originalEnv = process.env.NODE_ENV
+
+      afterEach(() => {
+        process.env.NODE_ENV = originalEnv
+      })
+
+      it('should inject GA4 script when configured in production', () => {
+        process.env.NODE_ENV = 'production'
+        const config = { integrations: { ga4: { measurementId: 'G-TEST123' } } }
+        const result = injectHtmlMeta(baseHtml, config as any)
+
+        expect(result).toContain('https://www.googletagmanager.com/gtag/js?id=G-TEST123')
+        expect(result).toContain("gtag('config', 'G-TEST123')")
+      })
+
+      it('should not inject GA4 script in development by default', () => {
+        process.env.NODE_ENV = 'development'
+        const config = { integrations: { ga4: { measurementId: 'G-TEST123' } } }
+        const result = injectHtmlMeta(baseHtml, config as any)
+
+        expect(result).not.toContain('https://www.googletagmanager.com/gtag/js')
+      })
+
+      it('should inject GA4 script in development if debug is true', () => {
+        process.env.NODE_ENV = 'development'
+        const config = { integrations: { ga4: { measurementId: 'G-TEST123', debug: true } } }
+        const result = injectHtmlMeta(baseHtml, config as any)
+
+        expect(result).toContain('https://www.googletagmanager.com/gtag/js?id=G-TEST123')
+      })
+    })
+
   })
 })

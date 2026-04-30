@@ -82,7 +82,25 @@ export function injectHtmlMeta(html: string, config: BoltdocsConfig): string {
     html = html.replace('</head>', `  <title>${title}</title>\n  </head>`)
   }
 
-  html = html.replace('</head>', `    ${seoTags}\n${themeScript}  </head>`)
+  let ga4Script = ''
+  if (config.integrations?.ga4) {
+    const ga4 = config.integrations.ga4
+    const isProd = process.env.NODE_ENV === 'production'
+    if (isProd || ga4.debug) {
+      ga4Script = `
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=${ga4.measurementId}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${ga4.measurementId}');
+    </script>
+`
+    }
+  }
+
+  html = html.replace('</head>', `    ${seoTags}\n${themeScript}\n${ga4Script}  </head>`)
 
   if (!html.includes('src/main') && !html.includes('virtual:boltdocs-entry')) {
     html = html.replace(

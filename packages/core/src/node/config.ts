@@ -49,6 +49,7 @@ interface RawUserConfig
   Partial<BoltdocsThemeConfig> {
   favicon?: string
   security?: BoltdocsSecurityConfig
+  integrations?: BoltdocsConfig['integrations']
 }
 
 /**
@@ -161,6 +162,7 @@ export async function resolveConfig(
     plugins: userConfig.plugins || [],
     robots: userConfig.robots,
     security: userConfig.security,
+    integrations: userConfig.integrations,
     vite: userConfig.vite,
   }
 

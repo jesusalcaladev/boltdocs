@@ -153,6 +153,16 @@ export interface BoltdocsSeoConfig {
 }
 
 /**
+ * Configuration for third-party integrations.
+ */
+export interface BoltdocsIntegrationsConfig {
+  ga4?: {
+    measurementId: string
+    debug?: boolean
+  }
+}
+
+/**
  * The root configuration object for Boltdocs.
  */
 export interface BoltdocsConfig {
@@ -167,6 +177,7 @@ export interface BoltdocsConfig {
   robots?: BoltdocsRobotsConfig
   security?: BoltdocsSecurityConfig
   seo?: BoltdocsSeoConfig
+  integrations?: BoltdocsIntegrationsConfig
   vite?: any // Avoid pulling in entire Vite types here
 }
 

@@ -212,6 +212,18 @@ export const BoltdocsSeoConfigSchema = z.object({
 })
 
 /**
+ * Zod schema for Integrations configuration.
+ */
+export const IntegrationsConfigSchema = z.object({
+  ga4: z
+    .object({
+      measurementId: z.string().min(1, 'Measurement ID is required for GA4'),
+      debug: z.boolean().optional(),
+    })
+    .optional(),
+})
+
+/**
  * Root Zod schema for Boltdocs project configuration.
  */
 export const BoltdocsConfigSchema = z.object({
@@ -225,5 +237,6 @@ export const BoltdocsConfigSchema = z.object({
   robots: RobotsConfigSchema.optional(),
   security: SecurityConfigSchema.optional(),
   seo: BoltdocsSeoConfigSchema.optional(),
+  integrations: IntegrationsConfigSchema.optional(),
   vite: z.record(z.string(), z.unknown()).optional(),
 })
