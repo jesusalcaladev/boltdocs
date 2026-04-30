@@ -60,8 +60,8 @@ export function Admonition({
       role={type === 'warning' || type === 'danger' ? 'alert' : 'note'}
       {...rest}
     >
-      {ICON_MAP[type as keyof typeof ICON_MAP]}
-      <div className="text-sm text-text-muted leading-relaxed [&>p]:m-0 [&>p]:mb-2 [&>p:last-child]:mb-0">
+      <span className="shrink-0">{ICON_MAP[type as keyof typeof ICON_MAP]}</span>
+      <div className="min-w-0 text-sm text-text-muted leading-relaxed [&>p]:m-0 [&>p]:mb-2 [&>p:last-child]:mb-0">
         {children}
       </div>
     </div>
