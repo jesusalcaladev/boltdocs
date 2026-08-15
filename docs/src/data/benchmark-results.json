@@ -2,79 +2,79 @@
   "pageCount": 100,
   "runs": 1,
   "complex": false,
-  "timestamp": "2026-08-08T15:38:18.854Z",
+  "timestamp": "2026-08-15T01:23:11.482Z",
   "metrics": {
     "buildTimeCold": {
       "boltdocs": {
-        "samples": [17.85],
-        "min": 17.85,
-        "max": 17.85,
-        "mean": 17.85,
-        "median": 17.85
+        "samples": [14.5],
+        "min": 14.5,
+        "max": 14.5,
+        "mean": 14.5,
+        "median": 14.5
       },
       "docusaurus": {
-        "samples": [16.97],
-        "min": 16.97,
-        "max": 16.97,
-        "mean": 16.97,
-        "median": 16.97
+        "samples": [16.87],
+        "min": 16.87,
+        "max": 16.87,
+        "mean": 16.87,
+        "median": 16.87
       }
     },
     "buildTimeWarm": {
       "boltdocs": {
-        "samples": [3.16],
-        "min": 3.16,
-        "max": 3.16,
-        "mean": 3.16,
-        "median": 3.16
+        "samples": [3.09],
+        "min": 3.09,
+        "max": 3.09,
+        "mean": 3.09,
+        "median": 3.09
       },
       "docusaurus": {
-        "samples": [8.42],
-        "min": 8.42,
-        "max": 8.42,
-        "mean": 8.42,
-        "median": 8.42
+        "samples": [9.47],
+        "min": 9.47,
+        "max": 9.47,
+        "mean": 9.47,
+        "median": 9.47
       }
     },
     "buildTimeEditedRebuild": {
       "boltdocs": {
-        "samples": [12.87],
-        "min": 12.87,
-        "max": 12.87,
-        "mean": 12.87,
-        "median": 12.87
+        "samples": [12.98],
+        "min": 12.98,
+        "max": 12.98,
+        "mean": 12.98,
+        "median": 12.98
       },
       "docusaurus": {
-        "samples": [8.62],
-        "min": 8.62,
-        "max": 8.62,
-        "mean": 8.62,
-        "median": 8.62
+        "samples": [9.97],
+        "min": 9.97,
+        "max": 9.97,
+        "mean": 9.97,
+        "median": 9.97
       }
     },
     "devServerStart": {
       "boltdocs": {
-        "samples": [5506],
-        "min": 5506,
-        "max": 5506,
-        "mean": 5506,
-        "median": 5506
+        "samples": [5253],
+        "min": 5253,
+        "max": 5253,
+        "mean": 5253,
+        "median": 5253
       },
       "docusaurus": {
-        "samples": [5000],
-        "min": 5000,
-        "max": 5000,
-        "mean": 5000,
-        "median": 5000
+        "samples": [5167],
+        "min": 5167,
+        "max": 5167,
+        "mean": 5167,
+        "median": 5167
       }
     },
     "bundleSize": {
       "boltdocs": {
-        "samples": [1852],
-        "min": 1852,
-        "max": 1852,
-        "mean": 1852,
-        "median": 1852
+        "samples": [1834],
+        "min": 1834,
+        "max": 1834,
+        "mean": 1834,
+        "median": 1834
       },
       "docusaurus": {
         "samples": [4183],
@@ -88,36 +88,36 @@
   "samples": [
     {
       "pageCount": 100,
-      "timestamp": "2026-08-08T15:38:18.846Z",
+      "timestamp": "2026-08-15T01:23:11.481Z",
       "buildTimeCold": {
-        "boltdocs": 17.85,
-        "docusaurus": 16.97,
-        "ratio": 1
+        "boltdocs": 14.5,
+        "docusaurus": 16.87,
+        "ratio": 1.2
       },
       "buildTimeWarm": {
-        "boltdocs": 3.16,
-        "docusaurus": 8.42,
-        "ratio": 2.7
+        "boltdocs": 3.09,
+        "docusaurus": 9.47,
+        "ratio": 3.1
       },
       "buildTimeEditedRebuild": {
-        "boltdocs": 12.87,
-        "docusaurus": 8.62,
-        "ratio": 0.7
+        "boltdocs": 12.98,
+        "docusaurus": 9.97,
+        "ratio": 0.8
       },
       "devServerStart": {
-        "boltdocs": 5506,
-        "docusaurus": 5000,
-        "ratio": 0.9
+        "boltdocs": 5253,
+        "docusaurus": 5167,
+        "ratio": 1
       },
       "bundleSize": {
-        "boltdocs": 1852,
+        "boltdocs": 1834,
         "docusaurus": 4183,
         "ratio": 2.3
       },
       "outputInventory": {
         "boltdocs": {
-          "files": 214,
-          "bytes": 1896425,
+          "files": 211,
+          "bytes": 1878451,
           "htmlFiles": 101,
           "documentRoutes": [
             "/",
@@ -225,7 +225,7 @@
         },
         "docusaurus": {
           "files": 215,
-          "bytes": 4283151,
+          "bytes": 4283165,
           "htmlFiles": 102,
           "documentRoutes": [
             "/",

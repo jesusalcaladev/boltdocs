@@ -15,7 +15,7 @@ tags: ["Release", "Performance"]
 Boltdocs 3.3.0 continúa el trabajo de Nitro iniciado en 3.1.0 y 3.2.0: menos trabajo durante el arranque, mejor concurrencia y menos supuestos dentro del core. También incorpora APIs opt-in para tener más control sobre SEO, transiciones y páginas personalizadas.
 
 <Callout type="info">
-  En el sitio de benchmark de 100 páginas, Boltdocs midió **11.41s en cold builds**, **4.31s de arranque dev** y **0.36s de HMR incremental de MDX**. Son resultados de benchmark, no una garantía para cada proyecto; consulta la [página de rendimiento](/es/benchmark) para ver la metodología y los resultados actuales.
+  En el sitio de benchmark de 100 páginas, el cold build de 3.3.0 bajó de **17.85s a 14.50s** comparado con la corrida publicada anterior (un ~19% más rápido), el arranque dev mejoró a **5.3s** y los warm builds terminan en **3.1s**. Son resultados de benchmark, no una garantía para cada proyecto; consulta la [página de rendimiento](/es/benchmark) para ver la metodología y los resultados actuales.
 </Callout>
 
 ---
@@ -24,7 +24,7 @@ Boltdocs 3.3.0 continúa el trabajo de Nitro iniciado en 3.1.0 y 3.2.0: menos tr
 
 ## Builds y arranque más rápidos
 
-3.3.0 mueve más trabajo fuera de la ruta crítica de inicio:
+3.3.0 mueve más trabajo fuera de la ruta crítica de inicio. En el sitio de benchmark de 100 páginas, el cold build bajó de **17.85s a 14.50s** y el arranque dev de **5.5s a 5.3s** comparado con la corrida publicada anterior:
 
 - **Precompilación temprana de Sätteri**: comienza desde `configResolved()` para que los workers preparen MDX mientras Vite inicializa su grafo.
 - **Pools dinámicos de workers**: evita saturar máquinas pequeñas con un número fijo de workers. El pool escala según CPU y cantidad de archivos.
@@ -179,4 +179,4 @@ pnpm add boltdocs@latest @bdocs/ssg@latest
 
 Si usas un framework CSS, instala también el plugin correspondiente. Los proyectos existentes pueden actualizar sin activar flags experimentales: `viewTransitions` y `fileRouting` siguen siendo opt-in.
 
-Consulta el [post de Boltdocs 3.3.0](/docs/es/blog/boltdocs-3.3.0), el [changelog](/docs/es/changelog) y la [documentación completa](/docs/es/) para explorar las referencias detalladas de cada API.
+Consulta el [post de Boltdocs 3.3.0](/docs/es/blog/boltdocs-3.3.0), las [releases](/docs/es/releases) y la [documentación completa](/docs/es/) para explorar las referencias detalladas de cada API.

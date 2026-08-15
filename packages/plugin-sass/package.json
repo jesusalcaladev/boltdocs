@@ -1,6 +1,6 @@
 {
   "name": "@bdocs/plugin-sass",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "SASS / SCSS preprocessor plugin for Boltdocs",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -23,12 +23,12 @@
     "sass-embedded": "^1.85.0"
   },
   "peerDependencies": {
-    "boltdocs": "workspace:*",
+    "boltdocs": "workspace:^",
     "vite": "^7.0.0 || ^8.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "boltdocs": "workspace:*",
+    "boltdocs": "workspace:^",
     "tsdown": "^0.21.7",
     "typescript": "^5.9.3",
     "tsdown-config": "workspace:*",
