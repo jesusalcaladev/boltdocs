@@ -1,0 +1,184 @@
+<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
+---
+title: "Boltdocs 3.3.0 — Faster Builds, CSS-Agnostic Core, and Experimental Routing"
+description: "Boltdocs 3.3.0 improves cold builds and dev startup, adds official CSS integrations, expands the plugin API, and introduces opt-in JSON-LD, View Transitions, and pages-external file routing."
+date: 2026-07-28
+cover: /blog-covers/Boltdocs-3.3.0.webp
+author:
+  name: Jesús Alcalá
+  avatar: /avatar.jpeg
+excerpt: "Boltdocs 3.3.0 combines the next Nitro performance improvements with a CSS-agnostic core, official Tailwind v4, SASS, and UnoCSS plugins, plus opt-in structured data and external file routing."
+tags: ["Release", "Performance"]
+tab: "3.3.0"
+---
+
+## Boltdocs 3.3.0 is here
+
+Boltdocs 3.3.0 continues the Nitro work started in 3.1.0 and 3.2.0: less work during startup, better concurrency, and a smaller set of assumptions in core. It also adds a small group of opt-in APIs for teams that want more control over SEO, transitions, and custom pages.
+
+<Callout type="info">
+  On the 100-page benchmark site, the 3.3.0 cold build dropped from **17.85s to 14.50s** compared with the previous published run (about 19% faster), dev startup improved to **5.3s**, and warm builds now finish in **3.1s**. These numbers are benchmark results, not a guarantee for every project; use the [benchmark page](/benchmark) to inspect the methodology and current results.
+</Callout>
+
+---
+
+---
+
+## Faster startup and builds
+
+3.3.0 moves more work out of the critical startup path. On the 100-page benchmark site, the cold build dropped from **17.85s to 14.50s** and dev startup from **5.5s to 5.3s** compared with the previous published run:
+
+- **Early Sätteri precompilation** starts from `configResolved()` so MDX workers can prepare files while Vite initializes.
+- **Dynamic worker sizing** avoids a fixed pool that can over-saturate smaller machines. The pool scales with CPU count and the number of files.
+- **Non-blocking dev startup** lets the server listen before background route generation finishes. The first request can arrive while the route tree is being prepared.
+
+The benchmark comparison is available on the [performance page](/benchmark). Treat it as a reproducible reference point, not as a promise about a particular application.
+
+---
+
+## A CSS-agnostic core
+
+Core no longer assumes that every project uses Tailwind CSS. Vanilla CSS, CSS Modules, custom properties, and the built-in theme tokens work without adding a CSS framework.
+
+CSS integrations are now explicit plugins:
+
+| Package | Purpose |
+| :--- | :--- |
+| [`@bdocs/plugin-tailwindcss`](/docs/plugins/css/tailwindcss) | Tailwind CSS v4 through the Vite integration. |
+| [`@bdocs/plugin-sass`](/docs/plugins/css/sass) | SASS and SCSS preprocessing. |
+| [`@bdocs/plugin-unocss`](/docs/plugins/css/unocss) | UnoCSS atomic utilities. |
+
+For example:
+
+```ts title="boltdocs.config.ts"
+import { defineConfig } from 'boltdocs'
+import tailwindcssPlugin from '@bdocs/plugin-tailwindcss'
+
+export default defineConfig({
+  plugins: [tailwindcssPlugin()],
+})
+```
+
+---
+
+## The next-generation plugin API
+
+The `definePlugin` API gives plugin authors typed lifecycle hooks and clear extension points for client UI, providers, frontmatter, search indexing, and post-build assets.
+
+```ts
+import { definePlugin } from 'boltdocs'
+
+export default definePlugin(() => ({
+  name: 'my-plugin',
+  hooks: {
+    'frontmatter:transform'(_ctx, { frontmatter, rawContent }) {
+      return {
+        ...frontmatter,
+        readingTime: Math.ceil(rawContent.split(/\s+/).length / 200),
+      }
+    },
+    'build:generate'(ctx, { routes, outDir }) {
+      ctx.logger.info(`Generated assets for ${routes.length} routes in ${outDir}.`)
+    },
+  },
+}))
+```
+
+Read the [Plugin API reference](/docs/api/plugin-api) for the complete hook and namespace list.
+
+---
+
+## Opt-in SEO and page APIs
+
+### Structured Data (JSON-LD)
+
+JSON-LD belongs to SEO and discoverability, not the internal search dialog. Configure a global graph with helpers imported from the Node entrypoint:
+
+```ts
+import {
+  createWebSiteStructuredData,
+  defineConfig,
+  defineStructuredData,
+} from 'boltdocs'
+
+export default defineConfig({
+  siteUrl: 'https://example.com',
+  seo: {
+    structuredData: defineStructuredData(
+      createWebSiteStructuredData({
+        name: 'Example Docs',
+        url: 'https://example.com',
+      }),
+    ),
+  },
+})
+```
+
+Use `seo.structuredData` in page frontmatter for page-specific data, or render `<StructuredData data={...} />` from an external React page. See the [SEO guide](/docs/integrations/seo) for article and breadcrumb helpers.
+
+### View Transitions
+
+View Transitions are opt-in and degrade to normal updates when the browser does not implement `document.startViewTransition`:
+
+```ts
+export default defineConfig({
+  experimental: {
+    viewTransitions: {
+      enabled: true,
+      types: ['page'],
+    },
+  },
+})
+```
+
+Custom layouts and external pages can call `useViewTransition()` from `boltdocs/client`. See [Experimental Features](/docs/guides/advanced/experimental).
+
+### Static `pages-external` file routing
+
+A project can opt into literal file routes without building one `pages` object:
+
+```text
+docs/pages-external/
+├── home.tsx      → /home
+├── about.tsx     → /about
+└── pricing.mdx   → /pricing
+```
+
+Enable it with `experimental.fileRouting`. Dynamic segments such as `[id]`, route groups, and reserved helper files are intentionally ignored in this first version. The existing `pages-external/index.tsx` API remains available. The [External Pages guide](/docs/guides/customization/external-pages) covers both APIs.
+
+---
+
+## Collections show recent posts first
+
+Collection posts now use descending publication dates. Newest posts appear first, while missing or invalid dates are placed after dated posts. This applies to `usePosts()`, `useRecentPosts()`, virtual collection data, and pagination in the default blog template.
+
+---
+
+## A sharper plugin security audit
+
+`boltdocs audit` — the static scan that inspects installed plugins for risky calls **without ever executing them** — received a round of correctness and performance work:
+
+- **Accurate plugin resolution.** Plugins are now paired with their installed packages through the config's import specifiers, so scoped packages resolve correctly even when the plugin `name` differs from the package name. `boltdocs-plugin-mermaid` now audits `@bdocs/plugin-mermaid` instead of reporting `Unresolved`.
+- **Bounded scans.** Each plugin is scanned within a total byte budget (8 MB by default). If a huge minified bundle crosses the budget, the scan stops and reports a `scan-truncated` finding — an incomplete scan is never reported as clean.
+- **Fail-closed summaries.** Plugins that cannot be resolved or scanned are treated as untrusted and never count toward "all plugins passed".
+- **Faster startup.** The audit loads only `config.plugins` (skipping the full configuration validation), gates the rule catalog with a single quick-reject pre-pass, and `--help`/`--version` no longer load the full UI toolkit — the CLI starts roughly 30% faster.
+
+Run it before adding a third-party plugin:
+
+```bash
+boltdocs audit
+```
+
+The scan reports child-process and dynamic-code calls, network access, file writes and reads, environment-variable reads, and metadata red flags (install scripts, bundled dependencies, missing license or provenance). See the [CLI reference](/docs/guides/getting-started/cli) for the full output format, including the CI exit-code contract.
+
+---
+
+## Upgrade
+
+```bash
+pnpm add boltdocs@latest @bdocs/ssg@latest
+```
+
+CSS framework users should also install the plugin they use. Existing projects can upgrade without enabling the experimental flags; both `viewTransitions` and `fileRouting` remain opt-in.
+
+Read the [3.3.0 release post](/docs/blog/boltdocs-3.3.0), the [releases](/docs/releases), and the [full documentation](/docs/) for the detailed API references.

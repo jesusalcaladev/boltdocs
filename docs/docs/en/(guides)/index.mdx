@@ -1,0 +1,107 @@
+<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
+---
+title: Guides
+sidebarPosition: 1
+description: Learn Boltdocs from first install to production operations, content authoring, customization, performance, and experimental APIs.
+---
+
+import { Rocket, Settings, Route, FileText, Code2, Tags, Paintbrush, Globe, Gauge, LifeBuoy, FlaskConical, Terminal, Map } from 'lucide-react'
+
+A practical path through Boltdocs. Start with the first two guides, then jump to the area that matches the problem you are solving.
+
+<Callout variant="info" title="Recommended path">
+  Install Boltdocs, configure the site, learn how files become routes, then choose a content, customization, performance, or operations guide. The [API reference](/docs/api) is for exact exports and types.
+</Callout>
+
+## Start here
+
+<Cards cols={2}>
+  <Card title="Installation" icon={<Rocket />} href="/docs/guides/getting-started/installation">
+    Create a project, start the dev server, and produce your first static build.
+  </Card>
+  <Card title="Configuration" icon={<Settings />} href="/docs/guides/getting-started/configuration">
+    Understand `boltdocs.config.ts`, themes, SEO, i18n, plugins, collections, and experimental flags.
+  </Card>
+  <Card title="Routing" icon={<Route />} href="/docs/guides/getting-started/routing">
+    Map files, folders, tabs, locales, and external pages to predictable URLs.
+  </Card>
+  <Card title="Frontmatter" icon={<FileText />} href="/docs/guides/content/frontmatter">
+    Control titles, sidebar order, badges, SEO, drafts, and page metadata.
+  </Card>
+  <Card title="CLI Commands" icon={<Terminal />} href="/docs/guides/getting-started/cli">
+    Run dev, build, preview, audit, doctor, and changelog commands.
+  </Card>
+</Cards>
+
+## Content & MDX
+
+<Cards cols={3}>
+  <Card title="Frontmatter" icon={<FileText />} href="/docs/guides/content/frontmatter">
+    Page-level metadata and SEO.
+  </Card>
+  <Card title="MDX Components" icon={<Code2 />} href="/docs/guides/content/mdx-components">
+    Register components and customize Markdown rendering.
+  </Card>
+  <Card title="Metadata" icon={<Tags />} href="/docs/guides/content/metadata">
+    Configure sidebar groups with `meta.json` and `_meta.json`.
+  </Card>
+</Cards>
+
+## Customization
+
+<Cards cols={3}>
+  <Card title="Icons" icon={<Paintbrush />} href="/docs/guides/customization/icons">
+    Use Lucide, SVG, and project-defined icons in tabs and navigation.
+  </Card>
+  <Card title="Custom Layout" icon={<Paintbrush />} href="/docs/guides/customization/layout">
+    Compose `DocsLayout`, Navbar, Sidebar, and page regions yourself.
+  </Card>
+  <Card title="External Pages" icon={<Globe />} href="/docs/guides/customization/external-pages">
+    Build interactive React pages and opt into literal file routing.
+  </Card>
+</Cards>
+
+## Navigation & Security
+
+<Cards cols={3}>
+  <Card title="Navigation" icon={<Map />} href="/docs/guides/navigation">
+    Configure the navbar, tabs, sidebar, breadcrumbs, and page navigation.
+  </Card>
+  <Card title="Headers" icon={<Gauge />} href="/docs/guides/headers/headers">
+    HTTP headers, caching, and security header examples for deployments.
+  </Card>
+  <Card title="CSP" icon={<FlaskConical />} href="/docs/guides/csp/csp">
+    Content Security Policy guidance and examples.
+  </Card>
+</Cards>
+
+## Performance & operations
+
+<Cards cols={3}>
+  <Card title="Cache & Environment" icon={<Gauge />} href="/docs/guides/performance/cache">
+    Understand disk caches, invalidation, and cache environment variables.
+  </Card>
+  <Card title="CI & Deploy" icon={<Terminal />} href="/docs/guides/operations/ci">
+    CI best practices: audit, doctor, tests, and deploy safely.
+  </Card>
+  <Card title="Troubleshooting" icon={<LifeBuoy />} href="/docs/guides/operations/troubleshooting">
+    Resolve installation, routing, build, and deployment problems.
+  </Card>
+  <Card title="Upgrading" icon={<Terminal />} href="/docs/guides/operations/upgrading-3-2">
+    Review release-specific migration notes before upgrading.
+  </Card>
+</Cards>
+
+## Experimental
+
+<Card title="Experimental APIs" icon={<FlaskConical />} href="/docs/guides/advanced/experimental">
+  Opt into View Transitions and `pages-external` file routing. These APIs are clearly marked because they may evolve.
+</Card>
+
+## Reference sections
+
+- [API reference](/docs/api) — hooks, utilities, plugin APIs, and experimental runtime APIs.
+- [CLI Commands](/docs/guides/getting-started/cli) — dev, build, preview, audit, doctor, and changelog.
+- [Components](/docs/components) — UI primitives and MDX components.
+- [Integrations](/docs/integrations) — SEO, search, analytics, i18n, versioning, and collections.
+- [Plugins](/docs/plugins) — official plugins and CSS integrations.

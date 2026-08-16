@@ -1,0 +1,248 @@
+<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
+---
+title: Lifecycle Hooks
+sidebarPosition: 9
+description: PluginLifecycleHooks — build and dev lifecycle hooks, transform chains, and chain signals for Boltdocs plugins.
+badge: Updated
+---
+
+# `hooks` — PluginLifecycleHooks
+
+Lifecycle hooks are the primary way plugins inject behaviour into the
+Boltdocs pipeline. Each hook receives a `PluginContext` as its first
+argument and can be synchronous or async.
+
+---
+
+## Build lifecycle hooks
+
+| Hook | Signature | When it runs |
+| :--- | :--- | :--- |
+| `build:before` | `(ctx: PluginContext) => void \| Promise<void>` | Right before static site generation (SSG) starts |
+| `build:after` | `(ctx: PluginContext) => void \| Promise<void>` | Immediately after a production build succeeds |
+| `build:end` | `(ctx: PluginContext) => void \| Promise<void>` | At process completion — runs on both success and error |
+| `build:generate` | `(ctx: PluginContext, { routes, outDir, siteUrl? }) => void \| Promise<void>` | Post-SSG asset generation hook for sitemaps, RSS, robots.txt, OG images |
+
+```ts
+import { definePlugin } from 'boltdocs'
+
+export default definePlugin({
+  name: 'my-build-plugin',
+  hooks: {
+    'build:before'(ctx) {
+      ctx.logger.info('Starting build...')
+    },
+    'build:generate'(ctx, { routes, outDir }) {
+      ctx.logger.info(`Generating static assets for ${routes.length} routes in ${outDir}`)
+    },
+    'build:after'(ctx) {
+      ctx.logger.info(`Build complete! ${ctx.routes.length} routes generated.`)
+    },
+    'build:end'(ctx) {
+      ctx.logger.info('Process finished — cleaning up...')
+    },
+  },
+})
+```
+
+---
+
+## Frontmatter & Route Pipeline hooks
+
+| Hook | Signature | Description |
+| :--- | :--- | :--- |
+| `frontmatter:transform` | `(ctx, { frontmatter, filePath, rawContent }) => Record<string, unknown> \| void` | Intercepts & enriches document frontmatter (readingTime, lastUpdated, author data, custom tags). |
+| `routes:resolved` | `(ctx, { routes }) => RouteMeta[] \| void` | Fired after all documentation routes are crawled, normalized, and sorted. |
+
+```ts
+import { definePlugin } from 'boltdocs'
+
+export default definePlugin({
+  name: 'my-metadata-plugin',
+  hooks: {
+    'frontmatter:transform'(ctx, { frontmatter, rawContent }) {
+      const words = rawContent.split(/\s+/).length
+      return {
+        ...frontmatter,
+        readingTime: Math.ceil(words / 200),
+        wordCount: words,
+      }
+    },
+    'routes:resolved'(ctx, { routes }) {
+      ctx.logger.info(`Resolved ${routes.length} total routes.`)
+    },
+  },
+})
+```
+
+---
+
+## Search Contract hook
+
+| Hook | Signature | Description |
+| :--- | :--- | :--- |
+| `search:index` | `(ctx, { documents, routes }) => unknown \| Promise<unknown>` | Standardized search index hook. Receives `SearchDocument[]` to compile index files (FlexSearch, Pagefind, Algolia, Meilisearch). |
+
+### SearchDocument interface
+
+```ts
+interface SearchDocument {
+  id: string
+  path: string
+  title: string
+  content: string
+  headings: Array<{ level: number; text: string; id: string }>
+  frontmatter: Record<string, unknown>
+  locale?: string
+  version?: string
+}
+```
+
+```ts
+import { definePlugin } from 'boltdocs'
+
+export default definePlugin({
+  name: 'my-search-plugin',
+  hooks: {
+    'search:index'(ctx, { documents }) {
+      ctx.logger.info(`Indexing ${documents.length} documents for search...`)
+      // Build search index...
+    },
+  },
+})
+```
+
+---
+
+## Dev & Server lifecycle hooks
+
+| Hook | Signature | When it runs |
+| :--- | :--- | :--- |
+| `dev:before` | `(ctx: PluginContext) => void \| Promise<void>` | Before the dev server starts listening |
+| `dev:after` | `(ctx: PluginContext) => void \| Promise<void>` | After the dev server is fully initialized |
+| `server:configure` | `(ctx: PluginContext, { server, middleware }) => void \| Promise<void>` | Configures dev/preview server HTTP middlewares and API endpoints |
+
+```ts
+import { definePlugin } from 'boltdocs'
+
+export default definePlugin({
+  name: 'my-dev-plugin',
+  hooks: {
+    'dev:before'(ctx) {
+      ctx.logger.info('Starting dev server...')
+    },
+    'server:configure'(ctx, { middleware }) {
+      middleware.useAt('/api/feedback', (req, res) => {
+        res.end(JSON.stringify({ status: 'ok' }))
+      })
+    },
+    'dev:after'(ctx) {
+      ctx.logger.info('Dev server ready!')
+    },
+  },
+})
+```
+
+---
+
+## Transform chain hooks
+
+These hooks form a **chain** — the output of one plugin feeds the
+input of the next. They are executed in `enforce` order (`pre` →
+normal → `post`) within each phase.
+
+| Hook | Signature | When it runs |
+| :--- | :--- | :--- |
+| `transform:source` | `(ctx, { code, filePath, frontmatter? }) => { code, __signal? }` | On raw MDX source **before** MDX compilation |
+| `transform:mdx` | `(ctx, { code, filePath, frontmatter? }) => { code, __signal? }` | On compiled MDX JavaScript **after** MDX compilation |
+| `transform:html` | `(ctx, { html, path, route? }) => { html, __signal? }` | On rendered HTML during SSG generation |
+
+### TransformSourceParams
+
+```ts
+interface TransformSourceParams {
+  /** The raw or compiled code */
+  code: string
+  /** Absolute file path of the source document */
+  filePath: string
+  /** Parsed frontmatter, if available (undefined in early pipeline) */
+  frontmatter?: Record<string, unknown>
+}
+```
+
+### TransformHtmlParams
+
+```ts
+interface TransformHtmlParams {
+  /** The rendered HTML string for this page */
+  html: string
+  /** The route path (e.g. /docs/guides/start) */
+  path: string
+  /** The route metadata for the page, if available */
+  route?: RouteMeta
+}
+```
+
+### Transform result & ChainSignal
+
+```ts
+type ChainSignal = 'skip' | 'break'
+
+type TransformResult<T> = T & { __signal?: ChainSignal }
+```
+
+| Signal | Behaviour |
+| :--- | :------- |
+| `__signal: 'skip'` | The output of this hook is **discarded**; original params pass to the next plugin |
+| `__signal: 'break'` | The chain stops immediately — no further plugins run |
+
+```ts
+import { definePlugin } from 'boltdocs'
+
+export default definePlugin({
+  name: 'my-transform-plugin',
+  hooks: {
+    async transformSource(ctx, { code }) {
+      const transformed = code
+        .replace(/\$\$(.+?)\$\$/gs, '<BlockMath>$1</BlockMath>')
+        .replace(/\$(.+?)\$/g, '<Math>$1</Math>')
+
+      return { code: transformed }
+    },
+    async transformHtml(ctx, { html }) {
+      return {
+        html: html.replace('</body>', '<footer>© 2026 My Docs</footer></body>'),
+      }
+    },
+  },
+})
+```
+
+---
+
+## Execution order
+
+```text
+beforeBuild / beforeDev
+  → frontmatter:transform
+    → routes:resolved
+      → transformSource (chain: pre → normal → post)
+        → MDX compilation
+          → transformMdx (chain: pre → normal → post)
+            → HTML rendering (SSG)
+              → transformHtml (chain: pre → normal → post)
+                → search:index
+                  → build:generate
+afterBuild / afterDev
+buildEnd
+```
+
+---
+
+## See also
+
+- [PluginContext](/docs/api/plugin-api) — base context object
+- [definePlugin & Client UI Slots](/docs/api/plugin-api/#defineplugin--client-ui-slots) — defining plugins & client injection
+- [Middleware](/docs/api/plugin-api/middleware) — transform middleware pipeline
+- [Plugin System overview](/docs/plugins/) — architecture, concepts, quick start
+

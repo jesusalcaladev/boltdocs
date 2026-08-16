@@ -1,0 +1,146 @@
+<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
+---
+title: Integrations
+sidebarPosition: 1
+description: Connect Boltdocs with external services — analytics, search, i18n, versioning, SEO, and more.
+---
+
+import { BarChart, Tag, Globe, Search, GitBranch, Bot, FolderOpen, MessageSquare } from 'lucide-react'
+
+Boltdocs integrates with popular services and provides built-in features for search, localization, versioning, and SEO. This section covers all available integrations.
+
+---
+
+## Available Integrations
+
+### SEO & Analytics
+<Cards cols={3}>
+  <Card title="SEO & Robots" icon={<Bot />} href="/docs/integrations/seo">
+    Automatic sitemap, robots.txt, and meta tags.
+  </Card>
+  <Card title="Google Analytics 4" icon={<BarChart />} href="/docs/integrations/seo/ga4">
+    Track page views and custom events with GA4.
+  </Card>
+  <Card title="Google Tag Manager" icon={<Tag />} href="/docs/integrations/seo/gtm">
+    Deploy and manage tags, analytics, and custom scripts with GTM.
+  </Card>
+  <Card title="Vercel Analytics" icon={<BarChart />} href="/docs/integrations/seo/vercel">
+    Monitor traffic and Core Web Vitals with zero-config Vercel Analytics.
+  </Card>
+  <Card title="Site Verification" icon={<Tag />} href="/docs/integrations/seo/verification">
+    Verify ownership with Google, Bing, Yandex, Pinterest, and Facebook.
+  </Card>
+</Cards>
+
+### Search
+<Cards cols={3}>
+  <Card title="Search Overview" icon={<Search />} href="/docs/integrations/search">
+    Built-in search architecture and customization options.
+  </Card>
+  <Card title="FlexSearch Custom UI" icon={<Search />} href="/docs/integrations/search/flexsearch">
+    Query offline indices programmatically and build custom search UIs.
+  </Card>
+  <Card title="Algolia DocSearch" icon={<Search />} href="/docs/integrations/search/algolia">
+    Integrate Algolia cloud search for advanced synonyms and analytics.
+  </Card>
+</Cards>
+
+### Globalization
+<Cards cols={2}>
+  <Card title="Internationalization" icon={<Globe />} href="/docs/integrations/globalization/i18n">
+    Multi-language docs with folder-based routing and RTL layouts.
+  </Card>
+  <Card title="Versioning" icon={<GitBranch />} href="/docs/integrations/globalization/versioning">
+    Maintain and switch between multiple parallel release versions.
+  </Card>
+</Cards>
+
+### Content Features
+<Cards cols={3}>
+  <Card title="Collections" icon={<FolderOpen />} href="/docs/integrations/features/collections">
+    Group documents into blogs, release notes, or tutorials with custom views.
+  </Card>
+  <Card title="Custom Feedback" icon={<MessageSquare />} href="/docs/integrations/features/feedback">
+    Native GitHub Discussion ratings and page-level comments.
+  </Card>
+  <Card title="Giscus Comments" icon={<MessageSquare />} href="/docs/integrations/features/giscus">
+    Add GitHub Discussions-powered comments to your docs.
+  </Card>
+</Cards>
+
+
+---
+
+## Built-in Features
+
+### Built-in Search
+
+Boltdocs ships with zero-dependency full-text search. The search index is built at compile time and embedded in the client bundle. No API keys, no external services.
+
+- **Indexing:** Titles, headings, descriptions, body text
+- **Trigger:** `Cmd+K` / `Ctrl+K` or click the search button
+- **Customization:** Use `useSearch()` hook or `<SearchDialog>` component
+
+### Internationalization
+
+Locale-based routing using folder conventions. Supports RTL languages, automatic fallbacks for untranslated pages, and locale-specific theming.
+
+- **Config:** `i18n.defaultLocale`, `i18n.locales`
+- **Folder structure:** `docs/es/`, `docs/fr/`
+- **RTL support:** Set `direction: 'rtl'` in locale config
+
+### Versioning
+
+Maintain multiple documentation versions (v1, v2, etc.) in parallel. Each version is a folder at the root of `docs/`.
+
+- **Config:** `versions.defaultVersion`, `versions.versions`
+- **Folder structure:** `docs/v1/`, `docs/v2/`
+- **Version switcher:** Built into the default layout
+
+### SEO & Robots
+
+Automatic meta tags, Open Graph images, sitemap.xml, and robots.txt generation. Fine-grained control per page via frontmatter.
+
+- **Config:** `seo`, `robots`, `siteUrl`
+- **Auto-generated:** `sitemap.xml`, `robots.txt`
+- **Per-page:** Override via frontmatter `seo` field
+
+### Collections
+
+Group files into dynamic directories using folder-based conventions. Boltdocs automatically maps bracketed folders (e.g. `[blog]`) to collection routes, enabling custom listing, post views, and isolated layouts.
+
+- **Conventions:** `layout.tsx`, `list.tsx`, `post.tsx`
+- **Data Loaders:** Type-safe collection loader data is available via `useLoaderData()`
+
+---
+
+
+## External Services
+
+### Google Analytics 4
+
+Track page views and custom events. Configure via `integrations.ga4` in your config:
+
+```ts
+integrations: {
+  ga4: {
+    measurementId: 'G-XXXXXXXXXX',
+  },
+}
+```
+
+Page views are tracked automatically. Use the `useTrackEvent()` hook for custom events.
+
+---
+
+## Configuration Reference
+
+| Key | Type | Description |
+| :--- | :--- | :--- |
+| **`integrations.ga4`** | `GA4Config` | Google Analytics 4 settings |
+| **`integrations.feedback`** | `FeedbackConfig` | Custom feedback integration settings |
+| **`i18n`** | `I18nConfig` | Internationalization settings |
+| **`versions`** | `VersionsConfig` | Versioning settings |
+| **`seo`** | `SeoConfig` | Global SEO defaults |
+| **`robots`** | `RobotsConfig` | robots.txt configuration |
+| **`siteUrl`** | `string` | Required for absolute URLs in sitemap/og:image |

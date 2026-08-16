@@ -1,0 +1,64 @@
+<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
+---
+title: API Reference
+sidebarPosition: 1
+description: Public API reference for Boltdocs configuration, React runtime, primitives, plugins, and experimental features.
+---
+
+import { Server, Blocks, Workflow, Wrench, Puzzle, FlaskConical, Braces } from 'lucide-react'
+
+Use this section when you know the API surface you need. For task-oriented instructions, start with the [Guides](/docs/guides).
+
+## Entry points
+
+| Import | Runtime | Use it for |
+| :--- | :--- | :--- |
+| `boltdocs` | Node / build | `defineConfig`, plugins, config types, JSON-LD factories. |
+| `boltdocs/client` | Browser / SSR | React hooks, structured data, transitions, collections, and client utilities. |
+| `boltdocs/primitives` | Browser / SSR | Unstyled layout, navigation, link, and interaction components. |
+
+<Cards cols={3}>
+  <Card title="Configuration" icon={<Server />} href="/docs/guides/getting-started/configuration">
+    Configure the project through `boltdocs.config.ts`.
+  </Card>
+  <Card title="React Hooks" icon={<Workflow />} href="/docs/api/hooks/use-config">
+    Read runtime state such as config, routes, theme, locale, and navigation.
+  </Card>
+  <Card title="Utilities" icon={<Wrench />} href="/docs/api/utils/define-config">
+    Small typed helpers for config, i18n, URLs, clipboard, and text.
+  </Card>
+  <Card title="Primitives" icon={<Blocks />} href="/docs/components/layout/docs-layout">
+    Compose custom layouts and navigation without the default theme shell.
+  </Card>
+  <Card title="Plugin API" icon={<Puzzle />} href="/docs/api/plugin-api">
+    Extend lifecycle, transforms, caches, diagnostics, server, and HMR.
+  </Card>
+  <Card title="Structured Data" icon={<Braces />} href="/docs/api/structured-data">
+    Generate and render type-safe JSON-LD graphs.
+  </Card>
+  <Card title="Experimental APIs" icon={<FlaskConical />} href="/docs/guides/advanced/experimental">
+    View Transitions, TransitionLink, and experimental file routing.
+  </Card>
+</Cards>
+
+## React hooks
+
+The [Hooks reference](/docs/api/hooks/use-config) documents the public hooks individually:
+
+- `useConfig`, `useTheme`, `useI18n`, `useVersion`, and `useLocation`
+- `useRoutes`, `useSearch`, `useNavbar`, `usePageNav`, and `useTabs`
+- collection hooks such as `usePosts`, `usePost`, and `useRecentPosts`
+
+## Plugin API
+
+The [Plugin API](/docs/api/plugin-api) is split into focused references for lifecycle hooks, caches, diagnostics, paths, virtual modules, middleware, server, and HMR.
+
+## Experimental APIs
+
+- [Structured Data](/docs/api/structured-data) — JSON-LD factory and component.
+- [Experimental Features](/docs/guides/advanced/experimental) — practical View Transitions and `pages-external` file-routing guide.
+
+<Callout variant="tip" title="Need a recipe instead?
+  ">
+  Guides explain the workflow. This section explains exact exports, parameters, and return values.
+</Callout>
