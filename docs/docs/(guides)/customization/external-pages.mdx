@@ -127,6 +127,21 @@ docs/pages-external/
 
 The route name comes from the file name. `.tsx`, `.ts`, `.jsx`, `.js`, `.mdx`, and `.md` are supported. `index.*` remains reserved for the legacy `pages` object. Dynamic segments such as `[id]`, route groups such as `(marketing)`, and reserved helper files (`layout`, `icons`, and `mdx-components`) are ignored. Existing `pages-external/index.tsx` routes can be used alongside file routes; avoid assigning the same URL to both.
 
+### Localized files
+
+When `i18n` is configured, a top-level directory whose name matches a configured locale provides the localized version of a page — the same convention the docs content uses (`docs/es/…`):
+
+```text
+docs/pages-external/
+├── roadmap.mdx      → /roadmap        (default locale)
+└── es/
+    └── roadmap.mdx  → /es/roadmap     (Spanish)
+```
+
+Each locale URL is served by the localized file when it exists and falls back to the default-locale file otherwise, mirroring the docs i18n fallback routes. For React components that translate internally (e.g. with `useI18n()`), the fallback is all you need: switching the locale re-renders the default component with the active locale derived from the URL. Create a localized `.tsx` file only when you need a genuinely different component per locale.
+
+Directories that do not match a configured locale remain literal URL segments (`guides/start.mdx` → `/guides/start`).
+
 See [Experimental Features](/docs/guides/advanced/experimental) for the complete opt-in API.
 
 ---

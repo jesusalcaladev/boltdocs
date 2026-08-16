@@ -16,9 +16,9 @@ import { useRef, useState, useEffect, useCallback } from 'react'
 import {
   useScrollAnimation,
   useScrollStagger,
-} from '../../src/hooks/useScrollAnimation'
-import { Github } from '../../src/components/ui/icons'
-import { useTranslations } from '../../src/i18n/index'
+} from '../../../src/hooks/useScrollAnimation'
+import { Github } from '../../../src/components/ui/icons'
+import { useTranslations } from '../../../src/i18n/index'
 
 function ShowcaseItems() {
   const t = useTranslations()

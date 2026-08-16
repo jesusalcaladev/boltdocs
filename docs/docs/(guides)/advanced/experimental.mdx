@@ -167,4 +167,6 @@ docs/pages-external/
 
 Supported extensions are `.tsx`, `.ts`, `.jsx`, `.js`, `.mdx`, and `.md`. Dynamic segments such as `[id]`, route groups such as `(marketing)`, `index.*`, and reserved helpers such as `layout`, `icons`, and `mdx-components` are ignored. The existing `pages-external/index.tsx` object API can run alongside file routes; avoid assigning the same URL twice.
 
+When `i18n` is configured, a top-level directory matching a configured locale provides the localized variant of a page: `es/roadmap.mdx` becomes `/es/roadmap` and wins over the fallback, while locale URLs without a localized file fall back to the default-locale file — mirroring the docs i18n fallback routes.
+
 See the [External Pages guide](/docs/guides/customization/external-pages) for the legacy object API, layouts, limitations, and file-routing details.

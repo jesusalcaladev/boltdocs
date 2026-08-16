@@ -2,13 +2,13 @@ import { useRef } from 'react'
 import {
   useScrollAnimation,
   useScrollStagger,
-} from '../../src/hooks/useScrollAnimation'
-import rawBenchmarkData from '../../src/data/benchmark-results.json'
+} from '../../../src/hooks/useScrollAnimation'
+import rawBenchmarkData from '../../../src/data/benchmark-results.json'
 import type {
   BenchmarkData,
   BenchmarkMetric,
-} from '../../src/components/benchmark/types'
-import { BarChart } from '../../src/components/benchmark/bar-chart'
+} from '../../../src/components/benchmark/types'
+import { BarChart } from '../../../src/components/benchmark/bar-chart'
 import { Zap, Timer, RotateCcw, HardDrive } from 'lucide-react'
 
 type AggregateMetric = {

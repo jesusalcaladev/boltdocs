@@ -1,8 +1,8 @@
 import { Link } from 'boltdocs/primitives'
 import { useRef } from 'react'
-import { useScrollStagger } from '../../src/hooks/useScrollAnimation'
-import { Github } from '../../src/components/ui/icons'
-import { useTranslations } from '../../src/i18n/index'
+import { useScrollStagger } from '../../../src/hooks/useScrollAnimation'
+import { Github } from '../../../src/components/ui/icons'
+import { useTranslations } from '../../../src/i18n/index'
 
 export default function AboutPage() {
   const contentRef = useRef<HTMLDivElement>(null)

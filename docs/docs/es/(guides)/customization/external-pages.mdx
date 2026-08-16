@@ -127,6 +127,21 @@ docs/pages-external/
 
 El nombre del archivo se convierte en la ruta. Se admiten `.tsx`, `.ts`, `.jsx`, `.js`, `.mdx` y `.md`. `index.*` queda reservado para el objeto `pages` legacy. Los segmentos dinámicos como `[id]`, los grupos como `(marketing)` y los archivos auxiliares reservados (`layout`, `icons` y `mdx-components`) se ignoran. Las rutas existentes de `pages-external/index.tsx` pueden convivir con file routes; evita asignar la misma URL a ambas APIs.
 
+### Archivos localizados
+
+Cuando `i18n` está configurado, un directorio de primer nivel cuyo nombre coincida con un locale configurado proporciona la versión localizada de una página — la misma convención que usa el contenido de docs (`docs/es/…`):
+
+```text
+docs/pages-external/
+├── roadmap.mdx      → /roadmap        (locale por defecto)
+└── es/
+    └── roadmap.mdx  → /es/roadmap     (español)
+```
+
+Cada URL de locale se sirve con el archivo localizado cuando existe y, si no, con el archivo del locale por defecto — igual que las rutas fallback de i18n de docs. Para componentes React que se traducen internamente (p. ej. con `useI18n()`), el fallback es suficiente: cambiar de idioma re-renderiza el componente por defecto con el locale activo derivado de la URL. Crea un archivo `.tsx` localizado solo cuando necesites un componente realmente distinto por idioma.
+
+Los directorios que no coinciden con un locale configurado siguen siendo segmentos de URL literales (`guides/start.mdx` → `/guides/start`).
+
 Consulta [Funciones Experimentales](/docs/es/guides/advanced/experimental) para la API opt-in completa.
 
 ---

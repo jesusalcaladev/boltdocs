@@ -60,9 +60,10 @@ export default defineConfig({
       enabled: false,
       types: ['page'],
     },
-    // File routing is opt-in for projects that keep only route files in
-    // pages-external/. This site has auxiliary components there, so it stays off.
-    fileRouting: false,
+    // File routing maps literal files in pages-external/ to external routes
+    // (e.g. roadmap.mdx → /roadmap). Auxiliary components live in the
+    // underscore-prefixed _sections/ folder so they are not treated as routes.
+    fileRouting: true,
   },
   seo: {
     indexing: 'all',
@@ -120,6 +121,10 @@ export default defineConfig({
       {
         label: 'Showcase',
         href: '/showcase',
+      },
+      {
+        label: { en: 'Roadmap', es: 'Roadmap' },
+        href: '/roadmap',
       },
     ],
     editLink:
