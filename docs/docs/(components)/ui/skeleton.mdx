@@ -1,64 +1,9 @@
 ---
-title: Skeleton
-sidebarPosition: 9
-description: Pulsing loading state placeholder component.
+title: (Placeholder) English source
+sidebarPosition: 1
+description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
 ---
 
-The `Skeleton` primitive renders animated pulsing placeholder shapes to represent content blocks (such as text headings, media cards, or profile pictures) while assets are fetching.
+This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
 
-Think of it as a pulse-animated low-fidelity copy of the layout you're loading into. It'll render *before* your data resolves to keep the page from jumping. Pair it with `react-aria-components` `useIsPending` or any standard data-fetching lib.
-
-Worth knowing: most of Boltdocs's content loads synchronously from MDX (the parser runs at build time, not in the browser), so you'll reach for `Skeleton` only in plugin / external-data contexts.
-
----
-
-## Import
-
-```tsx
-import { Skeleton } from 'boltdocs/primitives'
-```
-
----
-
-## Quick Start
-
-Mock a loading state of a user profile card:
-
-```tsx
-import { Skeleton } from 'boltdocs/primitives'
-
-export default function ProfileLoadingCard() {
-  return (
-    <div className="flex items-center gap-4 p-4 border border-subtle rounded-xl max-w-sm">
-      {/* 1. Circle skeleton for profile photo */}
-      <Skeleton variant="circle" className="size-12 shrink-0" />
-
-      {/* 2. Text rect placeholders */}
-      <div className="flex-1 flex flex-col gap-2">
-        <Skeleton variant="rect" className="h-4 w-2/3" />
-        <Skeleton variant="rect" className="h-3 w-1/2" />
-      </div>
-    </div>
-  )
-}
-```
-
----
-
-## Component Props
-
-The `Skeleton` component accepts standard HTML `div` properties plus:
-
-| Property | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| **`variant`** | `'rect' \| 'circle'` | `'rect'` | Shape structure style. Renders rounded-full for `'circle'` and rounded-md for `'rect'`. |
-| **`className`** | `string` | `undefined` | Custom CSS utility class overrides (e.g. mapping dimensions like `w-full h-8`). |
-| **`style`** | `CSSProperties` | `undefined` | Inline style settings. |
-
----
-
-## Pitfalls
-
-- **Match the eventual content's dimensions.** If you set `Skeleton w-32 h-4` and your final content is `h-5`, you'll flash on hydration. Pull the dimensions from the same source.
-- **Don't replace the entire page with skeletons.** A user sees a wall of pulse-animated boxes and assumes the page is broken. Leave navbars/sidebars visible and skeleton only the data-bound region.
-- **Prefer `bg-subtle`** (or a similar token from your theme). Hard-coded gray colors interact poorly with dark mode.
+Original Spanish translation: /docs/es/(components)/ui/skeleton.mdx

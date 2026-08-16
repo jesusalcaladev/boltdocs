@@ -1,61 +1,9 @@
 ---
-title: CI & Secure Deployments
-sidebarPosition: 2
-description: CI best practices for Boltdocs: build, audit, doctor, tests, and deploy safely.
+title: (Placeholder) English source
+sidebarPosition: 1
+description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
 ---
 
-This guide shows a secure GitHub Actions pipeline for Boltdocs, using pnpm, running `boltdocs audit` and `boltdocs doctor`, running tests, and deploying.
+This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
 
-Why audit & doctor in CI
-
-- `boltdocs audit` scans plugins and config for risky patterns and fails CI on critical issues.
-- `boltdocs doctor` runs local health checks (missing files, invalid frontmatter, route collisions).
-
-Example GitHub Actions workflow
-
-```yaml
-name: CI
-on: [push, pull_request]
-
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: pnpm/action-setup@v2
-        with:
-          node-version: 18
-      - name: Install
-        run: pnpm install --frozen-lockfile
-      - name: Run lint & format check
-        run: pnpm exec biome check --no-color || true
-      - name: Run tests
-        run: pnpm run test
-      - name: Run boltdocs audit
-        run: pnpm --filter boltdocs exec -- boltdocs audit || { echo 'Audit failed'; exit 1; }
-      - name: Run boltdocs doctor
-        run: pnpm --filter boltdocs exec -- boltdocs doctor || { echo 'Doctor failed'; exit 1; }
-      - name: Build site (optional)
-        run: pnpm run build
-```
-
-CI recommendations
-
-- Fail fast on `audit` and `doctor` for PRs. These commands detect security and content issues before deploy.
-- Use `pnpm install --frozen-lockfile` to ensure reproducible installs.
-- Run `pnpm run build` as a final step in a separate job if you split tests and builds.
-- For deploys, prefer platform-specific deploy actions (Vercel, Netlify) that verify the build step succeeded and allow rollbacks.
-
-Pre-deploy checks
-
-- Confirm `boltdocs audit` returns clean results.
-- Confirm `boltdocs doctor` reports no critical issues.
-- Optionally run a smoke test against the preview deploy to validate routing and CSP headers.
-
-Rollback & safety
-
-- Keep build artifacts for a short retention to allow quick rollbacks.
-- Use platform-provided atomic deploys (Vercel, Netlify) to avoid partial traffic to bad builds.
-
-If you want, can add vendor-specific deploy workflows (Vercel/GH Pages/Netlify) and a smoke-test job that requests the preview URL and checks for HTTP 200 and expected headers.
+Original Spanish translation: /docs/es/(guides)/operations/ci.mdx

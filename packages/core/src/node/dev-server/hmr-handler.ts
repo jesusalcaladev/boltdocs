@@ -129,6 +129,7 @@ export function setupHmr(
     type: 'add' | 'unlink' | 'change',
   ) => {
     try {
+      console.log('[HFE]', type, file, 'listeners=', server.watcher.listenerCount('change'))
       const normalized = normalizePath(file)
       const generation = (fileGenerations.get(normalized) ?? 0) + 1
       fileGenerations.set(normalized, generation)
@@ -190,8 +191,10 @@ export function setupHmr(
         normalized.includes('/pages-external/') ||
         normalized.includes('\\pages-external\\')
       ) {
+        console.log('[HFE] pages-external branch hit, sending full-reload')
         invalidateVirtualModule(server, 'entry')
         server.ws.send({ type: 'full-reload' })
+        console.log('[HFE] sent')
         return
       }
 
@@ -277,9 +280,14 @@ export function setupHmr(
 
               if (!isCurrentGeneration(normalized, generation)) return
 
-              setFrontmatterHash(file, newHash, cacheContext, cacheVariant)
+              // Invalidate the route/parser caches first, then persist the
+              // new hash as the baseline for the next change. Storing before
+              // invalidating would wipe the just-written entry (invalidateFile
+              // clears frontmatterHashes), leaving prevHash undefined on the
+              // next edit and silently disabling frontmatter-delta HMR.
               invalidateFile(file, cacheContext)
               invalidateMdxFileCache(file)
+              setFrontmatterHash(file, newHash, cacheContext, cacheVariant)
 
               // Regular document changes are debounced below, so notify
               // plugin handlers here after the change has been validated and
@@ -374,7 +382,17 @@ export function createHotUpdateHandler(
     const normalized = normalizePath(file).toLowerCase()
     const isInsideDocs =
       normalized === lowerDocsDir || normalized.startsWith(`${lowerDocsDir}/`)
-    if (isInsideDocs && (isDocFile(file) || normalized.endsWith('meta.json'))) {
+    const isExternalPage =
+      normalized.includes('/pages-external/') ||
+      normalized.includes('\\pages-external\\')
+    if (
+      isInsideDocs &&
+      (isDocFile(file) || normalized.endsWith('meta.json') || isExternalPage)
+    ) {
+      // Suppress Vite's default module-graph HMR for docs content and
+      // pages-external files — the watcher-driven handler owns their
+      // reload/update so a single change produces a single reload instead
+      // of a full-reload plus Vite's own full-reload.
       return []
     }
   }

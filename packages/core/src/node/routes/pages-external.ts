@@ -39,16 +39,45 @@ function walkFiles(directory: string): string[] {
   return files
 }
 
-function filePathToRoute(filePath: string, externalDir: string): string {
+/**
+ * Maps a `pages-external` file to its route. A top-level directory whose name
+ * matches a configured locale is consumed as the locale prefix (mirroring the
+ * `docs/{locale}/…` i18n convention), so `es/roadmap.mdx` becomes the `/es/roadmap`
+ * route for the `es` locale. Any other leading directory stays a literal URL
+ * segment (e.g. `guides/start.mdx` → `/guides/start`).
+ */
+function buildFileRoute(
+  filePath: string,
+  externalDir: string,
+  config?: BoltdocsConfig,
+): ExternalFileRoute {
   const relative = path.relative(externalDir, filePath).replace(/\\/g, '/')
   const extension = path.extname(relative)
   const withoutExtension = relative.slice(0, -extension.length)
   const segments = withoutExtension.split('/').filter(Boolean)
-  const last = segments.at(-1)
 
+  // A leading directory matching a configured locale is consumed as the
+  // locale prefix but stays part of the URL path (`es/roadmap.mdx` →
+  // `/es/roadmap`). The locale is recorded on the route so downstream code
+  // knows the file is a real localized variant.
+  let locale: string | undefined
+  if (segments.length > 1 && getLocales(config).includes(segments[0])) {
+    locale = segments[0]
+  }
+
+  const last = segments.at(-1)
   if (last === 'index') segments.pop()
   const pathname = `/${segments.join('/')}`
-  return pathname === '/' ? '/' : pathname.replace(/\/$/, '')
+  const routePath = pathname === '/' ? '/' : pathname.replace(/\/$/, '')
+
+  return {
+    path: routePath,
+    filePath,
+    kind: ['md', 'mdx'].includes(path.extname(filePath).slice(1))
+      ? ('mdx' as const)
+      : ('component' as const),
+    ...(locale ? { locale } : {}),
+  }
 }
 
 /**
@@ -79,13 +108,7 @@ export function getExternalFileRoutes(
         (segment) => segment.startsWith('[') || segment.startsWith('('),
       )
     })
-    .map((filePath) => ({
-      path: filePathToRoute(filePath, externalDir),
-      filePath,
-      kind: ['md', 'mdx'].includes(path.extname(filePath).slice(1))
-        ? ('mdx' as const)
-        : ('component' as const),
-    }))
+    .map((filePath) => buildFileRoute(filePath, externalDir, config))
     .sort((a, b) => a.path.localeCompare(b.path))
 }
 
@@ -120,7 +143,13 @@ export function getExternalRoutePaths(
   }
 
   for (const route of getExternalFileRoutes(docsDir, config)) {
-    for (const localized of withLocales(route.path, config)) {
+    // Routes that already carry a locale (e.g. `es/roadmap.mdx`) are literal
+    // localized paths; re-running `withLocales` would invent bogus variants
+    // like `/en/es/roadmap`. Only default-locale routes get fallback variants.
+    const variants = route.locale
+      ? [route.path]
+      : withLocales(route.path, config)
+    for (const localized of variants) {
       if (!keys.includes(localized)) keys.push(localized)
     }
   }

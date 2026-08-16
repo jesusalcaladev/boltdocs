@@ -38,6 +38,36 @@ function getLocalizedPaths(
   return paths
 }
 
+/**
+ * Content wrapper for file-routed MDX pages. The external layout renders the
+ * site chrome (navbar/footer), but unlike docs pages these routes are not
+ * nested inside DocsLayout, so the MDX content needs its own page container
+ * with the page title and prose typography — otherwise it renders raw and
+ * edge-to-edge directly below the navbar.
+ */
+function ExternalMdxContent({
+  title,
+  children,
+}: {
+  title?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="boltdocs-page w-full pt-4 pb-20 px-4 sm:px-8">
+      <div className="mx-auto w-full max-w-3xl sm:max-w-4xl lg:max-w-5xl">
+        {title && (
+          <h1 className="text-4xl font-bold tracking-tight text-default mb-3">
+            {title}
+          </h1>
+        )}
+        <div className="prose prose-neutral dark:prose-invert max-w-none">
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function routeTitle(pathname: string): string {
   const segment =
     pathname === '/' ? 'Home' : pathname.split('/').filter(Boolean).at(-1)
@@ -93,21 +123,23 @@ function buildExternalRouteRecord(options: {
           return (
             <ExternalPageWrapper>
               <ExternalLayout>
-                <EagerMdxElement
-                  moduleLoader={module}
-                  moduleKey={path}
-                  route={{
-                    path,
-                    title,
-                    filePath: path,
-                    componentPath: '',
-                    headings: [],
-                    locale,
-                  }}
-                  components={
-                    (components || {}) as Record<string, React.ComponentType>
-                  }
-                />
+                <ExternalMdxContent title={title}>
+                  <EagerMdxElement
+                    moduleLoader={module}
+                    moduleKey={path}
+                    route={{
+                      path,
+                      title,
+                      filePath: path,
+                      componentPath: '',
+                      headings: [],
+                      locale,
+                    }}
+                    components={
+                      (components || {}) as Record<string, React.ComponentType>
+                    }
+                  />
+                </ExternalMdxContent>
               </ExternalLayout>
             </ExternalPageWrapper>
           )
@@ -191,33 +223,67 @@ function buildExternalFileRoutes(options: ExternalRouteOptions): {
   const EffectiveExternalLayout =
     externalLayout ||
     (({ children }: { children: React.ReactNode }) => <>{children}</>)
-  const paths = new Set([
+  const locales = getLocales(config)
+  const isLocalizedPath = (pathname: string): boolean =>
+    locales.some(
+      (locale) =>
+        pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
+    )
+  const localeOfPath = (pathname: string): string | undefined => {
+    const first = pathname.split('/').filter(Boolean)[0]
+    return first && locales.includes(first) ? first : undefined
+  }
+
+  const fileRoutes = new Set([
     ...Object.keys(externalFilePages || {}),
     ...Object.keys(externalFileMdx || {}),
   ])
+  const registeredPaths = new Set<string>()
 
-  for (const pathname of paths) {
+  const pushRoute = (
+    pathname: string,
+    locale: string | undefined,
+    mdxLoader: unknown,
+    component: React.ComponentType | undefined,
+  ) => {
+    if (registeredPaths.has(pathname)) return
+    registeredPaths.add(pathname)
+    metadata.push(
+      buildExternalRouteMetadata(pathname, locale, routeTitle(pathname)),
+    )
+    children.push(
+      buildExternalRouteRecord({
+        path: pathname,
+        locale,
+        component,
+        mdxLoader,
+        externalLayout: EffectiveExternalLayout,
+        components,
+        title: routeTitle(pathname),
+      }),
+    )
+  }
+
+  // Real files first: every file — default or localized — owns its exact
+  // path (`roadmap.mdx` → `/roadmap`, `es/roadmap.mdx` → `/es/roadmap`).
+  for (const pathname of fileRoutes) {
+    pushRoute(
+      pathname,
+      localeOfPath(pathname) || config.i18n?.defaultLocale,
+      externalFileMdx?.[pathname],
+      externalFilePages?.[pathname],
+    )
+  }
+
+  // Fallback variants: default-locale files also serve every configured
+  // locale URL when no localized file exists (same semantics as the docs
+  // i18n fallback routes). Localized files registered above win.
+  for (const pathname of fileRoutes) {
+    if (isLocalizedPath(pathname)) continue
+    const mdxLoader = externalFileMdx?.[pathname]
+    const component = externalFilePages?.[pathname]
     for (const localized of getLocalizedPaths(pathname, config)) {
-      const mdxLoader = externalFileMdx?.[pathname]
-      const component = externalFilePages?.[pathname]
-      metadata.push(
-        buildExternalRouteMetadata(
-          localized.path,
-          localized.locale,
-          routeTitle(pathname),
-        ),
-      )
-      children.push(
-        buildExternalRouteRecord({
-          path: localized.path,
-          locale: localized.locale,
-          component,
-          mdxLoader,
-          externalLayout: EffectiveExternalLayout,
-          components,
-          title: routeTitle(pathname),
-        }),
-      )
+      pushRoute(localized.path, localized.locale, mdxLoader, component)
     }
   }
 

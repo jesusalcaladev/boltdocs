@@ -1,63 +1,9 @@
 ---
-title: Button
+title: (Placeholder) English source
 sidebarPosition: 1
-description: Interactive primitive button wrapping React Aria Components.
+description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
 ---
 
-The `Button` primitive is an unstyled, fully accessible interactive button component that supports keyboard navigation, screen reader accessibility, and hover/focus/press states.
+This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
 
-It's a thin re-export of `react-aria-components`' `Button` with the Boltdocs Tailwind class defaults applied. That means you can rely on the underlying React Aria keyboard handling, focus ring, and aria semantics — you only have to apply the visual treatment (`className`).
-
-You'll use it almost everywhere there's a click: nav triggers, search openers, copy buttons, theme toggles, drawer handles. For chip-like toggles that stay pressed, reach for `ToggleButton` from `react-aria-components` instead.
-
----
-
-## Import
-
-```tsx
-import { Button } from 'boltdocs/primitives'
-```
-
----
-
-## Quick Start
-
-Create an accessible, styled interactive button wrapper:
-
-```tsx
-import { Button } from 'boltdocs/primitives'
-
-export default function PrimaryButton() {
-  return (
-    <Button
-      onPress={() => alert('Button Pressed!')}
-      className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-2 focus:outline-primary-500"
-    >
-      Click Me
-    </Button>
-  )
-}
-```
-
----
-
-## Component Props
-
-The `Button` component accepts all properties from React Aria's `ButtonProps` plus common utility styles:
-
-| Property | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| **`onPress`** | `(e: PressEvent) => void` | `undefined` | Callback fired when the button is pressed (either via click, touch, or keyboard space/enter). |
-| **`isDisabled`** | `boolean` | `false` | Disables the button, preventing interactions and setting `aria-disabled="true"`. |
-| **`type`** | `'button' \| 'submit' \| 'reset'` | `'button'` | The HTML button element type. |
-| **`className`** | `string` | `undefined` | Custom CSS utility class overrides. |
-| **`style`** | `CSSProperties` | `undefined` | Inline styling overrides. |
-| **`children`** | `ReactNode` | `undefined` | The label text or graphic elements to render inside the button. |
-
----
-
-## Pitfalls
-
-- **Don't use `<button>` directly.** React Aria's `Button` handles edge cases you'll discover in audit (e.g. Space-key on non-submit forms). Import from `boltdocs/primitives` for safety.
-- **`onPress` ≠ `onClick`.** `onPress` fires consistently across mouse / keyboard / touch events, while `onClick` is mouse-only. Prefer `onPress` for any handler that's not strictly a mouse follow-up.
-- **`isDisabled` is the prop name** in React Aria (the lower-case `disabled` is a native HTML attribute that does *not* apply the right aria semantics for buttons in compound components).
+Original Spanish translation: /docs/es/(components)/ui/button.mdx

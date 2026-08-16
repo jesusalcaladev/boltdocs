@@ -850,6 +850,11 @@ export interface ExternalFileRoute {
   path: string
   filePath: string
   kind: 'component' | 'mdx'
+  /**
+   * Locale the file provides, derived from a `pages-external/{locale}/`
+   * directory. Absent for default-locale files.
+   */
+  locale?: string
 }
 
 /**
