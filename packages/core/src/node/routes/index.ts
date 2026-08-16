@@ -801,7 +801,35 @@ export async function generateRoutes(
     if (routeContext.activeGenerations.get(generationKey) === currentTask) {
       routeContext.activeGenerations.delete(generationKey)
     }
-    return generateRoutes(docsDir, config, basePath, forceScan, routeContext)
+    // Concurrent HMR invalidations (e.g. a burst of file edits) can invalidate
+    // the retry itself. Loop instead of recursing unprotected so the internal
+    // sentinel symbol never escapes to callers like computeFrontmatterDelta,
+    // which would log a spurious "Failed to compute frontmatter delta" error
+    // per invalidated generation.
+    const MAX_GENERATION_RETRIES = 10
+    let retries = 0
+    while (retries < MAX_GENERATION_RETRIES) {
+      try {
+        return await generateRoutes(
+          docsDir,
+          config,
+          basePath,
+          forceScan,
+          routeContext,
+        )
+      } catch (retryError) {
+        if (retryError !== ROUTE_GENERATION_INVALIDATED) throw retryError
+        if (routeContext.disposed) {
+          throw new Error(
+            '[boltdocs] Route cache context was disposed during generation.',
+          )
+        }
+        retries++
+      }
+    }
+    throw new Error(
+      '[boltdocs] Route generation was repeatedly invalidated by concurrent file changes.',
+    )
   } finally {
     if (routeContext.activeGenerations.get(generationKey) === currentTask) {
       routeContext.activeGenerations.delete(generationKey)

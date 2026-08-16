@@ -35,8 +35,19 @@ const DEBOUNCE_MS = 150
 const MDX_COMP_EXTENSIONS = ['tsx', 'ts', 'jsx', 'js']
 
 function invalidateVirtualModule(server: ViteDevServer, name: string): void {
-  const mod = server.moduleGraph.getModuleById(`\0virtual:boltdocs-${name}.ts`)
-  if (mod) server.moduleGraph.invalidateModule(mod)
+  // The entry resolves with a `.tsx` extension while other virtual modules use
+  // `.ts`; probe the exact id so invalidation actually hits the module graph.
+  const candidates = [
+    `\0virtual:boltdocs-${name}.ts`,
+    `\0virtual:boltdocs-${name}.tsx`,
+  ]
+  for (const id of candidates) {
+    const mod = server.moduleGraph.getModuleById(id)
+    if (mod) {
+      server.moduleGraph.invalidateModule(mod)
+      break
+    }
+  }
 }
 
 export function setupHmr(
@@ -129,7 +140,6 @@ export function setupHmr(
     type: 'add' | 'unlink' | 'change',
   ) => {
     try {
-      console.log('[HFE]', type, file, 'listeners=', server.watcher.listenerCount('change'))
       const normalized = normalizePath(file)
       const generation = (fileGenerations.get(normalized) ?? 0) + 1
       fileGenerations.set(normalized, generation)
@@ -191,10 +201,8 @@ export function setupHmr(
         normalized.includes('/pages-external/') ||
         normalized.includes('\\pages-external\\')
       ) {
-        console.log('[HFE] pages-external branch hit, sending full-reload')
         invalidateVirtualModule(server, 'entry')
         server.ws.send({ type: 'full-reload' })
-        console.log('[HFE] sent')
         return
       }
 
@@ -214,6 +222,17 @@ export function setupHmr(
         }
         if (isMetaJson) {
           invalidateDirectoryMetaFile(file, cacheContext)
+        }
+        // A deleted-and-recreated file keeps its old compiled output in the
+        // Sätteri MDX cache and in Vite's module graph unless it is
+        // invalidated here: the `change` path below clears both, but `add`
+        // regenerates routes and sends a full reload, after which the
+        // browser re-fetches the module and would otherwise receive the
+        // stale compiled content. (`unlink` alone needs no invalidation:
+        // the file is gone, and a later re-add goes through this branch.)
+        if (type === 'add') {
+          invalidateMdxFileCache(file)
+          invalidateMdxModules(normalized)
         }
         invalidateRouteCache(cacheContext)
         invalidateDirectoryMetaCache(virtualModuleState)
@@ -333,6 +352,16 @@ export function setupHmr(
                     data: delta,
                   })
                 } catch (e) {
+                  // Internal sentinel symbols (e.g. route-generation-invalidated)
+                  // are expected under concurrent edits: the generation was
+                  // superseded by a newer one. A full reload is the safe
+                  // fallback and no error needs to be surfaced for it.
+                  if (typeof e === 'symbol') {
+                    if (isCurrentGeneration(normalized, generation)) {
+                      server.ws.send({ type: 'full-reload' })
+                    }
+                    return
+                  }
                   error('Failed to compute frontmatter delta:', e)
                   if (isCurrentGeneration(normalized, generation)) {
                     server.ws.send({ type: 'full-reload' })

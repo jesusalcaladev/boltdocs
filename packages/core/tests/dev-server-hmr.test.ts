@@ -79,7 +79,9 @@ function createClientStub(root: string): string {
   return normalizePath(file)
 }
 
-async function startDevServer(files: Record<string, string>): Promise<TestServer> {
+async function startDevServer(
+  files: Record<string, string>,
+): Promise<TestServer> {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'boltdocs-hmr-it-'))
   const docsDir = path.join(root, 'docs')
   fs.mkdirSync(docsDir, { recursive: true })
@@ -149,12 +151,10 @@ async function startDevServer(files: Record<string, string>): Promise<TestServer
     }
   }
   collectDirs(docsDir)
-  console.log('[GATE] dirsToCover:', [...dirsToCover])
   await new Promise<void>((resolve, reject) => {
     const started = Date.now()
     const timer = setInterval(() => {
       const watched = server.watcher.getWatched() as Record<string, string[]>
-      console.log('[GATE] watching:', Object.keys(watched).filter((d) => d.includes('/docs')))
       if ([...dirsToCover].every((dir) => watched[dir] !== undefined)) {
         clearInterval(timer)
         resolve()
@@ -179,16 +179,30 @@ async function startDevServer(files: Record<string, string>): Promise<TestServer
   return { server, wsSend, invalidateModule, vmPlugin, root, docsDir }
 }
 
+/** Payload shape Vite passes to `ws.send` for both full-reload and custom events. */
+interface WsPayload {
+  type?: string
+  event?: string
+  data?: {
+    relPath?: string
+    file?: string
+    routes?: { updated?: { path?: string; title?: string }[] }
+    [key: string]: unknown
+  }
+}
+
 /** Waits until `server.ws.send` was called with a payload matching `predicate`. */
 async function waitForWsEvent(
   wsSend: TestServer['wsSend'],
-  predicate: (payload: any) => boolean,
+  predicate: (payload: WsPayload) => boolean,
   timeoutMs = 8000,
-): Promise<any> {
+): Promise<WsPayload> {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
-    const call = wsSend.mock.calls.find(([payload]) => predicate(payload))
-    if (call) return call[0]
+    const call = wsSend.mock.calls.find(([payload]) =>
+      predicate(payload as WsPayload),
+    )
+    if (call) return call[0] as WsPayload
     await new Promise((r) => setTimeout(r, 50))
   }
   throw new Error(`Timed out waiting for ws event (${timeoutMs}ms)`)
@@ -230,8 +244,8 @@ describe('dev server HMR integration', () => {
       type: 'custom',
       event: 'boltdocs:mdx-update',
     })
-    expect(event.data.relPath).toBe('index.mdx')
-    expect(event.data.file).toBe(
+    expect(event.data?.relPath).toBe('index.mdx')
+    expect(event.data?.file).toBe(
       normalizePath(path.join(ctx.docsDir, 'index.mdx')),
     )
 
@@ -270,7 +284,7 @@ describe('dev server HMR integration', () => {
       ctx.wsSend,
       (p) => p?.event === 'boltdocs:mdx-update',
     )
-    expect(event.data.relPath).toBe('es/intro.mdx')
+    expect(event.data?.relPath).toBe('es/intro.mdx')
   })
 
   it('emits boltdocs:frontmatter-update with a delta when frontmatter changes', async () => {
@@ -304,9 +318,9 @@ describe('dev server HMR integration', () => {
     expect(event).toMatchObject({ type: 'custom' })
     const updatedRoutes = event.data?.routes?.updated ?? []
     expect(updatedRoutes.length).toBeGreaterThan(0)
-    const guide = updatedRoutes.find((r: any) => r.path === '/docs/guide')
+    const guide = updatedRoutes.find((r) => r.path === '/docs/guide')
     expect(guide).toBeDefined()
-    expect(guide.title).toBe('Guide v2')
+    expect(guide?.title).toBe('Guide v2')
   })
 
   it('emits full-reload and invalidates the entry when a pages-external file changes', async () => {
@@ -330,15 +344,11 @@ describe('dev server HMR integration', () => {
       'utf-8',
     )
 
-    ctx.server.watcher.on('all', (e, f) => {
-      console.log('[WATCH]', e, f)
-    })
-    await new Promise((r) => setTimeout(r, 500))
-    console.log('[SPY] after 500ms, wsSend calls:', JSON.stringify(ctx.wsSend.mock.calls.map((c) => c[0])))
-    console.log('[SPY] ws equal?', ctx.server.ws === (ctx as any).__wsProbe)
-    const event = await waitForWsEvent(ctx.wsSend, (p) => p?.type === 'full-reload')
+    const event = await waitForWsEvent(
+      ctx.wsSend,
+      (p) => p?.type === 'full-reload',
+    )
     expect(event).toEqual({ type: 'full-reload' })
-    console.log('[DUIBUG] error calls:', JSON.stringify(duiMocks.error.mock.calls.map((c) => String(c[0]).slice(0, 100))))
 
     // External pages never trigger the docs content-update event.
     expect(
@@ -351,7 +361,8 @@ describe('dev server HMR integration', () => {
         const invalidated = invalidateModuleSpy.mock.calls
           .slice(callsBefore)
           .some(
-            ([mod]) => (mod as { id?: string })?.id === '\0virtual:boltdocs-entry.tsx',
+            ([mod]) =>
+              (mod as { id?: string })?.id === '\0virtual:boltdocs-entry.tsx',
           )
         expect(invalidated).toBe(true)
       },
@@ -386,7 +397,9 @@ describe('dev server HMR integration', () => {
     fs.rmSync(path.join(ctx.docsDir, 'pages-external', 'roadmap.mdx'))
     await waitForWsEvent(ctx.wsSend, (p) => p?.type === 'full-reload')
 
-    const entryAfterRemove = await vmPlugin.load!('\0virtual:boltdocs-entry.tsx')
+    const entryAfterRemove = await vmPlugin.load!(
+      '\0virtual:boltdocs-entry.tsx',
+    )
     expect(entryAfterRemove).not.toContain('roadmap.mdx')
   })
 
@@ -403,9 +416,15 @@ describe('dev server HMR integration', () => {
 
     // Change a docs page: exactly one custom mdx-update event, no full-reload
     // (Vite's own HMR is suppressed by createHotUpdateHandler).
-    fs.writeFileSync(path.join(ctx.docsDir, 'index.mdx'), '# Hello 2\n', 'utf-8')
+    fs.writeFileSync(
+      path.join(ctx.docsDir, 'index.mdx'),
+      '# Hello 2\n',
+      'utf-8',
+    )
     await waitForWsEvent(ctx.wsSend, (p) => p?.event === 'boltdocs:mdx-update')
-    expect(ctx.wsSend.mock.calls.filter(([p]) => p?.type === 'full-reload')).toEqual([])
+    expect(
+      ctx.wsSend.mock.calls.filter(([p]) => p?.type === 'full-reload'),
+    ).toEqual([])
 
     ctx.wsSend.mockClear()
 
@@ -417,7 +436,9 @@ describe('dev server HMR integration', () => {
     )
     await waitForWsEvent(ctx.wsSend, (p) => p?.type === 'full-reload')
 
-    const reloads = ctx.wsSend.mock.calls.filter(([p]) => p?.type === 'full-reload')
+    const reloads = ctx.wsSend.mock.calls.filter(
+      ([p]) => p?.type === 'full-reload',
+    )
     expect(reloads).toHaveLength(1)
     expect(
       ctx.wsSend.mock.calls.some(([p]) => p?.event === 'boltdocs:mdx-update'),

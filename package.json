@@ -30,7 +30,12 @@
     "benchmark:compare": "tsx scripts/benchmarks/compare-boltdocs-docusaurus.ts",
     "benchmark:baseline": "tsx scripts/benchmarks/run-baseline.ts",
     "benchmark:gate": "tsx scripts/benchmarks/gate.ts",
-    "knip": "knip"
+    "knip": "knip",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs,json,css}": "biome check --write",
+    "*.{md,mdx}": "markdownlint-cli2 --fix"
   },
   "packageManager": "pnpm@10.30.2",
   "devDependencies": {
@@ -42,7 +47,9 @@
     "@playwright/test": "^1.59.1",
     "@vitest/coverage-v8": "^3.0.0",
     "boltdocs": "workspace:*",
+    "husky": "^9.1.7",
     "knip": "^5.66.0",
+    "lint-staged": "^17.3.0",
     "markdownlint-cli2": "^0.21.0",
     "tinybench": "^6.0.2",
     "tsx": "^4.21.0",

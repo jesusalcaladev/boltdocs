@@ -110,7 +110,13 @@ const EagerMdxElement = ({
     if (!import.meta.hot || !moduleKey) return
     const handler = (data: { relPath: string }) => {
       if (!matchesMdxUpdatePath(route.filePath, data.relPath)) return
-      const cacheBustUrl = moduleKey + '?t=' + Date.now()
+      // `moduleKey` is the root-relative import.meta.glob key (e.g.
+      // `/docs/foo.mdx`), but the module is served under the configured base
+      // (`/docs` in the docs site → `/docs/docs/foo.mdx`). Fetching the bare
+      // key returns the SPA fallback HTML instead of the module, so the
+      // cache-busted re-import must be built from BASE_URL + key.
+      const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+      const cacheBustUrl = `${base}${moduleKey}?t=${Date.now()}`
       import(/* @vite-ignore */ cacheBustUrl).then((m) => {
         setMod(m as unknown as MdxModule)
       })
