@@ -4,6 +4,72 @@ sidebarPosition: 4
 description: HTTP headers, security headers, caching headers, and examples for configuring server headers for Boltdocs deployments.
 ---
 
-Placeholder: Header best practices and examples (CORS, caching, security headers, custom headers for CDNs).
+This guide covers HTTP headers you should set for Boltdocs sites: cache-control strategies, security headers, CORS, and CDN header examples.
 
-If you'd like, will draft sections: Common headers, Cache control, Security headers (HSTS, X-Frame-Options), and CDN examples (Vercel, Netlify, Cloudflare).
+Caching recommendations
+
+- Static assets (JS/CSS/images):
+  - `Cache-Control: public, max-age=31536000, immutable` for build-hashed assets.
+  - Use long TTLs for fingerprinted assets to leverage browser caching.
+- HTML pages (SSR/SSG output):
+  - `Cache-Control: public, max-age=0, s-maxage=60, must-revalidate` — short shared cache TTL with client revalidation.
+  - For frequently-updated docs, use `s-maxage` small and rely on CDN invalidation on deploy.
+
+Security headers
+
+- `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` (enable only after confirming HTTPS across the site).
+- `X-Frame-Options: DENY` or `frame-ancestors 'none'` in CSP — prevents clickjacking.
+- `Referrer-Policy: no-referrer-when-downgrade` or `strict-origin-when-cross-origin`.
+- `X-Content-Type-Options: nosniff`.
+- `Permissions-Policy: geolocation=(), microphone=()` — limit powerful APIs by default.
+
+CORS
+
+- For most docs sites, avoid wide-open CORS; only allow origins that need API access.
+- Example for an API endpoint used by the site:
+  - `Access-Control-Allow-Origin: https://example.com`
+  - `Access-Control-Allow-Methods: GET,OPTIONS`
+
+Platform examples
+
+Vercel (vercel.json)
+
+```json
+{
+  "headers": [
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ]
+}
+```
+
+Netlify (`_headers`)
+
+```
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+```
+
+Cloudflare
+
+- For Pages, use `_headers` or Cloudflare dashboard rules. For Workers, set headers in the Worker response object.
+
+Tips
+
+- Always test headers in staging before enabling `preload` HSTS.
+- Use `curl -I` and browser devtools to confirm headers on deployed pages.
+- Prefer CDN-based invalidation for cache-busting after deploys rather than lowering TTLs for all assets.

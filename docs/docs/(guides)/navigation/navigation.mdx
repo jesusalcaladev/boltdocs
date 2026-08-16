@@ -197,63 +197,56 @@ export function MyLayout() {
 
 ---
 
-## Links & hrefs
+## Links, i18n inference, and routing resolution
 
-Every link in Boltdocs — navbar entries, sidebar entries, cards, and MDX links — goes through the same path resolver (`useLocalizedTo`). It automatically prepends the locale and version the visitor is currently reading, so you write **canonical hrefs** and the framework localizes them. The resolver never rewrites external URLs.
+All site navigation (navbar, sidebar config, cards, and MDX links) use the canonical-path model and the same resolver (`useLocalizedTo`). Authors write canonical, unlocalized paths and the resolver computes the final href for the current visitor (locale + version + docs base).
 
-| Href | Kind | Resolution |
-| :--- | :--- | :--- |
-| `/docs/guides/getting-started` | **Docs page** | Localized with the active locale/version. The canonical form is the unlocalized path. |
-| `/showcase`, `/pricing` | **External page** | Route served by a `pages-external/` page. Known external routes are kept as-is. |
-| `/` | **Site root** | Resolves to the site root (localized). |
-| `https://example.com`, `//cdn...` | **External URL** | Never rewritten — passed through verbatim. |
-| `#section`, `?q=term` | **Anchor / query** | Passed through, joined to the current page URL. |
-| `site:/path` | **Site-prefixed** | Optional `site:` prefix forces the route to resolve against the site root, outside the docs base. |
+Key concepts
 
-### Hrefs in `boltdocs.config.ts`
+- Canonical paths: write `/docs/guides/getting-started`, not `/es/docs/...` or `/v2/...`.
+- Resolver context: the current locale, version, and site base (site root vs docs base) are applied by `useLocalizedTo` at render time.
+- Fallbacks: the site generator builds localized routes and may emit fallbacks; the default locale resolves at the site root if configured.
 
-Navbar and sidebar config accept canonical paths — the same values you would write in Markdown:
+Examples
 
-```ts title="boltdocs.config.ts"
-export default defineConfig({
-  theme: {
-    navbar: [
-      { label: 'Docs', href: '/docs/guides' },
-      { label: 'Showcase', href: '/showcase' },
-      // External URLs pass through the resolver untouched — no special flag needed.
-      { label: 'GitHub', href: 'https://github.com/my-org/my-project' },
-    ],
-  },
-})
-```
+- Canonical docs path → localized:
+  - Canonical: `/docs/guides` → Resolved for Spanish site: `/docs/es/guides` (or `/es/docs/guides` depending on config). The resolver honors the project's i18n config.
+- site: prefix (site:/)
+  - Use `site:/pricing` when you need a link to the site root outside the docs prefix. If docs are mounted at `/docs`, `site:/pricing` resolves to `/pricing`, not `/docs/pricing`.
+  - Use-case: a global pricing page, landing pages, or cross-site links that should not be localized under the docs prefix.
+- pages-external and literal routes
+  - Files under `docs/pages-external/` (or the configured external pages folder) map to top-level routes such as `/showcase` or `/roadmap`. These are resolved as external pages by the resolver and are not rewritten to `site:`.
 
-### Hrefs in MDX
+Implementation notes (how resolution works)
 
-Write the same canonical paths in Markdown — locale and version prefixes are added automatically at render time:
+1. Input: canonical path string (e.g. `/docs/guides/intro`) or relative MDX link.
+2. If path starts with `site:` prefix → drop docs base and resolve against site root.
+3. If path is external (http[s]:// or protocol-less `//`) → left unchanged.
+4. Otherwise, the resolver:
+   - Prepends current locale if the route is localized and not the default root mapping.
+   - Prepends version if a non-default version is active.
+   - Joins any query / hash fragments.
 
-```mdx
-- [Guides](/docs/guides)
-- [Showcase](/showcase)
-- [External docs](https://example.com)
-- [Jump to a section](#links--hrefs)
-```
+Using `Link` and `useLocalizedTo`
 
-### Hrefs in custom components
+- `Link` from `boltdocs/primitives` handles the resolver and active-state logic. Prefer `Link` for components.
+- `useLocalizedTo('/docs/guides')` returns the resolved string when you need it programmatically (for computing active states, menu highlighting, or analytics events).
 
-Use the `Link` primitive from `boltdocs/primitives` for localized navigation, or call `useLocalizedTo()` directly when you need the resolved string (e.g. to compute an active state):
+MDX linking tips
 
-```tsx
-import { Link } from 'boltdocs/primitives'
-import { useLocalizedTo } from 'boltdocs/client'
+- Use canonical absolute paths for cross-page links (`/docs/guides/foo`) and relative links for intra-folder jumps (`../bar.md`).
+- Anchor links `#section` are resolved relative to the current page and preserved by the resolver.
+- Avoid hard-coded locale/version prefixes; the resolver keeps localized URLs consistent.
 
-const resolved = useLocalizedTo('/docs/guides')
+Pages that live outside the docs base
 
-<Link href="/docs/guides">Guides</Link>
-```
+- `site:` is the escape hatch when you must target pages outside the docs prefix.
+- `pages-external/` provides a way to declare top-level site pages inside the docs workspace; their canonical hrefs are top-level (e.g., `/showcase`). Use them for marketing pages that still live in the repo.
 
-<Callout variant="warning" title="Never hand-write locale prefixes">
-Hard-coding `/es/docs/guides` or `/v2/docs/guides` breaks localization — the resolver expects canonical, unlocalized paths. Write `/docs/guides` and let `useLocalizedTo` add the prefix for the active locale and version.
-</Callout>
+Integrations & i18n generator notes
+
+- The static generator creates localized route sets and may produce fallback copies depending on `generateI18nFallbacks()` settings. When enabling i18n, validate the resulting routes (build output or `.boltdocs/build/ssg-cache.json`) to confirm the final paths.
+- For migrations: if the default locale should live at site root, confirm config so `/docs` isn't duplicated under `/en/docs`.
 
 ---
 

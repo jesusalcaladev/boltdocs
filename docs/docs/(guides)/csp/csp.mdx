@@ -4,6 +4,98 @@ sidebarPosition: 5
 description: Guidance and examples for configuring Content Security Policy for Boltdocs sites, including common directives and third-party services.
 ---
 
-Placeholder: CSP guidance — default recommended directives, examples for allowing analytics, fonts, and external scripts, and troubleshooting tips.
+This guide explains practical CSP configuration for Boltdocs sites, how CSP interacts with MDX and inline scripts, and rollout strategies.
 
-If you want, can add Vercel/Netlify examples and common CSP pitfalls with MDX embeds and inline scripts.
+Why CSP matters
+
+- CSP reduces XSS risk by restricting where the browser can load scripts, styles, images, fonts, and frames.
+- Modern analytics, widgets, and third-party embeds often require carefully-scoped policies.
+
+Core directives (recommended starter)
+
+```
+Content-Security-Policy: default-src 'self';
+  script-src 'self' 'sha256-<hash>' https://www.googletagmanager.com https://www.google-analytics.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  img-src 'self' data: https://www.google-analytics.com https://stats.g.doubleclick.net;
+  connect-src 'self' https://api.my-analytics.example.com;
+  frame-src https://www.youtube.com https://player.vimeo.com;
+  object-src 'none';
+  base-uri 'self';
+  frame-ancestors 'none';
+```
+
+Notes
+
+- Replace `https://...` origins with only the third-parties you use.
+- `script-src` can accept `nonce-<value>` (recommended for server-injected nonces) or `sha256-<hash>` for specific inline scripts.
+- Avoid `'unsafe-inline'` for scripts; prefer nonces/hashes.
+
+MDX and inline scripts
+
+- MDX sometimes produces small inline scripts (hydration, runtime snippets). If your build injects inline scripts, prefer using script hashes (`sha256-...`) or configure the renderer to emit nonces.
+- For third-party components that require inline scripts, use the hashed content approach: compute the script body SHA-256 and add `sha256-<base64>` to `script-src`.
+- If nonces are used, ensure the dev server and production build inject the same nonce generation strategy for SSR and client runtime.
+
+Rollout strategy
+
+1. Start with `Content-Security-Policy-Report-Only` to collect violations without blocking content.
+2. Review reports and add missing origins/hashes/nonces.
+3. Switch to enforcing `Content-Security-Policy` when coverage looks good.
+
+Platform examples
+
+Vercel (vercel.json)
+
+```json
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy-Report-Only", "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com;" }
+      ]
+    }
+  ]
+}
+```
+
+Netlify (`_headers`)
+
+```
+/*
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://www.googletagmanager.com;
+```
+
+Cloudflare (Workers / Pages)
+
+- For Pages, add headers in `_headers` like Netlify or use a middleware on Workers to set headers.
+- Example Worker snippet:
+
+```js
+addEventListener('fetch', event => {
+  event.respondWith(handle(event.request))
+})
+
+async function handle(request) {
+  const res = await fetch(request)
+  const headers = new Headers(res.headers)
+  headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self' https://www.googletagmanager.com")
+  return new Response(await res.arrayBuffer(), { status: res.status, headers })
+}
+```
+
+Troubleshooting
+
+- Use browser devtools → Console to find blocked resource messages (CSP violation reports show the blocked URI and directive).
+- Temporarily enable `report-uri` or `report-to` to gather remote reports during rollout.
+- If fonts/styles are blocked, confirm `style-src` and `font-src` include the CDN origins.
+
+Common pitfalls
+
+- `unsafe-inline` is a weak fallback (accept only for styles if necessary); prefer hashes or nonces for scripts.
+- Using `frame-src` too permissively can allow clickjacking — prefer explicit sources or `none`.
+- Forgetting to include `data:` when images use data URIs.
+
+If you want, will add per-service example pages (Vercel, Netlify, Cloudflare) with `report-to` config and a GitHub Actions job to validate CSP reporting during CI.
