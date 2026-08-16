@@ -3,36 +3,26 @@ title: "Caches"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: Caches
-sidebarPosition: 1
-description: PluginCachesAPI — transform cache, routes cache, and in-memory FIFO cache for Boltdocs plugins.
----
-
 # `ctx.caches` — PluginCachesAPI
 
-Three cache types, each bound to a namespaced scope so plugins never
-collide.
+Tres tipos de caché, cada uno vinculado a un scope namespaced para
+evitar colisiones entre plugins.
 
 ---
 
 ## `caches.transform(namespace)`
 
-Sharded, hash-keyed cache backed by the core's `TransformCache`. One
-namespace per plugin is recommended.
+Caché sharded con clave hash, respaldada por el `TransformCache` del
+core. Se recomienda un namespace por plugin.
 
 ```ts
-const cache = ctx.caches.transform('my-plugin')
+const cache = ctx.caches.transform('mi-plugin')
 
-// Async read — first call may warm from disk
-const cached = await cache.get('some-unique-key')
+const cached = await cache.get('una-clave-unica')
 // → string | null
 
-// Synchronous write — batches a background disk flush
-cache.set('some-unique-key', `<transformed>...</transformed>`)
+cache.set('una-clave-unica', `<transformado>...</transformado>`)
 
-// Force-flush background writes (call before measuring disk state)
 await cache.flush()
 ```
 
@@ -40,63 +30,54 @@ await cache.flush()
 
 ## `caches.routes`
 
-Wrapper around the parsed-document cache. Plugins can read, write, and
-invalidate individual routes by absolute file path.
+Wrapper sobre el caché de documentos parseados. Los plugins pueden
+leer, escribir e invalidar rutas individuales por ruta absoluta.
 
 ```ts
-// Read a route by absolute file path
-const route = ctx.caches.routes.get('/abs/path/to/page.mdx')
+const route = ctx.caches.routes.get('/ruta/absoluta/pagina.mdx')
 // → RouteMeta | null
 
-// Write a route entry (partial — only `route` is persisted)
-ctx.caches.routes.set('/abs/path/to/page.mdx', {
-  title: 'My Page',
-  path: '/docs/guides/my-page',
+ctx.caches.routes.set('/ruta/absoluta/pagina.mdx', {
+  title: 'Mi Página',
+  path: '/docs/guias/mi-pagina',
 } as RouteMeta)
 
-// Invalidate one route
-ctx.caches.routes.invalidate('/abs/path/to/page.mdx')
-
-// Clear every cached route (use when the directory layout changes)
+ctx.caches.routes.invalidate('/ruta/absoluta/pagina.mdx')
 ctx.caches.routes.invalidateAll()
 ```
 
-<Callout variant="warning" title="Routes cache contract">
-  `set()` writes a **partial** record. The internal `docCache` stores
-  the full `ParsedDocFile` (with `_content`, headings, sidebar,
-  frontmatter, etc). When you call `set()`, only the `route` field is
-  overwritten — the parser **always wins** on the next refresh. Route
-  entries written by plugins are overwritten on the next file-watcher
-  tick.
+<Callout variant="warning" title="Contrato del caché de rutas">
+  `set()` escribe un **registro parcial**. La capa de parsing **siempre
+  gana** en el próximo refresh — las entradas escritas por plugins se
+  sobrescriben en el siguiente tick del watcher de archivos.
 </Callout>
 
 ---
 
 ## `caches.memory<V>(namespace, opts?)`
 
-In-process FIFO cache that lives for the entire dev-server / build
-lifetime. Backed by a native `Map` — zero external dependencies.
+Caché FIFO en proceso que vive durante toda la vida del dev server /
+build. Respaldado por un `Map` nativo — sin dependencias externas.
 
 ```ts
-const cache = ctx.caches.memory<MyResult>('my-plugin', { max: 50, ttl: 60_000 })
+const cache = ctx.caches.memory<MiResultado>('mi-plugin', { max: 50, ttl: 60_000 })
 
-cache.set('key', { processed: true })
-const val = cache.get('key')   // → MyResult | undefined
-cache.has('key')               // → boolean
+cache.set('clave', { procesado: true })
+const val = cache.get('clave')   // → MiResultado | undefined
+cache.has('clave')               // → boolean
 ```
 
-### Options
+### Opciones
 
-| Option | Type | Default | Description |
+| Opción | Tipo | Predeterminado | Descripción |
 | :--- | :--- | :--- | :--- |
-| `max` | `number` | `100` | Maximum number of entries before the oldest are evicted. |
-| `ttl` | `number` | `0` | Time-to-live in milliseconds. `0` means no expiry. |
+| `max` | `number` | `100` | Número máximo de entradas antes de eliminar las más antiguas. |
+| `ttl` | `number` | `0` | Tiempo de vida en milisegundos. `0` significa sin expiración. |
 
 ---
 
-## See also
+## Ver también
 
-- [PluginContext](/docs/api/plugin-api) — base context object
-- [Diagnostics](/docs/api/plugin-api/diagnostics) — structured diagnostic reporting
-- [Virtual Modules](/docs/api/plugin-api/virtual-modules) — runtime virtual module declarations
-- [Lifecycle Hooks](/docs/api/plugin-api/lifecycle-hooks) — build/dev hooks, transform chains, and chain signals
+- [PluginContext](/docs/es/api/plugin-api) — objeto de contexto base
+- [Diagnostics](/docs/es/api/plugin-api/diagnostics) — reporte estructurado de diagnósticos
+- [Virtual Modules](/docs/es/api/plugin-api/virtual-modules) — declaraciones de módulos virtuales en runtime

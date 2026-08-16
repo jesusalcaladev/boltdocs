@@ -3,67 +3,59 @@ title: "Index"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: API Reference
-sidebarPosition: 1
-description: Public API reference for Boltdocs configuration, React runtime, primitives, plugins, and experimental features.
----
-
 import { Server, Blocks, Workflow, Wrench, Puzzle, FlaskConical, Braces } from 'lucide-react'
 
-Use this section when you know the API surface you need. For task-oriented instructions, start with the [Guides](/docs/guides).
+Usa esta sección cuando ya sabes qué superficie de API necesitas. Para instrucciones orientadas a tareas, comienza por las [Guías](/docs/es/guides).
 
-## Entry points
+## Entrypoints
 
-| Import | Runtime | Use it for |
+| Import | Runtime | Úsalo para |
 | :--- | :--- | :--- |
-| `boltdocs` | Node / build | `defineConfig`, plugins, config types, JSON-LD factories. |
-| `boltdocs/client` | Browser / SSR | React hooks, structured data, transitions, collections, and client utilities. |
-| `boltdocs/primitives` | Browser / SSR | Unstyled layout, navigation, link, and interaction components. |
+| `boltdocs` | Node / build | `defineConfig`, plugins, tipos de configuración y factories JSON-LD. |
+| `boltdocs/client` | Browser / SSR | Hooks React, structured data, transiciones, colecciones y utilidades cliente. |
+| `boltdocs/primitives` | Browser / SSR | Componentes sin estilos de layout, navegación, enlaces e interacción. |
 
 <Cards cols={3}>
-  <Card title="Configuration" icon={<Server />} href="/docs/guides/getting-started/configuration">
-    Configure the project through `boltdocs.config.ts`.
+  <Card title="Configuración" icon={<Server />} href="/docs/es/guides/getting-started/configuration">
+    Configura el proyecto desde `boltdocs.config.ts`.
   </Card>
-  <Card title="React Hooks" icon={<Workflow />} href="/docs/api/hooks/use-config">
-    Read runtime state such as config, routes, theme, locale, and navigation.
+  <Card title="Hooks de React" icon={<Workflow />} href="/docs/es/api/hooks/use-config">
+    Lee estado de runtime como config, rutas, tema, locale y navegación.
   </Card>
-  <Card title="Utilities" icon={<Wrench />} href="/docs/api/utils/define-config">
-    Small typed helpers for config, i18n, URLs, clipboard, and text.
+  <Card title="Utilidades" icon={<Wrench />} href="/docs/es/api/utils/define-config">
+    Helpers tipados para config, i18n, URLs, clipboard y texto.
   </Card>
-  <Card title="Primitives" icon={<Blocks />} href="/docs/components/layout/docs-layout">
-    Compose custom layouts and navigation without the default theme shell.
+  <Card title="Primitivas" icon={<Blocks />} href="/docs/es/components/layout/docs-layout">
+    Compón layouts y navegación sin el shell del theme por defecto.
   </Card>
-  <Card title="Plugin API" icon={<Puzzle />} href="/docs/api/plugin-api">
-    Extend lifecycle, transforms, caches, diagnostics, server, and HMR.
+  <Card title="API de Plugins" icon={<Puzzle />} href="/docs/es/api/plugin-api">
+    Extiende lifecycle, transforms, caches, diagnostics, server y HMR.
   </Card>
-  <Card title="Structured Data" icon={<Braces />} href="/docs/api/structured-data">
-    Generate and render type-safe JSON-LD graphs.
+  <Card title="Structured Data" icon={<Braces />} href="/docs/es/api/structured-data">
+    Genera y renderiza graphs JSON-LD tipados.
   </Card>
-  <Card title="Experimental APIs" icon={<FlaskConical />} href="/docs/guides/advanced/experimental">
-    View Transitions, TransitionLink, and experimental file routing.
+  <Card title="APIs experimentales" icon={<FlaskConical />} href="/docs/es/guides/advanced/experimental">
+    View Transitions, TransitionLink y file-routing experimental.
   </Card>
 </Cards>
 
-## React hooks
+## Hooks de React
 
-The [Hooks reference](/docs/api/hooks/use-config) documents the public hooks individually:
+La [referencia de Hooks](/docs/es/api/hooks/use-config) documenta cada hook público:
 
-- `useConfig`, `useTheme`, `useI18n`, `useVersion`, and `useLocation`
-- `useRoutes`, `useSearch`, `useNavbar`, `usePageNav`, and `useTabs`
-- collection hooks such as `usePosts`, `usePost`, and `useRecentPosts`
+- `useConfig`, `useTheme`, `useI18n`, `useVersion` y `useLocation`
+- `useRoutes`, `useSearch`, `useNavbar`, `usePageNav` y `useTabs`
+- Hooks de colecciones como `usePosts`, `usePost` y `useRecentPosts`
 
-## Plugin API
+## API de Plugins
 
-The [Plugin API](/docs/api/plugin-api) is split into focused references for lifecycle hooks, caches, diagnostics, paths, virtual modules, middleware, server, and HMR.
+La [API de Plugins](/docs/es/api/plugin-api) se divide en referencias de lifecycle hooks, caches, diagnostics, paths, virtual modules, middleware, server y HMR.
 
-## Experimental APIs
+## APIs experimentales
 
-- [Structured Data](/docs/api/structured-data) — JSON-LD factory and component.
-- [Experimental Features](/docs/guides/advanced/experimental) — practical View Transitions and `pages-external` file-routing guide.
+- [Structured Data](/docs/es/api/structured-data) — factory y componente JSON-LD.
+- [Funciones Experimentales](/docs/es/guides/advanced/experimental) — View Transitions y file-routing de `pages-external`.
 
-<Callout variant="tip" title="Need a recipe instead?
-  ">
-  Guides explain the workflow. This section explains exact exports, parameters, and return values.
+<Callout variant="tip" title="¿Necesitas una receta?">
+  Las Guías explican el workflow. Esta sección explica exports, parámetros y valores de retorno exactos.
 </Callout>

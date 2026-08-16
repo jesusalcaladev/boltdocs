@@ -3,41 +3,31 @@ title: "Plugin Ask Ai"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: "@bdocs/plugin-ask-ia"
-sidebarPosition: 6
-description: The @bdocs/plugin-ask-ai plugin adds a context-aware AI assistant to your Boltdocs documentation. Powered by the official OpenAI SDK, page-scoped, streamed SSE, with a hard-scoped system prompt that only answers using the page the user is viewing.
-badge: "0.3.0"
-draft: true
----
+*El plugin `@bdocs/plugin-ask-ai` añade una burbuja de chat flotante y un panel lateral complementario a tu sitio Boltdocs. El asistente responde **solo** usando la página de documentación que el visitante está leyendo actualmente — nunca conocimiento general — y rechaza preguntas que no estén fundamentadas en los docs.*
 
-*The `@bdocs/plugin-ask-ai` plugin adds a floating chat bubble and an inline sidebar companion to your Boltdocs site. The assistant answers **only** using the documentation page the visitor is currently reading — never general knowledge — and refuses questions that aren't grounded in the docs.*
-
-<Callout variant="info" title="Page-scoped answers, not general Q&A">
-  This is a documentation Q&A assistant, not a chatbot. The assistant will reply with `Not in docs.` if the question can't be answered from the current page. Pair it with `secretKey` and a reverse proxy for production deployments — see [Security Model](#security-model) below.
+<Callout variant="info" title="Respuestas con alcance de página, no Q&A general">
+  Este es un asistente de Q&A de documentación, no un chatbot. El asistente responderá con `Not in docs.` (No está en los docs.) si la pregunta no puede responderse desde la página actual. Combínalo con `secretKey` y un reverse proxy para deployments de producción — consulta [Modelo de Seguridad](#modelo-de-seguridad) más abajo.
 </Callout>
 
 ---
 
-## Installation & Quick Start
+## Instalación e Inicio Rápido
 
-### 1. Install the package
+### 1. Instala el paquete
 
 ```sh
-pnpm add @bdocs/plugin-ask-ai
-openai@^4.77.0
+pnpm add @bdocs/plugin-ask-ai openai@^4.77.0
 ```
 
-### 2. Set your API key
+### 2. Configura tu API key
 
-The plugin reads `OPENAI_API_KEY` from the server environment. Anything compatible with the OpenAI Chat Completions spec (Groq, OpenRouter, Together, Azure OpenAI, self-hosted) works through `baseURL`.
+El plugin lee `OPENAI_API_KEY` desde el entorno del servidor. Cualquier proveedor compatible con la spec OpenAI Chat Completions (Groq, OpenRouter, Together, Azure OpenAI, self-hosted) funciona mediante `baseURL`.
 
 ```bash title=".env"
 OPENAI_API_KEY=sk-...
 ```
 
-### 3. Register the plugin
+### 3. Registra el plugin
 
 ```ts title="boltdocs.config.ts"
 import { defineConfig } from 'boltdocs'
@@ -52,33 +42,33 @@ export default defineConfig({
 })
 ```
 
-After `pnpm boltdocs dev`, the plugin registers `<AskAiBubble />` and `<AskAiDialog />` as MDX components. To display the floating chat button or sidebar, you need to import and render them in your custom `layout.tsx` — see [Layout Integration](#layout-integration) below.
+Después de `pnpm boltdocs dev`, aparecerá un botón de chat flotante en la esquina inferior derecha de cada página. En viewports ≥ `xl` (≥ 1280 px) el asistente también obtiene un slot de sidebar integrado mediante el componente `<AskAiDialog />`.
 
 ---
 
-## Concepts & Architecture
+## Conceptos y Arquitectura
 
-The plugin is a **three-tier pipeline** that runs entirely inside Boltdocs' dev/preview server and a thin middleware that fronts any deployed host:
+El plugin es un **pipeline de tres niveles** que se ejecuta completamente dentro del servidor dev/preview de Boltdocs y un middleware delgado que se sitúa frente a cualquier host desplegado:
 
 ```mermaid
 flowchart LR
-  A[Visitor asks a question] --> B[Client hook: useAskAi]
-  B -->|POST /api/ask-ai| C[Server middleware]
-  C --> D[Resolve current page]
-  D -->|page content| E[Wrap in <<<DOCS_START>>> / <<<DOCS_END>>>]
+  A[Visitante hace una pregunta] --> B[Hook cliente: useAskAi]
+  B -->|POST /api/ask-ai| C[Middleware del servidor]
+  C --> D[Resolver la página actual]
+  D -->|contenido de la página| E[Envolver en <<<DOCS_START>>> / <<<DOCS_END>>>]
   E --> F[OpenAI SDK chat.completions.stream]
-  F -->|SSE events| B
-  B --> G[<Streamdown> markdown render]
+  F -->|eventos SSE| B
+  B --> G[Render markdown con <Streamdown>]
 ```
 
-### 1. Client (`@bdocs/plugin-ask-ai/client`)
+### 1. Cliente (`@bdocs/plugin-ask-ai/client`)
 
-- **`useAskAi()`** — React hook that owns the chat state, the streaming SSE reader, and the cooperative abort controller. Returns `messages`, `input`, `isLoading`, `submitQuestion`, `stopStreaming`, `clearChat`, `isOpen`, `setIsOpen`.
-- **`<AskAiBubble />`** — auto-injected floating button + popover dialog (bottom-right on every page).
-- **`<AskAiDialog />`** — auto-injected sidebar companion on `xl:` viewports (≥ 1280 px).
-- **`<MarkdownRenderer />`** — thin `Streamdown` wrapper that flips `parseIncompleteMarkdown` on by default for smooth streaming display without flicker.
+- **`useAskAi()`** — Hook de React que posee el estado del chat, el lector SSE del stream y el `AbortController` cooperativo. Devuelve `messages`, `input`, `isLoading`, `submitQuestion`, `stopStreaming`, `clearChat`, `isOpen`, `setIsOpen`.
+- **`<AskAiBubble />`** — botón flotante auto-inyectado + diálogo emergente (esquina inferior derecha en cada página).
+- **`<AskAiDialog />`** — companion de sidebar auto-inyectado en viewports `xl:` (≥ 1280 px).
+- **`<MarkdownRenderer />`** — wrapper delgado de `Streamdown` que activa `parseIncompleteMarkdown` por defecto para una visualización de streaming fluida y sin parpadeos.
 
-The hook also listens for global events so other parts of your site can drive it:
+El hook también escucha eventos globales para que otras partes de tu sitio puedan manejarlo:
 
 ```ts
 window.dispatchEvent(new CustomEvent('boltdocs:ask-ai:toggle'))
@@ -86,31 +76,31 @@ window.dispatchEvent(new CustomEvent('boltdocs:ask-ai:open'))
 window.dispatchEvent(new CustomEvent('boltdocs:ask-ai:close'))
 ```
 
-### 2. Server middleware (`POST /api/ask-ai`)
+### 2. Middleware del servidor (`POST /api/ask-ai`)
 
-A `vite`-aware Vite middleware mounted on `dev` and `preview`. It:
+Un middleware de `vite` montado sobre `dev` y `preview`. Este:
 
-1. Reads the rendered page content (Vite dev) **or** accepts pre-extracted `{ page, content }` from the client (serverless adapter mode).
-2. Validates the question against the configured caps and denylist.
-3. Wraps the page content in `<<<DOCS_START>>>` / `<<<DOCS_END>>>` markers — and **escapes literal occurrences of those tokens inside the page** so an MDX author cannot break the boundary.
-4. Streams `chat.completions.create({ stream: true })` events back as Server-Sent Events (`text/event-stream`).
+1. Lee el contenido de la página renderizada (Vite dev) **o** acepta `{ page, content }` pre-extraído del cliente (modo adaptador serverless).
+2. Valida la pregunta contra los caps configurados y la denylist.
+3. Envuelve el contenido de la página en marcadores `<<<DOCS_START>>>` / `<<<DOCS_END>>>` — y **escapa las ocurrencias literales de esos tokens dentro de la página** para que un autor de MDX no pueda romper la frontera.
+4. Hace streaming de eventos `chat.completions.create({ stream: true })` de vuelta como Server-Sent Events (`text/event-stream`).
 
-### 3. LLM layer
+### 3. Capa LLM
 
-The official `openai` SDK (`^4.77.0`). Every other piece of the plugin builds around four guarantees:
+El SDK oficial `openai` (`^4.77.0`). Todas las demás piezas del plugin se construyen alrededor de cuatro garantías:
 
-- Any provider that speaks `/v1/chat/completions` works through `baseURL`.
-- `AbortController` is wired all the way down, so closing the tab mid-stream immediately halts the upstream request (no orphan token usage).
-- A 60-second internal timeout aborts the stream even if the client never disconnects.
-- Output is hard-cap-limited by `max_tokens` at the SDK level — runaway costs are bounded even if all other guards degrade.
+- Cualquier proveedor que hable `/v1/chat/completions` funciona mediante `baseURL`.
+- `AbortController` está cableado hasta abajo, por lo que cerrar la pestaña mid-stream detiene inmediatamente la solicitud upstream (sin gasto huérfano de tokens).
+- Un timeout interno de 60 segundos aborta el stream incluso si el cliente nunca se desconecta.
+- El output está limitado en el SDK por `max_tokens` — los costes descontrolados están acotados incluso si todas las demás protecciones degradan.
 
 ---
 
-## Configuration
+## Configuración
 
-### Plugin Options
+### Opciones del Plugin
 
-All options are optional. Pass them to the `askAiPlugin()` initializer in `boltdocs.config.ts`:
+Todas las opciones son opcionales. Pásalas al inicializador `askAiPlugin()` en `boltdocs.config.ts`:
 
 ```ts
 askAiPlugin({
@@ -127,41 +117,43 @@ askAiPlugin({
 })
 ```
 
-| Property | Type | Default | Description |
+| Propiedad | Tipo | Predeterminado | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`model`** | `'gpt-4o-mini' \| 'gpt-4.1-mini' \| 'gpt-4.1-nano'` | `'gpt-4o-mini'` | Built-in model. If you need another model, list it in `customModels` and add it to `modelAllowlist`. |
-| **`endpoint`** | `string` | `'/api/ask-ai'` | Vite middleware path. POST-only. Anything else 404s by design. |
-| **`baseURL`** | `string` (URL-validated) | `undefined` | OpenAI-compatible API base URL. Falls back to `OPENAI_BASE_URL` env var → OpenAI. |
-| **`systemPrompt`** | `string` | `DEFAULT_SYSTEM_PROMPT` | Override the safety prompt. **Override only if you understand the security model** — see [Layer 4](#security-model). Resetting to the default is `systemPrompt: undefined`. |
-| **`maxInputChars`** | `number` (1–20 000) | `2_000` | Hard cap on the user question before it reaches OpenAI. |
-| **`maxOutputTokens`** | `number` (1–4 000) | `600` | Hard cap on completion tokens, enforced by the SDK. |
-| **`contextChars`** | `number` (1–40 000) | `6_000` | Max chars of page content forwarded. Long pages truncate silently. |
-| **`rateLimitPerMinute`** | `number` (≥ 0) | `30` | Per-IP requests per minute. Set `0` to disable (not recommended on open deployments). |
-| **`secretKey`** | `string` (≥ 8 chars) | `undefined` | Required shared secret. Callers must include `?secret=<key>` or header `x-boltdocs-ask-ai-key: <key>`. Any other origin gets `UNAUTHORIZED`. |
-| **`customModels`** | `string[]` (≤ 20 entries, ≤ 120 chars each) | `[]` | Power-user escape hatch. Adds model names to the runtime allowlist without bumping the schema. |
+| **`model`** | `'gpt-4o-mini' \| 'gpt-4.1-mini' \| 'gpt-4.1-nano'` | `'gpt-4o-mini'` | Modelo built-in. Si necesitas otro modelo, listalo en `customModels` y añádelo a la `modelAllowlist`. |
+| **`endpoint`** | `string` | `'/api/ask-ai'` | Ruta del middleware de Vite. Solo POST. Cualquier otro método devuelve 404 por diseño. |
+| **`baseURL`** | `string` (validada como URL) | `undefined` | URL base de la API OpenAI-compatible. Cae al env var `OPENAI_BASE_URL` → OpenAI. |
+| **`systemPrompt`** | `string` | `DEFAULT_SYSTEM_PROMPT` | Override del prompt de seguridad. **Override solo si entiendes el modelo de seguridad** — consulta [Capa 4](#modelo-de-seguridad). Para resetear al predeterminado, pon `systemPrompt: undefined`. |
+| **`maxInputChars`** | `number` (1–20 000) | `2_000` | Cap duro sobre la pregunta del usuario antes de llegar a OpenAI. |
+| **`maxOutputTokens`** | `number` (1–4 000) | `600` | Cap duro sobre los tokens de completion, aplicado por el SDK. |
+| **`contextChars`** | `number` (1–40 000) | `6_000` | Máximo de caracteres del contenido de la página enviado. Las páginas largas se truncan silenciosamente. |
+| **`rateLimitPerMinute`** | `number` (≥ 0) | `30` | Peticiones por minuto por IP. Pon `0` para desactivar (no recomendado en deployments abiertos). |
+| **`secretKey`** | `string` (≥ 8 caracteres) | `undefined` | Secreto compartido requerido. Los llamantes deben incluir `?secret=<key>` o el header `x-boltdocs-ask-ai-key: <key>`. Cualquier otro origen recibe `UNAUTHORIZED`. |
+| **`customModels`** | `string[]` (≤ 20 entradas, ≤ 120 caracteres cada una) | `[]` | Comodín para usuarios avanzados. Añade nombres de modelos a la allowlist runtime sin tocar el schema. |
 
-### Environment Variables
+> Las páginas que excedan `contextChars` se truncan al inicio. Si necesitas usar la última sección de un documento largo, plantéate exponer un punto de anclaje o dividir el contenido en piezas más pequeñas.
 
-| Variable | Required | Default | Description |
+### Variables de Entorno
+
+| Variable | Requerida | Predeterminada | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`OPENAI_API_KEY`** | yes | — | API key for the upstream provider. The middleware refuses to stream if unset. |
-| **`OPENAI_BASE_URL`** | no | OpenAI | Override for the API base URL. Equivalent to `baseURL` in plugin options (options take precedence). |
+| **`OPENAI_API_KEY`** | sí | — | API key del proveedor upstream. El middleware rehúsa hacer streaming si no está establecida. |
+| **`OPENAI_BASE_URL`** | no | OpenAI | Override para la URL base de la API. Equivalente a `baseURL` en las opciones del plugin (las opciones tienen precedencia). |
 
-`OPENAI_API_KEY` is read at request time, so you can rotate keys without restarting the dev server. For production secrets, mount through your platform's env-var manager (Vercel project env, AWS Secrets Manager, etc.) — never commit.
+`OPENAI_API_KEY` se lee al momento de la petición, por lo que puedes rotar keys sin reiniciar el servidor de desarrollo. Para secretos en producción, móntalo mediante el gestor de env vars de tu plataforma (Vercel project env, AWS Secrets Manager, etc.) — nunca lo commitees.
 
 ---
 
-## Supported Models
+## Modelos Soportados
 
-### Built-in allowlist
+### Allowlist built-in
 
-Models bundled with the schema, picked for the price/quality sweet spot on doc Q&A:
+Modelos empaquetados en el schema, elegidos por su equilibrio precio/calidad en Q&A de documentación:
 
-| Model | Tier | Use case |
+| Modelo | Tier | Caso de uso |
 | :--- | :--- | :--- |
-| `gpt-4o-mini` (default) | cheap | Most doc Q&A. Stable, well-priced. |
-| `gpt-4.1-mini` | low | Better reasoning than `gpt-4o-mini` at similar latency. |
-| `gpt-4.1-nano` | very cheap | High-volume deployments. Accept lower accuracy. |
+| `gpt-4o-mini` (predeterminado) | barato | Mayoría de Q&A sobre docs. Estable y bien de precio. |
+| `gpt-4.1-mini` | bajo | Mejor razonamiento que `gpt-4o-mini` con latencia similar. |
+| `gpt-4.1-nano` | muy barato | Deployments de alto volumen. Acepta menor accuracy. |
 
 ```ts
 askAiPlugin({ model: 'gpt-4.1-mini' })
@@ -169,7 +161,7 @@ askAiPlugin({ model: 'gpt-4.1-mini' })
 
 ### Escape hatch — `customModels`
 
-Any model name that your account or provider hosts can be added without bumping the schema:
+Cualquier nombre de modelo que tu cuenta o proveedor pueda hospedar puede agregarse sin tocar el schema:
 
 ```ts
 askAiPlugin({
@@ -178,35 +170,35 @@ askAiPlugin({
 })
 ```
 
-The runtime allowlist is `ALLOWED_MODELS ∪ customModels`. Any value not in the union silently falls back to `gpt-4o-mini`.
+La allowlist runtime es `ALLOWED_MODELS ∪ customModels`. Cualquier valor fuera de esa unión cae silenciosamente a `gpt-4o-mini`.
 
 ---
 
-## Supported Providers
+## Proveedores Soportados
 
-The plugin uses the official `openai` Node SDK (v4+). Any provider that exposes an OpenAI-compatible `/v1/chat/completions` endpoint works. Configure with `baseURL` in plugin options or `OPENAI_BASE_URL` in env.
+El plugin usa el SDK oficial `openai` de Node (v4+). Cualquier proveedor que exponga un endpoint OpenAI-compatible `/v1/chat/completions` funciona. Configúralo con `baseURL` en las opciones del plugin o `OPENAI_BASE_URL` en el entorno.
 
-| Provider | Example `baseURL` | Notes |
+| Proveedor | Ejemplo `baseURL` | Notas |
 | :--- | :--- | :--- |
-| **OpenAI** (default) | `https://api.openai.com/v1` | Used when `baseURL` is unset. |
-| **Groq** | `https://api.groq.com/openai/v1` | Fast Llama 3, Mixtral inference. Groq-issued key. |
-| **OpenRouter** | `https://openrouter.ai/api/v1` | Aggregator: Claude, Gemini, Mistral, etc. Pass any model name OpenRouter recognises. |
-| **Together AI** | `https://api.together.xyz/v1` | Open-source fleet. |
-| **Azure OpenAI** | `https://<resource>.openai.azure.com/openai/deployments/<dep>/v1` | Endpoint varies per deployment. |
-| **Self-hosted OpenAI-compatible** (llama.cpp, vLLM, LM Studio, Ollama + OpenAI shim, vLLM `--openai-compatible`) | `http://localhost:<port>/v1` | Server must expose `/v1/chat/completions`. |
+| **OpenAI** (predeterminado) | `https://api.openai.com/v1` | Se usa cuando `baseURL` no está establecido. |
+| **Groq** | `https://api.groq.com/openai/v1` | Inferencia rápida con Llama 3, Mixtral. Key emitida por Groq. |
+| **OpenRouter** | `https://openrouter.ai/api/v1` | Agregador: Claude, Gemini, Mistral, etc. Pasa cualquier nombre de modelo que OpenRouter reconozca. |
+| **Together AI** | `https://api.together.xyz/v1` | Flota open-source. |
+| **Azure OpenAI** | `https://<resource>.openai.azure.com/openai/deployments/<dep>/v1` | El endpoint varía por deployment. |
+| **Self-hosted OpenAI-compatible** (llama.cpp, vLLM, LM Studio, Ollama + OpenAI shim, vLLM `--openai-compatible`) | `http://localhost:<puerto>/v1` | El servidor debe exponer `/v1/chat/completions`. |
 
-### Not supported (explicit)
+### No soportados (explícitamente)
 
-- **Anthropic Claude API** — different request/response shape. The plugin only knows the OpenAI spec.
-- **Google Gemini API** — different shape.
-- **Local model servers that don't speak the OpenAI shim** (raw Ollama `/api/generate`, llama.cpp `/completion`).
-- **Function-calling / tools use / structured outputs / speech-to-text / image inputs.** Pure chat completions only.
+- **Anthropic Claude API** — forma de request/response distinta. El plugin solo conoce la spec de OpenAI.
+- **Google Gemini API** — forma distinta.
+- **Servidores de modelos locales que no hablan el shim de OpenAI** (Ollama `/api/generate` raw, llama.cpp `/completion`).
+- **Function-calling / tools use / structured outputs / speech-to-text / image inputs.** Solo chat completions puro.
 
 ---
 
-## Usage Examples
+## Ejemplos de Uso
 
-### Minimal setup
+### Configuración mínima
 
 ```ts title="boltdocs.config.ts"
 import askAiPlugin from '@bdocs/plugin-ask-ai'
@@ -216,16 +208,16 @@ export default {
 }
 ```
 
-### Switch to a stronger model
+### Cambiar a un modelo más potente
 
 ```ts
 askAiPlugin({
   model: 'gpt-4.1-mini',
-  maxOutputTokens: 800,   // allow longer answers
+  maxOutputTokens: 800,   // permite respuestas más largas
 })
 ```
 
-### Use a non-OpenAI provider
+### Usar un proveedor distinto de OpenAI
 
 ```ts
 askAiPlugin({
@@ -236,10 +228,10 @@ askAiPlugin({
 ```
 
 ```bash title=".env"
-OPENAI_API_KEY=gsk_...    # Groq issues this
+OPENAI_API_KEY=gsk_...    # Groq emite esto
 ```
 
-### Lock down a production deployment
+### Asegurar un deployment de producción
 
 ```ts
 askAiPlugin({
@@ -249,30 +241,31 @@ askAiPlugin({
 })
 ```
 
-Caddy / nginx / Cloudflare / Vercel should set `x-forwarded-for` from a trusted source. Combined with `secretKey`, an attacker can neither bypass the limiter nor supply forged `context` payloads.
+Caddy / nginx / Cloudflare / Vercel deben establecer `x-forwarded-for` desde una fuente confiable. Combinado con `secretKey`, un atacante no puede saltarse el limiter ni enviar payloads `context` falsificados.
 
-### Compose manually in your layout
+### Componer manualmente (sin auto-injection)
 
-The plugin registers `<AskAiBubble />` and `<AskAiDialog />` as MDX components, but does **not** auto-mount them in the layout. You compose them directly in your `layout.tsx`:
+```ts title="boltdocs.config.ts"
+askAiPlugin({ autoInject: false })
+```
 
-```tsx title="docs/layout.tsx"
-import { AskAiBubble, AskAiDialog } from '@bdocs/plugin-ask-ai/client'
-import { DocsLayout } from 'boltdocs'
+Luego, en tu layout personalizado:
 
-export default function Layout({ children }) {
+```tsx title="src/layout.tsx"
+import { AskAiBubble } from '@bdocs/plugin-ask-ai/client'
+
+export default function Layout() {
   return (
-    <DocsLayout>
-      {children}
-      <AskAiBubble />   {/* Floating bubble — bottom-right */}
-      <AskAiDialog />   {/* Right rail on xl viewports */}
-    </DocsLayout>
+    <div className="min-h-screen">
+      {/* …tu nav y contenido a pantalla completa… */}
+      <AskAiBubble />
+      {/* O <AskAiDialog /> — tú decides */}
+    </div>
   )
 }
 ```
 
-Mount only what you need (e.g. only `<AskAiDialog />` as a dedicated sidebar), position them with your own CSS, and remove unused ones entirely.
-
-### Drive the chat from a button elsewhere
+### Manejar el chat desde un botón en otro lugar
 
 ```tsx
 import { useAskAi } from '@bdocs/plugin-ask-ai/client'
@@ -283,10 +276,10 @@ export function HelpButton() {
     <button
       onClick={() => {
         setIsOpen(true)
-        submitQuestion('Walk me through this page')
+        submitQuestion('Guíame a través de esta página')
       }}
     >
-      Help
+      Ayuda
     </button>
   )
 }
@@ -294,175 +287,107 @@ export function HelpButton() {
 
 ---
 
-## Manual Component Composition
+## Composición Manual de Componentes
 
-The plugin does **not** auto-mount its UI. You compose `<AskAiBubble />` and/or `<AskAiDialog />` directly in your `layout.tsx`:
+El plugin **no** auto-monta su UI. Compón `<AskAiBubble />` y/o `<AskAiDialog />` directamente en tu `layout.tsx`:
 
-```tsx title="docs/layout.tsx"
+```tsx title="src/layout.tsx"
 import { AskAiBubble, AskAiDialog } from '@bdocs/plugin-ask-ai/client'
-import { DocsLayout } from 'boltdocs'
 
 export default function Layout({ children }) {
   return (
-    <DocsLayout>
+    <div className="min-h-screen">
       {children}
-      <AskAiBubble />   {/* Floating bubble — bottom-right */}
-      <AskAiDialog />   {/* Right rail on xl viewports */}
-    </DocsLayout>
+      <AskAiBubble />   {/* Burbuja flotante — esquina inferior derecha */}
+      <AskAiDialog />   {/* Right rail en viewports xl */}
+    </div>
   )
 }
 ```
 
-Mount only what you need (e.g. only `<AskAiDialog />` as a dedicated sidebar), position them with your own CSS, and remove unused ones entirely.
+Monta solo lo que necesites (por ejemplo, solo `<AskAiDialog />` como sidebar dedicado), posiciónalos con tu propio CSS, o elimina los no usados.
 
 ---
 
-## Layout Integration
+## Referencia: API de `useAskAi()`
 
-The plugin components are available via `@bdocs/plugin-ask-ai/client` but require manual placement in your layout. Here are the recommended patterns:
+El hook devuelve el estado del chat y handles imperativos. Está memoizado internamente — re-suscribirse es barato.
 
-### Pattern 1: Using DocsLayout (recommended)
-
-```tsx title="docs/layout.tsx"
-import { AskAiBubble, AskAiDialog } from '@bdocs/plugin-ask-ai/client'
-import { DocsLayout } from 'boltdocs'
-
-export default function Layout({ children }) {
-  return (
-    <DocsLayout>
-      {children}
-      <AskAiBubble />
-    </DocsLayout>
-  )
-}
-```
-
-### Pattern 2: Full control with primitives
-
-```tsx title="docs/layout.tsx"
-import { AskAiBubble, AskAiDialog } from '@bdocs/plugin-ask-ai/client'
-import { DocsLayout, Navbar, Sidebar, OnThisPage } from 'boltdocs/client'
-
-export default function Layout({ children }) {
-  return (
-    <DocsLayout>
-      <Navbar />
-      <DocsLayout.Body>
-        <Sidebar routes={[]} config={{}} />
-        <DocsLayout.Content>
-          <DocsLayout.ContentMdx>
-            {children}
-          </DocsLayout.ContentMdx>
-        </DocsLayout.Content>
-        <OnThisPage />
-      </DocsLayout.Body>
-      <DocsLayout.RightRail>
-        <AskAiDialog />
-      </DocsLayout.RightRail>
-      <AskAiBubble />
-    </DocsLayout>
-  )
-}
-```
-
-### Pattern 3: Only the floating bubble
-
-```tsx title="docs/layout.tsx"
-import { AskAiBubble } from '@bdocs/plugin-ask-ai/client'
-import { DocsLayout } from 'boltdocs'
-
-export default function Layout({ children }) {
-  return (
-    <DocsLayout>
-      {children}
-      <AskAiBubble />
-    </DocsLayout>
-  )
-}
-```
-
----
-
-## Reference: `useAskAi()` API
-
-The hook returns the chat state and imperative handles. It is auto-memoised internally — re-subscribing is cheap.
-
-| Field | Type | Description |
+| Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
-| `messages` | `Message[]` | Chat history. Each message has `role`, `content`, optional `status` (`reading` \| `streaming` \| `done` \| `error`) and optional `contextChip` showing the captured page metadata. |
-| `input` | `string` | Current input field value. |
-| `setInput` | `(v: string) => void` | Update the input. |
-| `isLoading` | `boolean` | True while a request is in flight. |
-| `submitQuestion` | `(text: string) => Promise<void>` | Append a user message and start streaming. Cancels any in-flight stream. |
-| `stopStreaming` | `() => void` | Abort the current stream. Partial content is preserved, status flips to `done`. |
-| `clearChat` | `() => void` | Stop streaming and reset `messages` to `[]`. |
-| `isOpen` | `boolean` | Bubble/sidebar open state. Toggle via global events too. |
-| `setIsOpen` | `(v: boolean) => void` | Override open state. |
+| `messages` | `Message[]` | Historial del chat. Cada mensaje tiene `role`, `content`, opcional `status` (`reading` \| `streaming` \| `done` \| `error`) y opcional `contextChip` con los metadatos de la página capturada. |
+| `input` | `string` | Valor actual del input. |
+| `setInput` | `(v: string) => void` | Actualiza el input. |
+| `isLoading` | `boolean` | `true` mientras hay una petición en curso. |
+| `submitQuestion` | `(text: string) => Promise<void>` | Añade un mensaje del usuario e inicia el streaming. Cancela cualquier stream en curso. |
+| `stopStreaming` | `() => void` | Aborta el stream actual. El contenido parcial se preserva, status pasa a `done`. |
+| `clearChat` | `() => void` | Detiene el streaming y resetea `messages` a `[]`. |
+| `isOpen` | `boolean` | Estado de apertura de la burbuja / sidebar. También puedes alternarlo mediante eventos globales. |
+| `setIsOpen` | `(v: boolean) => void` | Sobrescribe el estado de apertura. |
 
 `UseAskAiOptions`:
 
-| Field | Type | Default | Description |
+| Campo | Tipo | Predeterminado | Descripción |
 | :--- | :--- | :--- | :--- |
-| `endpoint` | `string` | `/api/ask-ai` (resolved from `virtual:boltdocs-config`) | Override the SSE URL. |
-| `currentPage` | `string` | `window.location.pathname` | Override the path the assistant uses to choose the page. |
+| `endpoint` | `string` | `/api/ask-ai` (resuelto desde `virtual:boltdocs-config`) | Override de la URL SSE. |
+| `currentPage` | `string` | `window.location.pathname` | Override del path que el asistente usa para elegir la página. |
 
 ---
 
-## Security Model
+## Modelo de Seguridad
 
-The plugin implements **defense-in-depth at seven layers**. No single layer is load-bearing — degradation of one (e.g., a stale regex) is captured by another.
+El plugin implementa **defense-in-depth en siete capas**. Ninguna capa es indispensable — la degradación de una (p. ej. un regex que queda obsoleto) queda cubierta por otra.
 
-| # | Layer | Default | Degrades? |
+| # | Capa | Predeterminado | ¿Se degrada? |
 | :--- | :--- | :--- | :--- |
-| 1 | Input hard caps | `maxInputChars=2 000` / `maxOutputTokens=600` | Server-enforced. Cannot be overridden by the model. |
-| 2 | Deterministic denylist (regex) | Six patterns covering `ignore previous`, `DAN`, `developer mode`, `jailbreak`, system-extract verbs | Static. Stale patterns fall through to layer 4. |
-| 3 | Delimiter hardening | `<<<DOCS_START>>>` / `<<<DOCS_END>>>` + literal-marker escape inside content | Model-side interpretation. |
-| 4 | Scope-locked system prompt | 7-rule priority hierarchy with explicit override refusal in 5 categories (a)–(e) | Model-side interpretation. |
-| 5 | Per-IP rate limit | 30 req/min/IP, in-memory token bucket | Per-process. Multi-instance deployments need an edge limiter. |
-| 6 | Deployment network contract | `x-forwarded-for` aware, optional `secretKey` | Spoofable when not behind a trusted proxy. |
-| 7 | Forwarded-client-context cap | `contextChars=6 000` | Trust promotion; requires `secretKey` for open deployments. |
+| 1 | Caps duros de input | `maxInputChars=2 000` / `maxOutputTokens=600` | Aplicados en el servidor. El modelo no puede saltarlos. |
+| 2 | Denylist determinista (regex) | Seis patrones que cubren `ignore previous`, `DAN`, `developer mode`, `jailbreak`, verbos de extracción del system | Estática. Patrones obsoletos caen a la capa 4. |
+| 3 | Hardening de delimitadores | `<<<DOCS_START>>>` / `<<<DOCS_END>>>` + escape de marcadores literales dentro del contenido | Interpretación del lado del modelo. |
+| 4 | System prompt con scope estricto | Jerarquía priorizada de 7 reglas con rechazo explícito de overrides en 5 categorías (a)–(e) | Interpretación del lado del modelo. |
+| 5 | Rate limit por IP | 30 req/min/IP, bucket de tokens en memoria | Por proceso. Deployments multi-instancia requieren un limiter en el edge. |
+| 6 | Contrato de red de deployment | Lee `x-forwarded-for`, `secretKey` opcional | Suplantable cuando no está detrás de un proxy confiable. |
+| 7 | Cap del contexto reenviado por cliente | `contextChars=6 000` | Promoción de confianza; requiere `secretKey` en deployments abiertos. |
 
-<Callout variant="warning" title="Behind a hostile edge, x-forwarded-for is trivially spoofable">
-  If you can't deploy behind a trusted reverse proxy, **`secretKey` is required** for production. See [`SECURITY.md`](https://github.com/boltdocs/boltdocs/blob/main/packages/plugin-ask-ai/SECURITY.md) in the source repo for the full threat model and deployment checklist.
+<Callout variant="warning" title="Detrás de un edge hostil, x-forwarded-for es trivialmente suplantable">
+  Si no puedes deployar detrás de un reverse proxy confiable, **`secretKey` es obligatorio** para producción. Consulta [`SECURITY.md`](https://github.com/boltdocs/boltdocs/blob/main/packages/plugin-ask-ai/SECURITY.md) en el repo fuente para el modelo de amenaza completo y el checklist de deployment.
 </Callout>
 
-The system prompt is bundled as `DEFAULT_SYSTEM_PROMPT` in `src/node/index.ts` and is the single highest-leverage piece of code in the package — it leads with **RULE 0 (ABSOLUTE — NEVER OVERRIDE)** and ends with a confidentiality clause that explicitly forbids exposing the prompt itself. Six regression tests in `tests/system-prompt.test.ts` anchor the priority hierarchy, refusal categories, imperative density, the literal `Not in docs.` refusal, and the marker tokens.
+El system prompt viene empaquetado como `DEFAULT_SYSTEM_PROMPT` en `src/node/index.ts` y es la pieza de código con mayor apalancamiento del paquete — arranca con **RULE 0 (ABSOLUTE — NEVER OVERRIDE)** y termina con una cláusula de confidencialidad que prohíbe explícitamente exponer el propio prompt. Seis tests de regresión en `tests/system-prompt.test.ts` anclan la jerarquía priorizada, las categorías de rechazo, la densidad imperativa, el rechazo literal `Not in docs.` y los tokens marcadores.
 
 ---
 
 ## Troubleshooting
 
-### Assistant says `Not in docs.` for a question that IS in the docs
+### El asistente dice `Not in docs.` para una pregunta QUE está en los docs
 
-- **Page mismatch:** the assistant only sees the path the visitor is at. If the user lands on `/docs/guide/installing` and asks about `/docs/guide/troubleshooting`, the answer will be `Not in docs.` Navigate them to the relevant page first, or use `currentPage` from `useAskAi` to point at scope.
-- **Truncation:** pages over `contextChars` (default 6 000) characters truncate at the start. Surface this in your UI when relevant.
+- **Mismatch de página:** el asistente solo ve la ruta en la que está el visitante. Si el usuario aterriza en `/docs/guide/installing` y pregunta sobre `/docs/guide/troubleshooting`, la respuesta será `Not in docs.` Llevalo primero a la página relevante, o usa `currentPage` desde `useAskAi` para apuntar al scope correcto.
+- **Truncamiento:** las páginas que excedan `contextChars` (predeterminado 6 000) caracteres se truncan al inicio. Súmalos en tu UI cuando sea relevante.
 
-### `401 UNAUTHORIZED` on every request
+### `401 UNAUTHORIZED` en cada request
 
-You set `secretKey` but didn't pass it. Either:
+Estableciste `secretKey` pero no lo enviaste. O bien:
 
-- Add `?secret=<key>` to the URL, **or**
-- Send header `x-boltdocs-ask-ai-key: <key>`, **or**
-- Remove `secretKey` from your plugin options.
+- Añade `?secret=<key>` a la URL, **o**
+- Envía el header `x-boltdocs-ask-ai-key: <key>`, **o**
+- Quita `secretKey` de las opciones del plugin.
 
-### `429 RATE_LIMITED` or `Retry-After` header
+### `429 RATE_LIMITED` o header `Retry-After`
 
-You exceeded `rateLimitPerMinute` (default 30). Either bump the limit, disable it with `rateLimitPerMinute: 0`, or front the endpoint with a shared limiter (Upstash, Vercel, Cloudflare Rate Limiting Rules) for multi-replica deployments.
+Excediste `rateLimitPerMinute` (predeterminado 30). Sube el límite, desactívalo con `rateLimitPerMinute: 0`, o pon un limiter compartido delante del endpoint (Upstash, Vercel, Cloudflare Rate Limiting Rules) para deployments multi-réplica.
 
-### Bubble doesn't appear
+### La burbuja no aparece
 
-- The plugin registers `<AskAiBubble />` and `<AskAiDialog />` via the `components` field in `boltdocs.config.ts`. You must import and render them manually in your `layout.tsx`.
-- Check that your custom `layout.tsx` imports from `@bdocs/plugin-ask-ai/client` and renders the component.
-- Verify the plugin is installed: `pnpm add @bdocs/plugin-ask-ai`.
+- `autoInject: true` (predeterminado) registra `<AskAiBubble />` y `<AskAiDialog />` globalmente vía el registro `components` del plugin. Si escribiste `<AskAiBubble />` manualmente en tu layout Y pusiste `autoInject: false`, está bien — si no, pasa a `autoInject: false`.
+- Comprueba que tu layout personalizado extiende el shell de Boltdocs (`<BoltdocsShell />`) o de algún modo incluye el registro global de componentes de Boltdocs.
 
-### Streaming stops mid-sentence
+### El streaming se detiene a mitad de frase
 
-- The 60-second internal timeout is up. Bumping it isn't an option — fork the plugin if you need longer. For long answers, increase `maxOutputTokens` instead.
-- The user closed the tab or clicked Stop. The `AbortController` propagates all the way down to the SDK, so closing the request halts upstream token spend.
+- Pasó el timeout interno de 60 segundos. Subirlo no es una opción — forkea el plugin si necesitas más tiempo. Para respuestas largas, aumenta `maxOutputTokens` en su lugar.
+- El usuario cerró la pestaña o hizo clic en Detener. El `AbortController` se propaga hasta el SDK, por lo que cerrar la request detiene el gasto upstream de tokens.
 
-### Custom model isn't used
+### No se usa el modelo personalizado
 
-Did you add it to `customModels`? `model` alone is limited to the built-in allowlist. Examples:
+¿Lo añadiste a `customModels`? `model` solo está limitado a la allowlist built-in. Ejemplos:
 
 ```ts
 askAiPlugin({
@@ -471,16 +396,16 @@ askAiPlugin({
 })
 ```
 
-If your provider speaks the OpenAI shim but the model name is fuzzy (e.g. `openai/gpt-4o` for OpenRouter), include the full slug in `customModels`.
+Si tu proveedor habla el shim de OpenAI pero el nombre del modelo es difuso (p. ej. `openai/gpt-4o` en OpenRouter), incluye el slug completo en `customModels`.
 
-### Hitting OpenAI quota errors
+### Errores de cuota de OpenAI
 
-The `openai` SDK throws a typed `APIError`. The middleware streams the error message back as an SSE `error` event and ends with `[DONE]`. Check your dashboard for hard-limit reasons, then check `maxOutputTokens` and `maxInputChars` if you're hitting length limits.
+El SDK `openai` lanza un `APIError` tipado. El middleware envía el mensaje de error como evento SSE `error` y termina con `[DONE]`. Revisa tu dashboard por motivos de hard limit, y luego verifica `maxOutputTokens` y `maxInputChars` si estás golpeando límites de longitud.
 
 ---
 
-## Version History
+## Historial de Versiones
 
-- **0.3.0** — Removed automatic slot-based mounting. Plugin now ships `<AskAiBubble />` and `<AskAiDialog />` as standalone components for manual composition.
-- **0.2.0** — OpenAI SDK rewrite. Streamdown on the client. Page-scoped via `<<<DOCS_START>>>` / `<<<DOCS_END>>>` delimiters + literal-marker escape. Hard-scoped system prompt with 7-rule priority hierarchy. Per-IP token bucket, optional `secretKey`, `customModels[]` escape hatch. Removes Ollama / dev-mode.
-- **0.1.x** — Earlier Ollama-powered prototype. See git history.
+- **0.3.0** — Eliminado el auto-montaje vía slots. Las componentes `<AskAiBubble />` y `<AskAiDialog />` ahora se montan manualmente desde `layout.tsx`.
+- **0.2.0** — Rewrite con OpenAI SDK. Streamdown en el cliente. Alcance de página mediante delimitadores `<<<DOCS_START>>>` / `<<<DOCS_END>>>` + escape de marcadores literales. System prompt con scope estricto, jerarquía priorizada de 7 reglas. Bucket de tokens por IP, `secretKey` opcional, escape hatch `customModels[]`. Elimina Ollama / modo dev.
+- **0.1.x** — Prototipo previo impulsado por Ollama. Consulta el historial de git.

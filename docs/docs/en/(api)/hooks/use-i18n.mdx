@@ -3,17 +3,11 @@ title: "Use I18n"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useI18n
-description: Manage and switch between different languages/locales.
----
-
-The `useI18n` hook returns details about the active documentation locale, lists available languages defined in `boltdocs.config.ts`, and provides a helper function to change the active locale.
+El hook `useI18n` retorna detalles sobre la región activa de la documentación, lista los idiomas disponibles definidos en `boltdocs.config.ts`, y proporciona una función auxiliar para cambiar la región activa.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useI18n } from 'boltdocs/client'
@@ -21,9 +15,9 @@ import { useI18n } from 'boltdocs/client'
 
 ---
 
-## Response Schema
+## Esquema de Respuesta
 
-The hook returns the following object parameters:
+El hook retorna los siguientes parámetros del objeto:
 
 ```ts
 interface UseI18nReturn {
@@ -43,9 +37,9 @@ interface LocaleOption {
 
 ---
 
-## Usage Example
+## Ejemplo de Uso
 
-Below is a reference language selection dropdown component crafted using custom buttons and the `useI18n` hook:
+A continuación se muestra un componente de selección de idioma de referencia construido con botones personalizados y el hook `useI18n`:
 
 ```tsx
 import React, { useState } from 'react'

@@ -3,17 +3,11 @@ title: "Use Tabs"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useTabs
-description: Retrieve category tabs and active sliding indicator style values.
----
-
-The `useTabs` hook retrieves the site's layout tabs/categories, tracks which category tab matches the active document routing, and generates inline styles to animate a sliding background indicator block.
+El hook `useTabs` obtiene las pestañas/categorías de diseño del sitio, rastrea qué pestaña de categoría coincide con el enrutamiento del documento activo, y genera estilos en línea para animar un bloque indicador de fondo deslizante.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useTabs } from 'boltdocs/client'
@@ -21,9 +15,9 @@ import { useTabs } from 'boltdocs/client'
 
 ---
 
-## Response Schema
+## Esquema de Respuesta
 
-The hook returns the following parameters:
+El hook retorna los siguientes parámetros:
 
 ```ts
 interface UseTabsReturn {
@@ -43,9 +37,9 @@ interface BoltdocsTab {
 
 ---
 
-## Usage Example
+## Ejemplo de Uso
 
-Below is a reference implementation showing how to build an animated horizontal tab selector inside a custom layout header:
+A continuación se muestra una implementación de referencia que enseña cómo construir un selector de pestañas horizontal animado dentro de un encabezado de diseño personalizado:
 
 ```tsx
 import React from 'react'

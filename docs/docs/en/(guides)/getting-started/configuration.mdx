@@ -3,14 +3,7 @@ title: "Configuration"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: Configuration
-sidebarPosition: 2
-description: A guided walkthrough of every top-level key in boltdocs.config.ts and the real-world problems each one solves.
----
-
-`boltdocs.config.ts` is the single configuration file for your entire documentation site. It lives at the root of your project alongside `package.json` and controls everything from the site title to the plugin stack and SEO behavior.
+`boltdocs.config.ts` es el único archivo de configuración para todo tu sitio de documentación. Vive en la raíz de tu proyecto junto a `package.json` y controla todo, desde el título del sitio hasta el stack de plugins y el comportamiento de SEO.
 
 ```ts title="boltdocs.config.ts"
 import { defineConfig } from 'boltdocs'
@@ -25,87 +18,87 @@ export default defineConfig({
 })
 ```
 
-Boltdocs reads this file at startup and generates a complete Vite configuration internally. You never need to touch a `vite.config.ts`.
+Boltdocs lee este archivo al iniciar y genera una configuración completa de Vite internamente. Nunca necesitas tocar un `vite.config.ts`.
   
 ---
 
-## Top-Level Keys
+## Claves de Nivel Superior
 
-| Property | Type | Default | Description |
+| Propiedad | Tipo | Por Defecto | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`siteUrl`** | `string` | `undefined` | The production URL of your site. Critical for generating `sitemap.xml` and canonical SEO tags. |
-| **`base`** | `string` | `'/'` | The sub-path where the docs site is deployed (e.g., `/docs`). All static assets and internal links will be relative to this. |
-| **`docsDir`** | `string` | `'./docs'` | Path to the directory containing your Markdown content. Relative to the project root. |
-| **`plugins`** | `BoltdocsPlugin[]` | `[]` | An array of Boltdocs plugins. See the [Plugins tab](/docs/plugins) for the full plugin system reference. |
-| **`theme`** | [`ThemeConfig`](#themeconfig) | — | Controls the visual appearance, navigation, sidebar, and display options. |
-| **`seo`** | [`SeoConfig`](#seoconfig) | — | Controls indexing behavior, Open Graph metadata, and structured data. |
-| **`experimental`** | [`BoltdocsExperimentalConfig`](#experimentalconfig) | — | Enables opt-in APIs that may evolve between releases. |
-| **`robots`** | [`RobotsConfig`](#robotsconfig) | — | Generates `robots.txt` and links your sitemap. |
-| **`integrations`** | [`IntegrationsConfig`](#integrationsconfig) | — | Enables third-party integrations such as Google Analytics 4 and Google Tag Manager. |
-| **`i18n`** | [`I18nConfig`](#i18nconfig) | — | Enables multi-language documentation with locale-based folder routing. |
-| **`versions`** | [`VersionsConfig`](#versionsconfig) | — | Enables side-by-side versioned documentation. |
-| **`collections`** | [`CollectionsConfig`](#collectionsconfig) | — | Configures the dynamic collections (blog) system for grouping related posts. |
-| **`directoryMeta`** | `Record<string, DirectoryMeta>` | — | Override sidebar titles, icons, and ordering for directories using `meta.json` files. |
-| **`security`** | [`SecurityConfig`](#securityconfig) | — | Configures HTTP security headers and CSP rules. |
-| **`vite`** | `ViteUserConfig` | — | Extends the internally generated Vite config with custom options. |
+| **`siteUrl`** | `string` | `undefined` | La URL de producción de tu sitio. Crítica para generar `sitemap.xml` y tags canónicos de SEO. |
+| **`base`** | `string` | `'/'` | La sub-ruta donde se despliega el sitio de docs (por ejemplo, `/docs`). Todos los assets estáticos y enlaces internos serán relativos a esto. |
+| **`docsDir`** | `string` | `'./docs'` | Ruta al directorio que contiene tu contenido Markdown. Relativa a la raíz del proyecto. |
+| **`plugins`** | `BoltdocsPlugin[]` | `[]` | Un array de plugins de Boltdocs. Consulta la pestaña [Plugins](/docs/plugins) para la referencia completa del sistema de plugins. |
+| **`theme`** | [`ThemeConfig`](#themeconfig) | — | Controla la apariencia visual, navegación, sidebar y opciones de visualización. |
+| **`seo`** | [`SeoConfig`](#seoconfig) | — | Controla la indexación, los metadatos Open Graph y los datos estructurados. |
+| **`experimental`** | [`BoltdocsExperimentalConfig`](#experimentalconfig) | — | Habilita APIs opt-in que pueden evolucionar entre releases. |
+| **`robots`** | [`RobotsConfig`](#robotsconfig) | — | Genera `robots.txt` y enlaza tu sitemap. |
+| **`integrations`** | [`IntegrationsConfig`](#integrationsconfig) | — | Habilita integraciones de terceros como Google Analytics 4 y Google Tag Manager. |
+| **`i18n`** | [`I18nConfig`](#i18nconfig) | — | Habilita documentación multilingüe con enrutamiento basado en carpetas por locale. |
+| **`versions`** | [`VersionsConfig`](#versionsconfig) | — | Habilita documentación versionada lado a lado. |
+| **`collections`** | [`CollectionsConfig`](#collectionsconfig) | — | Configura el sistema de colecciones dinámicas (blog) para agrupar publicaciones relacionadas. |
+| **`directoryMeta`** | `Record<string, DirectoryMeta>` | — | Sobreescribe títulos del sidebar, iconos y orden para directorios usando archivos `meta.json`. |
+| **`security`** | [`SecurityConfig`](#securityconfig) | — | Configura headers de seguridad HTTP y reglas CSP. |
+| **`vite`** | `ViteUserConfig` | — | Extiende la configuración de Vite generada internamente con opciones personalizadas. |
 
 ---
 
 ## `ThemeConfig`
 
-Controls the entire visual shell of your documentation site.
+Controla toda la shell visual de tu sitio de documentación.
 
-| Property | Type | Default | Description |
+| Propiedad | Tipo | Por Defecto | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`title`** | `string \| Record<string, string>` | `'Boltdocs'` | The main title shown in the navbar and browser tabs. Supports i18n locale key maps. |
-| **`description`** | `string` | — | A short description used in default SEO meta tags. |
-| **`logo`** | [`LogoConfig`](#logoconfig) | `undefined` | Custom logo images for light and dark modes. |
-| **`favicon`** | `string` | — | Path to the favicon (relative to `public/`). |
-| **`githubRepo`** | `string` | — | Repository in `owner/repo` format. Enables the GitHub link in the navbar automatically. |
-| **`navbar`** | `NavbarItem[]` | — | Top-level navigation links. Supports nested dropdown items. |
-| **`tabs`** | `TabConfig[]` | — | Horizontal tab strip above the sidebar. See [File-System Routing](/docs/guides/getting-started/routing). |
-| **`sidebar`** | `SidebarConfig` | — | Manually defined sidebar structure (disables auto-discovery for those prefixes). |
-| **`sidebarGroups`** | `Record<string, SidebarGroupConfig>` | — | Override group titles and icons without defining a full manual sidebar. |
-| **`codeTheme`** | [`CodeThemeConfig`](#codethemeconfig) | — | Shiki theme used for code block highlighting. |
-| **`editLink`** | `string` | — | URL template for the "Edit this page" link. Use `:path` as a placeholder for the current file's relative path. |
-| **`socialLinks`** | `SocialLink[]` | — | Extra icon links (Twitter/X, Discord, etc.) displayed in the navbar. |
-| **`communityHelp`** | `string` | — | Support link (e.g. Discord, slack or forum URL) shown in the page footer. |
-| **`version`** | `string` | — | Release version string displayed in the navbar. |
+| **`title`** | `string \| Record<string, string>` | `'Boltdocs'` | El título principal mostrado en la navbar y pestañas del navegador. Soporta mapas de claves de locale para i18n. |
+| **`description`** | `string` | — | Una descripción corta usada en meta tags de SEO por defecto. |
+| **`logo`** | [`LogoConfig`](#logoconfig) | `undefined` | Imágenes de logo personalizadas para modos claro y oscuro. |
+| **`favicon`** | `string` | — | Ruta al favicon (relativa a `public/`). |
+| **`githubRepo`** | `string` | — | Repositorio en formato `owner/repo`. Habilita el enlace de GitHub en la navbar automáticamente. |
+| **`navbar`** | `NavbarItem[]` | — | Enlaces de navegación de nivel superior. Soporta elementos anidados con dropdown. |
+| **`tabs`** | `TabConfig[]` | — | Franja de pestañas horizontal sobre el sidebar. Consulta [Enrutamiento por Sistema de Archivos](/docs/guides/getting-started/routing). |
+| **`sidebar`** | `SidebarConfig` | — | Estructura del sidebar definida manualmente (deshabilita el auto-descubrimiento para esos prefijos). |
+| **`sidebarGroups`** | `Record<string, SidebarGroupConfig>` | — | Sobreescribe títulos e iconos de grupos sin definir un sidebar manual completo. |
+| **`codeTheme`** | [`CodeThemeConfig`](#codethemeconfig) | — | Tema de Shiki usado para el resaltado de código. |
+| **`editLink`** | `string` | — | Plantilla de URL para el enlace "Editar esta página". Usa `:path` como placeholder para la ruta relativa del archivo actual. |
+| **`socialLinks`** | `SocialLink[]` | — | Enlaces de iconos extra (Twitter/X, Discord, etc.) mostrados en la navbar. |
+| **`communityHelp`** | `string` | — | Enlace de soporte (por ejemplo, URL de Discord, Slack o foro) mostrado en el pie de página. |
+| **`version`** | `string` | — | Cadena de versión del release mostrada en la navbar. |
 
 ### `LogoConfig`
 
-| Property | Type | Default | Description |
+| Propiedad | Tipo | Por Defecto | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`dark`** | `string` | — | Path to the logo image shown in dark mode (relative to `public/`). |
-| **`light`** | `string` | — | Path to the logo image shown in light mode. |
-| **`alt`** | `string` | Title | Alt text for the logo `<img>`. |
-| **`width`** | `number` | — | Explicit pixel width for the logo image. |
-| **`height`** | `number` | — | Explicit pixel height for the logo image. |
+| **`dark`** | `string` | — | Ruta a la imagen del logo mostrada en modo oscuro (relativa a `public/`). |
+| **`light`** | `string` | — | Ruta a la imagen del logo mostrada en modo claro. |
+| **`alt`** | `string` | Título | Texto alternativo para el `<img>` del logo. |
+| **`width`** | `number` | — | Ancho explícito en píxeles para la imagen del logo. |
+| **`height`** | `number` | — | Alto explícito en píxeles para la imagen del logo. |
 
 ### `CodeThemeConfig`
 
-| Property | Type | Default | Description |
+| Propiedad | Tipo | Por Defecto | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`light`** | `string` | `'github-light'` | Shiki theme name for light mode. |
-| **`dark`** | `string` | `'github-dark'` | Shiki theme name for dark mode. |
+| **`light`** | `string` | `'github-light'` | Nombre del tema de Shiki para modo claro. |
+| **`dark`** | `string` | `'github-dark'` | Nombre del tema de Shiki para modo oscuro. |
 
-Available themes: `github-light`, `github-dark`, `tokyo-night`, `dracula`, `nord`, `one-dark-pro`, `one-light`.
+Temas disponibles: `github-light`, `github-dark`, `tokyo-night`, `dracula`, `nord`, `one-dark-pro`, `one-light`.
 
 ---
 
 ## `SeoConfig`
 
-Controls how search engines index your site and how social shares look.
+Controla cómo los motores de búsqueda indexan tu sitio y cómo se ven los compartidos en redes sociales.
 
-| Property | Type | Default | Description |
+| Propiedad | Tipo | Por Defecto | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`indexing`** | `'all' \| 'none' \| 'noindex' \| 'nofollow'` | `'all'` | Controls the `<meta name="robots">` directive applied to every page. |
-| **`thumbnails`** | [`ThumbnailConfig`](#thumbnailconfig) | — | Generates Open Graph images for each page using a background template. |
-| **`structuredData`** | `StructuredData` | — | Emits JSON-LD in the document head. It is for search engines and crawlers, not the internal search index. |
+| **`indexing`** | `'all' \| 'none' \| 'noindex' \| 'nofollow'` | `'all'` | Controla la directiva `<meta name="robots">` aplicada a cada página. |
+| **`thumbnails`** | [`ThumbnailConfig`](#thumbnailconfig) | — | Genera imágenes Open Graph para cada página usando una plantilla de fondo. |
+| **`structuredData`** | `StructuredData` | — | Emite JSON-LD en el head del documento. Es para buscadores y crawlers, no para el índice de búsqueda interno. |
 
-### Structured data
+### Datos estructurados
 
-Use the Node-safe helpers from `boltdocs` in `boltdocs.config.ts`. For the most convenient API, see the [Structured Data API reference](/docs/api/structured-data) and use `createStructuredData({ website, article, breadcrumbs })`. Page-level `seo.structuredData` can be supplied in MDX frontmatter, and `<StructuredData />` is available for external React pages.
+Usa los helpers seguros para Node desde `boltdocs` en `boltdocs.config.ts`. Para la API más cómoda, consulta la [referencia de Structured Data](/docs/es/api/structured-data) y usa `createStructuredData({ website, article, breadcrumbs })`. `seo.structuredData` también puede definirse en el frontmatter MDX, y `<StructuredData />` está disponible para páginas React externas.
 
 ```ts
 import {
@@ -127,37 +120,37 @@ export default defineConfig({
 })
 ```
 
-Available helpers include `createWebSiteStructuredData`, `createArticleStructuredData`, and `createBreadcrumbStructuredData`.
+Los helpers disponibles incluyen `createWebSiteStructuredData`, `createArticleStructuredData` y `createBreadcrumbStructuredData`.
 
 ### `ThumbnailConfig`
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`background`** | `string` | Path (relative to `public/`) to the background image used for OG thumbnails. |
+| **`background`** | `string` | Ruta (relativa a `public/`) a la imagen de fondo usada para thumbnails OG. |
 
 ---
 
 ## `ExperimentalConfig`
 
-Experimental capabilities are disabled by default.
+Las capacidades experimentales están desactivadas por defecto.
 
-| Property | Type | Default | Description |
+| Propiedad | Tipo | Predeterminado | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`viewTransitions`** | `boolean \| { enabled?: boolean; types?: string[] }` | disabled | Uses the native View Transition API when available and falls back safely when it is not. |
-| **`fileRouting`** | `boolean` | disabled | Maps literal files in `docs/pages-external/` to external routes. |
+| **`viewTransitions`** | `boolean \| { enabled?: boolean; types?: string[] }` | desactivado | Usa la API nativa de View Transitions cuando existe y vuelve a un comportamiento normal cuando no. |
+| **`fileRouting`** | `boolean` | desactivado | Mapea archivos literales de `docs/pages-external/` a rutas externas. |
 
-See [Experimental Features](/docs/guides/advanced/experimental) for practical View Transitions examples, `TransitionLink`, and file-routing limitations.
+Consulta [Funciones Experimentales](/docs/es/guides/advanced/experimental) para ejemplos prácticos de View Transitions, `TransitionLink` y limitaciones de file-routing.
 
 ---
 
 ## `RobotsConfig`
 
-Generates a `robots.txt` file at build time.
+Genera un archivo `robots.txt` en tiempo de compilación.
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`rules`** | `RobotsRule[]` | Array of crawl rules. Each rule accepts `userAgent`, `allow`, and `disallow`. |
-| **`sitemaps`** | `string[]` | Full URLs to your sitemap(s) to include in `robots.txt`. |
+| **`rules`** | `RobotsRule[]` | Array de reglas de rastreo. Cada regla acepta `userAgent`, `allow` y `disallow`. |
+| **`sitemaps`** | `string[]` | URLs completas de tu(s) sitemap(s) para incluir en `robots.txt`. |
 
 ```ts title="boltdocs.config.ts"
 export default defineConfig({
@@ -174,63 +167,61 @@ export default defineConfig({
 
 ## `IntegrationsConfig`
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`ga4`** | [`GA4Config`](#ga4config) | Google Analytics 4 configuration. |
-| **`gtm`** | [`GTMConfig`](#gtmconfig) | Google Tag Manager configuration. |
+| **`ga4`** | [`GA4Config`](#ga4config) | Configuración de Google Analytics 4. |
+| **`gtm`** | [`GTMConfig`](#gtmconfig) | Configuración de Google Tag Manager. |
 
 ### `GA4Config`
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`measurementId`** | `string` | Your GA4 Measurement ID (e.g., `'G-XXXXXXXXXX'`). Boltdocs injects the tracking script automatically. |
+| **`measurementId`** | `string` | Tu ID de Medición de GA4 (por ejemplo, `'G-XXXXXXXXXX'`). Boltdocs inyecta el script de rastreo automáticamente. |
 
 ### `GTMConfig`
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`tagId`** | `string` | Your Google Tag Manager Container ID (e.g., `'GTM-XXXXXX'`). |
-| **`dataLayerName`** | `string` | Custom name for GTM dataLayer (defaults to `'dataLayer'`). |
-| **`preview`** | `string` | GTM preview/environment identifier query string. |
+| **`tagId`** | `string` | Tu ID de Contenedor de Google Tag Manager (por ejemplo, `'GTM-XXXXXX'`). |
+| **`dataLayerName`** | `string` | Nombre personalizado para el dataLayer de GTM (por defecto `'dataLayer'`). |
+| **`preview`** | `string` | Cadena de consulta de identificador de preview/entorno de GTM. |
 
 ---
 
 ## `I18nConfig`
 
-| Property | Type | Required | Description |
+| Propiedad | Tipo | Requerido | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`defaultLocale`** | `string` | ✓ | The primary language code (e.g., `'en'`). |
-| **`locales`** | `string[] \| Record<string, string>` | ✓ | All supported locale codes. |
-| **`localeConfigs`** | `Record<string, LocaleConfig>` | — | Per-locale display settings (label, direction, htmlLang). |
+| **`defaultLocale`** | `string` | ✓ | El código de idioma principal (por ejemplo, `'en'`). |
+| **`locales`** | `string[] \| Record<string, string>` | ✓ | Todos los códiges de locale soportados. |
+| **`localeConfigs`** | `Record<string, LocaleConfig>` | — | Configuraciones de visualización por locale (label, direction, htmlLang). |
 
-See the [Internationalization guide](/docs/integrations/globalization/i18n) for full details.
+Consulta la [guía de Internacionalización](/docs/integrations/globalization/i18n) para más detalles.
 
 ---
 
 ## `VersionsConfig`
 
-| Property | Type | Required | Description |
+| Propiedad | Tipo | Requerido | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`defaultVersion`** | `string` | ✓ | The version path considered the current default. |
-| **`versions`** | `VersionConfig[]` | ✓ | Ordered list of available versions. |
-| **`prefix`** | `string` | — | String prepended to every version's folder path. |
+| **`defaultVersion`** | `string` | ✓ | La ruta de versión considerada como la actual por defecto. |
+| **`versions`** | `VersionConfig[]` | ✓ | Lista ordenada de versiones disponibles. |
+| **`prefix`** | `string` | — | Cadena antepuesta a la ruta de carpeta de cada versión. |
 
-See the [Versioning guide](/docs/integrations/globalization/versioning) for full details.
+Consulta la [guía de Versionado](/docs/integrations/globalization/versioning) para más detalles.
 
 ---
 
 ## `CollectionsConfig`
 
-Configures the dynamic collections system — perfect for blogs, release notes, changelogs, or any content that follows a repeating structure. Collections are defined by bracketed folder names (e.g., `[blog]`) inside your `docs/` directory.
+Configura el sistema de colecciones dinámicas — perfecto para blogs, notas de release, changelogs o cualquier contenido que siga una estructura repetitiva. Las colecciones se definen con nombres de carpeta entre corchetes (por ejemplo, `[blog]`) dentro de tu directorio `docs/`.
 
-| Property | Type | Default | Description |
+| Propiedad | Tipo | Por Defecto | Descripción |
 | :--- | :--- | :--- | :--- |
-| **`postsPerPage`** | `number` | `10` | Number of posts displayed per page in collection listing indexes. |
-| **`defaultCollection`** | `string` | `'blog'` | The collection ID used by `BlogList` when no collection is explicitly specified. |
-| **`dateFormat`** | `string` | `'MMMM dd, yyyy'` | Date format string for rendering post dates in listing pages. |
-| **`sortBy`** | `'date' \| 'title' \| 'sidebarPosition'` | `'date'` | Field used to sort posts within a collection. |
-| **`labels`** | `Record<string, string \| Record<string, string>>` | — | Per-collection human-readable label. Falls back to the collection id. |
-| **`positions`** | `Record<string, number>` | — | Manual numeric ordering for collection indexes in the sidebar. |
+| **`postsPerPage`** | `number` | `10` | Número de publicaciones mostradas por página en los índices de listado de colecciones. |
+| **`defaultCollection`** | `string` | `'blog'` | El ID de colección usado por `BlogList` cuando no se especifica una colección explícitamente. |
+| **`dateFormat`** | `string` | `'MMMM dd, yyyy'` | Cadena de formato de fecha para renderizar las fechas de publicación en páginas de listado. |
+| **`sortBy`** | `'date' \| 'title' \| 'sidebarPosition'` | `'date'` | Campo usado para ordenar publicaciones dentro de una colección. |
 
 ```ts title="boltdocs.config.ts"
 export default defineConfig({
@@ -239,143 +230,57 @@ export default defineConfig({
     defaultCollection: 'blog',
     dateFormat: 'MMM dd, yyyy',
     sortBy: 'date',
-    labels: {
-      blog: 'Engineering Blog',
-      changelog: 'Release Notes',
-    },
-    positions: {
-      blog: 1,
-      changelog: 2,
-    },
   },
 })
 ```
 
-<Callout variant="tip" title="Quick Setup">
-Collections work out of the box with zero configuration. Simply create a bracketed folder like `[blog]` inside `docs/` and add your MDX files. Use `collections` only when you need to override the defaults.
+<Callout variant="tip" title="Configuración Rápida">
+Las colecciones funcionan de fábrica sin ninguna configuración. Simplemente crea una carpeta entre corchetes como `[blog]` dentro de `docs/` y agrega tus archivos MDX. Usa `collections` solo cuando necesites sobreescribir los valores por defecto.
 </Callout>
 
-See the [Collections guide](/docs/integrations/features/collections) for full details on folder conventions, custom views, and loader data.
-
----
-
-## `DraftsConfig`
-
-Control the visibility of draft pages across different environments.
-
-| Property | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| **`visible`** | `boolean` | `false` | If `true`, drafts are visible in all environments. |
-| **`environments`** | `string[]` | `[]` | Environments where drafts are visible (e.g., `['development', 'staging']`). |
-
-### Behavior
-
-- **Production** (default): Drafts are excluded from builds. Pages with `draft: true` in frontmatter are filtered out.
-- **Development**: Drafts are hidden by default unless `drafts.visible: true` or `BOLTDOCS_DRAFTS=true` is set.
-- **Environment override**: Set `BOLTDOCS_DRAFTS=true` to force drafts visible in any environment.
-- **Config override**: Set `drafts.visible: true` or `drafts.environments: ['development', 'staging']` to control per-environment visibility.
-
-### Environment Variables
-
-| Variable | Effect |
-| :--- | :--- |
-| `BOLTDOCS_DRAFTS=true` | Forces draft pages to be visible, overriding all config settings |
-| `NODE_ENV=production` | Default production mode — drafts are excluded unless `drafts.visible: true` |
-| `NODE_ENV=development` | Default development mode — drafts are hidden unless enabled via config or env |
-
-```md
----
-title: My Draft Page
-draft: true
----
-```
-
-<Callout variant="warning" title="Drafts in Production">
-When `drafts.visible: true` is set, draft pages will appear in production builds. Use this only for preview deployments or staging environments.
-</Callout>
-
----
-
-## `FeatureFlags`
-
-Control page visibility based on feature flags. Pages can declare required flags in their frontmatter, and only render when all flags are active in the config.
-
-| Property | Type | Description |
-| :--- | :--- | :--- |
-| **`featureFlags`** | `Record<string, boolean \| string>` | Feature flag definitions. `boolean` = always on/off. `string` = only active when matches `NODE_ENV`. |
-
-### How It Works
-
-1. Add `featureFlags` to your config:
-```ts title="boltdocs.config.ts"
-export default defineConfig({
-  featureFlags: {
-    'new-dashboard': true,           // Always visible
-    'beta-api': 'development',       // Only in development
-    'experimental-search': false,    // Always hidden
-  },
-})
-```
-
-2. Mark pages with required flags:
-```md
----
-title: New Dashboard
-featureFlags:
-  - new-dashboard
-  - beta-api
----
-```
-
-3. The page only renders when **all** declared flags are active in the config.
-
-<Callout variant="tip" title="Use Cases">
-- **Progressive rollout**: Enable features per environment
-- **A/B testing**: Toggle pages based on config
-- **Internal tools**: Hide pages from public builds
-</Callout>
+Consulta la [guía de Colecciones](/docs/integrations/features/collections) para más detalles sobre convenciones de carpetas, vistas personalizadas y datos de loaders.
 
 ---
 
 ## `directoryMeta`
 
-A powerful mechanism to customize how directories appear in the sidebar without writing any code. Boltdocs automatically scans for `meta.json` files inside your `docs/` directory and merges them into the sidebar configuration at build time.
+Un mecanismo poderoso para personalizar cómo aparecen los directorios en el sidebar sin escribir ningún código. Boltdocs escanea automáticamente archivos `meta.json` dentro de tu directorio `docs/` y los fusiona en la configuración del sidebar en tiempo de compilación.
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`title`** | `string` | Custom display title for the directory in the sidebar. |
-| **`order`** | `number \| string[]` | Numeric position or explicit ordering of child items within the directory. |
-| **`icon`** | `string` | Icon name displayed next to the directory label (supports Lucide icons). |
-| **`collapsible`** | `boolean` | Whether the sidebar group is collapsible. |
-| **`collapsed`** | `boolean` | Whether the group starts in a collapsed state. |
+| **`title`** | `string` | Título de visualización personalizado para el directorio en el sidebar. |
+| **`order`** | `number \| string[]` | Posición numérica u ordenamiento explícito de elementos hijos dentro del directorio. |
+| **`icon`** | `string` | Nombre del icono mostrado junto a la etiqueta del directorio (soporta iconos de Lucide). |
+| **`collapsible`** | `boolean` | Si el grupo del sidebar es plegable. |
+| **`collapsed`** | `boolean` | Si el grupo inicia en estado colapsado. |
 
-### Using `meta.json` Files (Recommended)
+### Usando Archivos `meta.json` (Recomendado)
 
-Drop a `meta.json` (or `_meta.json`) into any directory to configure it automatically:
+Coloca un `meta.json` (o `_meta.json`) en cualquier directorio para configurarlo automáticamente:
 
 ```json title="(guides)/getting-started/meta.json"
 {
-  "title": "Getting Started",
+  "title": "Primeros Pasos",
   "order": 1,
   "icon": "Rocket",
   "collapsed": false
 }
 ```
 
-### Using `directoryMeta` in Config
+### Usando `directoryMeta` en Configuración
 
-You can also define metadata directly in `boltdocs.config.ts` for directories you don't own or when you prefer centralized configuration:
+También puedes definir metadatos directamente en `boltdocs.config.ts` para directorios que no controlas o cuando prefieres una configuración centralizada:
 
 ```ts title="boltdocs.config.ts"
 export default defineConfig({
   directoryMeta: {
     'guides/getting-started': {
-      title: 'Quick Start',
+      title: 'Inicio Rápido',
       icon: 'Zap',
       order: 0,
     },
     'api': {
-      title: 'API Reference',
+      title: 'Referencia API',
       icon: 'Code2',
       collapsed: false,
     },
@@ -383,25 +288,25 @@ export default defineConfig({
 })
 ```
 
-<Callout variant="info" title="Path Format">
-Directory keys use the relative path from your `docs/` directory (e.g., `'guides/getting-started'`). The root directory is represented as `'.'`.
+<Callout variant="info" title="Formato de Ruta">
+Las claves de directorio usan la ruta relativa desde tu directorio `docs/` (por ejemplo, `'guides/getting-started'`). El directorio raíz se representa como `'.'`.
 </Callout>
 
 ---
 
 ## `SecurityConfig`
 
-Configure response headers, security settings, and Content Security Policy (CSP).
+Configura headers de respuesta, ajustes de seguridad y Content Security Policy (CSP).
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`enableCSP`** | `boolean` | Set to `true` to inject a default secure Content Security Policy header. |
-| **`headers`** | `Record<string, string>` | Custom HTTP headers sent on all requests. |
-| **`customHeaders`** | `Record<string, string>` | Additional override headers for the web server. |
+| **`enableCSP`** | `boolean` | Establece en `true` para inyectar un header de Content Security Policy seguro por defecto. |
+| **`headers`** | `Record<string, string>` | Headers HTTP personalizados enviados en todas las solicitudes. |
+| **`customHeaders`** | `Record<string, string>` | Headers de sobreescritura adicionales para el servidor web. |
 
 ---
 
-## Full Example
+## Ejemplo Completo
 
 ```ts title="boltdocs.config.ts"
 import { defineConfig } from 'boltdocs'
@@ -448,17 +353,9 @@ export default defineConfig({
     defaultCollection: 'blog',
     sortBy: 'date',
   },
-  drafts: {
-    visible: false,
-    environments: ['development'],
-  },
-  featureFlags: {
-    'new-dashboard': true,
-    'beta-api': 'development',
-  },
   directoryMeta: {
     'guides/getting-started': {
-      title: 'Quick Start',
+      title: 'Inicio Rápido',
       icon: 'Zap',
       order: 0,
     },

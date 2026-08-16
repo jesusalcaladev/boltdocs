@@ -3,316 +3,270 @@ title: "Boltdocs 3.1.0"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: "Boltdocs 3.1.0 — Project Nitro begins: turbo pipeline, Sätteri MDX, and more"
-description: "Project Nitro begins: the experimental --turbo pipeline, Sätteri MDX compilation, Zig/WASM critical CSS extraction, single-pass parsing, feature flags, drafts, collection hooks, PostHog support, and an RSS feed plugin."
-date: 2026-06-26
-cover: /blog-covers/Boltdocs-3.1.0.webp
-author:
-  name: Jesús Alcalá
-  avatar: /avatar.jpeg
-excerpt: "Project Nitro begins: the experimental --turbo pipeline, Sätteri MDX compilation, Zig/WASM critical CSS extraction, single-pass parsing, feature flags, drafts, collection hooks, PostHog support, and an RSS feed plugin."
-tags: ["Release"]
-tab: "3.1.0"
----
+## Esta se trata de los cimientos
 
-## This one's about the foundation
-
-3.0.0 was about raw speed — the native parser. 3.1.0 is about the next layer: turbo mode. This is Phase 1 of Project Nitro, and it changes what runs under the hood when you build.
+3.0.0 fue sobre velocidad pura — el parser nativo. 3.1.0 es sobre la siguiente capa: el modo turbo. Esta es la Fase 1 del Proyecto Nitro, y cambia lo que corre por debajo cuando construyes.
 
 <Callout type="info">
-  An experimental `--turbo` flag that swaps the MDX compiler for Rust-powered Sätteri, replaces Beasties with Zig-compiled critical CSS extraction, and enables a single-pass parser mode. This is the first step toward 4x faster builds.
+  Una bandera experimental `--turbo` que reemplaza el compilador MDX por Sätteri (Rust), Beasties por extracción de CSS crítico compilada con Zig, y activa un modo parser de pasada única. Este es el primer paso hacia builds 4x más rápidos.
 </Callout>
 
 <Callout type="info">
-  **Build output optimized**: Beasties critical CSS inlining has been disabled by default, reducing total HTML output by ~7.3 MB. The default locale duplication bug has also been fixed, saving an additional ~8 MB. Combined, the build output is now ~60% smaller.
+  **Build output optimizado**: Beasties de inlining de CSS crítico ha sido desactivado por defecto, reduciendo el HTML total en ~7.3 MB. El bug de duplicación del locale por defecto también ha sido corregido, ahorrando ~8 MB adicionales. Combinado, el output del build es ahora ~60% más pequeño.
 </Callout>
 
 ---
 
-## `--turbo` — Experimental Build Mode
+## `--turbo` — Modo Build Experimental
 
-The new `--turbo` flag activates three native-powered optimizations in a single command:
+La nueva bandera `--turbo` activa tres optimizaciones nativas en un solo comando:
 
 ```bash
 pnpm boltdocs build --turbo
 ```
 
-Or set it permanently via environment variable:
+O configúralo permanentemente con una variable de entorno:
 
 ```bash
 BOLTDOCS_TURBO=true pnpm boltdocs build
 ```
 
-What changes under the hood:
+Qué cambia por debajo:
 
-| Component | Without `--turbo` | With `--turbo` |
-| ----------- | ------------------- | ---------------- |
-| MDX compilation | `@mdx-js/rollup` + remark/rehype JS plugins | Sätteri (Rust) + native plugins |
-| Critical CSS | None (external CSS only) | `@bdocs/zig-critters` (Zig/WASM) |
-| Parser | Multi-pass mode | Single-pass with shared buffer |
+| Componente | Sin `--turbo` | Con `--turbo` |
+| ------------ | --------------- | --------------- |
+| Compilación MDX | `@mdx-js/rollup` + plugins remark/rehype JS | Sätteri (Rust) + plugins nativos |
+| CSS crítico | Ninguno (CSS externo solamente) | `@bdocs/zig-critters` (Zig/WASM) |
+| Parser | Modo multi-pasada | Pasada única con buffer compartido |
 
 <Callout type="warning">
-  This flag is experimental. You may encounter CSS compatibility issues from zig-critters or MDX compilation differences from Sätteri. If something breaks, remove `--turbo` and report the issue — your standard build is unaffected.
+  Esta bandera es experimental. Puedes encontrar problemas de compatibilidad de CSS por zig-critters o diferencias de compilación MDX por Sätteri. Si algo falla, elimina `--turbo` y reporta el problema — tu build estándar no se ve afectado.
 </Callout>
 
 ---
 
-## Sätteri MDX — Rust-Powered Compilation
+## Sätteri MDX — Compilación Impulsada por Rust
 
-The biggest change in `--turbo` mode is the MDX compiler. Sätteri replaces `@mdx-js/rollup` with a Rust-based processor built on pulldown-cmark with MDX extensions.
+El cambio más grande en modo `--turbo` es el compilador MDX. Sätteri reemplaza `@mdx-js/rollup` con un procesador basado en Rust, construido sobre pulldown-cmark con extensiones MDX.
 
-The pipeline:
+El pipeline:
 
-1. Rust parser (`satteri-pulldown-cmark`) parses Markdown/MDX into an arena-allocated AST
-2. MDAST plugins run on the arena (remark-meta, remark-gfm)
-3. AST converts to HAST
-4. HAST plugins run (rehype-slug, rehype-shiki)
-5. `mdxToJs()` compiles HAST to JSX output
+1. El parser Rust (`satteri-pulldown-cmark`) parsea Markdown/MDX a un AST asignado en arena
+2. Los plugins MDAST corren sobre la arena (remark-meta, remark-gfm)
+3. El AST se convierte a HAST
+4. Los plugins HAST corren (rehype-slug, rehype-shiki)
+5. `mdxToJs()` compila el HAST a salida JSX
 
-Benchmarks from the Boltdocs docs site (241 pages):
+Benchmarks del sitio de documentación de Boltdocs (241 páginas):
 
-| Metric | Default (`@mdx-js/rollup`) | Turbo (Sätteri) | Difference |
-| -------- | --------------------------- | ----------------- | ------------ |
-| Build Time | 97.3s | 43.9s | **2.2x faster** |
-| SSG Total | 98.7s | 45.1s | **54% faster** |
-| JavaScript Output | 10.5 MB | 8.4 MB | **20% smaller** |
-| HTML Output | 25.65 MB | 15.51 MB | **40% smaller** |
+| Métrica | Default (`@mdx-js/rollup`) | Turbo (Sätteri) | Diferencia |
+| --------- | --------------------------- | ----------------- | ------------ |
+| Build Time | 97.3s | 43.9s | **2.2x más rápido** |
+| SSG Total | 98.7s | 45.1s | **54% más rápido** |
+| Salida JavaScript | 10.5 MB | 8.4 MB | **20% menos** |
+| Salida HTML | 25.65 MB | 15.51 MB | **40% menos** |
 
-Sätteri also includes three native sub-plugins that replace the standard remark/rehype equivalents:
+Sätteri también incluye tres sub-plugins nativos que reemplazan los equivalentes estándar de remark/rehype:
 
-- **`satteriRemarkMetaPlugin`** — captures code fence meta strings into `hProperties.metastring`
-- **`satteriRehypeSlugPlugin`** — adds `id` attributes to headings
-- **`satteriRehypeShikiPlugin`** — Shiki syntax highlighting via HAST visitor
+- **`satteriRemarkMetaPlugin`** — captura las meta strings de las cercas de código en `hProperties.metastring`
+- **`satteriRehypeSlugPlugin`** — agrega atributos `id` a los encabezados
+- **`satteriRehypeShikiPlugin`** — resaltado de sintaxis Shiki via visitante HAST
 
-### Fallback behavior
+### Comportamiento de fallback
 
-If Sätteri fails to compile a file, it automatically falls back to `@mdx-js/rollup` with basic plugins (remark-gfm, remark-frontmatter, rehype-slug). Your build won't break — it just won't be turbo for that file.
+Si Sätteri falla al compilar un archivo, automáticamente vuelve a `@mdx-js/rollup` con plugins básicos (remark-gfm, remark-frontmatter, rehype-slug). Tu build no se rompe — simplemente no es turbo para ese archivo.
 
-### Known limitation: legacy plugin compatibility
+### Limitación conocida: compatibilidad con plugins legacy
 
-Sätteri uses a Rust arena for HAST nodes. Standard unified/remark/rehype plugins that mutate nodes in place won't work — Sätteri requires a return-to-replace pattern. If you use custom plugins via `remarkPlugins` or `rehypePlugins` in your config, they may not apply in turbo mode. The adapter layer detects this and logs a warning.
+Sätteri usa una arena Rust para los nodos HAST. Los plugins estándar de unified/remark/rehype que mutan nodos en su lugar no funcionan — Sätteri requiere un patrón de retorno-para-reemplazar. Si usas plugins personalizados via `remarkPlugins` o `rehypePlugins` en tu configuración, pueden no aplicarse en modo turbo. La capa de adaptador detecta esto y muestra un warning.
 
-For now, turbo mode is best for sites with standard MDX (code blocks, GFM tables, frontmatter). Custom plugin-heavy sites should stick with the default compiler.
-
----
-
-## `@bdocs/zig-critters` — Zig-Compiled Critical CSS
-
-Beasties extracts critical CSS by loading your HTML and CSS, matching selectors, and inlining only the rules that apply above the fold. It works — but it's written in JavaScript.
-
-`@bdocs/zig-critters` is a complete rewrite in Zig, compiled to WebAssembly. Same algorithm, native speed.
-
-How it works:
-
-1. Loads the pre-compiled WASM binary on first use
-2. Encodes your HTML and CSS into WASM linear memory
-3. Parses CSS into rules, parses HTML into a flat element list
-4. Matches selectors against elements, marks unused rules
-5. Serializes only the critical rules back to JS
-
-The result is injected as a `<style data-zig-critters>...</style>` tag before `</head>`.
-
-### What it supports
-
-- `@media` and `@supports` containers — kept if any child rule matches
-- `@keyframes` — three strategies: `critical` (only used), `all`, `none`
-- `@font-face` — optional inline via `inline_fonts`
-- `@property` rules — always kept
-- Comment-based include/exclude directives
-- CSS minification (enabled by default)
-
-### Known limitation: CSS compatibility
-
-zig-critters strips pseudo-classes and pseudo-elements when matching (matching Beasties behavior). This means `:hover`, `:focus`, and viewport-dependent selectors are matched against their base element only. Some edge cases with complex selector chains may produce different critical CSS output than Beasties.
-
-If you notice styling issues in turbo mode, try removing `--turbo` to confirm it's a zig-critters issue, then report it with a reproduction.
+Por ahora, el modo turbo funciona mejor para sitios con MDX estándar (bloques de código, tablas GFM, frontmatter). Los sitios con muchos plugins personalizados deben usar el compilador estándar.
 
 ---
 
-## Single-Pass Parser Mode
+## `@bdocs/zig-critters` — CSS Crítico Compilado con Zig
 
-The native Zig parser already runs 5-6x faster than the old JS parser. In turbo mode, it switches to a single-pass algorithm:
+Beasties extrae CSS crítico cargando tu HTML y CSS, emparejando selectores, e inlineando solo las reglas que aplican above the fold. Funciona — pero está escrito en JavaScript.
 
-- **Normal mode**: `parseDoc()` — two passes (one for frontmatter/headings, one for plain text)
-- **Turbo mode**: `parseDocSinglePass()` — one pass with a shared `ParseContext` buffer
+`@bdocs/zig-critters` es una reescritura completa en Zig, compilada a WebAssembly. Mismo algoritmo, velocidad nativa.
 
-Same output, less memory allocation. The single-pass mode generates headings, plain text, and content in one scan with arena-style allocation.
+Cómo funciona:
+
+1. Carga el binario WASM pre-compilado en el primer uso
+2. Codifica tu HTML y CSS en la memoria lineal de WASM
+3. Parsea CSS a reglas, parsea HTML a una lista plana de elementos
+4. Empareja selectores contra elementos, marca reglas no usadas
+5. Serializa solo las reglas críticas de vuelta a JS
+
+El resultado se inyecta como un tag `<style data-zig-critters>...</style>` antes de `</head>`.
+
+### Qué soporta
+
+- Contenedores `@media` y `@supports` — se mantienen si alguna regla hija coincide
+- `@keyframes` — tres estrategias: `critical` (solo las usadas), `all`, `none`
+- `@font-face` — inline opcional via `inline_fonts`
+- Reglas `@property` — siempre se mantienen
+- Directivas de include/exclude basadas en comentarios
+- Minificación de CSS (habilitada por defecto)
+
+### Limitación conocida: compatibilidad de CSS
+
+zig-critters elimina pseudo-clases y pseudo-elementos al emparejar (comportamiento equivalente a Beasties). Esto significa que `:hover`, `:focus` y selectores dependientes del viewport se emparejan solo contra su elemento base. Algunos casos bordeos con cadenas de selectores complejas pueden producir CSS crítico diferente al de Beasties.
+
+Si notas problemas de estilos en modo turbo, intenta eliminar `--turbo` para confirmar que es un issue de zig-critters, luego reportalo con una reproducción.
 
 ---
 
-## Feature Flags & Drafts
+## Modo Parser de Pasada Única
 
-Control which pages are visible in each environment without code changes or conditional builds.
+El parser nativo en Zig ya corre 5-6x más rápido que el antiguo parser JS. En modo turbo, cambia a un algoritmo de pasada única:
 
-### Drafts
+- **Modo normal**: `parseDoc()` — dos pasadas (una para frontmatter/headings, otra para texto plano)
+- **Modo turbo**: `parseDocSinglePass()` — una pasada con un `ParseContext` buffer compartido
 
-Mark any page as a draft in frontmatter:
+Misma salida, menos asignación de memoria. El modo de pasada única genera encabezados, texto plano y contenido en un solo escaneo con estilo de arena.
+
+---
+
+## Feature Flags y Borradores
+
+Controla qué páginas son visibles en cada entorno sin cambios de código ni builds condicionales.
+
+### Borradores
+
+Marca cualquier página como borrador en el frontmatter:
 
 ```md
 ---
-title: Upcoming Feature
+title: Próxima Función
 draft: true
 ---
 ```
 
-Draft pages are automatically excluded from production builds. In development, drafts are visible by default. Control visibility via config:
+Las páginas en borrador se excluyen automáticamente de los builds de producción. En desarrollo, los borradores son visibles por defecto. Controla la visibilidad via config:
 
 ```ts
 export default defineConfig({
   drafts: {
-    visible: false,              // Hide in all environments
-    environments: ['development', 'staging'],  // Or per-environment
+    visible: false,              // Ocultar en todos los entornos
+    environments: ['development', 'staging'],  // O por entorno
   },
 })
 ```
 
-Or use the `BOLTDOCS_DRAFTS=true` environment variable to force visibility.
+O usa la variable de entorno `BOLTDOCS_DRAFTS=true` forzar la visibilidad.
 
 ### Feature Flags
 
-Define feature flags in your config:
+Define feature flags en tu config:
 
 ```ts
 export default defineConfig({
   featureFlags: {
-    'new-dashboard': true,           // Always visible
-    'beta-api': 'development',       // Only in development
-    'experimental-search': false,    // Always hidden
+    'new-dashboard': true,           // Siempre visible
+    'beta-api': 'development',       // Solo en desarrollo
+    'experimental-search': false,    // Siempre oculto
   },
 })
 ```
 
-Then mark pages with required flags:
+Luego marca las páginas con flags requeridos:
 
 ```md
 ---
-title: New Dashboard
+title: Nuevo Dashboard
 featureFlags:
   - new-dashboard
   - beta-api
 ---
 ```
 
-The page only renders when **all** declared flags are active. Perfect for progressive rollouts, A/B testing, or hiding internal tools from production.
+La página solo se renderiza cuando **todos** los flags declarados están activos. Perfecto para lanzamientos progresivos, pruebas A/B u ocultar herramientas internas de producción.
 
-<Callout variant="info" title="Coming Soon">
-Feature flags will integrate with the Ask AI plugin in v3.2.0 to enable context-aware responses based on enabled features.
+<Callout variant="info" title="Próximamente">
+Los feature flags se integrarán con el plugin Ask AI en v3.2.0 para habilitar respuestas contextuales basadas en funciones habilitadas.
 </Callout>
 
 ---
 
-## Build Output Optimizations
+## Optimizaciones del Build Output
 
-### Beasties Disabled — Why?
+### Beasties Desactivado — Por Qué?
 
-Beasties was previously enabled by default, extracting "critical" CSS and inlining it into every HTML page as `<style>` tags. The problem: Beasties has no viewport awareness — it doesn't use a headless browser. It simply matches CSS selectors against the DOM and classifies any rule that matches *any* element as "critical."
+Beasties estaba habilitado por defecto, extrayendo CSS "crítico" e inlineandolo en cada página HTML como tags `<style>`. El problema: Beasties no tiene conciencia del viewport — no usa un navegador headless. Simplemente empareja selectores CSS contra el DOM y clasifica cualquier regla que coincida con *cualquier* elemento como "crítica."
 
-With Tailwind CSS, nearly every utility class is used somewhere on the page. This means Beasties inlined almost the entire CSS bundle (~37 KB) into every single page. Across 246 pages, that's **7.3 MB of duplicated CSS** — a 75x bloat over the actual 99 KB CSS file.
+Con Tailwind CSS, casi cada clase de utilidad se usa en algún lugar de la página. Esto significa que Beasties inlineó casi todo el bundle CSS (~37 KB) en cada página. A través de 246 páginas, eso es **7.3 MB de CSS duplicado** — 75x de bloat sobre el archivo CSS real de 99 KB.
 
-I considered two alternatives:
+Consideré dos alternativas:
 
-1. **Adding viewport intelligence to Beasties** — This would require running a headless browser during the build to determine which CSS rules are truly above-the-fold. It works, but it makes the build significantly slower (Beasties is already the slowest step in the pipeline).
+1. **Agregar inteligencia de viewport a Beasties** — Esto requeriría ejecutar un navegador headless durante el build para determinar qué reglas CSS están realmente above-the-fold. Funciona, pero hace el build significativamente más lento (Beasties ya es el paso más lento del pipeline).
 
-2. **Disabling Beasties entirely** — Pages load CSS via a single external `<link>` tag. The browser caches it after the first page load. No inlined `<style>` tags, no duplicated CSS, no build slowdown.
+2. **Desactivar Beasties completamente** — Las páginas cargan CSS via un solo tag `<link>` externo. El navegador lo cachea después de la primera carga. Sin tags `<style>` inlineados, sin CSS duplicado, sin ralentización del build.
 
-I chose option 2. The CSS file is only 99 KB and compresses well with gzip. Modern browsers handle external stylesheets efficiently — the cache hit rate across pages is excellent.
+Elegí la opción 2. El archivo CSS es solo 99 KB y se comprime bien con gzip. Los navegadores modernos manejan stylesheets externos eficientemente — la tasa de aciertos de caché entre páginas es excelente.
 
 <Callout type="info">
-  **Turbo mode difference**: In `--turbo` mode, `@bdocs/zig-critters` (Zig/WASM) handles critical CSS extraction. It's orders of magnitude faster than Beasties and can intelligently extract only the truly critical CSS. If you need critical CSS inlining for performance-sensitive deployments, use `--turbo`.
+  **Diferencia en modo turbo**: En modo `--turbo`, `@bdocs/zig-critters` (Zig/WASM) maneja la extracción de CSS crítico. Es órdenes de magnitud más rápido que Beasties y puede extraer inteligentemente solo el CSS verdaderamente crítico. Si necesitas inlining de CSS crítico para despliegues sensibles al rendimiento, usa `--turbo`.
 </Callout>
 
-### Duplicate Locale Fix
+### Corrección de Locale Duplicado
 
-Previously, `generateI18nFallbacks()` created locale-prefixed copies of the default locale's content. For a site with `en` (default) and `es` locales, every English page existed twice:
+Anteriormente, `generateI18nFallbacks()` creaba copias con prefijo de locale del contenido del locale por defecto. Para un sitio con locales `en` (por defecto) y `es`, cada página en inglés existía dos veces:
 
-- `/docs/api/structured-data` — the original
-- `/docs/en/api/structured-data` — an identical copy
+- `/docs/api/structured-data` — el original
+- `/docs/en/api/structured-data` — una copia idéntica
 
-This resulted in **74 duplicate HTML files** totaling **~8 MB** of wasted space. The fix skips generating fallback routes for the default locale — its content already exists at the root level.
+Esto resultó en **74 archivos HTML duplicados** totalizando **~8 MB** de espacio desperdiciado. La corrección omite la generación de rutas de fallback para el locale por defecto — su contenido ya existe a nivel raíz.
 
-### Results
+### Resultados
 
-| Metric | Before | After | Savings |
-| -------- | -------- | ------- | --------- |
+| Métrica | Antes | Después | Ahorro |
+| --------- | ------- | --------- | -------- |
 | HTML output (total) | 25.4 MB | ~10.1 MB | **~15.3 MB (60%)** |
-| Per-page size (avg) | ~217 KB | ~180 KB | ~37 KB per page |
-| Duplicate pages | 74 | 0 | **74 files eliminated** |
+| Tamaño por página (promedio) | ~217 KB | ~180 KB | ~37 KB por página |
+| Páginas duplicadas | 74 | 0 | **74 archivos eliminados** |
 
 ---
 
-## Other bits
+## Otros detalles
 
-- **Plugin timing visibility** — the turbo build now reports per-plugin timing in the build output, so you can see exactly where time is spent
-- **Lazy-loaded Sätteri** — the Sätteri plugin is dynamically imported on first use, not at startup. If you're not using `--turbo`, there's zero overhead
-- **Cache separation** — Sätteri and the default MDX compiler use separate cache namespaces (`v6-fallback` vs `v3`). Switching between turbo and non-turbo modes doesn't corrupt cached transforms
-- **Beasties fallback** — if zig-critters WASM binary is missing, Beasties takes over with a warning. Your build never fails because of a missing binary
-- **Duplicate `crossorigin` fixed** — the regex that adds `crossorigin` to stylesheet links now avoids duplicating the attribute when it's already present
-- **PostHog integration** — built-in support for [PostHog](https://posthog.com/) product analytics. Configure via `integrations.analytics.posthog` with your project API key, and the PostHog snippet is injected automatically. Supports EU cloud, session recording, and autocapture (off by default)
-
----
-
-## RSS Feed Plugin
-
-The `@bdocs/plugin-rss` plugin generates RSS 2.0 and Atom feeds from your documentation routes with zero configuration.
-
-Feeds include all routes by default, organized into a clean `rss/` directory:
-
-```
-dist/
-  rss/
-    feed-en.xml
-    feed-es.xml
-```
-
-### Quick Start
-
-```sh
-pnpm add @bdocs/plugin-rss
-```
-
-```ts title="boltdocs.config.ts"
-import { defineConfig } from 'boltdocs'
-import rssPlugin from '@bdocs/plugin-rss'
-
-export default defineConfig({
-  siteUrl: 'https://my-docs.com',
-  plugins: [rssPlugin()],
-})
-```
-
-### Options
-
-| Option | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `limit` | `number` | unlimited | Max items per feed (1–500) |
-| `paths` | `string[]` | all routes | Filter by path prefix |
-| `collections` | `string[]` | all collections | Filter by collection name |
-| `format` | `'rss' \| 'atom' \| 'both'` | `'rss'` | Feed format(s) to generate |
-
-See the [full RSS plugin docs](/docs/plugins/plugin-rss) for details.
+- **Visibilidad de tiempos de plugins** — el build turbo ahora reporta tiempos por plugin en la salida del build, para que veas exactamente dónde se pasa el tiempo
+- **Sätteri lazy-loaded** — el plugin Sätteri se importa dinámicamente en el primer uso, no al iniciar. Si no usas `--turbo`, no hay sobrecarga
+- **Separación de caché** — Sätteri y el compilador MDX estándar usan namespaces de caché separados (`v6-fallback` vs `v3`). Cambiar entre modos turbo y no-turbo no corrompe los transforms cacheados
+- **Fallback de Beasties** — si el binario WASM de zig-critters no existe, Beasties toma el control con un warning. Tu build nunca falla por un binario faltante
+- **`crossorigin` duplicado corregido** — el regex que agrega `crossorigin` a los links de stylesheet ahora evita duplicar el atributo cuando ya está presente
+- **Integración con PostHog** — soporte integrado para [PostHog](https://posthog.com/). Configura via `integrations.analytics.posthog` con tu clave API del proyecto, y el snippet de PostHog se inyecta automáticamente. Soporta nube de la UE, grabación de sesión y autocapture (desactivado por defecto)
 
 ---
 
-## Upgrading
+## Actualización
 
-No breaking changes. The `--turbo` flag is opt-in — your existing build command works exactly the same.
+Sin breaking changes. La bandera `--turbo` es optativa — tu comando de build existente funciona exactamente igual.
 
-To try turbo mode:
+Para probar el modo turbo:
 
 ```bash
 pnpm boltdocs build --turbo
 ```
 
-If you hit issues, remove the flag. The standard build is unchanged.
+Si tienes problemas, elimina la bandera. El build estándar no cambia.
 
 ---
 
-Install or update:
+## Qué Sigue
+
+La Fase 2 de Nitro ya está en progreso:
+
+- **FileStore shardeado** — reemplazando la caché monolítica de rutas con shards por archivo
+- **Caché por ruta + parches delta** — cambiar un archivo no invalidará todas las rutas
+- **HMR delta de frontmatter** — editar un título no recargará el navegador
+- **Worker threads para MDX** — transforms MDX en paralelo entre núcleos del CPU
+- **Mapa de dependencias de código cliente** — reconstruir solo las páginas afectadas por un cambio CSS
+
+Instala o actualiza:
 
 ```bash
 pnpm add boltdocs@latest
 ```
 
-Check the [full docs](/docs/) to explore everything new.
+Revisa la [documentación completa](/docs/) para explorar todo lo nuevo.

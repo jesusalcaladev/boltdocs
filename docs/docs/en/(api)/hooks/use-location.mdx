@@ -3,17 +3,11 @@ title: "Use Location"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useLocation
-description: Wrapper around React Router DOM location hook to access current router path metadata.
----
-
-The `useLocation` hook exposes details about the current URL route location (pathname, search queries, and navigation state parameters) in custom components.
+El hook `useLocation` expone detalles sobre la ubicación de la ruta URL actual (pathname, consultas de búsqueda y parámetros de estado de navegación) en componentes personalizados.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useLocation } from 'boltdocs/client'
@@ -21,9 +15,9 @@ import { useLocation } from 'boltdocs/client'
 
 ---
 
-## Response Schema
+## Esquema de Respuesta
 
-The hook returns the standard location structure from React Router:
+El hook retorna la estructura de ubicación estándar de React Router:
 
 ```ts
 interface Location {
@@ -37,9 +31,9 @@ interface Location {
 
 ---
 
-## Usage Example
+## Ejemplo de Uso
 
-Below is a custom tracking widget showing how to capture location changes using the `useLocation` hook:
+A continuación se muestra un widget de rastreo personalizado que enseña cómo capturar cambios de ubicación usando el hook `useLocation`:
 
 ```tsx
 import React, { useEffect } from 'react'

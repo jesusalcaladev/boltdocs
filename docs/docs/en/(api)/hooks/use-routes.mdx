@@ -3,17 +3,11 @@ title: "Use Routes"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useRoutes
-description: Access metadata and config mappings for all compiled documentation pages.
----
-
-The `useRoutes` hook gives access to metadata for all generated page paths, along with localized version configurations.
+El hook `useRoutes` brinda acceso a los metadatos de todas las rutas de páginas generadas, junto con configuraciones de versión localizadas.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useRoutes } from 'boltdocs/client'
@@ -21,18 +15,18 @@ import { useRoutes } from 'boltdocs/client'
 
 ---
 
-## Return Values
+## Valores de Retorno
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`allRoutes`** | `RouteMeta[]` | Listing of all compiled documentation page routing records. |
-| **`currentRoute`** | `RouteMeta \| undefined` | Metadata representing the active route route. |
-| **`currentLocale`** | `string \| undefined` | The active language locale identifier. |
-| **`currentVersion`** | `string \| undefined` | The active configuration version tag. |
+| **`allRoutes`** | `RouteMeta[]` | Lista de todos los registros de enrutamiento de páginas de documentación compiladas. |
+| **`currentRoute`** | `RouteMeta \| undefined` | Metadatos que representan la ruta activa. |
+| **`currentLocale`** | `string \| undefined` | El identificador de región de idioma activo. |
+| **`currentVersion`** | `string \| undefined` | La etiqueta de versión de configuración activa. |
 
 ---
 
-## RouteMeta Interface
+## Interfaz RouteMeta
 
 ```ts
 interface RouteMeta {
@@ -47,7 +41,7 @@ interface RouteMeta {
 
 ---
 
-## Example: Displaying Sub-Pages Index
+## Ejemplo: Mostrando Índice de Sub-Páginas
 
 ```tsx
 import { useRoutes } from 'boltdocs/client'

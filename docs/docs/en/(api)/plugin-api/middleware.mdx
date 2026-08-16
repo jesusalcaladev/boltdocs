@@ -3,13 +3,44 @@ title: "Middleware"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+# `ctx.middleware` — PluginMiddlewareAPI
+
+Registra entradas de middleware transform. El campo `name` es opcional
+— cuando se omite, se usa el nombre del plugin como contexto.
+
+```ts
+ctx.middleware.add({
+  name: 'mi-plugin:html',
+  transformHtml: async (_ctx, { html, path }) => ({
+    html: html.replace('</body>', '<footer>© 2026</footer></body>'),
+  }),
+})
+
+ctx.middleware.has('mi-plugin:html')  // → boolean
+ctx.middleware.list()                 // → readonly PluginTransformMiddleware[]
+ctx.middleware.remove('mi-plugin:html')
+```
+
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+## Hooks de transformación
 
-Original Spanish translation: /docs/es/(api)/plugin-api/middleware.mdx
+Cada entrada de middleware puede implementar uno o más hooks de
+transformación:
+
+| Hook | Firma | Cuándo se ejecuta |
+| :--- | :--- | :--- |
+| `transformSource` | `(ctx, { code, filePath }) => { code }` | Antes de la compilación MDX |
+| `transformMdx` | `(ctx, { code, filePath }) => { code }` | Después de la compilación MDX |
+| `transformHtml` | `(ctx, { html, path }) => { html }` | Después del renderizado HTML |
+
+Los middlewares se ejecutan en orden de registro. Cada hook es una
+cadena — la salida de un middleware alimenta la entrada del siguiente.
+
+---
+
+## Ver también
+
+- [PluginContext](/docs/es/api/plugin-api) — objeto de contexto base
+- [Server](/docs/es/api/plugin-api/server) — middleware HTTP y ciclo de vida del servidor
+- [HMR](/docs/es/api/plugin-api/hmr) — observación de archivos y eventos personalizados del dev server

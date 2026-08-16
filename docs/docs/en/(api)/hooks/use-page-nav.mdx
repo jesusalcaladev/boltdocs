@@ -3,17 +3,11 @@ title: "Use Page Nav"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: usePageNav
-description: Access previous and next documentation page routes relative to the active sidebar.
----
-
-The `usePageNav` hook resolves the adjacent nodes in the sidebar list to construct previous and next page link triggers.
+El hook `usePageNav` resuelve los nodos adyacentes en la lista de la barra lateral para construir los disparadores de enlaces de páginas anterior y siguiente.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { usePageNav } from 'boltdocs/client'
@@ -21,16 +15,16 @@ import { usePageNav } from 'boltdocs/client'
 
 ---
 
-## Return Values
+## Valores de Retorno
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`prev`** | `PageNavItem \| null` | Metadata of the preceding page, or `null` if on the first page. |
-| **`next`** | `PageNavItem \| null` | Metadata of the succeeding page, or `null` if on the last page. |
+| **`prev`** | `PageNavItem \| null` | Metadatos de la página anterior, o `null` si estás en la primera página. |
+| **`next`** | `PageNavItem \| null` | Metadatos de la página siguiente, o `null` si estás en la última página. |
 
 ---
 
-## PageNavItem Schema
+## Esquema de PageNavItem
 
 ```ts
 interface PageNavItem {
@@ -41,7 +35,7 @@ interface PageNavItem {
 
 ---
 
-## Example: Pagination Buttons
+## Ejemplo: Botones de Paginación
 
 ```tsx
 import { usePageNav } from 'boltdocs/client'

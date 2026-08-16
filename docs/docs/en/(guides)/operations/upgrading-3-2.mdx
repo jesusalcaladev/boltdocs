@@ -3,49 +3,43 @@ title: "Upgrading 3 2"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: "3.2.0 Upgrade"
-sidebarPosition: 4
-description: "The complete audit of peer dependency changes, moved dependencies, and runtime behavior in boltdocs 3.2.0. Includes migration recipes, CI / lockfile-strict handling, and FAQ."
----
+# Actualizar a Boltdocs 3.2.0
 
-# Upgrading to Boltdocs 3.2.0
-
-3.2.0 is **documented semver-minor**, but it touches your `node_modules` at install time in three places. This page is the audit + the recipes that get you past the install warnings cleanly. If you only need the headline: read the [3.2.0 release blog post](/docs/blog/boltdocs-3.2.0#package-weight-reduction), then come back if your `pnpm install` complains.
+3.2.0 es **semver-minor documentado**, pero toca tu `node_modules` al instalar en tres lugares. Esta página es la auditoría + las recetas que te llevan más allá de los install warnings limpiamente. Si solo necesitás el titular: leé el [blog post del release 3.2.0](/es/blog/boltdocs-3.2.0#reducción-del-peso-del-paquete), y volvé si tu `pnpm install` se queja.
 
 <Callout type="warn">
-  **Heads-up for CI-strict setups.** Teams that hard-fail builds on peer warnings (Husky, Renovate, monorepos with `--strict-peer-dependencies`) will see a red CI on first install. Section [3 below](#3-ci--lockfile-strict-setups) has the one-line `.npmrc` fix.
+  **Alerta para setups de CI estrictos.** Equipos que rompen builds con peer warnings (Husky, Renovate, monorepos con `--strict-peer-dependencies`) verán un CI rojo al primer install. La sección [3 más abajo](#3-setups-de-ci--lockfile-estrictos) tiene la fix de una línea en `.npmrc`.
 </Callout>
 
 ---
 
-## 1. The audit at a glance
+## 1. La auditoría de un vistazo
 
-| Concern | What changed | Who is affected | Action required |
-| --------- | -------------- | ----------------- | ----------------- |
-| `react-aria-components` | Promoted from `dependencies` to a **required** `peerDependencies` | Every Boltdocs consumer | Add `react-aria-components: ^1.16.0` to your `dependencies` (or accept the peer warning if your framework wrapper provides it) |
-| `sharp` | Removed from core; now `peerDependenciesMeta.optional` of `@bdocs/plugin-image-optimizer` | Only if you don't use `@bdocs/plugin-image-optimizer`: pure win (you save ~30 MB unpacked) | If you previously relied on `sharp` being a transitive of `boltdocs`, install `sharp` explicitly or add the optimizer plugin |
-| `svgo` | Same as `sharp` (moved out of core) | Only if you don't use the image optimizer: pure win (~5 MB unpacked) | Same as `sharp` |
-| Lang icons in MDX code blocks | `lang-icons.tsx` removed entirely from the core bundle | End users (no action) | None — code block titles no longer render any language icon; pages ship zero bytes for the icon set regardless of whether they contain code blocks |
-| Social/nav icons | New `icons-prod.tsx` entry; `Github`, `Discord`, `XSocial`, `Bluesky` extracted from the language set | Plugin authors who import from `'../icons-dev'` | Update import paths to `'../icons-prod'` (only internal — not a public API change) |
-| Client subpath exports | `'boltdocs/primitives'`, `'boltdocs/mdx'`, `'boltdocs/server'` already split (3.1.0) — now in `exports` map | End users who import from these subpaths | None — backward compatible |
-| `optionalDependencies` field | Removed entirely from `package.json` | CI pipelines that scan for `optionalDependencies` | None — the field just isn't there anymore |
+| Concern | Qué cambió | Quién es afectado | Acción requerida |
+| --------- | ------------ | ------------------- | ----------------- |
+| `react-aria-components` | Promovida de `dependencies` a un `peerDependencies` **requerido** | Todo consumidor de Boltdocs | Agregá `react-aria-components: ^1.16.0` a tus `dependencies` (o aceptá el peer warning si tu wrapper de framework lo provee) |
+| `sharp` | Removido de core; ahora `peerDependenciesMeta.optional` de `@bdocs/plugin-image-optimizer` | Solo si no usás `@bdocs/plugin-image-optimizer`: victoria pura (ahorrás ~30 MB desempaquetados) | Si dependías de `sharp` como transitivo de `boltdocs`, instalá `sharp` explícitamente o agregá el plugin optimizer |
+| `svgo` | Igual que `sharp` (movido fuera de core) | Solo si no usás el image optimizer: victoria pura (~5 MB desempaquetados) | Igual que `sharp` |
+| Iconos de lenguajes en code blocks MDX | `lang-icons.tsx` eliminado por completo del bundle del core | Usuarios finales (sin acción) | Ninguna — los títulos de los code blocks ya no renderizan ningún icono de lenguaje; las páginas envían cero bytes para el set de iconos sin importar si contienen code blocks |
+| Iconos sociales/nav | Nuevo entry `icons-prod.tsx`; `Github`, `Discord`, `XSocial`, `Bluesky` extraídos del set de lenguajes | Autores de plugins que importaban desde `'../icons-dev'` | Actualizá los import paths a `'../icons-prod'` (solo interno — no es un cambio de API pública) |
+| Subpath exports del cliente | `'boltdocs/primitives'`, `'boltdocs/mdx'`, `'boltdocs/server'` ya estaban separados (3.1.0) — ahora en el mapa `exports` | Usuarios finales que importan desde estos subpaths | Ninguna — retrocompatible |
+| Campo `optionalDependencies` | Removido por completo del `package.json` | Pipelines de CI que escanean `optionalDependencies` | Ninguna — el campo simplemente no está más |
 
-A new test pins this contract: `packages/core/tests/package-shape.test.ts`. Any future PR that accidentally re-bloats the surface area breaks CI.
+Un nuevo test fija este contrato: `packages/core/tests/package-shape.test.ts`. Cualquier PR futuro que accidentalmente re-infle el surface area rompe el CI.
 
 ---
 
-## 2. Migration recipes
+## 2. Recetas de migración
 
-### 2a. The minimal paste (95% of users)
+### 2a. El paste mínimo (95% de los usuarios)
 
-```jsonc title="package.json"
+```jsonc
+// package.json
 {
   "dependencies": {
-    // ...existing...
+    // ...existentes...
     "boltdocs": "^3.2.0",
-    // ↓ Add this line — was previously transitive:
+    // ↓ Agregá esta línea — antes era transitivo:
     "react-aria-components": "^1.16.0"
   }
 }
@@ -55,11 +49,11 @@ A new test pins this contract: `packages/core/tests/package-shape.test.ts`. Any 
 pnpm install
 ```
 
-No code changes. No config changes. The peer warning clears.
+Sin cambios de código. Sin cambios de configuración. El peer warning se limpia.
 
-### 2b. If you use `@bdocs/plugin-image-optimizer`
+### 2b. Si usás `@bdocs/plugin-image-optimizer`
 
-The optimizer already declares `sharp` and `svgo` as `peerDependenciesMeta.optional` — your install behavior is **unchanged**. The optimizer's `peerDependencies` section supplies them when the user opts in. If you don't have it:
+El optimizer ya declara `sharp` y `svgo` como `peerDependenciesMeta.optional` — el comportamiento de install queda **igual**. Las `peerDependencies` del optimizer los proveen cuando el usuario opta in. Si no lo tenés:
 
 ```sh
 pnpm add @bdocs/ssg \
@@ -68,157 +62,157 @@ pnpm add @bdocs/ssg \
   svgo@^4.0.1
 ```
 
-Sites that don't use the image optimizer get a smaller `node_modules` — `sharp` and `svgo` are simply absent from the tree.
+Los sitios que no usan el image optimizer obtienen un `node_modules` más chico — `sharp` y `svgo` simplemente están ausentes del árbol.
 
-### 2c. If you author a plugin that imported internal icons
+### 2c. Si sos autor de un plugin que importaba iconos internos
 
-The old import path `'../icons-dev'` no longer exists. Replace it with the appropriate new path:
+El import path viejo `'../icons-dev'` ya no existe. Reemplazalo con el path nuevo apropiado:
 
 ```ts
-// ❌ Before 3.2.0 — gone
+// ❌ Antes de 3.2.0 — gone
 import { Github, Cs } from '../icons-dev'
 
-// ✅ After 3.2.0 — prod/nav icons
-import { Github } from 'boltdocs/client/icons-prod'    // (planned; current path: 'boltdocs/client')
+// ✅ Después de 3.2.0 — íconos prod/nav
+import { Github } from 'boltdocs/client/icons-prod'    // (planeado; path actual: 'boltdocs/client')
 
-// ✅ After 3.2.0 — language icons removed
-// `lang-icons.tsx` no longer exists in the public API. Render your own
-// icon next to the title via the `useCodeBlock` hook's `effectiveTitle`
-// value, or simply display the title text with no icon.
+// ✅ Después de 3.2.0 — íconos de lenguajes eliminados
+// `lang-icons.tsx` ya no existe en la API pública. Renderizá tu propio
+// ícono junto al título a través del valor `effectiveTitle` del hook
+// `useCodeBlock`, o simplemente mostrá el texto del título sin ícono.
 ```
 
-For the social icons, use the new `icons-prod.tsx` exports.
+Para los iconos sociales, usá los exports nuevos de `icons-prod.tsx`.
 
-### 2d. Version-locked lockfiles
+### 2d. Lockfiles versionados
 
-If your repo uses `pnpm-lock.yaml` from 3.1.x, run `pnpm install` once after bumping `boltdocs` to `^3.2.0`. The lockfile will rewrite the entries for `react-aria-components` (no longer transitive). Expect `pnpm install --frozen-lockfile` complaints on the first run **only** — that's expected, the rewrite is needed once.
+Si tu repo usa `pnpm-lock.yaml` desde 3.1.x, corré `pnpm install` una vez después de bumpear `boltdocs` a `^3.2.0`. El lockfile reescribirá las entries para `react-aria-components` (ya no es transitivo). Esperá quejas de `pnpm install --frozen-lockfile` solo en la primera corrida — eso es esperado, la reescritura es necesaria una sola vez.
 
-If you can't rewrite the lockfile (security-mandated frozen), pin `react-aria-components` to a version your tooling already approves, then add the `.npmrc` recipe from §3 below.
+Si no podés reescribir el lockfile (frozen por seguridad), pineá `react-aria-components` a una versión que tu tooling ya aprueba, después agregá la receta de `.npmrc` de §3 más abajo.
 
 ---
 
-## 3. CI / lockfile-strict setups
+## 3. Setups de CI / lockfile estrictos
 
-Three environments hit the peer warning hard:
+Tres entornos golpean el peer warning fuerte:
 
-1. **Husky + lint-staged pre-commit** with `pnpm install --frozen-lockfile --strict-peer-dependencies`.
-2. **Renovate / Dependabot** policies marked `ignoreUnstable: false` that flag `missingPeer` as red.
-3. **Turborepo / Nx monorepos** that wrap the consumer build in `pnpm install --strict-peer-dependencies`.
+1. **Husky + lint-staged pre-commit** con `pnpm install --frozen-lockfile --strict-peer-dependencies`.
+2. **Renovate / Dependabot** con políticas marcadas `ignoreUnstable: false` que flaggean `missingPeer` como rojo.
+3. **Turborepo / Nx monorepos** que envuelven el build del consumidor en `pnpm install --strict-peer-dependencies`.
 
-For all three, the fix is a one-line `.npmrc` that hoists `react-aria-components` to your lockfile scope **explicitly**, without blanket-disabling peer checks:
+Para los tres, la fix es una línea en `.npmrc` que hoistea `react-aria-components` al scope de tu lockfile **explícitamente**, sin desactivar globalmente los peer checks:
 
 <Callout type="warn">
-  **Pick one, not both.** Use **either** `.npmrc` OR `.pnpmrc`, not both. Picking both can double-hoist or hit a pnpm parsing quirk (`public-hoist-pattern[]` is npm-style array syntax; pnpm reads `.pnpmrc` as bracket-less per-line). Most teams only need one of the two.
+  **Elegí uno, no ambos.** Usá **`.npmrc` O `.pnpmrc`**, no los dos. Elegir los dos puede duplicar el hoist o caer en una quirk de parsing de pnpm (`public-hoist-pattern[]` es sintaxis de array estilo npm; pnpm lee `.pnpmrc` como una línea por setting). La mayoría de los equipos solo necesita uno de los dos.
 </Callout>
 
 ```ini
 # .npmrc
-# Allow the documented boltdocs@3.2 → react-aria-components peer advisory.
-# This is NOT a blanket disable — only this specific peer is whitelisted.
+# Permití el peer advisory documentado de boltdocs@3.2 → react-aria-components.
+# Esto NO es un disable global — solo este peer específico está whitelisteado.
 public-hoist-pattern[]=*react-aria-components*
 ```
 
-Equivalent `.pnpmrc` form (use it if you prefer pnpm-native config — note the `[!]` brackets-as-array-key is **npm** syntax; `.pnpmrc` uses the bracket-less form below):
+Forma equivalente en `.pnpmrc` (sintaxis pnpm-nativa — sin corchetes):
 
 ```ini
 # .pnpmrc
-# Make react-aria-components an explicit, transparent peer in your lockfile.
-# `.pnpmrc` does NOT use the `[]` array syntax — pnpm-native is comma-less per-line.
+# Hacés que react-aria-components sea un peer explícito y transparente en el lockfile.
+# `.pnpmrc` NO usa la sintaxis `[]` de array — la forma pnpm-nativa es sin corchetes por línea.
 public-hoist-pattern=*react-aria-components*
 peerDependencyRules.allowedVersions.react-aria-components=^1.16.0
 ```
 
-**Don't** use `legacy-peer-deps=true` or `auto-install-peers=false`. Both silence every peer warning across the tree and will mask future real breakages. The two configs above are scoped to the **one specific** peer advisory that 3.2.0 documents.
+**No** uses `legacy-peer-deps=true` o `auto-install-peers=false`. Ambos silencian cada peer warning en todo el árbol y van a enmascarar futuras roturas reales. Las dos configs de arriba están scoped al **único** peer advisory específico que documenta 3.2.0.
 
 ### Pre-flight check
 
-After adding the `.npmrc` rule, verify the install now looks like:
+Después de agregar la regla en `.npmrc`, verificá que el install ahora se vea así:
 
 ```bash
 pnpm install --frozen-lockfile
-# → No peer warnings
+# → Sin peer warnings
 # → boltdocs@3.2.0 install OK
-# → react-aria-components visible at top of dep tree, not nested
+# → react-aria-components visible al tope del dep tree, no nestado
 ```
 
-If you still see the warning, run `pnpm why react-aria-components` — the output should show **two** owners: `boltdocs` (peer) and **your own deps** (your `react-aria-components` line). That confirms the hoist pattern worked.
+Si todavía ves el warning, corré `pnpm why react-aria-components` — el output debería mostrar **dos** owners: `boltdocs` (peer) y **tus propias deps** (tu línea de `react-aria-components`). Eso confirma que el hoist pattern funcionó.
 
 ---
 
-## 4. Runtime behavior — what didn't change
+## 4. Comportamiento runtime — qué no cambió
 
-For users who skip the migration snippet, the runtime is **identical** to 3.1.x. Specifically:
+Para los usuarios que se saltean el snippet de migración, el runtime es **idéntico** a 3.1.x. Específicamente:
 
-- **Imports are unchanged.** All public exports from `'boltdocs'`, `'boltdocs/client'`, `'boltdocs/server'`, `'boltdocs/primitives'`, `'boltdocs/mdx'` resolve to the same symbols as 3.1.x.
-- **The `DocsLayout`, `Navbar`, `Sidebar`, `OnThisPage`, `SearchDialog`, `Breadcrumbs`, `PageNav` components work as before.** The icons they render look identical.
-- **MDX code blocks render the title only.** Code block titles show the filename text without any language icon — a generic file icon renders unconditionally for visual balance. This is a visual change from 3.1.x.
-- **`fetch` to API feedback endpoints / GitHub discussions / Giscus work as before.** No transport changes.
-- **Vite plugin integrations**, `@bdocs/plugin-mermaid`, `@bdocs/plugin-math`, `@bdocs/plugin-rss`, `@bdocs/plugin-ask-ai` all unchanged — they keep their own dep trees.
+- **Los imports no cambiaron.** Todos los exports públicos desde `'boltdocs'`, `'boltdocs/client'`, `'boltdocs/server'`, `'boltdocs/primitives'`, `'boltdocs/mdx'` resuelven a los mismos símbolos que 3.1.x.
+- **Los componentes `DocsLayout`, `Navbar`, `Sidebar`, `OnThisPage`, `SearchDialog`, `Breadcrumbs`, `PageNav` funcionan igual.** Los íconos que renderizan se ven idénticos.
+- **Los code blocks MDX renderizan solo el título.** Los títulos de los code blocks muestran el texto del nombre del archivo sin ningún icono de lenguaje — se renderiza un icono de archivo genérico de forma incondicional para balance visual. Este es un cambio visual respecto a 3.1.x.
+- **`fetch` a los endpoints de API feedback / GitHub discussions / Giscus funcionan igual.** Sin cambios de transporte.
+- **Las integraciones de plugins Vite**, `@bdocs/plugin-mermaid`, `@bdocs/plugin-math`, `@bdocs/plugin-rss`, `@bdocs/plugin-ask-ai` siguen sin cambios — mantienen sus propios dep trees.
 
-There is no hydration-time flash: the generic `File` icon is the only thing rendered, and it ships with the page on first paint.
+No hay flash en tiempo de hidratación: el ícono `File` genérico es lo único que se renderiza, y viaja con la página en el primer paint.
 
 ---
 
 ## 5. FAQ
 
-### "Do I have to install `react-aria-components` explicitly?"
+### "¿Tengo que instalar `react-aria-components` explícitamente?"
 
-Yes, but only if your project doesn't already have a transitive of it. If you already have `react-aria-components` in your lockfile from a different package (rare for a 3.1.x install — boltdocs was the only common transitive), the peer warning stays silent.
+Sí, pero solo si tu proyecto todavía no tiene un transitivo. Si ya tenés `react-aria-components` en tu lockfile desde otro paquete (raro para un install de 3.1.x — boltdocs era el único transitivo común), el peer warning queda en silencio.
 
-If your framework shell — e.g. a CMS template, a shadcn-derived stack, or an internal design system — already declares `react-aria-components` as a dep, you're already covered.
+Si tu shell de framework — por ejemplo un template de CMS, un stack derivado de shadcn, o un design system interno — ya declara `react-aria-components` como dep, ya estás cubierto.
 
-### "Why not make `react-aria-components` an `optional` peer?"
+### "¿Por qué no hicieron `react-aria-components` un peer `optional`?"
 
-Because `react-aria-components` is **directly imported** by 8 client primitives (`Button`, `Sidebar`, `SearchDialog`, `Tooltip`, `Popover`, `Menu`, `Navbar`, `Breadcrumbs`, `ThemeToggle`). Marking it `optional` would let sites skip the install and silently crash on every page with a navbar.
+Porque `react-aria-components` es **directamente importado** por 8 primitivos del cliente (`Button`, `Sidebar`, `SearchDialog`, `Tooltip`, `Popover`, `Menu`, `Navbar`, `Breadcrumbs`, `ThemeToggle`). Marcarlo como `optional` dejaría que los sitios se salten el install y crasheen silenciosamente en cada página con un navbar.
 
-The hard-peer placement matches the binary behavior: 3.2.0 requires `react-aria-components` at runtime exactly as 3.1.x did. The peer just surfaces that requirement to the install tool instead of burying it.
+La ubicación como peer hard matchea el comportamiento binario: 3.2.0 requiere `react-aria-components` en runtime exactamente como lo hacía 3.1.x. El peer simplemente surfaccea ese requerimiento al install tool en lugar de enterrarlo.
 
-### "Will my install warning fail CI?"
+### "¿Fallará mi CI con el install warning?"
 
-Only if your CI runs `pnpm install --strict-peer-dependencies` *or* reads `npm warn` output and treats warnings as errors. Add the `.npmrc` rule from §3 to whitelist this specific peer advisory without disabling peer checks globally.
+Solo si tu CI corre `pnpm install --strict-peer-dependencies` o lee la salida de `npm warn` y trata warnings como errores. Agregá la regla de `.npmrc` de §3 para whitelisteear este peer advisory específico sin desactivar los peer checks globalmente.
 
-### "Why didn't you make `sharp` / `svgo` peers of `boltdocs` instead of moving them out?"
+### "¿Por qué no hicieron `sharp` / `svgo` peers de `boltdocs` en lugar de moverlos fuera?"
 
-Two reasons:
+Dos razones:
 
-1. **Most sites don't need them.** A docs framework shouldn't drag a 35 MB native binary into the install of a site that never opted into image optimization. Moving them to the image optimizer's own optional-peer meta makes that choice explicit.
-2. **`sharp` is widely known as an install-hostile dep on Alpine ARM, musl libc, and old glibc.** Removing it from boltdocs means boltdocs now installs cleanly on those platforms regardless of whether the user ever uses image optimization.
+1. **La mayoría de los sitios no los necesitan.** Un framework de docs no debería arrastrar un binario nativo de 35 MB al install de un sitio que nunca optó por image optimization. Moverlos al optional-peer meta del image optimizer hace que esa elección sea explícita.
+2. **`sharp` es ampliamente conocido como un dep hostil al install en Alpine ARM, musl libc y glibc viejo.** Removerlo de boltdocs significa que boltdocs ahora instala limpiamente en esas plataformas sin importar si el usuario usa image optimization o no.
 
-### "Is there a way to keep `sharp` and `svgo` in my tree even without the image optimizer?"
+### "¿Hay alguna forma de mantener `sharp` y `svgo` en mi árbol sin el image optimizer?"
 
-Yes — install them explicitly:
+Sí — instalalos explícitamente:
 
 ```sh
 pnpm add sharp svgo
 ```
 
-They're back in your tree (if you really want them), without boltdocs declaring them.
+Vuelven a tu árbol (si realmente los querés), sin que boltdocs los declare.
 
-### "Is `@bdocs/ssg` still independent?"
+### "¿Sigue siendo `@bdocs/ssg` independiente?"
 
-Yes. `@bdocs/ssg` is a separate workspace package and ships its own `peerDependencies` (`react`, `react-dom`, `react-router-dom`). It's not affected by boltdocs 3.2.0's peer reconfiguration.
+Sí. `@bdocs/ssg` es un paquete separado del workspace y tiene sus propios `peerDependencies` (`react`, `react-dom`, `react-router-dom`). No queda afectado por la reconfiguración de peers de boltdocs 3.2.0.
 
-### "Will my `boltdocs/client` bundle size go up after upgrading?"
+### "¿Va a crecer el tamaño de mi bundle `boltdocs/client` después del upgrade?"
 
-No. In fact, on pages with MDX code blocks, the bundle goes **down** by ~17 KB (the entire `lang-icons.tsx` module has been removed from the core). Pages without code blocks were already at zero bytes for these icons since 3.2.0's lazy load. See the [package weight blog section](/docs/blog/boltdocs-3.2.0#package-weight-reduction) for the full before/after table.
+No. De hecho, en páginas con code blocks MDX, el bundle **baja** ~17 KB (el módulo completo `lang-icons.tsx` fue eliminado del core). Las páginas sin code blocks ya estaban en cero bytes para estos íconos desde el lazy-load de 3.2.0. Consultá la [sección de peso del paquete en el blog](/es/blog/boltdocs-3.2.0#reducción-del-peso-del-paquete) para la tabla completa de antes/después.
 
 ---
 
-## 6. Rollback plan
+## 6. Plan de rollback
 
-If you need to roll back to 3.1.x post-upgrade:
+Si necesitás volver a 3.1.x post-upgrade:
 
 ```sh
 pnpm add boltdocs@3.1.x
 ```
 
-The lockfile reverts without manual edits because 3.1.x and 3.2.0 share the same public surface. Roll back the `react-aria-components` explicit declaration only if your build complains (most won't).
+El lockfile revierte sin ediciones manuales porque 3.1.x y 3.2.0 comparten la misma superficie pública. Revertí la declaración explícita de `react-aria-components` solo si tu build se queja (la mayoría no).
 
 ---
 
-## See also
+## Ver también
 
-- [Boltdocs 3.2.0 release blog post](/docs/blog/boltdocs-3.2.0) — the **why** behind these decisions
-- [Installation guide](/docs/getting-started) — fresh-install flow
-- [Plugin authoring guide](/docs/plugins) — for plugin authors affected by the icons split
-- [Boltdocs config reference](/docs/configuration) — full config schema
+- [Blog post del release 3.2.0](/es/blog/boltdocs-3.2.0) — el **porqué** detrás de estas decisiones
+- [Guía de instalación](/es/getting-started) — flujo de install nuevo
+- [Guía de autoría de plugins](/es/plugins) — para autores de plugins afectados por el split de iconos
+- [Referencia de configuración](/es/configuration) — schema completo de configuración

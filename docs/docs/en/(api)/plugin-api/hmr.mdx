@@ -3,59 +3,41 @@ title: "Hmr"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: HMR
-sidebarPosition: 8
-description: PluginHmrAPI — hook into dev-server file watching and send custom HMR events to connected clients.
----
-
 # `ctx.hmr` — PluginHmrAPI
 
-Hook into the dev-server file-watching pipeline and send custom events
-to connected browser clients.
+Conéctate al pipeline de file-watching del dev server y envía eventos
+personalizados a los clientes conectados.
 
 ```ts
-// Listen for file changes inside docs/
 ctx.hmr.onFileChange(async (filePath) => {
-  ctx.logger.info(`File modified: ${filePath}`)
+  ctx.logger.info(`Archivo modificado: ${filePath}`)
 })
-
-// Listen for new files
 ctx.hmr.onFileAdd((filePath) => {
-  ctx.logger.info(`New document: ${filePath}`)
+  ctx.logger.info(`Nuevo documento: ${filePath}`)
 })
-
-// Listen for file deletions
-ctx.hmr.onFileUnlink((filePath) => {
-  ctx.logger.info(`Document removed: ${filePath}`)
-})
-
-// Send a custom HMR event to all connected browser clients
-ctx.hmr.send('my-plugin:update', { reason: 'regenerated' })
-// Clients listen with: import.meta.hot.on('boltdocs:plugin:my-plugin:update', ...)
+ctx.hmr.send('mi-plugin:update', { reason: 'regenerado' })
 ```
 
 ---
 
-## Event types
+## Tipos de eventos
 
-| Method | Event type | When it fires |
+| Método | Tipo de evento | Cuándo se dispara |
 | :--- | :--- | :--- |
-| `onFileAdd` | `'add'` | New file created inside `docs/` |
-| `onFileChange` | `'change'` | Existing file modified |
-| `onFileUnlink` | `'unlink'` | File deleted from `docs/` |
-| `onFileEvent(type, fn)` | any | Low-level — listen to a specific event type |
+| `onFileAdd` | `'add'` | Nuevo archivo creado dentro de `docs/` |
+| `onFileChange` | `'change'` | Archivo existente modificado |
+| `onFileUnlink` | `'unlink'` | Archivo eliminado de `docs/` |
+| `onFileEvent(type, fn)` | any | Bajo nivel — escucha un tipo de evento específico |
 
-All handlers receive the **normalized absolute file path** and run after
-the core's own HMR processing. Errors in plugin handlers are caught and
-logged — they never crash the dev server.
+Todos los handlers reciben la **ruta absoluta normalizada** y se
+ejecutan después del procesamiento HMR del core. Los errores en los
+handlers de plugins son capturados y registrados — nunca detienen el
+dev server.
 
 ---
 
-## See also
+## Ver también
 
-- [PluginContext](/docs/api/plugin-api) — base context object
-- [Server](/docs/api/plugin-api/server) — HTTP middleware & server lifecycle
-- [Middleware](/docs/api/plugin-api/middleware) — transform middleware pipeline
-- [Lifecycle Hooks](/docs/api/plugin-api/lifecycle-hooks) — build/dev hooks, transform chains, and chain signals
+- [PluginContext](/docs/es/api/plugin-api) — objeto de contexto base
+- [Server](/docs/es/api/plugin-api/server) — middleware HTTP y ciclo de vida del servidor
+- [Middleware](/docs/es/api/plugin-api/middleware) — pipeline de middleware de transformación

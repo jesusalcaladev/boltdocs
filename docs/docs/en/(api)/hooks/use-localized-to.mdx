@@ -3,17 +3,11 @@ title: "Use Localized To"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useLocalizedTo
-description: Utility hook to automatically append locale and version segments to path links.
----
-
-The `useLocalizedTo` hook prefixes path links with the active version and locale language codes so that users do not lose their current location context when clicking internal anchors.
+El hook `useLocalizedTo` agrega prefijos a los enlaces de rutas con la versión activa y los códigos de idioma de la región para que los usuarios no pierdan su contexto de ubicación actual al hacer clic en anclas internas.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useLocalizedTo } from 'boltdocs/client'
@@ -21,35 +15,35 @@ import { useLocalizedTo } from 'boltdocs/client'
 
 ---
 
-## Method Signature
+## Firma del Método
 
 ```ts
 function useLocalizedTo(to: string): string
 ```
 
-### Parameters
+### Parámetros
 
-- **`to`** (`string`): The destination relative link path (e.g. `/getting-started`).
+- **`to`** (`string`): La ruta relativa del enlace de destino (ej. `/getting-started`).
 
-### Return Value
+### Valor de Retorno
 
-- Returns the fully constructed destination path string containing the active version and language subdirectories (e.g. `/docs/2.x/es/getting-started`).
+- Retorna la cadena de ruta de destino completamente construida que contiene los subdirectorios de versión y idioma activos (ej. `/docs/2.x/es/getting-started`).
 
 ---
 
-## Behavior Rules
+## Reglas de Comportamiento
 
-- **Unchanged Inputs**: Absolute external links (`http://`, `https://`, `//`) or target hash anchors (`#installation`) are bypassed and returned unmodified.
-- **Docs Context Resolution**: If the configuration contains `base` paths, the hook injects the active version tag and locale code between the base and content directories:
+- **Entradas sin cambios**: Los enlaces externos absolutos (`http://`, `https://`, `//`) o las anclas de destino hash (`#installation`) se omiten y retornan sin modificar.
+- **Resolución de Contexto de Docs**: Si la configuración contiene rutas `base`, el hook inyecta la etiqueta de versión activa y el código de idioma entre los directorios base y de contenido:
   `"/getting-started"` ➔ `"/docs/[version]/[locale]/getting-started"`
-- **External Page Context**: Non-doc routing URLs are prefixed only with the active locale code:
+- **Contexto de Páginas Externas**: Las URLs de enrutamiento que no son de docs se prefijan solo con el código de idioma activo:
   `"/about"` ➔ `"/es/about"`
 
 ---
 
-## Usage Example
+## Ejemplo de Uso
 
-Below is a custom link selector component that handles routing localization using the `useLocalizedTo` hook:
+A continuación se muestra un componente de selector de enlaces personalizado que maneja la localización de enrutamiento usando el hook `useLocalizedTo`:
 
 ```tsx
 import React from 'react'

@@ -3,13 +3,55 @@ title: "Define Config"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+La utilidad `defineConfig` es un asistente de configuración en tiempo de compilación que proporciona autocompletado de tipos TypeScript y verificación de propiedades.
+
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+## Importación
 
-Original Spanish translation: /docs/es/(api)/utils/define-config.mdx
+A diferencia de los hooks y utilidades del lado del cliente, `defineConfig` se ejecuta en el entorno de compilación de Node y se importa desde el paquete raíz:
+
+```ts
+import { defineConfig } from 'boltdocs'
+```
+
+---
+
+## Firma
+
+```ts
+function defineConfig(config: BoltdocsConfig): BoltdocsConfig
+```
+
+---
+
+## Ejemplo: Estructura de Configuración
+
+```ts
+// boltdocs.config.ts
+import { defineConfig } from 'boltdocs'
+import mermaidPlugin from '@bdocs/plugin-mermaid'
+
+export default defineConfig({
+  siteUrl: 'https://docs.example.com',
+  title: 'My Custom Framework',
+  description: 'Clean developers guides.',
+  theme: {
+    logo: {
+      light: '/logo-light.svg',
+      dark: '/logo-dark.svg'
+    },
+    tabs: [
+      { id: 'guides', title: 'Guides', href: '/docs/guides' },
+      { id: 'api', title: 'API Reference', href: '/docs/api' }
+    ]
+  },
+  plugins: [
+    mermaidPlugin({
+      themes: {
+        light: { primaryColor: '#f3f4f6' }
+      }
+    })
+  ]
+})
+```

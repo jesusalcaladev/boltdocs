@@ -3,17 +3,11 @@ title: "Use Config"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useConfig
-description: Retrieve the parsed global Boltdocs configuration object.
----
-
-The `useConfig` hook allows custom components to access properties from the active `boltdocs.config.ts` file, such as base paths, localized directories, navigation entries, and theme settings.
+El hook `useConfig` permite que los componentes personalizados accedan a propiedades del archivo activo `boltdocs.config.ts`, como rutas base, directorios localizados, entradas de navegación y configuraciones de tema.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useConfig } from 'boltdocs/client'
@@ -21,9 +15,9 @@ import { useConfig } from 'boltdocs/client'
 
 ---
 
-## Response Schema
+## Esquema de Respuesta
 
-The hook returns the full parsed configurations matching the `BoltdocsConfig` interface:
+El hook retorna las configuraciones completas parseadas que coinciden con la interfaz `BoltdocsConfig`:
 
 ```ts
 interface BoltdocsConfig {
@@ -51,9 +45,9 @@ interface BoltdocsConfig {
 
 ---
 
-## Usage Example
+## Ejemplo de Uso
 
-The example below shows how to access the custom metadata options from the configuration to show custom footer copyrights:
+El siguiente ejemplo muestra cómo acceder a las opciones de metadatos personalizados desde la configuración para mostrar derechos de autor personalizados en el pie de página:
 
 ```tsx
 import React from 'react'

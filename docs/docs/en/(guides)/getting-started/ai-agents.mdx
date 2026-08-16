@@ -3,82 +3,75 @@ title: "Ai Agents"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: AI Agents & Skills
-sidebarPosition: 5
-description: Teach your AI pair-programmer the Boltdocs architecture, routing, components, and styling conventions so it gives you better, more relevant suggestions.
----
+Cada asistente IA es tan inteligente como el contexto que le des. Ya sea que uses **Cursor**, **Claude Code**, **GitHub Copilot** o **Gemini Code Assist**, nuestra skill estructurada le enseña a tu herramienta cómo funciona Boltdocs internamente — para que deje de adivinar y empiece a generar código que encaje con tu proyecto.
 
-Every AI assistant is only as smart as the context you give it. Whether you use **Cursor**, **Claude Code**, **GitHub Copilot**, or **Gemini Code Assist**, our structured skill teaches your tool how Boltdocs works under the hood—so it stops guessing and starts generating code that fits your project.
-
-The skill is a set of markdown files that act as a localized knowledge base. AI tools read them to learn about `boltdocs.config.ts`, file-system routing, built-in MDX components, and the Tailwind CSS v4 styling system.
+La skill es un conjunto de archivos markdown que actúan como una base de conocimiento localizada. Las herramientas IA los leen para aprender sobre `boltdocs.config.ts`, enrutamiento por sistema de archivos, componentes MDX incorporados y el sistema de estilos Tailwind CSS v4.
 
 ---
 
-## What's Inside
+## Qué Contiene
 
-The skill is organized into a main entrypoint file and four focused reference guides. Each guide covers one area of the framework so the AI loads only what it needs:
+La skill está organizada en un archivo de entrada principal y cuatro guías de referencia enfocadas. Cada guía cubre un área del framework para que la IA solo cargue lo que necesita:
 
-| File | What It Teaches the AI |
+| Archivo | Qué le Enseña a la IA |
 | :--- | :--- |
-| [`SKILL.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/SKILL.md) | When to activate the skill — editing config, adding docs pages, writing MDX components, or changing styles. |
-| [`configuration.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/references/configuration.md) | Writing and maintaining `boltdocs.config.ts` — `defineConfig`, site metadata, theme, plugins, and tab structure. |
-| [`routing.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/references/routing.md) | File-system routing inside `docs/`, sidebar groups, `meta.json` folder configuration, and tab alignment. |
-| [`components.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/references/components.md) | Built-in MDX components (Callout, Cards, Mermaid), code block titles, math equations, and global component injection via `mdx-components.tsx`. |
-| [`styling.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/references/styling.md) | Tailwind CSS v4 theme tokens, semantic color mappings, dark mode overrides, and Biome-safe custom variant syntax. |
+| [`SKILL.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/SKILL.md) | Cuándo activar la skill — editando configuración, agregando páginas de docs, escribiendo componentes MDX o cambiando estilos. |
+| [`configuration.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/references/configuration.md) | Escribir y mantener `boltdocs.config.ts` — `defineConfig`, metadatos del sitio, tema, plugins y estructura de pestañas. |
+| [`routing.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/references/routing.md) | Enrutamiento por sistema de archivos dentro de `docs/`, grupos del sidebar, configuración de carpetas `meta.json` y alineación de pestañas. |
+| [`components.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/references/components.md) | Componentes MDX incorporados (Callout, Cards, Mermaid), títulos de bloques de código, ecuaciones matemáticas e inyección global de componentes a través de `mdx-components.tsx`. |
+| [`styling.md`](https://github.com/jesus-alcala/boltdocs/blob/develop/skills/boltdocs/references/styling.md) | Tokens de tema de Tailwind CSS v4, mapeos de colores semánticos, sobreescripciones de modo oscuro y sintaxis de variantes personalizadas segura para Biome. |
 
 ---
 
-## Installation
+## Instalación
 
-We ship an automated installer script `install-ai-agents.sh` at the project root. It copies the skill files to the folder your AI environment expects.
+Incluimos un script de instalación automatizado `install-ai-agents.sh` en la raíz del proyecto. Copia los archivos de skill a la carpeta que tu entorno de IA espera.
 
-### Quick Install (Standalone)
+### Instalación Rápida (Independiente)
 
-If you're adding the skill to an existing Boltdocs project without cloning the framework repository:
+Si estás agregando la skill a un proyecto Boltdocs existente sin clonar el repositorio del framework:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/jesus-alcala/boltdocs/develop/install-ai-agents.sh | bash
 ```
 
-The script detects whether local skill files exist. If they don't, it downloads them from GitHub automatically.
+El script detecta si existen archivos de skill locales. Si no existen, los descarga de GitHub automáticamente.
 
-### Install from a Cloned Repository
+### Instalación desde un Repositorio Clonado
 
-If you have the Boltdocs repository cloned, run the script directly — it uses the local files so the skill always matches your checkout:
+Si tienes el repositorio de Boltdocs clonado, ejecuta el script directamente — usa los archivos locales para que la skill siempre coincida con tu checkout:
 
 ```bash
 ./install-ai-agents.sh
 ```
 
-<Callout variant="tip" title="Pro Tip">
-  Run the installer from your **project's root directory**, not the Boltdocs framework directory. The `--output-dir` flag lets you point it anywhere.
+<Callout variant="tip" title="Consejo Profesional">
+  Ejecuta el instalador desde el **directorio raíz de tu proyecto**, no desde el directorio del framework Boltdocs. La bandera `--output-dir` te permite apuntar a cualquier ubicación.
 </Callout>
 
 ---
 
-## Script Reference
+## Referencia del Script
 
-The installer supports these flags for automated or CI workflows:
+El instalador soporta estas banderas para flujos automatizados o de CI:
 
-| Flag | Value | Description |
+| Bandera | Valor | Descripción |
 | :--- | :--- | :--- |
-| `-t, --target` | `cursor`, `claude`, `copilot`, `agents`, `all` | Which editor or AI environment to configure. |
-| `-o, --output-dir` | `<path>` | Custom installation directory (overrides default paths). |
-| `-y, --yes` | — | Non-interactive mode — skips prompts and confirms automatically. |
-| `-h, --help` | — | Print usage information and exit. |
+| `-t, --target` | `cursor`, `claude`, `copilot`, `agents`, `all` | Qué editor o entorno de IA configurar. |
+| `-o, --output-dir` | `<path>` | Directorio de instalación personalizado (sobreescribe las rutas por defecto). |
+| `-y, --yes` | — | Modo no interactivo — salta los prompts y confirma automáticamente. |
+| `-h, --help` | — | Imprime información de uso y sale. |
 
-### Default Target Directories
+### Directorios de Destino por Defecto
 
-| Target | Installation Path |
+| Destino | Ruta de Instalación |
 | :--- | :--- |
 | `cursor` | `.cursor/skills/boltdocs/` |
 | `claude` | `.claude/skills/boltdocs/` |
 | `copilot` | `.copilot/skills/boltdocs/` |
 | `agents` (Gemini) | `.agents/skills/boltdocs/` |
 
-### Example: Install for Claude in CI
+### Ejemplo: Instalar para Claude en CI
 
 ```bash
 ./install-ai-agents.sh --target claude --yes
@@ -88,13 +81,13 @@ The installer supports these flags for automated or CI workflows:
 
 import { Bot, HelpCircle } from 'lucide-react'
 
-## What's Next?
+## ¿Qué Sigue?
 
 <Cards cols={2}>
-  <Card title="Plugin System" href="/docs/plugins" icon={<Bot />}>
-    Extend your project by writing custom Remark, Rehype, and Vite plugins.
+  <Card title="Sistema de Plugins" href="/docs/plugins" icon={<Bot />}>
+    Extiende tu proyecto escribiendo plugins personalizados de Remark, Rehype y Vite.
   </Card>
-  <Card title="Troubleshooting" href="/docs/guides/operations/troubleshooting" icon={<HelpCircle />}>
-    Resolve common configuration mismatches or SSG bundle warnings.
+  <Card title="Solución de Problemas" href="/docs/guides/operations/troubleshooting" icon={<HelpCircle />}>
+    Resuelve desajustes de configuración comunes o advertencias de bundle SSG.
   </Card>
 </Cards>

@@ -3,48 +3,41 @@ title: "Lifecycle Hooks"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: Lifecycle Hooks
-sidebarPosition: 9
-description: PluginLifecycleHooks — build and dev lifecycle hooks, transform chains, and chain signals for Boltdocs plugins.
-badge: Updated
----
-
 # `hooks` — PluginLifecycleHooks
 
-Lifecycle hooks are the primary way plugins inject behaviour into the
-Boltdocs pipeline. Each hook receives a `PluginContext` as its first
-argument and can be synchronous or async.
+Los hooks del lifecycle son la forma principal en que los plugins
+inyectan comportamiento en el pipeline de Boltdocs. Cada hook recibe
+un `PluginContext` como primer argumento y puede ser síncrono o
+asíncrono.
 
 ---
 
-## Build lifecycle hooks
+## Hooks del ciclo de vida de build
 
-| Hook | Signature | When it runs |
+| Hook | Firma | Cuándo se ejecuta |
 | :--- | :--- | :--- |
-| `build:before` | `(ctx: PluginContext) => void \| Promise<void>` | Right before static site generation (SSG) starts |
-| `build:after` | `(ctx: PluginContext) => void \| Promise<void>` | Immediately after a production build succeeds |
-| `build:end` | `(ctx: PluginContext) => void \| Promise<void>` | At process completion — runs on both success and error |
-| `build:generate` | `(ctx: PluginContext, { routes, outDir, siteUrl? }) => void \| Promise<void>` | Post-SSG asset generation hook for sitemaps, RSS, robots.txt, OG images |
+| `build:before` | `(ctx: PluginContext) => void \| Promise<void>` | Justo antes de que comience la generación de sitio estático (SSG) |
+| `build:after` | `(ctx: PluginContext) => void \| Promise<void>` | Inmediatamente después de que un build de producción sea exitoso |
+| `build:end` | `(ctx: PluginContext) => void \| Promise<void>` | Al completar el proceso — se ejecuta tanto en éxito como en error |
+| `build:generate` | `(ctx: PluginContext, { routes, outDir, siteUrl? }) => void \| Promise<void>` | Hook post-SSG para generar assets estáticos (sitemaps, RSS, robots.txt, imágenes OG) |
 
 ```ts
 import { definePlugin } from 'boltdocs'
 
 export default definePlugin({
-  name: 'my-build-plugin',
+  name: 'mi-plugin-build',
   hooks: {
     'build:before'(ctx) {
-      ctx.logger.info('Starting build...')
+      ctx.logger.info('Iniciando build...')
     },
     'build:generate'(ctx, { routes, outDir }) {
-      ctx.logger.info(`Generating static assets for ${routes.length} routes in ${outDir}`)
+      ctx.logger.info(`Generando assets estáticos para ${routes.length} rutas en ${outDir}`)
     },
     'build:after'(ctx) {
-      ctx.logger.info(`Build complete! ${ctx.routes.length} routes generated.`)
+      ctx.logger.info(`Build completo! ${ctx.routes.length} rutas generadas.`)
     },
     'build:end'(ctx) {
-      ctx.logger.info('Process finished — cleaning up...')
+      ctx.logger.info('Proceso finalizado — limpiando...')
     },
   },
 })
@@ -52,18 +45,18 @@ export default definePlugin({
 
 ---
 
-## Frontmatter & Route Pipeline hooks
+## Hooks del Pipeline de Frontmatter & Rutas
 
-| Hook | Signature | Description |
+| Hook | Firma | Descripción |
 | :--- | :--- | :--- |
-| `frontmatter:transform` | `(ctx, { frontmatter, filePath, rawContent }) => Record<string, unknown> \| void` | Intercepts & enriches document frontmatter (readingTime, lastUpdated, author data, custom tags). |
-| `routes:resolved` | `(ctx, { routes }) => RouteMeta[] \| void` | Fired after all documentation routes are crawled, normalized, and sorted. |
+| `frontmatter:transform` | `(ctx, { frontmatter, filePath, rawContent }) => Record<string, unknown> \| void` | Intercepta y enriquece el frontmatter (tiempo de lectura, fecha de actualización, autores, metadata custom). |
+| `routes:resolved` | `(ctx, { routes }) => RouteMeta[] \| void` | Se ejecuta después de escanear, normalizar y ordenar todas las rutas de la documentación. |
 
 ```ts
 import { definePlugin } from 'boltdocs'
 
 export default definePlugin({
-  name: 'my-metadata-plugin',
+  name: 'mi-plugin-metadata',
   hooks: {
     'frontmatter:transform'(ctx, { frontmatter, rawContent }) {
       const words = rawContent.split(/\s+/).length
@@ -74,7 +67,7 @@ export default definePlugin({
       }
     },
     'routes:resolved'(ctx, { routes }) {
-      ctx.logger.info(`Resolved ${routes.length} total routes.`)
+      ctx.logger.info(`Resueltas ${routes.length} rutas en total.`)
     },
   },
 })
@@ -82,13 +75,13 @@ export default definePlugin({
 
 ---
 
-## Search Contract hook
+## Hook Contrato de Búsqueda (`search:index`)
 
-| Hook | Signature | Description |
+| Hook | Firma | Descripción |
 | :--- | :--- | :--- |
-| `search:index` | `(ctx, { documents, routes }) => unknown \| Promise<unknown>` | Standardized search index hook. Receives `SearchDocument[]` to compile index files (FlexSearch, Pagefind, Algolia, Meilisearch). |
+| `search:index` | `(ctx, { documents, routes }) => unknown \| Promise<unknown>` | Hook de índice de búsqueda estandarizado. Recibe `SearchDocument[]` para generar índices de búsqueda (FlexSearch, Pagefind, Algolia, Meilisearch). |
 
-### SearchDocument interface
+### Interfaz SearchDocument
 
 ```ts
 interface SearchDocument {
@@ -107,11 +100,11 @@ interface SearchDocument {
 import { definePlugin } from 'boltdocs'
 
 export default definePlugin({
-  name: 'my-search-plugin',
+  name: 'mi-plugin-busqueda',
   hooks: {
     'search:index'(ctx, { documents }) {
-      ctx.logger.info(`Indexing ${documents.length} documents for search...`)
-      // Build search index...
+      ctx.logger.info(`Indexando ${documents.length} documentos para búsqueda...`)
+      // Compilar índice...
     },
   },
 })
@@ -119,22 +112,22 @@ export default definePlugin({
 
 ---
 
-## Dev & Server lifecycle hooks
+## Hooks del ciclo de vida de Dev y Servidor
 
-| Hook | Signature | When it runs |
+| Hook | Firma | Cuándo se ejecuta |
 | :--- | :--- | :--- |
-| `dev:before` | `(ctx: PluginContext) => void \| Promise<void>` | Before the dev server starts listening |
-| `dev:after` | `(ctx: PluginContext) => void \| Promise<void>` | After the dev server is fully initialized |
-| `server:configure` | `(ctx: PluginContext, { server, middleware }) => void \| Promise<void>` | Configures dev/preview server HTTP middlewares and API endpoints |
+| `dev:before` | `(ctx: PluginContext) => void \| Promise<void>` | Antes de que el dev server comience a escuchar |
+| `dev:after` | `(ctx: PluginContext) => void \| Promise<void>` | Después de que el dev server esté completamente inicializado |
+| `server:configure` | `(ctx: PluginContext, { server, middleware }) => void \| Promise<void>` | Configura middlewares HTTP y endpoints API en dev y preview |
 
 ```ts
 import { definePlugin } from 'boltdocs'
 
 export default definePlugin({
-  name: 'my-dev-plugin',
+  name: 'mi-plugin-dev',
   hooks: {
     'dev:before'(ctx) {
-      ctx.logger.info('Starting dev server...')
+      ctx.logger.info('Iniciando dev server...')
     },
     'server:configure'(ctx, { middleware }) {
       middleware.useAt('/api/feedback', (req, res) => {
@@ -142,7 +135,7 @@ export default definePlugin({
       })
     },
     'dev:after'(ctx) {
-      ctx.logger.info('Dev server ready!')
+      ctx.logger.info('Dev server listo!')
     },
   },
 })
@@ -150,27 +143,24 @@ export default definePlugin({
 
 ---
 
-## Transform chain hooks
+## Hooks de cadena de transformación
 
-These hooks form a **chain** — the output of one plugin feeds the
-input of the next. They are executed in `enforce` order (`pre` →
-normal → `post`) within each phase.
+Estos hooks forman una **cadena** — la salida de un plugin alimenta la
+entrada del siguiente. Se ejecutan en orden `enforce` (`pre` → normal
+→ `post`) dentro de cada fase.
 
-| Hook | Signature | When it runs |
+| Hook | Firma | Cuándo se ejecuta |
 | :--- | :--- | :--- |
-| `transform:source` | `(ctx, { code, filePath, frontmatter? }) => { code, __signal? }` | On raw MDX source **before** MDX compilation |
-| `transform:mdx` | `(ctx, { code, filePath, frontmatter? }) => { code, __signal? }` | On compiled MDX JavaScript **after** MDX compilation |
-| `transform:html` | `(ctx, { html, path, route? }) => { html, __signal? }` | On rendered HTML during SSG generation |
+| `transform:source` | `(ctx, { code, filePath, frontmatter? }) => { code, __signal? }` | En el fuente MDX **antes** de la compilación MDX |
+| `transform:mdx` | `(ctx, { code, filePath, frontmatter? }) => { code, __signal? }` | En el JavaScript MDX compilado **después** de la compilación |
+| `transform:html` | `(ctx, { html, path, route? }) => { html, __signal? }` | En el HTML renderizado durante la generación SSG |
 
 ### TransformSourceParams
 
 ```ts
 interface TransformSourceParams {
-  /** The raw or compiled code */
   code: string
-  /** Absolute file path of the source document */
   filePath: string
-  /** Parsed frontmatter, if available (undefined in early pipeline) */
   frontmatter?: Record<string, unknown>
 }
 ```
@@ -179,16 +169,13 @@ interface TransformSourceParams {
 
 ```ts
 interface TransformHtmlParams {
-  /** The rendered HTML string for this page */
   html: string
-  /** The route path (e.g. /docs/guides/start) */
   path: string
-  /** The route metadata for the page, if available */
   route?: RouteMeta
 }
 ```
 
-### Transform result & ChainSignal
+### Resultado de transformación & ChainSignal
 
 ```ts
 type ChainSignal = 'skip' | 'break'
@@ -196,27 +183,26 @@ type ChainSignal = 'skip' | 'break'
 type TransformResult<T> = T & { __signal?: ChainSignal }
 ```
 
-| Signal | Behaviour |
-| :--- | :------- |
-| `__signal: 'skip'` | The output of this hook is **discarded**; original params pass to the next plugin |
-| `__signal: 'break'` | The chain stops immediately — no further plugins run |
+| Señal | Comportamiento |
+| :--- | :------------- |
+| `__signal: 'skip'` | La salida de este hook se **descarta**; los params originales pasan al siguiente plugin |
+| `__signal: 'break'` | La cadena se detiene inmediatamente — ningún plugin adicional se ejecuta |
 
 ```ts
 import { definePlugin } from 'boltdocs'
 
 export default definePlugin({
-  name: 'my-transform-plugin',
+  name: 'mi-plugin-transform',
   hooks: {
     async transformSource(ctx, { code }) {
       const transformed = code
         .replace(/\$\$(.+?)\$\$/gs, '<BlockMath>$1</BlockMath>')
         .replace(/\$(.+?)\$/g, '<Math>$1</Math>')
-
       return { code: transformed }
     },
     async transformHtml(ctx, { html }) {
       return {
-        html: html.replace('</body>', '<footer>© 2026 My Docs</footer></body>'),
+        html: html.replace('</body>', '<footer>© 2026 Mis Docs</footer></body>'),
       }
     },
   },
@@ -225,17 +211,17 @@ export default definePlugin({
 
 ---
 
-## Execution order
+## Orden de ejecución
 
 ```text
 beforeBuild / beforeDev
   → frontmatter:transform
     → routes:resolved
-      → transformSource (chain: pre → normal → post)
-        → MDX compilation
-          → transformMdx (chain: pre → normal → post)
-            → HTML rendering (SSG)
-              → transformHtml (chain: pre → normal → post)
+      → transformSource (cadena: pre → normal → post)
+        → Compilación MDX
+          → transformMdx (cadena: pre → normal → post)
+            → Renderizado HTML (SSG)
+              → transformHtml (cadena: pre → normal → post)
                 → search:index
                   → build:generate
 afterBuild / afterDev
@@ -244,10 +230,10 @@ buildEnd
 
 ---
 
-## See also
+## Ver también
 
-- [PluginContext](/docs/api/plugin-api) — base context object
-- [definePlugin & Client UI Slots](/docs/api/plugin-api/#defineplugin--client-ui-slots) — defining plugins & client injection
-- [Middleware](/docs/api/plugin-api/middleware) — transform middleware pipeline
-- [Plugin System overview](/docs/plugins/) — architecture, concepts, quick start
+- [PluginContext](/docs/es/api/plugin-api) — objeto de contexto base
+- [definePlugin y Slots de UI](/docs/es/api/plugin-api/#defineplugin--slots-de-ui-del-cliente) — definición de plugins e inyección de slots
+- [Middleware](/docs/es/api/plugin-api/middleware) — pipeline de middleware de transformación
+- [Descripción general del Sistema de Plugins](/docs/es/plugins/) — arquitectura, conceptos, inicio rápido
 

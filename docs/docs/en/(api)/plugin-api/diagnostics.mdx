@@ -3,64 +3,52 @@ title: "Diagnostics"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: Diagnostics
-sidebarPosition: 2
-description: PluginDiagnosticsAPI — structured diagnostic channel for Boltdocs plugins with severity levels, FIFO queue, and machine-readable codes.
----
-
 # `ctx.diagnostics` — PluginDiagnosticsAPI
 
-Structured diagnostics channel. Plugins push records instead of spamming
-the logger; downstream tools (dev-server overlay, CI reporters, IDE
-plugins) drain the queue via `list()`.
+Canal estructurado de diagnósticos. Los plugins envían registros en
+lugar de spamear el logger; las herramientas downstream (dev-server
+overlay, reportes CI, plugins de IDE) drenan la cola vía `list()`.
 
 ```ts
-type DiagnosticSeverity = 'info' | 'warn' | 'error'
-
-// Report a diagnostic
 ctx.diagnostics.report(
   'warn',
-  'MY_PLUGIN_SLOW_TRANSFORM',
-  'Transformation took 3.2s — consider caching the result',
-  { filePath: '/abs/path/to/page.mdx' },
+  'MI_PLUGIN_TRANSFORM_LENTO',
+  'La transformación tomó 3.2s — considera cachear el resultado',
+  { filePath: '/ruta/absoluta/pagina.mdx' },
 )
 
-// Read all pending diagnostics (snapshot, not a live stream)
-const allDiagnostics: readonly DiagnosticRecord[] = ctx.diagnostics.list()
+const todos: readonly DiagnosticRecord[] = ctx.diagnostics.list()
 
-// Clear the queue
 ctx.diagnostics.clear()
 ```
 
 ---
 
-## DiagnosticRecord shape
+## Forma de DiagnosticRecord
 
 ```ts
 interface DiagnosticRecord {
   readonly id: number
   readonly severity: 'info' | 'warn' | 'error'
-  readonly code: string            // Machine-readable error code
-  readonly message: string         // Human-readable description
-  readonly pluginName: string      // Set automatically from the plugin's name
+  readonly code: string
+  readonly message: string
+  readonly pluginName: string
   readonly filePath?: string
   readonly routePath?: string
   readonly time: Date
 }
 ```
 
-### FIFO cap
+### Límite FIFO
 
-The queue is capped at **256 records**. When a plugin emits faster than
-the dev-server overlay drains, the oldest records are silently evicted.
+La cola está limitada a **256 registros**. Cuando un plugin emite más
+rápido de lo que la overlay del dev-server drena, los registros más
+antiguos se eliminan silenciosamente.
 
 ---
 
-## See also
+## Ver también
 
-- [PluginContext](/docs/api/plugin-api) — base context object
-- [Caches](/docs/api/plugin-api/caches) — transform, routes, and memory caches
-- [Server](/docs/api/plugin-api/server) — HTTP middleware & server lifecycle
-- [Lifecycle Hooks](/docs/api/plugin-api/lifecycle-hooks) — build/dev hooks, transform chains, and chain signals
+- [PluginContext](/docs/es/api/plugin-api) — objeto de contexto base
+- [Caches](/docs/es/api/plugin-api/caches) — cachés de transformación, rutas y memoria
+- [Server](/docs/es/api/plugin-api/server) — middleware HTTP y ciclo de vida del servidor

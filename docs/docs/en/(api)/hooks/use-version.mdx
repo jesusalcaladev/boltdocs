@@ -3,17 +3,11 @@ title: "Use Version"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useVersion
-description: Manage and switch between different documentation versions.
----
-
-The `useVersion` hook retrieves information about the active version of the documentation, lists other compiled release paths, and redirects users when updating version dropdown selections.
+El hook `useVersion` obtiene información sobre la versión activa de la documentación, lista otras rutas de compilación disponibles y redirige a los usuarios cuando actualizan las selecciones del dropdown de versiones.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useVersion } from 'boltdocs/client'
@@ -21,9 +15,9 @@ import { useVersion } from 'boltdocs/client'
 
 ---
 
-## Response Schema
+## Esquema de Respuesta
 
-The hook returns the following parameters:
+El hook retorna los siguientes parámetros:
 
 ```ts
 interface UseVersionReturn {
@@ -43,9 +37,9 @@ interface VersionOption {
 
 ---
 
-## Usage Example
+## Ejemplo de Uso
 
-Below is a reference implementation of a custom version picker select component:
+A continuación se muestra una implementación de referencia de un componente select de selección de versión personalizado:
 
 ```tsx
 import React from 'react'

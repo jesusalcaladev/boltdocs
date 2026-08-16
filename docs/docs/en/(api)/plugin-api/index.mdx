@@ -3,53 +3,46 @@ title: "Index"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: Plugin API Reference
-sidebarPosition: 3
-description: Complete reference for the Boltdocs Plugin API — PluginContext, caches, diagnostics, path resolution, and virtual modules. Covers every field and method exposed to plugin lifecycle hooks.
-badge: Updated
----
+El objeto `PluginContext` que recibe cada hook del lifecycle incluye
+siete namespaces enriquecidos que otorgan a los plugins acceso seguro
+y tipado a la maquinaria interna del core: **caches**, **diagnostics**,
+**paths**, **virtual modules**, **middleware**, **server**
+y **hmr**.
 
-The `PluginContext` object passed to every lifecycle hook carries seven
-enriched namespaces that give plugins safe, typed access to the core's
-internal machinery: **caches**, **diagnostics**, **paths**,
-**virtual modules**, **middleware**, **server**, and **hmr**.
+Esta sección es la referencia oficial de la API. Léela junto con la
+[descripción general del Sistema de Plugins](/docs/es/plugins/) para
+conocer la arquitectura y ejemplos.
 
-This section is the official API reference. Read it alongside the
-[Plugin System overview](/docs/plugins/) for the architecture and
-examples.
-
-Each namespace has its own dedicated page — use the sidebar or the
-cards below to navigate.
+Cada namespace tiene su propia página — usa el sidebar o las tarjetas
+a continuación para navegar.
 
 <Cards cols={2}>
-  <Card title="PluginContext" href="/docs/api/plugin-api">
-    Base context object passed to every lifecycle hook.
+  <Card title="PluginContext" href="/docs/es/api/plugin-api">
+    Objeto de contexto base pasado a cada hook del lifecycle.
   </Card>
-  <Card title="Caches" href="/docs/api/plugin-api/caches">
-    Transform, routes, and memory caches.
+  <Card title="Caches" href="/docs/es/api/plugin-api/caches">
+    Cachés de transformación, rutas y memoria.
   </Card>
-  <Card title="Diagnostics" href="/docs/api/plugin-api/diagnostics">
-    Structured diagnostic reporting.
+  <Card title="Diagnostics" href="/docs/es/api/plugin-api/diagnostics">
+    Reporte estructurado de diagnósticos.
   </Card>
-  <Card title="Paths" href="/docs/api/plugin-api/paths">
-    Safe workspace path resolution.
+  <Card title="Paths" href="/docs/es/api/plugin-api/paths">
+    Resolución segura de rutas en el workspace.
   </Card>
-  <Card title="Virtual Modules" href="/docs/api/plugin-api/virtual-modules">
-    Runtime virtual module declarations.
+  <Card title="Virtual Modules" href="/docs/es/api/plugin-api/virtual-modules">
+    Declaraciones de módulos virtuales en runtime.
   </Card>
-  <Card title="Middleware" href="/docs/api/plugin-api/middleware">
-    Transform middleware pipeline.
+  <Card title="Middleware" href="/docs/es/api/plugin-api/middleware">
+    Pipeline de middleware de transformación.
   </Card>
-  <Card title="Server" href="/docs/api/plugin-api/server">
-    HTTP middleware & server lifecycle.
+  <Card title="Server" href="/docs/es/api/plugin-api/server">
+    Middleware HTTP y ciclo de vida del servidor.
   </Card>
-  <Card title="HMR" href="/docs/api/plugin-api/hmr">
-    Dev-server file watching & custom events.
+  <Card title="HMR" href="/docs/es/api/plugin-api/hmr">
+    Observación de archivos y eventos HMR personalizados.
   </Card>
-  <Card title="Lifecycle Hooks" href="/docs/api/plugin-api/lifecycle-hooks">
-    Build/dev hooks, transform chains, and chain signals.
+  <Card title="Lifecycle Hooks" href="/docs/es/api/plugin-api/lifecycle-hooks">
+    Hooks de build/dev, cadenas de transformación y señales.
   </Card>
 </Cards>
 
@@ -57,67 +50,67 @@ cards below to navigate.
 
 ## PluginContext
 
-Every lifecycle hook receives a `PluginContext` as its first argument:
+Cada hook del lifecycle recibe un `PluginContext` como primer argumento:
 
 ```ts
 interface PluginContext {
-  readonly config: BoltdocsConfig      // Read-only resolved config
-  readonly logger: PluginLogger        // info / warn / error / debug
-  readonly store: PluginStore          // Namespaced key-value store
-  readonly meta: PluginMeta            // Current plugin identity
-  readonly docsDir: string             // Absolute path to docs/
-  readonly rootDir: string             // Absolute path to project root
-  readonly outDir: string              // Build output (e.g. 'dist/')
-  readonly routes: RouteMeta[]         // All generated routes
+  readonly config: BoltdocsConfig
+  readonly logger: PluginLogger
+  readonly store: PluginStore
+  readonly meta: PluginMeta
+  readonly docsDir: string
+  readonly rootDir: string
+  readonly outDir: string
+  readonly routes: RouteMeta[]
 
-  // --- Enriched in 3.3.0 ---
-  readonly caches: PluginCachesAPI         // Transform, routes, memory
+  // --- Nuevo en 3.3.0 ---
+  readonly caches: PluginCachesAPI
   readonly diagnostics: PluginDiagnosticsAPI
   readonly paths: PluginPathsAPI
   readonly virtualModules: PluginVirtualModulesAPI
-  readonly middleware: PluginMiddlewareAPI  // Register transform middleware
-  readonly server: PluginServerAPI         // Register HTTP middleware
-  readonly hmr: PluginHmrAPI               // Hook into HMR events
+  readonly middleware: PluginMiddlewareAPI  // Registrar middleware transform
+  readonly server: PluginServerAPI         // Registrar middleware HTTP
+  readonly hmr: PluginHmrAPI               // Hooks de HMR
 }
 ```
 
-### Base fields
+### Campos base
 
-| Field | Type | Description |
+| Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
-| `config` | `BoltdocsConfig` | Read-only resolved configuration object. |
-| `logger` | `PluginLogger` | Structured logging — `info()`, `warn()`, `error()`, `debug()`. |
-| `store` | `PluginStore` | Namespaced key-value store for inter-plugin communication. |
-| `meta` | `PluginMeta` | Current plugin identity (`name`, `version`, `boltdocsVersion`). |
-| `docsDir` | `string` | Absolute path to the `docs/` directory. |
-| `rootDir` | `string` | Absolute path to the project root. |
-| `outDir` | `string` | Build output directory (e.g. `dist/`). |
-| `routes` | `RouteMeta[]` | All generated documentation routes. |
+| `config` | `BoltdocsConfig` | Objeto de configuración resuelto y de solo lectura. |
+| `logger` | `PluginLogger` | Logging estructurado — `info()`, `warn()`, `error()`, `debug()`. |
+| `store` | `PluginStore` | Almacén clave-valor con namespace para comunicación entre plugins. |
+| `meta` | `PluginMeta` | Identidad del plugin actual (`name`, `version`, `boltdocsVersion`). |
+| `docsDir` | `string` | Ruta absoluta al directorio `docs/`. |
+| `rootDir` | `string` | Ruta absoluta a la raíz del proyecto. |
+| `outDir` | `string` | Directorio de salida del build (ej. `dist/`). |
+| `routes` | `RouteMeta[]` | Todas las rutas de documentación generadas. |
 
-### Enriched namespaces (3.3.0+)
+### Namespaces enriquecidos (3.3.0+)
 
-| Field | Page | Description |
+| Campo | Página | Descripción |
 | :--- | :--- | :--- |
-| `caches` | [Caches](/docs/api/plugin-api/caches) | Transform cache, routes cache, and in-memory FIFO cache. |
-| `diagnostics` | [Diagnostics](/docs/api/plugin-api/diagnostics) | Structured diagnostic channel with severity levels. |
-| `paths` | [Paths](/docs/api/plugin-api/paths) | Safe path resolution inside the workspace boundary. |
-| `virtualModules` | [Virtual Modules](/docs/api/plugin-api/virtual-modules) | Declare virtual modules for Vite resolution. |
-| `middleware` | [Middleware](/docs/api/plugin-api/middleware) | Register transform middleware at runtime. |
-| `server` | [Server](/docs/api/plugin-api/server) | Register HTTP middleware and lifecycle callbacks. |
-| `hmr` | [HMR](/docs/api/plugin-api/hmr) | Hook into dev-server file watching and send custom events. |
+| `caches` | [Caches](/docs/es/api/plugin-api/caches) | Caché de transformación, rutas y FIFO en memoria. |
+| `diagnostics` | [Diagnostics](/docs/es/api/plugin-api/diagnostics) | Canal de diagnóstico estructurado con niveles de severidad. |
+| `paths` | [Paths](/docs/es/api/plugin-api/paths) | Resolución segura de rutas dentro del workspace. |
+| `virtualModules` | [Virtual Modules](/docs/es/api/plugin-api/virtual-modules) | Declara módulos virtuales para resolución por Vite. |
+| `middleware` | [Middleware](/docs/es/api/plugin-api/middleware) | Registra middleware de transformación en runtime. |
+| `server` | [Server](/docs/es/api/plugin-api/server) | Registra middleware HTTP y callbacks del ciclo de vida. |
+| `hmr` | [HMR](/docs/es/api/plugin-api/hmr) | Conéctate al file-watching del dev server y envía eventos. |
 
 ---
 
-## Putting it all together
+## Ejemplo completo
 
-A real-world plugin that caches an expensive transform, reports progress,
-resolves a path, and registers a virtual module:
+Un plugin real que cachea una transformación costosa, reporta progreso,
+resuelve una ruta y registra un módulo virtual:
 
 ```ts
 import { definePlugin } from 'boltdocs'
 
-export default definePlugin<MyOptions>((options) => ({
-  name: 'my-smart-plugin',
+export default definePlugin<MisOpciones>((options) => ({
+  name: 'mi-plugin-inteligente',
   client: {
     slots: {
       'header:right': './components/HeaderActions.tsx',
@@ -134,10 +127,10 @@ export default definePlugin<MyOptions>((options) => ({
       }
     },
     'search:index'(ctx, { documents }) {
-      ctx.logger.info(`Indexed ${documents.length} search documents.`)
+      ctx.logger.info(`Indexados ${documents.length} documentos de búsqueda.`)
     },
     'build:generate'(ctx, { routes, outDir }) {
-      ctx.logger.info(`Generated assets for ${routes.length} routes in ${outDir}.`)
+      ctx.logger.info(`Assets generados para ${routes.length} rutas en ${outDir}.`)
     },
   },
 }))
@@ -145,9 +138,9 @@ export default definePlugin<MyOptions>((options) => ({
 
 ---
 
-## See also
+## Ver también
 
-- [Plugin System overview](/docs/plugins/) — architecture, concepts, quick start
-- [@bdocs/unist-utils](/docs/plugins/unist-utils) — AST utilities for remark/rehype
-- [Releases](/docs/releases) — release history
-- [Boltdocs 3.3.0 release post](/docs/blog/boltdocs-3.3.0) — detailed release notes
+- [Descripción general del Sistema de Plugins](/docs/es/plugins/) — arquitectura, conceptos, inicio rápido
+- [@bdocs/unist-utils](/docs/es/plugins/unist-utils) — Utilidades AST para remark/rehype
+- [Releases](/docs/es/releases) — historial de releases
+- [Post de lanzamiento de Boltdocs 3.3.0](/docs/es/blog/boltdocs-3.3.0) — notas detalladas de la versión

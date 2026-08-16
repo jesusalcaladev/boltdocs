@@ -3,128 +3,121 @@ title: "Index"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: Integrations
-sidebarPosition: 1
-description: Connect Boltdocs with external services — analytics, search, i18n, versioning, SEO, and more.
----
-
 import { BarChart, Tag, Globe, Search, GitBranch, Bot, FolderOpen, MessageSquare } from 'lucide-react'
 
-Boltdocs integrates with popular services and provides built-in features for search, localization, versioning, and SEO. This section covers all available integrations.
+Boltdocs se integra con servicios populares y ofrece funciones integradas para búsqueda, localización, versionado y SEO. Esta sección cubre todas las integraciones disponibles.
 
 ---
 
-## Available Integrations
+## Integraciones Disponibles
 
-### SEO & Analytics
+### SEO y Analítica
 <Cards cols={3}>
-  <Card title="SEO & Robots" icon={<Bot />} href="/docs/integrations/seo">
-    Automatic sitemap, robots.txt, and meta tags.
+  <Card title="SEO y Robots" icon={<Bot />} href="/docs/integrations/seo">
+    Sitemap automático, robots.txt y etiquetas meta.
   </Card>
   <Card title="Google Analytics 4" icon={<BarChart />} href="/docs/integrations/seo/ga4">
-    Track page views and custom events with GA4.
+    Rastrea vistas de página y eventos personalizados con GA4.
   </Card>
   <Card title="Google Tag Manager" icon={<Tag />} href="/docs/integrations/seo/gtm">
-    Deploy and manage tags, analytics, and custom scripts with GTM.
+    Despliega y gestiona etiquetas, analítica y scripts personalizados con GTM.
   </Card>
   <Card title="Vercel Analytics" icon={<BarChart />} href="/docs/integrations/seo/vercel">
-    Monitor traffic and Core Web Vitals with zero-config Vercel Analytics.
+    Monitorea tráfico y Core Web Vitals con Vercel Analytics sin configuración.
   </Card>
-  <Card title="Site Verification" icon={<Tag />} href="/docs/integrations/seo/verification">
-    Verify ownership with Google, Bing, Yandex, Pinterest, and Facebook.
+  <Card title="Verificación de Sitio" icon={<Tag />} href="/docs/integrations/seo/verification">
+    Verifica la titularidad con Google, Bing, Yandex, Pinterest y Facebook.
   </Card>
 </Cards>
 
-### Search
+### Búsqueda
 <Cards cols={3}>
-  <Card title="Search Overview" icon={<Search />} href="/docs/integrations/search">
-    Built-in search architecture and customization options.
+  <Card title="Visión General de Búsqueda" icon={<Search />} href="/docs/integrations/search">
+    Arquitectura de búsqueda integrada y opciones de personalización.
   </Card>
-  <Card title="FlexSearch Custom UI" icon={<Search />} href="/docs/integrations/search/flexsearch">
-    Query offline indices programmatically and build custom search UIs.
+  <Card title="Interfaz Personalizada con FlexSearch" icon={<Search />} href="/docs/integrations/search/flexsearch">
+    Consulta índices offline de forma programática y construye interfaces de búsqueda personalizadas.
   </Card>
   <Card title="Algolia DocSearch" icon={<Search />} href="/docs/integrations/search/algolia">
-    Integrate Algolia cloud search for advanced synonyms and analytics.
+    Integra la búsqueda en la nube de Algolia para sinónimos avanzados y analítica.
   </Card>
 </Cards>
 
-### Globalization
+### Globalización
 <Cards cols={2}>
-  <Card title="Internationalization" icon={<Globe />} href="/docs/integrations/globalization/i18n">
-    Multi-language docs with folder-based routing and RTL layouts.
+  <Card title="Internacionalización" icon={<Globe />} href="/docs/integrations/globalization/i18n">
+    Documentación multilingüe con enrutamiento basado en carpetas y diseños RTL.
   </Card>
-  <Card title="Versioning" icon={<GitBranch />} href="/docs/integrations/globalization/versioning">
-    Maintain and switch between multiple parallel release versions.
+  <Card title="Versionado" icon={<GitBranch />} href="/docs/integrations/globalization/versioning">
+    Mantén y cambia entre múltiples versiones de lanzamiento en paralelo.
   </Card>
 </Cards>
 
-### Content Features
+### Funcionalidades de Contenido
 <Cards cols={3}>
-  <Card title="Collections" icon={<FolderOpen />} href="/docs/integrations/features/collections">
-    Group documents into blogs, release notes, or tutorials with custom views.
+  <Card title="Colecciones" icon={<FolderOpen />} href="/docs/integrations/features/collections">
+    Agrupa documentos en blogs, notas de lanzamiento o tutoriales con vistas personalizadas.
   </Card>
-  <Card title="Custom Feedback" icon={<MessageSquare />} href="/docs/integrations/features/feedback">
-    Native GitHub Discussion ratings and page-level comments.
+  <Card title="Retroalimentación Personalizada" icon={<MessageSquare />} href="/docs/integrations/features/feedback">
+    Calificaciones nativas de GitHub Discussion y comentarios a nivel de página.
   </Card>
-  <Card title="Giscus Comments" icon={<MessageSquare />} href="/docs/integrations/features/giscus">
-    Add GitHub Discussions-powered comments to your docs.
+  <Card title="Comentarios con Giscus" icon={<MessageSquare />} href="/docs/integrations/features/giscus">
+    Agrega comentarios impulsados por GitHub Discussions a tu documentación.
   </Card>
 </Cards>
 
 
 ---
 
-## Built-in Features
+## Funciones Integradas
 
-### Built-in Search
+### Búsqueda integrada
 
-Boltdocs ships with zero-dependency full-text search. The search index is built at compile time and embedded in the client bundle. No API keys, no external services.
+Boltdocs incluye búsqueda de texto completo sin dependencias. El índice de búsqueda se construye en tiempo de compilación y se incrusta en el paquete del cliente. Sin claves de API, sin servicios externos.
 
-- **Indexing:** Titles, headings, descriptions, body text
-- **Trigger:** `Cmd+K` / `Ctrl+K` or click the search button
-- **Customization:** Use `useSearch()` hook or `<SearchDialog>` component
+- **Indexación:** Títulos, encabezados, descripciones, texto del cuerpo
+- **Activación:** `Cmd+K` / `Ctrl+K` o haz clic en el botón de búsqueda
+- **Personalización:** Usa el hook `useSearch()` o el componente `<SearchDialog>`
 
-### Internationalization
+### Internacionalización
 
-Locale-based routing using folder conventions. Supports RTL languages, automatic fallbacks for untranslated pages, and locale-specific theming.
+Enrutamiento basado en locales usando convenciones de carpetas. Soporta idiomas RTL, respaldos automáticos para páginas no traducidas y temáticas específicas por locale.
 
-- **Config:** `i18n.defaultLocale`, `i18n.locales`
-- **Folder structure:** `docs/es/`, `docs/fr/`
-- **RTL support:** Set `direction: 'rtl'` in locale config
+- **Configuración:** `i18n.defaultLocale`, `i18n.locales`
+- **Estructura de carpetas:** `docs/es/`, `docs/fr/`
+- **Soporte RTL:** Configura `direction: 'rtl'` en la configuración del locale
 
-### Versioning
+### Versionado
 
-Maintain multiple documentation versions (v1, v2, etc.) in parallel. Each version is a folder at the root of `docs/`.
+Mantén múltiples versiones de documentación (v1, v2, etc.) en paralelo. Cada versión es una carpeta en la raíz de `docs/`.
 
-- **Config:** `versions.defaultVersion`, `versions.versions`
-- **Folder structure:** `docs/v1/`, `docs/v2/`
-- **Version switcher:** Built into the default layout
+- **Configuración:** `versions.defaultVersion`, `versions.versions`
+- **Estructura de carpetas:** `docs/v1/`, `docs/v2/`
+- **Selector de versión:** Integrado en el diseño predeterminado
 
-### SEO & Robots
+### SEO y Robots
 
-Automatic meta tags, Open Graph images, sitemap.xml, and robots.txt generation. Fine-grained control per page via frontmatter.
+Generación automática de etiquetas meta, imágenes Open Graph, sitemap.xml y robots.txt. Control detallado por página mediante frontmatter.
 
-- **Config:** `seo`, `robots`, `siteUrl`
-- **Auto-generated:** `sitemap.xml`, `robots.txt`
-- **Per-page:** Override via frontmatter `seo` field
+- **Configuración:** `seo`, `robots`, `siteUrl`
+- **Auto-generado:** `sitemap.xml`, `robots.txt`
+- **Por página:** Override mediante campo `seo` en frontmatter
 
-### Collections
+### Colecciones
 
-Group files into dynamic directories using folder-based conventions. Boltdocs automatically maps bracketed folders (e.g. `[blog]`) to collection routes, enabling custom listing, post views, and isolated layouts.
+Agrupa archivos en directorios dinámicos usando convenciones de carpetas. Boltdocs mapea automáticamente las carpetas entre corchetes (por ejemplo `[blog]`) a rutas de colección, permitiendo listados personalizados, vistas de publicaciones y diseños aislados.
 
-- **Conventions:** `layout.tsx`, `list.tsx`, `post.tsx`
-- **Data Loaders:** Type-safe collection loader data is available via `useLoaderData()`
+- **Convenciones:** `layout.tsx`, `list.tsx`, `post.tsx`
+- **Cargadores de Datos:** Los datos tipados del cargador de colección están disponibles mediante `useLoaderData()`
 
 ---
 
 
-## External Services
+## Servicios Externos
 
 ### Google Analytics 4
 
-Track page views and custom events. Configure via `integrations.ga4` in your config:
+Rastrea vistas de página y eventos personalizados. Configura mediante `integrations.ga4` en tu configuración:
 
 ```ts
 integrations: {
@@ -134,18 +127,18 @@ integrations: {
 }
 ```
 
-Page views are tracked automatically. Use the `useTrackEvent()` hook for custom events.
+Las vistas de página se rastrean automáticamente. Usa el hook `useTrackEvent()` para eventos personalizados.
 
 ---
 
-## Configuration Reference
+## Referencia de Configuración
 
-| Key | Type | Description |
+| Clave | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`integrations.ga4`** | `GA4Config` | Google Analytics 4 settings |
-| **`integrations.feedback`** | `FeedbackConfig` | Custom feedback integration settings |
-| **`i18n`** | `I18nConfig` | Internationalization settings |
-| **`versions`** | `VersionsConfig` | Versioning settings |
-| **`seo`** | `SeoConfig` | Global SEO defaults |
-| **`robots`** | `RobotsConfig` | robots.txt configuration |
-| **`siteUrl`** | `string` | Required for absolute URLs in sitemap/og:image |
+| **`integrations.ga4`** | `GA4Config` | Configuración de Google Analytics 4 |
+| **`integrations.feedback`** | `FeedbackConfig` | Configuración de la integración de retroalimentación personalizada |
+| **`i18n`** | `I18nConfig` | Configuración de internacionalización |
+| **`versions`** | `VersionsConfig` | Configuración de versionado |
+| **`seo`** | `SeoConfig` | Valores predeterminados globales de SEO |
+| **`robots`** | `RobotsConfig` | Configuración de robots.txt |
+| **`siteUrl`** | `string` | Requerido para URLs absolutas en sitemap/og:image |

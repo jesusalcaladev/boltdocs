@@ -3,17 +3,11 @@ title: "Use Theme"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useTheme
-description: Retrieve and update the active color theme (light/dark mode).
----
-
-The `useTheme` hook lets components subscribe to and modify the active UI color theme.
+El hook `useTheme` permite que los componentes se suscriban y modifiquen el tema de color de interfaz activo.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useTheme } from 'boltdocs/client'
@@ -21,17 +15,17 @@ import { useTheme } from 'boltdocs/client'
 
 ---
 
-## Return Values
+## Valores de Retorno
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`theme`** | `'light' \| 'dark'` | The active color mode. |
-| **`setTheme`** | `(t: 'light' \| 'dark') => void` | Directly set a specific color mode. |
-| **`toggleTheme`** | `() => void` | Alternate the theme between light and dark modes. |
+| **`theme`** | `'light' \| 'dark'` | El modo de color activo. |
+| **`setTheme`** | `(t: 'light' \| 'dark') => void` | Establecer directamente un modo de color específico. |
+| **`toggleTheme`** | `() => void` | Alternar el tema entre los modos claro y oscuro. |
 
 ---
 
-## Example: Custom Theme Toggle Button
+## Ejemplo: Botón de Alternancia de Tema Personalizado
 
 ```tsx
 import { useTheme } from 'boltdocs/client'

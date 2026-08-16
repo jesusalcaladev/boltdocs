@@ -3,17 +3,11 @@ title: "Use Breadcrumbs"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useBreadcrumbs
-description: Fetch the list of parent paths leading to the current active page.
----
-
-The `useBreadcrumbs` hook computes the path segment breadcrumb hierarchy for the currently active route.
+El hook `useBreadcrumbs` calcula la jerarquía de migas de pan por segmento de ruta para la ruta activa actual.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useBreadcrumbs } from 'boltdocs/client'
@@ -21,15 +15,15 @@ import { useBreadcrumbs } from 'boltdocs/client'
 
 ---
 
-## Return Values
+## Valores de Retorno
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`breadcrumbs`** | `Breadcrumb[]` | Array of path segment definitions from root to current page. |
+| **`breadcrumbs`** | `Breadcrumb[]` | Arreglo de definiciones de segmentos de ruta desde la raíz hasta la página actual. |
 
 ---
 
-## Breadcrumb Schema
+## Esquema de Breadcrumb
 
 ```ts
 interface Breadcrumb {
@@ -40,7 +34,7 @@ interface Breadcrumb {
 
 ---
 
-## Example: Custom Top Path Banner
+## Ejemplo: Banner de Ruta Superior Personalizado
 
 ```tsx
 import { useBreadcrumbs } from 'boltdocs/client'

@@ -3,17 +3,11 @@ title: "Use Search"
 description: "Placeholder English source. Replace with full content."
 ---
 
-<!-- AUTO-COPY: English source (copied to support i18n doctor) -->
----
-title: useSearch
-description: Access search query, results, and open/close controls programmatically.
----
-
-The `useSearch` hook provides programmatic control over the documentation's full-text search state and search result data.
+El hook `useSearch` proporciona control programático sobre el estado de búsqueda de texto completo de la documentación y los datos de resultados de búsqueda.
 
 ---
 
-## Import
+## Importación
 
 ```tsx
 import { useSearch } from 'boltdocs/client'
@@ -21,21 +15,21 @@ import { useSearch } from 'boltdocs/client'
 
 ---
 
-## Return Values
+## Valores de Retorno
 
-| Property | Type | Description |
+| Propiedad | Tipo | Descripción |
 | :--- | :--- | :--- |
-| **`query`** | `string` | The current text value of the search query. |
-| **`setQuery`** | `(q: string) => void` | Updates the search query and triggers search indexing. |
-| **`results`** | `SearchResult[]` | Array of matching search results ordered by relevance score. |
-| **`isOpen`** | `boolean` | True if the search dialog/overlay modal is currently open. |
-| **`open`** | `() => void` | Opens the search dialog. |
-| **`close`** | `() => void` | Closes the search dialog and clears the active query. |
-| **`handleSelect`** | `(key: React.Key) => void` | Callback to handle selection of a search result by its unique key (e.g. page path). |
+| **`query`** | `string` | El valor de texto actual de la consulta de búsqueda. |
+| **`setQuery`** | `(q: string) => void` | Actualiza la consulta de búsqueda y activa la indexación de búsqueda. |
+| **`results`** | `SearchResult[]` | Arreglo de resultados de búsqueda coincidentes ordenados por puntaje de relevancia. |
+| **`isOpen`** | `boolean` | Verdadero si el diálogo/modo superposición de búsqueda está actualmente abierto. |
+| **`open`** | `() => void` | Abre el diálogo de búsqueda. |
+| **`close`** | `() => void` | Cierra el diálogo de búsqueda y limpia la consulta activa. |
+| **`handleSelect`** | `(key: React.Key) => void` | Función de controlador para seleccionar un resultado de búsqueda por su clave. |
 
 ---
 
-## SearchResult Interface
+## Interfaz SearchResult
 
 ```ts
 interface SearchResult {
@@ -49,7 +43,7 @@ interface SearchResult {
 
 ---
 
-## Example: Inline Search Input
+## Ejemplo: Entrada de Búsqueda en Línea
 
 ```tsx
 import { useSearch } from 'boltdocs/client'
