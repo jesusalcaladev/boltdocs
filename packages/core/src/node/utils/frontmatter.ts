@@ -43,6 +43,15 @@ export function parseFrontmatterFast(input: string): ParsedFrontmatter {
   }
 }
 
+// Characters that may legally precede the start of a quoted scalar in YAML.
+// An apostrophe inside a plain scalar (e.g. "page's" or "don't") is NOT a
+// quote boundary, so it must not toggle the quote state.
+const QUOTE_TOKEN_START = /[\s:[\]{},-]/u
+
+function isTokenStart(str: string, i: number): boolean {
+  return i === 0 || QUOTE_TOKEN_START.test(str[i - 1])
+}
+
 function hasUnclosedQuotes(str: string): boolean {
   let inSingle = false
   let inDouble = false
@@ -52,9 +61,18 @@ function hasUnclosedQuotes(str: string): boolean {
     const prev = i > 0 ? str[i - 1] : ''
 
     if (char === "'" && !inDouble && prev !== '\\') {
-      inSingle = !inSingle
+      if (inSingle) {
+        // Closing quote — only when preceded by a plain-scalar character.
+        if (!isTokenStart(str, i)) inSingle = false
+      } else if (isTokenStart(str, i)) {
+        inSingle = true
+      }
     } else if (char === '"' && !inSingle && prev !== '\\') {
-      inDouble = !inDouble
+      if (inDouble) {
+        if (!isTokenStart(str, i)) inDouble = false
+      } else if (isTokenStart(str, i)) {
+        inDouble = true
+      }
     }
   }
 

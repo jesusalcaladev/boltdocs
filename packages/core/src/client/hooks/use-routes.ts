@@ -22,17 +22,18 @@ export function useRoutes() {
   }
   const config = useConfig()
   const location = useLocation()
+  const { pathname } = location
 
   const {
     currentLocale: currentLocaleStore,
     currentVersion: currentVersionStore,
   } = useBoltdocsContext()
 
-  const currentPath = normalizePath(location.pathname)
+  const currentPath = normalizePath(pathname)
 
   const currentRoute = routeIndex.byPath.get(currentPath)
 
-  const pathParts = location.pathname.split('/').filter(Boolean)
+  const pathParts = pathname.split('/').filter(Boolean)
   const urlLocale = config.i18n
     ? pathParts.find((part) =>
         Array.isArray(config.i18n?.locales)
@@ -76,7 +77,7 @@ export function useRoutes() {
 
       if (!(localeMatch && versionMatch)) return false
 
-      const pathParts = location.pathname.split('/').filter(Boolean)
+      const pathParts = pathname.split('/').filter(Boolean)
       const isCurrentLocalePrefixed = !!(
         config.i18n &&
         pathParts.includes(currentLocaleStore || config.i18n.defaultLocale)
@@ -111,12 +112,10 @@ export function useRoutes() {
   }, [
     allRoutes,
     config,
-    routeIndex,
+    pathname,
     currentLocale,
     currentVersion,
-    location.pathname,
     currentLocaleStore,
-    currentVersionStore,
   ])
 
   const collections = useMemo(
@@ -124,13 +123,16 @@ export function useRoutes() {
     [routeIndex.collectionNames],
   )
 
-  const currentSegment = location.pathname
-    .split('/')
-    .filter(Boolean)[0]
-    ?.toLowerCase()
+  // Collection post routes are registered without the docs base (e.g.
+  // `/blog/post`), while the browser URL includes it (`/docs/blog/post`),
+  // so `currentRoute` is undefined on post pages. Detect collection pages
+  // from any path segment instead of relying on the route index alone.
   const isCollectionPage =
     !!currentRoute?.collection ||
-    (currentSegment ? collections.has(currentSegment) : false)
+    location.pathname
+      .split('/')
+      .filter(Boolean)
+      .some((segment) => collections.has(segment.toLowerCase()))
 
   return {
     routes,

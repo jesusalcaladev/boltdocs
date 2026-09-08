@@ -61,9 +61,12 @@ export function setupHmr(
   routeCacheVariant?: RouteCacheVariant,
 ): void {
   const cacheContext =
-    routeCacheContext ??
-    virtualModuleState?.routeCacheContext ??
-    getRouteCacheContext(docsDir)
+    routeCacheContext && !routeCacheContext.disposed
+      ? routeCacheContext
+      : virtualModuleState?.routeCacheContext &&
+          !virtualModuleState.routeCacheContext.disposed
+        ? virtualModuleState.routeCacheContext
+        : getRouteCacheContext(docsDir)
   const cacheVariant =
     routeCacheVariant ??
     getRouteCacheVariant(

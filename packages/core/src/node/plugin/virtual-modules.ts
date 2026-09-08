@@ -158,6 +158,32 @@ function clearVirtualData(state?: VirtualModuleState): void {
   moduleState.searchDataMap.clear()
 }
 
+/**
+ * Return a live route cache context, refreshing the module state when the
+ * shared context was disposed by a previous dev-server instance. During a
+ * `server.restart()` the old server's `close` handler may dispose the shared
+ * context AFTER the new server's `configureServer` has already captured it,
+ * so virtual module loads must self-heal instead of throwing the
+ * "Route cache context has been disposed." error.
+ */
+function ensureRouteCacheContext(
+  docsDir: string,
+  moduleState: VirtualModuleState,
+): RouteCacheContext {
+  if (
+    !moduleState.routeCacheContext ||
+    moduleState.routeCacheContext.disposed
+  ) {
+    moduleState.routeCacheContext = getRouteCacheContext(docsDir)
+    moduleState.routeCacheVariant = undefined
+    moduleState.routeGenerationFingerprint = undefined
+    moduleState.routesDataMap.clear()
+    moduleState.collectionsDataMap.clear()
+    moduleState.searchDataMap.clear()
+  }
+  return moduleState.routeCacheContext
+}
+
 async function regenerateRouteData(
   docsDir: string,
   config: BoltdocsConfig,
@@ -165,19 +191,15 @@ async function regenerateRouteData(
   routeCacheVariant?: RouteCacheVariant,
 ): Promise<void> {
   const moduleState = getVirtualModuleState(state)
-  if (!moduleState.routeCacheContext) {
-    moduleState.routeCacheContext = getRouteCacheContext(docsDir)
-  }
+  const routeCacheContext = ensureRouteCacheContext(docsDir, moduleState)
   const generationKey = getRouteGenerationFingerprint(config)
   const existingVariant =
     routeCacheVariant?.fingerprint === generationKey &&
-    moduleState.routeCacheContext.variants.get(generationKey) ===
-      routeCacheVariant
+    routeCacheContext.variants.get(generationKey) === routeCacheVariant
       ? routeCacheVariant
       : undefined
   const variant =
-    existingVariant ??
-    getRouteCacheVariant(moduleState.routeCacheContext, generationKey)
+    existingVariant ?? getRouteCacheVariant(routeCacheContext, generationKey)
   moduleState.routeCacheVariant = variant
   moduleState.routeGenerationFingerprint = generationKey
   const routes = await generateRoutes(
@@ -185,7 +207,7 @@ async function regenerateRouteData(
     config,
     undefined,
     false,
-    moduleState.routeCacheContext,
+    routeCacheContext,
     variant,
   )
   moduleState.routesDataMap.clear()
@@ -235,9 +257,7 @@ async function ensureRoutesGenerated(
   state?: VirtualModuleState,
 ): Promise<void> {
   const moduleState = getVirtualModuleState(state)
-  if (!moduleState.routeCacheContext) {
-    moduleState.routeCacheContext = getRouteCacheContext(docsDir)
-  }
+  ensureRouteCacheContext(docsDir, moduleState)
   const generationKey = getRouteGenerationFingerprint(config)
   if (
     moduleState.routesDataMap.size === 0 ||
@@ -294,7 +314,9 @@ function serializeMapToExport<T, R>(
     }
     return getKey(left).localeCompare(getKey(right))
   })
-  return `export default ${JSON.stringify(values, null, 2)};`
+  // Compact JSON: the routes payload is multi-MB; indenting it inflates the
+  // module the browser must download and parse before hydration.
+  return `export default ${JSON.stringify(values)};`
 }
 
 /** Export the current search document cache as a plain array. */
@@ -309,7 +331,7 @@ export function getSearchDataExport(
 function serializeCollectionsToExport(
   record: Record<string, CollectionPost[]>,
 ): string {
-  return `export default ${JSON.stringify(record, null, 2)};`
+  return `export default ${JSON.stringify(record)};`
 }
 
 /**

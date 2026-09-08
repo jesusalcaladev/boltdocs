@@ -3,6 +3,7 @@ import type { BoltdocsConfig } from '../config'
 import type { IPluginLifecycleManager } from '../../shared/types'
 import {
   disposeRouteCacheContext,
+  getRouteCacheContext,
   type RouteCacheContext,
 } from '../routes/cache'
 import {
@@ -62,7 +63,13 @@ export function createDevServerPlugin(
       const cacheContext =
         routeCacheContext && !routeCacheContext.disposed
           ? routeCacheContext
-          : virtualModuleState?.routeCacheContext
+          : virtualModuleState?.routeCacheContext &&
+              !virtualModuleState.routeCacheContext.disposed
+            ? virtualModuleState.routeCacheContext
+            : getRouteCacheContext(docsDir)
+      if (virtualModuleState) {
+        virtualModuleState.routeCacheContext = cacheContext
+      }
 
       setupPrewarming(server, docsDir, getConfig, routesPromise)
       setupMiddlewares(server, docsDir, getConfig)
@@ -81,6 +88,16 @@ export function createDevServerPlugin(
           disposeRouteCacheContext(docsDir, cacheContext)
         })
       }
+
+      // Pre-warm Shiki highlighter once the HTTP server is actually
+      // listening. During createServer the highlighter build (~2.5s of
+      // synchronous CPU from TextMate grammar parsing) would block startup,
+      // so it is deferred to the background after the "ready" banner prints.
+      server.httpServer?.once('listening', () => {
+        import('../mdx/shiki-adapter')
+          .then(({ prewarmShiki }) => prewarmShiki(getConfig()))
+          .catch(() => {})
+      })
 
       // Wire plugin HMR sender (ctx.hmr.send())
       setHmrSender((event, data) => {

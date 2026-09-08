@@ -2,8 +2,14 @@ import type { ViteDevServer } from 'vite'
 import type { BoltdocsConfig } from '../config'
 import path from 'node:path'
 
-const BATCH_SIZE = 48
-const PREWARM_DELAY = 0
+const BATCH_SIZE = 8
+/**
+ * Delay before prewarming starts. The browser fetches ~150-250 modules for
+ * the first page load right after the server becomes ready; transforming
+ * every docs page at t=0 would starve the event loop exactly then and slow
+ * down first paint. Waiting lets the initial request win the race.
+ */
+const PREWARM_DELAY = 1500
 
 const activePrewarms = new WeakMap<ViteDevServer, Promise<void>>()
 
@@ -68,12 +74,14 @@ export function setupPrewarming(
               docsDir,
               getConfig(),
             )
+        // Warm EVERY route (priority order) so client-side navigation always
+        // hits an already-compiled module instead of compiling on demand.
         const files = routes
           .filter((r) => r.filePath)
-          .map((r) => r.filePath)
+          .map((r) => r.filePath as string)
           .sort((a, b) => getRoutePriority(a) - getRoutePriority(b))
-          .slice(0, 40)
 
+        const prewarmStart = performance.now()
         for (let i = 0; i < files.length; i += BATCH_SIZE) {
           const batch = files.slice(i, i + BATCH_SIZE)
           await Promise.allSettled(
@@ -82,6 +90,15 @@ export function setupPrewarming(
               const viteUrl = rel.startsWith('/') ? rel : `/${rel}`
               return server.transformRequest(viteUrl)
             }),
+          )
+        }
+        if (
+          process.env.BOLTDOCS_DEBUG === 'true' ||
+          process.env.BOLTDOCS_BENCHMARK === 'true'
+        ) {
+          // eslint-disable-next-line no-console
+          console.log(
+            `[boltdocs] prewarm done (${files.length} files) in ${Math.round(performance.now() - prewarmStart)}ms`,
           )
         }
       } catch (error) {
