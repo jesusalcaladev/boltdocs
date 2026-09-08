@@ -101,9 +101,13 @@ export class SsgWorkerPool {
       idleTimeout: 10000,
     })
 
-    console.log(
-      `[ssg-worker/piscina] Piscina pool initialized with ${this.totalWorkers} workers (RAM: ${totalGB.toFixed(1)} GB total, ${freeGB.toFixed(1)} GB free)`,
-    )
+    // Diagnostic line for capacity planning — only in benchmark mode so
+    // ordinary builds stay quiet (stdout writes are not free).
+    if (process.env.BOLTDOCS_BENCHMARK_PHASES === 'true') {
+      console.log(
+        `[ssg-worker/piscina] Piscina pool initialized with ${this.totalWorkers} workers (RAM: ${totalGB.toFixed(1)} GB total, ${freeGB.toFixed(1)} GB free)`,
+      )
+    }
   }
 
   async ready(): Promise<void> {

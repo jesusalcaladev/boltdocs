@@ -139,9 +139,13 @@ function main(): void {
 
   if (!baseline) {
     writeBaseline(opts.baselinePath, currentMs)
-    console.log(`[gate] No committed baseline found — wrote one: ${fmt(currentMs)}`)
+    console.log(
+      `[gate] No committed baseline found — wrote one: ${fmt(currentMs)}`,
+    )
     console.log(`       Saved to ${opts.baselinePath}`)
-    console.log('       Review and commit it; subsequent runs enforce the gate.')
+    console.log(
+      '       Review and commit it; subsequent runs enforce the gate.',
+    )
     return
   }
 
@@ -151,8 +155,12 @@ function main(): void {
 
   console.log(`[gate] Current cold build  : ${fmt(currentMs)}`)
   console.log(`[gate] Baseline (committed): ${fmt(baseline.medianTotalMs)}`)
-  console.log(`[gate] Allowed regression  : +${opts.thresholdPct}% (<= ${fmt(limit)})`)
-  console.log(`[gate] Delta vs baseline   : ${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%`)
+  console.log(
+    `[gate] Allowed regression  : +${opts.thresholdPct}% (<= ${fmt(limit)})`,
+  )
+  console.log(
+    `[gate] Delta vs baseline   : ${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%`,
+  )
 
   if (!ok) {
     console.error(
@@ -162,7 +170,9 @@ function main(): void {
     process.exit(1)
   }
 
-  console.log('\n[gate] ACCEPTED: cold build holds or improves vs baseline (SPEC §2.2).')
+  console.log(
+    '\n[gate] ACCEPTED: cold build holds or improves vs baseline (SPEC §2.2).',
+  )
 }
 
 main()

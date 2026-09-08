@@ -1,27 +1,33 @@
 import { describe, it, expect } from 'vitest'
-import { generateRobotsTxt } from '../../../packages/core/src/node/seo/robots'
+import { generateRobotsTxt } from '../../../src/node/seo/robots'
 
-describe('ssg robots.txt', () => {
-  it('should return string robots config directly', () => {
+describe('generateRobotsTxt', () => {
+  it('returns a string robots config directly', () => {
     const config = {
       robots: 'User-agent: *\nDisallow: /private/',
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toBe('User-agent: *\nDisallow: /private/')
   })
 
-  it('should generate default robots.txt with no config', () => {
-    const config = {}
-
-    const result = generateRobotsTxt(config)
+  it('generates a default robots.txt with no config', () => {
+    const result = generateRobotsTxt({} as any)
 
     expect(result).toContain('User-agent: *')
     expect(result).toContain('Allow: /')
   })
 
-  it('should handle rules with disallow', () => {
+  it('disallows everything for private indexing', () => {
+    const result = generateRobotsTxt({ seo: { indexing: 'private' } } as any)
+
+    expect(result).toContain('User-agent: *')
+    expect(result).toContain('Disallow: /')
+    expect(result).not.toContain('Allow:')
+  })
+
+  it('handles rules with disallow arrays', () => {
     const config = {
       robots: {
         rules: [
@@ -33,14 +39,14 @@ describe('ssg robots.txt', () => {
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toContain('User-agent: *')
     expect(result).toContain('Disallow: /admin/')
     expect(result).toContain('Disallow: /private/')
   })
 
-  it('should handle rules with allow and disallow', () => {
+  it('handles rules with allow and disallow', () => {
     const config = {
       robots: {
         rules: [
@@ -53,14 +59,14 @@ describe('ssg robots.txt', () => {
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toContain('User-agent: Googlebot')
     expect(result).toContain('Allow: /public/')
     expect(result).toContain('Disallow: /private/')
   })
 
-  it('should handle multiple user-agent rules', () => {
+  it('handles multiple user-agent rules', () => {
     const config = {
       robots: {
         rules: [
@@ -70,14 +76,14 @@ describe('ssg robots.txt', () => {
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toContain('User-agent: *')
     expect(result).toContain('User-agent: BadBot')
     expect(result).toContain('Disallow: /')
   })
 
-  it('should add sitemap from siteUrl', () => {
+  it('adds sitemap from siteUrl', () => {
     const config = {
       siteUrl: 'https://example.com',
       robots: {
@@ -85,12 +91,12 @@ describe('ssg robots.txt', () => {
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toContain('Sitemap: https://example.com/sitemap.xml')
   })
 
-  it('should add custom sitemaps', () => {
+  it('adds custom sitemaps', () => {
     const config = {
       robots: {
         rules: [{ userAgent: '*', allow: '/' }],
@@ -101,72 +107,62 @@ describe('ssg robots.txt', () => {
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toContain('Sitemap: https://example.com/sitemap1.xml')
     expect(result).toContain('Sitemap: https://example.com/sitemap2.xml')
   })
 
-  it('should not add sitemap when no siteUrl', () => {
+  it('does not add a sitemap when no siteUrl', () => {
     const config = {
       robots: {
         rules: [{ userAgent: '*', allow: '/' }],
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).not.toContain('Sitemap:')
   })
 
-  it('should handle allow as string', () => {
+  it('handles allow as a string', () => {
     const config = {
       robots: {
-        rules: [
-          {
-            userAgent: '*',
-            allow: '/public/',
-          },
-        ],
+        rules: [{ userAgent: '*', allow: '/public/' }],
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toContain('Allow: /public/')
   })
 
-  it('should handle disallow as string', () => {
+  it('handles disallow as a string', () => {
     const config = {
       robots: {
-        rules: [
-          {
-            userAgent: '*',
-            disallow: '/admin/',
-          },
-        ],
+        rules: [{ userAgent: '*', disallow: '/admin/' }],
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toContain('Disallow: /admin/')
   })
 
-  it('should trim trailing whitespace', () => {
+  it('trims trailing whitespace', () => {
     const config = {
       robots: {
         rules: [{ userAgent: '*', allow: '/' }],
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result.endsWith('\n')).toBe(false)
     expect(result).toBe(result.trim())
   })
 
-  it('should handle siteUrl with trailing slash', () => {
+  it('handles siteUrl with a trailing slash', () => {
     const config = {
       siteUrl: 'https://example.com/',
       robots: {
@@ -174,7 +170,7 @@ describe('ssg robots.txt', () => {
       },
     }
 
-    const result = generateRobotsTxt(config)
+    const result = generateRobotsTxt(config as any)
 
     expect(result).toContain('Sitemap: https://example.com/sitemap.xml')
     expect(result).not.toContain('https://example.com//sitemap.xml')
