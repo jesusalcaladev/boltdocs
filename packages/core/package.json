@@ -88,7 +88,7 @@
   "author": "Jesus Alcala",
   "license": "MIT",
   "dependencies": {
-    "@bdocs/dui": "^0.3.0",
+    "@bdocs/dui": "^0.6.0",
     "@bdocs/parser": "workspace:*",
     "@bdocs/plugin-image-optimizer": "workspace:*",
     "@bdocs/processor-satteri": "workspace:*",
@@ -114,7 +114,7 @@
     "semver": "^7.7.4",
     "shiki": "3.23.0",
     "tailwind-merge": "3.5.0",
-    "vite": "7.0.0 || 8.0.0",
+    "vite": "8.1.5",
     "zod": "4.3.6"
   },
   "peerDependencies": {
@@ -138,8 +138,8 @@
     "react-aria-components": "1.16.0",
     "tailwindcss": "^4.3.0",
     "tsdown": "0.21.7",
+    "tsdown-config": "workspace:*",
     "typescript": "5.9.3",
-    "vitest": "^3.0.0",
-    "tsdown-config": "workspace:*"
+    "vitest": "^3.0.0"
   }
 }

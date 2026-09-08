@@ -139,10 +139,61 @@ function _getBoltdocsVersion(): string {
 // compatibility, and validates the plugin schema.  On cold builds where
 // boltdocsPlugin() is called multiple times (client + SSR builds),
 // this avoids duplicating the ~500ms validation work.
+//
+// On cold start (empty in-memory cache), the disk cache at
+// .boltdocs/cache/plugin-validation.json is checked first.  If the
+// cache key (sorted plugin names + versions + boltdocsVersion) matches,
+// the entire validatePlugins() call — including Zod parsing — is skipped.
 const _pluginValidationCache = new Map<
   string,
   { validated: BoltdocsPlugin[] }
 >()
+
+// Disk cache for plugin validation — persists across process restarts.
+interface PluginValidationDiskEntry {
+  key: string
+  boltdocsVersion: string
+  validatedNames: string[]
+  timestamp: number
+}
+
+function _getPluginValidationCachePath(root: string): string {
+  return path.join(root, '.boltdocs', 'cache', 'plugin-validation.json')
+}
+
+function _tryLoadPluginValidationDiskCache(
+  root: string,
+  expectedKey: string,
+): boolean {
+  try {
+    const cachePath = _getPluginValidationCachePath(root)
+    if (!fs.existsSync(cachePath)) return false
+    const raw = fs.readFileSync(cachePath, 'utf-8')
+    const entry = JSON.parse(raw) as PluginValidationDiskEntry
+    return entry.key === expectedKey
+  } catch {
+    return false
+  }
+}
+
+function _writePluginValidationDiskCache(
+  root: string,
+  key: string,
+  boltdocsVersion: string,
+  validatedNames: string[],
+): void {
+  try {
+    const cachePath = _getPluginValidationCachePath(root)
+    fs.mkdirSync(path.dirname(cachePath), { recursive: true })
+    const entry: PluginValidationDiskEntry = {
+      key,
+      boltdocsVersion,
+      validatedNames,
+      timestamp: Date.now(),
+    }
+    fs.writeFileSync(cachePath, JSON.stringify(entry), 'utf-8')
+  } catch {}
+}
 
 // Cache for SSR external resolution — pre-resolves once, serves per-import cache hits
 let _preResolvedExternals: Map<string, string> | null = null
@@ -191,8 +242,13 @@ export function boltdocsPlugin(
   let resolvedExtraVitePlugins: Plugin[] = []
   if (config?.plugins?.length) {
     try {
+      const version = _getBoltdocsVersion()
       const cacheKey = JSON.stringify(
-        config.plugins.map((p: any) => p.name || '').sort(),
+        config.plugins
+          .map((p: any) =>
+            [p.name || '', p.version || '', p.boltdocsVersion || ''].join(':'),
+          )
+          .sort(),
       )
       const cached = _pluginValidationCache.get(cacheKey)
       if (cached) {
@@ -211,8 +267,26 @@ export function boltdocsPlugin(
         resolvedExtraVitePlugins = validated.flatMap((p) =>
           adaptVitePlugins(p.vitePlugins),
         )
+      } else if (_tryLoadPluginValidationDiskCache(projectRoot, cacheKey)) {
+        // Disk cache hit — skip validatePlugins() entirely.
+        // The plugins were validated on a previous cold start and the
+        // cache key (names + versions + boltdocsVersion) hasn't changed.
+        const validated = config.plugins as unknown as BoltdocsPlugin[]
+        lifecycle = new PluginLifecycleManager(
+          validated,
+          config,
+          docsDir,
+          undefined,
+          undefined,
+          undefined,
+          runtime,
+          routeCacheContext,
+        )
+        resolvedExtraVitePlugins = validated.flatMap((p) =>
+          adaptVitePlugins(p.vitePlugins),
+        )
+        _pluginValidationCache.set(cacheKey, { validated })
       } else {
-        const version = _getBoltdocsVersion()
         const validated = validatePlugins(config.plugins, version)
         config.plugins = validated as any
         lifecycle = new PluginLifecycleManager(
@@ -229,6 +303,12 @@ export function boltdocsPlugin(
           adaptVitePlugins(p.vitePlugins),
         )
         _pluginValidationCache.set(cacheKey, { validated })
+        _writePluginValidationDiskCache(
+          projectRoot,
+          cacheKey,
+          version,
+          validated.map((p) => p.name),
+        )
       }
     } catch {}
   }

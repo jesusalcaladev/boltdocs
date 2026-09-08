@@ -2,8 +2,8 @@ import type { ViteDevServer } from 'vite'
 import type { BoltdocsConfig } from '../config'
 import path from 'node:path'
 
-const BATCH_SIZE = 32
-const PREWARM_DELAY = 150
+const BATCH_SIZE = 48
+const PREWARM_DELAY = 0
 
 const activePrewarms = new WeakMap<ViteDevServer, Promise<void>>()
 
@@ -15,11 +15,35 @@ const PRIORITY_PATTERNS = [
   /\/readme/i,
 ]
 
+// Common Vite dependencies that should be warmed early to avoid
+// cold-start penalties on first page navigation.
+const DEPENDENCY_ENTRIES = [
+  'react',
+  'react-dom',
+  'react-dom/client',
+  'react-router-dom',
+  'react-helmet-async',
+]
+
 function getRoutePriority(filePath: string): number {
   for (let i = 0; i < PRIORITY_PATTERNS.length; i++) {
     if (PRIORITY_PATTERNS[i].test(filePath)) return i
   }
   return PRIORITY_PATTERNS.length
+}
+
+/**
+ * Warm Vite's optimizeDeps pre-bundling by requesting transforms for
+ * common framework dependencies.  This runs in the background and
+ * completes before the user's first navigation, eliminating the cold-start
+ * "optimizing dependencies" delay.
+ */
+function warmDependencies(server: ViteDevServer): void {
+  for (const dep of DEPENDENCY_ENTRIES) {
+    // transformRequest on a bare module ID forces Vite to resolve and
+    // pre-bundle it.  Errors are silently ignored — this is best-effort.
+    server.transformRequest(`/${dep}`).catch(() => {})
+  }
 }
 
 export function setupPrewarming(
@@ -31,6 +55,9 @@ export function setupPrewarming(
   >,
 ): void {
   if (activePrewarms.has(server)) return
+
+  // Kick off dependency warming immediately — no delay.
+  warmDependencies(server)
 
   const prewarm = new Promise<void>((resolve) => {
     setTimeout(async () => {
@@ -45,7 +72,7 @@ export function setupPrewarming(
           .filter((r) => r.filePath)
           .map((r) => r.filePath)
           .sort((a, b) => getRoutePriority(a) - getRoutePriority(b))
-          .slice(0, 20)
+          .slice(0, 40)
 
         for (let i = 0; i < files.length; i += BATCH_SIZE) {
           const batch = files.slice(i, i + BATCH_SIZE)

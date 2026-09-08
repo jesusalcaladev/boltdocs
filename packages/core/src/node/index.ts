@@ -59,6 +59,7 @@ function createViteConfigCacheKey(
         routeCount: options.routes?.length ?? 0,
         skipTypes: options.skipTypes ?? false,
         skipLinkTree: options.skipLinkTree ?? false,
+        skipRoutes: options.skipRoutes ?? false,
         hasPreResolved: !!preResolvedConfig,
         docsDir: preResolvedConfig?.docsDir || 'docs',
         publicDir: resolvePublicDir(root, preResolvedConfig, options.publicDir),
@@ -75,6 +76,8 @@ export interface CreateViteConfigOptions {
   skipTypes?: boolean
   /** Skip writing the link tree (it was already written elsewhere). */
   skipLinkTree?: boolean
+  /** Skip route generation entirely. Routes will be generated lazily by virtual modules. */
+  skipRoutes?: boolean
   /** Static asset directory relative to the project root (default: docs/public). */
   publicDir?: string | false
 }
@@ -148,7 +151,7 @@ export async function createViteConfig(
   let _reactPlugin: any = null
   let _boltdocsPlugin: any = null
   let _getExternalAbsolutePaths: any = null
-  let _SECURITY_HEADERS: Record<string, string> | null = null
+  let _resolveSecurityHeaders: any = null
   let _normalizePath: any = null
 
   async function ensureImports() {
@@ -157,7 +160,7 @@ export async function createViteConfig(
     const importPromises: Promise<any>[] = [
       import('@vitejs/plugin-react'),
       import('./plugin/index'),
-      import('./security/headers'),
+      import('./security/resolve'),
       import('vite').then((m) => ({ normalizePath: m.normalizePath })),
     ]
 
@@ -165,7 +168,7 @@ export async function createViteConfig(
     _reactPlugin = results[0].default
     _boltdocsPlugin = results[1].boltdocsPlugin
     _getExternalAbsolutePaths = results[1].getExternalAbsolutePaths
-    _SECURITY_HEADERS = results[2].SECURITY_HEADERS
+    _resolveSecurityHeaders = results[2].resolveSecurityHeaders
     _normalizePath = results[3].normalizePath
   }
 
@@ -184,10 +187,12 @@ export async function createViteConfig(
 
   const routes =
     options.routes ??
-    (await (async () => {
-      const { generateRoutes } = await import('./routes')
-      return generateRoutes(docsDir, config, undefined, false)
-    })())
+    (options.skipRoutes
+      ? []
+      : await (async () => {
+          const { generateRoutes } = await import('./routes')
+          return generateRoutes(docsDir, config, undefined, false)
+        })())
 
   const isProd = mode === 'production'
 
@@ -195,14 +200,7 @@ export async function createViteConfig(
   // in parallel with the types/link-tree generation below.
   const securityHeadersPromise: Promise<Record<string, string>> = (async () => {
     await ensureImports()
-    const headers: Record<string, string> = isProd
-      ? { ..._SECURITY_HEADERS! }
-      : {}
-    if (config.security?.enableCSP) {
-      const { getCSPHeader } = await import('./security/csp')
-      headers['Content-Security-Policy'] = getCSPHeader(config)
-    }
-    return headers
+    return _resolveSecurityHeaders(config, isProd)
   })()
 
   // Only build routePaths for types/link-tree when we actually need them.
@@ -251,6 +249,13 @@ export async function createViteConfig(
   const viteConfig: InlineConfig = {
     root,
     mode,
+    // Vite 8.1+ bundled dev mode: bundles modules during development,
+    // eliminating per-module HTTP overhead. Shows 3x faster cold starts
+    // in Linear's testing. Opt-in via BOLTDOCS_BUNDLED_DEV=true until
+    // @react-refresh + custom base path compatibility is resolved.
+    experimental: {
+      bundledDev: !isProd && process.env.BOLTDOCS_BUNDLED_DEV === 'true',
+    },
     oxc: {
       jsx: {
         development: !isProd,
