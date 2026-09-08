@@ -1,6 +1,6 @@
 import { preview } from 'vite'
-import { colors, error, double, steps, table, divider } from '@bdocs/dui'
-import { previewServer } from '../ui-utils'
+import { error } from '@bdocs/dui'
+import { buildSummary, previewServer } from '../ui-utils'
 import { notifyUpdateAvailable } from '../update-check'
 import { createBuildPipeline } from '../pipeline/index'
 import type { StepResult } from '../pipeline/types'
@@ -13,17 +13,18 @@ function formatDuration(ms: number): string {
   return ms < 1000 ? `${Math.round(ms)}ms` : `${(ms / 1000).toFixed(1)}s`
 }
 
-function buildStepList(stepResults: StepResult[]): Array<{
-  label: string
-  status: 'success' | 'error' | 'running' | 'pending'
-  details?: string
-}> {
-  return stepResults.map((s) => ({
-    label: s.name,
-    status: s.success ? 'success' : 'error',
-    details: s.details,
-  }))
-}
+/**
+ * SSG sub-phases reported inside the 'SSG build' pipeline step. They are
+ * omitted from the summary to keep the output compact — their metrics are
+ * surfaced through the build summary line instead.
+ */
+const SSG_SUB_STEPS = new Set([
+  'Client build',
+  'Server build',
+  'Render pages',
+  'Static loader data',
+  'Build metrics',
+])
 
 function writeBenchmarkReport(
   root: string,
@@ -101,54 +102,36 @@ export async function buildAction(
       process.exit(0)
     }
 
-    const allSteps = buildStepList(result.stepResults)
-    console.log('')
-    console.log(steps(allSteps))
-    console.log(divider('═', 44))
-    console.log(
-      `  ${colors.dim('Total'.padEnd(20))} ${colors.cyan(formatDuration(result.timing.total))}`,
+    // Surface only top-level pipeline steps — SSG sub-phases (client/server
+    // build, render, static loader data, build metrics) are folded into the
+    // 'SSG build' step and their metrics appear on the summary line.
+    const topLevelSteps = result.stepResults.filter(
+      (step) => !SSG_SUB_STEPS.has(step.name),
     )
-    console.log('')
 
-    // Look for SSG build metrics in sub-steps
     const buildMetricsStep = result.stepResults.find(
-      (s) => s.name === 'Build metrics',
+      (step) => step.name === 'Build metrics',
     )
     const metrics = buildMetricsStep?.metrics
-    if (metrics) {
-      const toKB = (b: number) => (b / 1024).toFixed(0)
-      const toMB = (b: number) => (b / 1024 / 1024).toFixed(1)
-      const jsSize =
-        metrics.jsSize > 1024 * 1024
-          ? toMB(metrics.jsSize) + ' MB'
-          : toKB(metrics.jsSize) + ' kB'
-      const cssSize =
-        metrics.cssSize > 1024 * 1024
-          ? toMB(metrics.cssSize) + ' MB'
-          : toKB(metrics.cssSize) + ' kB'
+    const toKB = (b: number) => (b / 1024).toFixed(0)
+    const toMB = (b: number) => (b / 1024 / 1024).toFixed(1)
+    const formatSize = (bytes: number) =>
+      bytes > 1024 * 1024 ? `${toMB(bytes)} MB` : `${toKB(bytes)} kB`
 
-      console.log(
-        table(
-          ['Metric', 'Result'],
-          [
-            ['Build Time', formatDuration(metrics.buildTime)],
-            ['Pages', String(metrics.totalPages)],
-            ['JavaScript', jsSize],
-            ['CSS', cssSize],
-          ],
-          { style: 'round', headerSeparator: true },
-        ),
-      )
-      console.log('')
-    }
-
-    const totalTime = formatDuration(result.timing.total)
     console.log(
-      double([
-        `boltdocs build completed in ${totalTime}`,
-        '',
-        `${colors.cyan('boltdocs')} documentation is ready at ${colors.green('dist/')}`,
-      ]),
+      buildSummary({
+        totalMs: result.timing.total,
+        steps: topLevelSteps.map((step) => ({
+          name: step.name,
+          success: step.success,
+          duration: step.duration,
+          details: step.details,
+        })),
+        pages: metrics?.totalPages,
+        jsSize: metrics ? formatSize(metrics.jsSize) : undefined,
+        cssSize: metrics ? formatSize(metrics.cssSize) : undefined,
+        outDir: 'dist/',
+      }),
     )
     await flushCache()
     process.exit(0)
@@ -183,12 +166,14 @@ export async function previewAction(
       viteConfig.preview.host = options.host
     }
 
+    const startedAt = performance.now()
     const server = await preview(viteConfig)
     const urls = server.resolvedUrls
     console.log(
       previewServer(
         urls?.local?.[0] ?? `http://localhost:${options.port ?? 4173}`,
         urls?.network?.[0] ?? null,
+        { readyIn: performance.now() - startedAt },
       ),
     )
   } catch (e) {

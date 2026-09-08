@@ -16,13 +16,16 @@ import { SEVERITY_RANK } from '../security/audit/types'
 const COLOR_SUPPORTED =
   !('NO_COLOR' in process.env) && (process.stdout?.isTTY ?? false)
 
-const ANSI_RE = /\u001b\[[0-9;]*m/g
+// `\x1b` written via String.fromCharCode to avoid a control character in the
+// regex source, which Biome flags (noControlCharactersInRegex).
+const ESC = String.fromCharCode(27)
+const ANSI_RE = new RegExp(`${ESC}\\[[0-9;]*m`, 'g')
 
 function visibleLength(s: string): number {
   return s.replace(ANSI_RE, '').length
 }
 
-function colorize(code: number, s: string): string {
+function colorize(code: number | string, s: string): string {
   return COLOR_SUPPORTED ? `\u001b[${code}m${s}\u001b[0m` : s
 }
 
@@ -35,6 +38,9 @@ const colors = {
   bold: (s: string) => colorize(1, s),
   dim: (s: string) => colorize(2, s),
 }
+
+/** Brand terracotta (`#eb5828`) — true-color escape, no dui dependency. */
+const terracotta = (s: string) => colorize('38;2;235;88;40', s)
 
 const PREFIX = 'boltdocs'
 
@@ -88,9 +94,9 @@ function table(headers: string[], rows: string[][]): string {
     br: '┘',
   }
   const border = (l: string, m: string, r: string) =>
-    l + colWidths.map((w) => b.h.repeat(w)).join(m) + r
+    terracotta(l + colWidths.map((w) => b.h.repeat(w)).join(m) + r)
   const rowLine = (cells: string[]) =>
-    b.v +
+    terracotta(b.v) +
     cells
       .map((cell, c) => {
         const text = cell ?? ''
@@ -100,8 +106,8 @@ function table(headers: string[], rows: string[][]): string {
           ' '.repeat(colWidths[c] - visibleLength(text) - padding)
         )
       })
-      .join(b.v) +
-    b.v
+      .join(terracotta(b.v)) +
+    terracotta(b.v)
   const lines: string[] = [border(b.tl, b.tm, b.tr)]
   if (headers.length > 0) {
     lines.push(rowLine(headers.map((h) => colors.bold(h))))
@@ -130,7 +136,7 @@ function severityColor(report: AuditPluginReport) {
   if (report.status === 'error') return colors.red
   if (report.severity === 'high') return colors.red
   if (report.severity === 'warning') return colors.yellow
-  if (report.severity === 'low') return colors.cyan
+  if (report.severity === 'low') return terracotta
   return colors.green
 }
 
@@ -175,7 +181,7 @@ export async function auditAction(root: string = process.cwd()): Promise<void> {
 
     if (report.status === 'unresolved') {
       warn(
-        `\n${colors.cyan(label)} — ${colors.yellow('❓ Unresolved')} (could not locate the package in node_modules)`,
+        `\n${terracotta(label)} — ${colors.yellow('❓ Unresolved')} (could not locate the package in node_modules)`,
       )
       continue
     }
@@ -185,7 +191,7 @@ export async function auditAction(root: string = process.cwd()): Promise<void> {
         ? 'no findings'
         : `${report.findings.length} finding${report.findings.length === 1 ? '' : 's'}`
     console.log(
-      `\n${colors.bold(colors.cyan(label))} — ${severityColor(report)(severityLabel(report))} (${summary} · ${report.filesScanned} file${report.filesScanned === 1 ? '' : 's'} scanned)`,
+      `\n${colors.bold(terracotta(label))} — ${severityColor(report)(severityLabel(report))} (${summary} · ${report.filesScanned} file${report.filesScanned === 1 ? '' : 's'} scanned)`,
     )
 
     const sortedFindings = [...report.findings].sort(
