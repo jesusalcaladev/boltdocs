@@ -174,6 +174,18 @@ const fs = require('fs')
 
 **Path**: `packages/core/src/client/components/`
 
+### Primitive Contract (style-neutral)
+
+`primitives/` components are **style-neutral**: they own structure, behavior, and state. **No colors, borders, or sizes** are baked into primitives. State is exposed via `data-*` attributes that are **present only when true** (e.g. `data-active`, `data-open`, `data-selected`, `data-level`, `data-collapsible`, `data-badge`). Themes style states via CSS (`[data-active]`) or Tailwind v4 variants (`data-active:...`). The framework's default look lives in `ui-base/` on top of the primitives; `ui-base/` accepts `className` slots that merge with and win over defaults. Do not add baked-in visuals to a primitive — pass a `className` slot or emit a `data-*` attribute instead.
+
+Enforcement rules (from the no-barriers refactor):
+
+- **Every styled element must be reachable**: any JSX node with baked-in classes needs a `className` slot (`cn(defaults, className)`), or an explicit slot prop (`contentClassName`, `wrapperClassName`, `dialogClassName`, etc.) for nested wrappers.
+- **No `!important` utilities in components** — override rules that beat third-party styles (e.g. Shiki's `pre`) live as scoped CSS in `client/theme/reset.css` keyed off hooks like `.boltdocs-code-block`.
+- **Layout primitives carry no spacing**: `DocsLayout.ContentMdx` renders only `boltdocs-page w-full`; the reading column inner wrapper exposes `contentClassName`/`contentStyle`. The default padding (`pt-4 pb-20 px-4 sm:px-8`) lives in `docs-layout-default.tsx`, so custom themes pass their own `className` without fighting responsive defaults.
+- **No string-inspection hacks**: behavior must not key off `className.includes(...)`; expose a typed prop (e.g. `ButtonGroup` `radius`) instead.
+- Hardcoded colors use theme tokens (`danger-500`, `success-500`, ...), never raw palettes (`rose-*`, `slate-*`).
+
 ### Directory Structure
 
 ```text

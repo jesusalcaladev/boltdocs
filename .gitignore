@@ -4,6 +4,7 @@ jspm_packages/
 bower_components/
 
 .agents/
+.freebuff
 
 # Build outputs
 dist/
