@@ -32,7 +32,7 @@
     "katex": "^0.16.11"
   },
   "peerDependencies": {
-    "@bdocs/dui": "^0.2.0",
+    "@bdocs/dui": "^0.6.0",
     "boltdocs": "workspace:^",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

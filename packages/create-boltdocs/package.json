@@ -25,7 +25,7 @@
   ],
   "packageManager": "pnpm@10.30.2",
   "dependencies": {
-    "@bdocs/dui": "^0.2.0",
+    "@bdocs/dui": "^0.6.0",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
