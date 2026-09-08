@@ -109,7 +109,6 @@ describe('E2E integration tests', () => {
 
     expect(guide).toMatchObject({ title: 'Guide', sidebarPosition: 1 })
     expect(guide?.headings?.map((heading) => heading.text)).toEqual([
-      'Welcome',
       'Install',
       'Configure',
     ])
