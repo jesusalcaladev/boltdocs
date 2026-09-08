@@ -20,6 +20,12 @@ import {
   type VirtualModuleState,
 } from './virtual-modules'
 import { createDevServerPlugin } from '../dev-server/index'
+import {
+  createPublicAssetRedirectMiddleware,
+  createPublicAssetResolver,
+  rewriteHtmlPublicAssetUrls,
+  type PublicAssetResolver,
+} from '../public-assets'
 import { createSatteriMdxPlugin } from '@bdocs/processor-satteri/node'
 import type { BoltdocsPluginOptions } from './types'
 
@@ -228,6 +234,21 @@ export function boltdocsPlugin(
   // Cache routes between client and server build config() invocations
   let _routesCachePromise: Promise<RouteMeta[]> | null = null
 
+  // Framework fix for base-prefixed deployments: user-authored absolute URLs
+  // pointing at files in the public directory must carry Vite's `base`, both
+  // in the prerendered HTML (SSG) and in dev requests. The resolver is built
+  // lazily from the resolved Vite config (publicDir + base) and is a no-op
+  // when base is '/' or publicDir is disabled.
+  let _publicAssetResolver: PublicAssetResolver | null = null
+  const getPublicAssetResolver = (): PublicAssetResolver | null => {
+    if (_publicAssetResolver) return _publicAssetResolver
+    _publicAssetResolver = createPublicAssetResolver(
+      viteConfig?.publicDir,
+      viteConfig?.base,
+    )
+    return _publicAssetResolver
+  }
+
   // Validate plugins and extract vitePlugins synchronously at creation time
   // so they're available when the plugins array is returned to Vite.
   // The config() hook runs AFTER Vite receives the array, so we can't
@@ -419,13 +440,14 @@ export function boltdocsPlugin(
         // If routes were pre-computed by the pipeline, skip generation here.
         // The pipeline (ConfigResolveStep) already wrote types/link-tree.
 
-        // Pre-warm Shiki highlighter in background (non-blocking)
-        import('../mdx/shiki-adapter')
-          .then(({ getShikiAdapter }) => {
-            const adapter = getShikiAdapter(config)
-            adapter.getHighlighter().catch(() => {})
-          })
-          .catch(() => {})
+        // Pre-warm Shiki highlighter only for builds. In dev it is deferred
+        // to post-listen (dev-server plugin) because the highlighter build is
+        // ~2.5s of synchronous CPU that otherwise blocks Vite's server setup.
+        if (isBuild) {
+          import('../mdx/shiki-adapter')
+            .then(({ prewarmShiki }) => prewarmShiki(config))
+            .catch(() => {})
+        }
 
         // Initialize plugin lifecycle (already validated in constructor — skip
         // duplicate validatePlugins call which is expensive). If lifecycle
@@ -493,6 +515,12 @@ export function boltdocsPlugin(
                   { html, path },
                 )
                 html = middlewareResult.html
+                // Normalize user-authored public-asset URLs to the configured
+                // base so prerendered pages resolve under base deployments.
+                const publicAssetResolver = getPublicAssetResolver()
+                if (publicAssetResolver) {
+                  html = rewriteHtmlPublicAssetUrls(html, publicAssetResolver)
+                }
                 return html
               } catch {
                 return renderedHTML
@@ -514,6 +542,10 @@ export function boltdocsPlugin(
               'react-helmet-async',
               'react-fast-compare',
               'invariant',
+              // Default docs themes import lucide-react statically; without
+              // this entry its late discovery triggers a full-page reload on
+              // cold starts.
+              'lucide-react',
             ],
             exclude: ['boltdocs', 'boltdocs/client'],
           },
@@ -689,6 +721,17 @@ export function boltdocsPlugin(
       },
 
       configureServer(server) {
+        // Serve public assets authored without the base prefix: redirect
+        // `/cover.webp` → `<base>/cover.webp` when the file exists in the
+        // resolved publicDir. Without this, user references to public files
+        // 404 in dev on base-prefixed deployments.
+        server.middlewares.use(
+          createPublicAssetRedirectMiddleware(
+            viteConfig?.publicDir,
+            viteConfig?.base,
+          ),
+        )
+
         // Serve search.json dynamically in dev so the client can fetch the
         // index lazily without bundling it into the JS payload.
         server.middlewares.use((req, res, next) => {
