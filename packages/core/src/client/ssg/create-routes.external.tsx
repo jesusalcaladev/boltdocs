@@ -1,5 +1,6 @@
 import type { RouteRecord } from '../router'
 import type { ComponentRoute, BoltdocsConfig } from '../types'
+import { cn } from '../utils/cn'
 import { ExternalPageWrapper } from './external-page-wrapper'
 import {
   EagerMdxElement,
@@ -48,15 +49,26 @@ function getLocalizedPaths(
 function ExternalMdxContent({
   title,
   children,
+  className,
+  contentClassName,
 }: {
   title?: string
   children: React.ReactNode
+  className?: string
+  contentClassName?: string
 }) {
   return (
-    <div className="boltdocs-page w-full pt-4 pb-20 px-4 sm:px-8">
-      <div className="mx-auto w-full max-w-3xl sm:max-w-4xl lg:max-w-5xl">
+    <div
+      className={cn('boltdocs-page w-full pt-4 pb-20 px-4 sm:px-8', className)}
+    >
+      <div
+        className={cn(
+          'mx-auto w-full max-w-3xl sm:max-w-4xl lg:max-w-5xl',
+          contentClassName,
+        )}
+      >
         {title && (
-          <h1 className="text-4xl font-bold tracking-tight text-default mb-3">
+          <h1 className="text-4xl font-bold tracking-tight text-body mb-3">
             {title}
           </h1>
         )}

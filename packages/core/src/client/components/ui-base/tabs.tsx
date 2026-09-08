@@ -6,15 +6,18 @@ import type { BoltdocsTab, ComponentRoute } from '../../types'
 import { IconRenderer, resolveIcon } from './icon-renderer'
 import { getTranslated } from '../../utils/i18n'
 import { useRoutes } from '../../hooks/use-routes'
+import { cn } from '../../utils/cn'
 
 export function Tabs({
   tabs,
   routes,
   allRoutes,
+  className,
 }: {
   tabs: BoltdocsTab[]
   routes: ComponentRoute[]
   allRoutes?: ComponentRoute[]
+  className?: string
 }) {
   const { currentLocale } = useRoutes()
   const { indicatorStyle, tabRefs, activeIndex } = useTabsHook(tabs, routes)
@@ -37,7 +40,12 @@ export function Tabs({
   )
 
   return (
-    <div className="mx-auto max-w-(--breakpoint-3xl) px-4 md:px-6 select-none">
+    <div
+      className={cn(
+        'mx-auto max-w-(--breakpoint-3xl) px-4 md:px-6 select-none',
+        className,
+      )}
+    >
       <T.List className="border-none py-0 scrollbar-hide relative flex flex-row items-center overflow-x-auto">
         {tabs.map((tab, index) => {
           const isActive = index === activeIndex

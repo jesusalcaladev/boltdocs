@@ -15,6 +15,7 @@ import { Helmet } from '../app/helmet-compat'
 import { InternalErrorBoundary as ErrorBoundary } from '../components/internal/error-boundary'
 import { CollectionsProvider } from '../collections/collections-context'
 import type { CollectionsData } from '../collections/collections-context'
+import { cn } from '../utils/cn'
 
 import virtualCustomComponents from 'virtual:boltdocs-mdx-components'
 import { normalizePath } from '../utils/path'
@@ -90,11 +91,14 @@ export function BoltdocsShell({
   routes,
   components = {},
   collectionsData,
+  contentClassName,
 }: {
   config: BoltdocsConfig
   routes: ComponentRoute[]
   components?: Record<string, React.ComponentType>
   collectionsData?: CollectionsData
+  /** Class name for the shell content frame (defaults to fixed viewport). */
+  contentClassName?: string
 }) {
   const allComponents = useMemo(
     () => ({
@@ -156,7 +160,12 @@ export function BoltdocsShell({
                     routes={routes}
                   />
                   <ErrorBoundary>
-                    <div className="boltdocs-shell-content h-screen overflow-hidden">
+                    <div
+                      className={cn(
+                        'boltdocs-shell-content h-screen overflow-hidden',
+                        contentClassName,
+                      )}
+                    >
                       <Outlet />
                     </div>
                   </ErrorBoundary>

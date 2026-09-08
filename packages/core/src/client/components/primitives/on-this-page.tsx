@@ -59,6 +59,10 @@ export interface ScrollProviderProps {
 export interface OnThisPageContentProps extends ComponentBase {
   ref?: React.Ref<HTMLDivElement>
   scrollRef?: RefObject<HTMLElement | null>
+  /** Class applied to the bottom fade element (theme-owned). */
+  fadeClassName?: string
+  /** Class applied to the inner content wrapper (`relative z-10`). */
+  innerClassName?: string
 }
 
 export interface OnThisPageItemProps extends ComponentBase {
@@ -163,14 +167,7 @@ export function AnchorProvider({
 
 export function OnThisPage({ children, className }: ComponentBase) {
   return (
-    <nav
-      className={cn(
-        'sticky top-navbar hidden xl:flex flex-col shrink-0',
-        'w-toc',
-        'py-4 pl-6 pr-4',
-        className,
-      )}
-    >
+    <nav data-otp-root className={className}>
       {children}
     </nav>
   )
@@ -178,10 +175,7 @@ export function OnThisPage({ children, className }: ComponentBase) {
 
 function OnThisPageHeader({ children, className, ...props }: ComponentBase) {
   return (
-    <div
-      className={cn('mb-4 text-xs font-bold text-body', className)}
-      {...props}
-    >
+    <div className={className} {...props}>
       {children}
     </div>
   )
@@ -191,6 +185,8 @@ function OnThisPageContent({
   children,
   className,
   ref,
+  fadeClassName,
+  innerClassName,
   ...props
 }: OnThisPageContentProps) {
   const internalRef = useRef<HTMLDivElement>(null)
@@ -210,21 +206,18 @@ function OnThisPageContent({
   return (
     <div
       ref={setRefs}
-      className={cn(
-        'relative isolate overflow-y-auto boltdocs-otp-content pb-12',
-        'max-h-[70%]',
-        className,
-      )}
+      data-otp-content
+      className={cn('relative isolate overflow-y-auto', className)}
       {...props}
     >
-      <div className="relative z-10">{children}</div>
+      <div className={cn('relative z-10', innerClassName)}>{children}</div>
       <div
         aria-hidden="true"
-        className="pointer-events-none sticky bottom-0 z-0 -mt-10 h-10 w-full"
-        style={{
-          background:
-            'linear-gradient(to bottom, color-mix(in srgb, var(--color-main) 0%, transparent), var(--color-main) 96%)',
-        }}
+        data-otp-fade
+        className={cn(
+          'pointer-events-none sticky bottom-0 z-0 -mt-10 h-10 w-full',
+          fadeClassName,
+        )}
       />
     </div>
   )
@@ -234,19 +227,18 @@ OnThisPageContent.displayName = 'OnThisPageContent'
 
 function OnThisPageList({ children, className }: ComponentBase) {
   return (
-    <ul
-      className={cn(
-        'relative space-y-0.5 text-sm border-l border-subtle',
-        className,
-      )}
-    >
+    <ul data-otp-list className={cn('relative', className)}>
       {children}
     </ul>
   )
 }
 
 function OnThisPageItem({ level, children, className }: OnThisPageItemProps) {
-  return <li className={cn(level === 3 && 'pl-3', className)}>{children}</li>
+  return (
+    <li data-level={level || undefined} className={className}>
+      {children}
+    </li>
+  )
 }
 
 function OnThisPageLink({
@@ -300,12 +292,9 @@ function OnThisPageLink({
       ref={anchorRef}
       href={href}
       onClick={handleClick}
-      data-active={computedActive}
-      className={cn(
-        'block py-0.5 pl-4 text-[13px] outline-none transition-colors',
-        computedActive ? 'text-primary-500' : 'text-muted hover:text-body',
-        className,
-      )}
+      data-active={computedActive || undefined}
+      aria-current={computedActive ? 'true' : undefined}
+      className={className}
     >
       {children}
     </a>
@@ -357,10 +346,8 @@ function OnThisPageIndicator({ style, className }: OnThisPageIndicatorProps) {
   return (
     <div
       ref={containerRef}
-      className={cn(
-        'absolute -left-px w-0.5 rounded-full bg-primary-500',
-        className,
-      )}
+      data-otp-indicator
+      className={cn('absolute', className)}
       style={{
         transition:
           'transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), height 180ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 150ms',
@@ -376,19 +363,33 @@ function OnThisPageIndicator({ style, className }: OnThisPageIndicatorProps) {
 export function OnThisPageItems({
   headings = [],
   className,
+  itemClassName,
+  linkClassName,
+  indicatorClassName,
 }: {
   headings: { level: number; text: string; id: string }[]
-} & ComponentBase) {
+} & ComponentBase & {
+    /** Class applied to each `<li>`. */
+    itemClassName?: string
+    /** Class applied to each `<a>`. Style states via `data-active`. */
+    linkClassName?: string
+    /** Class applied to the active-track indicator. */
+    indicatorClassName?: string
+  }) {
   const activeIds = useActiveAnchors()
 
   if (headings.length === 0) return null
 
   return (
     <OnThisPageList className={className}>
-      <OnThisPageIndicator />
+      <OnThisPageIndicator className={indicatorClassName} />
       {headings.map((h) => (
-        <OnThisPageItem key={h.id} level={h.level}>
-          <OnThisPageLink href={`#${h.id}`} active={activeIds.includes(h.id)}>
+        <OnThisPageItem key={h.id} level={h.level} className={itemClassName}>
+          <OnThisPageLink
+            href={`#${h.id}`}
+            active={activeIds.includes(h.id)}
+            className={linkClassName}
+          >
             {h.text}
           </OnThisPageLink>
         </OnThisPageItem>
@@ -403,9 +404,25 @@ export function OnThisPageItems({
 export function OnThisPageTree({
   headings = [],
   className,
+  itemClassName,
+  linkClassName,
+  indicatorClassName,
+  fadeClassName,
+  contentClassName,
 }: {
   headings: { level: number; text: string; id: string }[]
-} & ComponentBase) {
+} & ComponentBase & {
+    /** Class applied to each `<li>`. */
+    itemClassName?: string
+    /** Class applied to each `<a>`. Style states via `data-active`. */
+    linkClassName?: string
+    /** Class applied to the active-track indicator. */
+    indicatorClassName?: string
+    /** Class applied to the bottom fade element (theme-owned). */
+    fadeClassName?: string
+    /** Class applied to the scrollable content container. */
+    contentClassName?: string
+  }) {
   const toc = useMemo(
     () =>
       headings.map((h) => ({ title: h.text, url: `#${h.id}`, depth: h.level })),
@@ -419,8 +436,18 @@ export function OnThisPageTree({
   return (
     <AnchorProvider toc={toc} single={true}>
       <ScrollProvider containerRef={scrollContainerRef}>
-        <OnThisPageContent ref={scrollContainerRef}>
-          <OnThisPageItems headings={headings} className={className} />
+        <OnThisPageContent
+          ref={scrollContainerRef}
+          fadeClassName={fadeClassName}
+          className={contentClassName}
+        >
+          <OnThisPageItems
+            headings={headings}
+            className={className}
+            itemClassName={itemClassName}
+            linkClassName={linkClassName}
+            indicatorClassName={indicatorClassName}
+          />
         </OnThisPageContent>
       </ScrollProvider>
     </AnchorProvider>

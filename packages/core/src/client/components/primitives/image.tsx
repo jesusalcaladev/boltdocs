@@ -12,7 +12,7 @@ export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
  * A responsive image component that automatically supports dark and light theme variations
  * via the `theme` prop.
  */
-export function Image({ theme, className, src, ...props }: ImageProps) {
+export function Image({ theme, className, src, alt, ...props }: ImageProps) {
   const { resolvedTheme } = useTheme()
   const config = useConfig()
 
@@ -23,6 +23,7 @@ export function Image({ theme, className, src, ...props }: ImageProps) {
   return (
     <img
       className={cn('max-w-full h-auto rounded-lg my-8', className)}
+      alt={alt ?? ''}
       {...props}
       src={
         typeof src === 'string' ? resolvePublicAssetUrl(src, config.base) : src

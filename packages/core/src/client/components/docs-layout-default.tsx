@@ -37,7 +37,7 @@ function DocsLayoutComponent({ children }: DocsLayoutThemeProps) {
           <Sidebar routes={filteredRoutes || []} config={config} />
         )}
         <DocsLayoutPrimitive.Content>
-          <DocsLayoutPrimitive.ContentMdx>
+          <DocsLayoutPrimitive.ContentMdx className="pt-4 pb-20 px-4 sm:px-8">
             {!isCollectionPage && (
               <DocsLayoutPrimitive.Header>
                 <div className="mb-4 border-b border-subtle pb-4 flex flex-wrap items-center justify-between gap-3">
@@ -49,12 +49,12 @@ function DocsLayoutComponent({ children }: DocsLayoutThemeProps) {
                 </div>
 
                 {currentRoute?.title && (
-                  <h1 className="text-4xl font-bold tracking-tight text-default mb-3">
+                  <h1 className="text-4xl font-bold tracking-tight text-body mb-3">
                     {currentRoute.title}
                   </h1>
                 )}
                 {currentRoute?.description && (
-                  <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                  <p className="text-lg text-muted mb-6 leading-relaxed">
                     {currentRoute.description}
                   </p>
                 )}

@@ -17,8 +17,12 @@ describe('OnThisPage content gradient', () => {
     const linksLayer = links.parentElement
     const gradient = container.querySelector('[aria-hidden="true"]')
 
-    expect(content).not.toHaveStyle({ maskImage: expect.any(String) })
-    expect(content).not.toHaveStyle({ WebkitMaskImage: expect.any(String) })
+    // The gradient must live on the decorative fade element, never as an
+    // inline style on the scrollable content wrapper. Assert the style
+    // attribute directly: computed style (`toHaveStyle`) resolves mask-image
+    // differently across jsdom versions ('' vs the CSS initial value 'none').
+    expect(content).not.toHaveAttribute('style')
+    expect(gradient).toHaveAttribute('data-otp-fade')
     expect(linksLayer).toHaveClass('relative', 'z-10')
     expect(gradient).toHaveClass('pointer-events-none', 'sticky', 'z-0')
   })

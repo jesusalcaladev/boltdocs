@@ -4,6 +4,7 @@ import { SearchDialog as SearchDialogPrimitive } from '../primitives/search-dial
 import Navbar from '../primitives/navbar'
 import type { ComponentRoute } from '../../types'
 import { InternalErrorBoundary as ErrorBoundary } from '../internal/error-boundary'
+import { cn } from '../../utils/cn'
 
 interface SearchResult {
   id: string
@@ -14,7 +15,15 @@ interface SearchResult {
   isHeading?: boolean
 }
 
-function Highlight({ text, query }: { text: string; query: string }) {
+function Highlight({
+  text,
+  query,
+  markClassName,
+}: {
+  text: string
+  query: string
+  markClassName?: string
+}) {
   if (!query || !text) return <>{text}</>
   const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const regex = new RegExp(`(${escapedQuery})`, 'gi')
@@ -25,7 +34,10 @@ function Highlight({ text, query }: { text: string; query: string }) {
         regex.test(part) ? (
           <mark
             key={i}
-            className="bg-primary-500/20 text-primary-600 dark:text-primary-400 font-bold px-0.5 rounded-sm"
+            className={cn(
+              'bg-primary-500/20 text-primary-600 dark:text-primary-400 font-bold px-0.5 rounded-sm',
+              markClassName,
+            )}
           >
             {part}
           </mark>
@@ -37,7 +49,15 @@ function Highlight({ text, query }: { text: string; query: string }) {
   )
 }
 
-export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
+export function SearchDialog({
+  routes,
+  className,
+  markClassName,
+}: {
+  routes: ComponentRoute[]
+  className?: string
+  markClassName?: string
+}) {
   const {
     isOpen,
     setIsOpen,
@@ -74,7 +94,10 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
           isOpen={isOpen}
           isDismissable
           onOpenChange={() => setIsOpen(false)}
-          className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in"
+          className={cn(
+            'fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in',
+            className,
+          )}
         >
           <SearchDialogPrimitive.Content className="w-full max-w-lg bg-main border border-subtle shadow-md rounded-2xl overflow-hidden p-6">
             <SearchDialogPrimitive.Dialog
@@ -130,10 +153,18 @@ export function SearchDialog({ routes }: { routes: ComponentRoute[] }) {
                         />
                         <div className="flex flex-col justify-center min-w-0">
                           <SearchDialogPrimitive.Item.Title className="text-sm font-medium text-body truncate dark:group-hover:text-primary-100">
-                            <Highlight text={item.title} query={query} />
+                            <Highlight
+                              text={item.title}
+                              query={query}
+                              markClassName={markClassName}
+                            />
                           </SearchDialogPrimitive.Item.Title>
                           <SearchDialogPrimitive.Item.Bio className="text-xs text-muted truncate">
-                            <Highlight text={item.bio} query={query} />
+                            <Highlight
+                              text={item.bio}
+                              query={query}
+                              markClassName={markClassName}
+                            />
                           </SearchDialogPrimitive.Item.Bio>
                         </div>
                       </SearchDialogPrimitive.Item>

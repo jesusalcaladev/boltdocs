@@ -19,6 +19,10 @@ export interface LinkProps
   transition?: boolean
   /** Native transition types for this link. */
   transitionTypes?: string[]
+  /** Ref to the rendered anchor element. */
+  ref?: React.Ref<HTMLAnchorElement>
+  /** Arbitrary `data-*` state attributes (e.g. `data-active`, `data-depth`). */
+  [key: `data-${string}`]: string | number | boolean | undefined
 }
 
 /**
@@ -29,6 +33,7 @@ export function Link(props: LinkProps) {
   const {
     href,
     to,
+    ref,
     prefetch = 'hover',
     onMouseEnter,
     onFocus,
@@ -104,6 +109,7 @@ export function Link(props: LinkProps) {
   return (
     <a
       {...rest}
+      ref={ref}
       href={localizedHref}
       target={linkTarget}
       download={download}

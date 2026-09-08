@@ -69,3 +69,11 @@ export { reactToText } from './utils/react-to-text'
 export { copyToClipboard } from './utils/copy-clipboard'
 export { getStarsRepo } from './utils/github'
 export { useCodeBlock } from './components/mdx/use-code-block'
+export { useCopyButton } from './components/mdx/use-copy-button'
+export { useExpandable } from './components/mdx/use-expandable'
+export type { UseExpandableOptions } from './components/mdx/use-expandable'
+export { useCodeBlockFeedback } from './components/mdx/use-code-block-feedback'
+export type {
+  CodeBlockFeedbackPayload,
+  UseCodeBlockFeedbackOptions,
+} from './components/mdx/use-code-block-feedback'
