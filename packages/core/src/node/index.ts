@@ -17,6 +17,48 @@ export { generateEntryCode } from './plugin/entry'
 // during dev server setup (previewAction).
 const _createViteConfigCache = new Map<string, { config: InlineConfig }>()
 
+/**
+ * Resolves the monorepo `packages/core/src` source root for the core package.
+ *
+ * The dev server maps `boltdocs/client` to the checked-out source via the
+ * `virtual:boltdocs-client.mjs` module, but the remaining framework sub-path
+ * entries (`boltdocs/primitives`, `boltdocs/mdx`, `boltdocs/client/router`)
+ * fall through to the built `dist` bundle. The dist bundle carries its own
+ * isolated copies of the client contexts (e.g. `ui-context`), so primitives
+ * that consume `useUI()` no longer share state with the `UIProvider` mounted
+ * by `BoltdocsShell` — causing the mobile sidebar to silently never open.
+ *
+ * To keep every framework client module on a single shared instance during
+ * development, alias all the sub-path entries to this source root when it
+ * exists. In a published install (no `src/`) this returns `undefined` and the
+ * aliases below are skipped, falling back to the normal dist resolution.
+ */
+function resolveClientSourceRoot(): string | undefined {
+  let currentDir = __dirname
+  while (currentDir && currentDir !== path.parse(currentDir).root) {
+    const pkgPath = path.join(currentDir, 'package.json')
+    if (fs.existsSync(pkgPath)) {
+      let name = ''
+      try {
+        name = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')).name || ''
+      } catch {
+        name = ''
+      }
+      if (name === 'boltdocs') {
+        const src = path.join(currentDir, 'src/client')
+        return fs.existsSync(src) ? src : undefined
+      }
+    }
+    currentDir = path.dirname(currentDir)
+  }
+  return undefined
+}
+
+// Computed once at module load: the monorepo client source root, or undefined
+// in a published install. Used to keep every framework sub-path entry on the
+// same module instance as `boltdocs/client` during development.
+const _clientSourceRoot = resolveClientSourceRoot()
+
 function resolvePublicDir(
   root: string,
   config: BoltdocsConfig | undefined,
@@ -310,6 +352,28 @@ export async function createViteConfig(
             path.resolve(root, 'boltdocs-client.mjs'),
           ),
         },
+        ...(_clientSourceRoot
+          ? ([
+              {
+                find: 'boltdocs/primitives',
+                replacement: _normalizePath(
+                  path.join(_clientSourceRoot, 'primitives.ts'),
+                ),
+              },
+              {
+                find: 'boltdocs/mdx',
+                replacement: _normalizePath(
+                  path.join(_clientSourceRoot, 'mdx.ts'),
+                ),
+              },
+              {
+                find: 'boltdocs/client/router',
+                replacement: _normalizePath(
+                  path.join(_clientSourceRoot, 'router/index.ts'),
+                ),
+              },
+            ] as { find: string; replacement: string }[])
+          : []),
         {
           find: 'use-sync-external-store/shim/index.js',
           replacement: 'react',
@@ -387,6 +451,13 @@ export async function createViteConfig(
   // Populate in-memory cache so the next caller with the same parameters
   // skips all module imports + plugin creation + config building.
   _createViteConfigCache.set(cacheKey, { config: viteConfig })
+
+  // Expose the resolved config on the returned InlineConfig so callers that
+  // skip their own resolveConfig() (devAction) can still read config fields
+  // (docsDir, plugins) without resolving the config a second time.
+  ;(
+    viteConfig as InlineConfig & { __boltdocsConfig: BoltdocsConfig }
+  ).__boltdocsConfig = config
 
   return viteConfig
 }
