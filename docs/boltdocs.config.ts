@@ -1,9 +1,12 @@
+import path from 'node:path'
 import { defineConfig } from 'boltdocs'
 import mermaidPlugin from '@bdocs/plugin-mermaid'
 import mathPlugin from '@bdocs/plugin-math'
 import llmsTextPlugin from '@bdocs/plugin-llms-text'
 import rssPlugin from '@bdocs/plugin-rss'
 import tailwindcssPlugin from '@bdocs/plugin-tailwindcss'
+
+const rootDir = path.dirname(import.meta.filename)
 
 export default defineConfig({
   base: '/docs',
@@ -22,9 +25,9 @@ export default defineConfig({
     mermaidPlugin({
       themes: {
         light: {
-          primaryColor: '#fef4f0',
-          primaryTextColor: '#eb5828',
-          primaryBorderColor: '#faa184',
+          primaryColor: '#eef6ff',
+          primaryTextColor: '#3d8bfa',
+          primaryBorderColor: '#95c0ff',
           lineColor: '#b5b19c',
           mainBkg: '#ffffff',
           nodeTextColor: '#25241d',
@@ -36,18 +39,18 @@ export default defineConfig({
           clusterBorder: '#d9d6c7',
         },
         dark: {
-          primaryColor: '#5a1503',
-          primaryTextColor: '#faa184',
-          primaryBorderColor: '#d34013',
-          lineColor: '#767673',
-          mainBkg: '#1e1e1d',
-          nodeTextColor: '#d5d5d3',
-          secondaryColor: '#252524',
-          tertiaryColor: '#141413',
-          nodeBorder: '#3c3c39',
-          edgeLabelBackground: '#252524',
-          clusterBkg: '#252524',
-          clusterBorder: '#3c3c39',
+          primaryColor: '#12264d',
+          primaryTextColor: '#95c0ff',
+          primaryBorderColor: '#2769db',
+          lineColor: '#424242',
+          mainBkg: '#151515',
+          nodeTextColor: '#f1f1f1',
+          secondaryColor: '#2a2a2a',
+          tertiaryColor: '#151515',
+          nodeBorder: '#2a2a2a',
+          edgeLabelBackground: '#2a2a2a',
+          clusterBkg: '#2a2a2a',
+          clusterBorder: '#424242',
         },
       },
     }),
@@ -81,10 +84,7 @@ export default defineConfig({
       en: 'Building documentation for your project has never been easier. Create beautiful, highly customizable, and extremely fast sites out of the box.',
       es: 'Crear documentación para tu proyecto nunca ha sido tan fácil. Genera sitios hermosos, altamente personalizables y extremadamente rápidos desde el primer momento.',
     },
-    codeTheme: {
-      light: 'github-light',
-      dark: 'github-dark',
-    },
+    codeTheme: 'github-dark',
     favicon: '/light.svg',
     logo: {
       dark: '/light.svg',
@@ -120,11 +120,11 @@ export default defineConfig({
       },
       {
         label: 'Showcase',
-        href: '/showcase',
+        href: 'site:/showcase',
       },
       {
         label: { en: 'Roadmap', es: 'Roadmap' },
-        href: '/roadmap',
+        href: 'site:/roadmap',
       },
     ],
     editLink:
@@ -139,6 +139,60 @@ export default defineConfig({
       },
     ],
     sitemaps: ['https://boltdocs.vercel.app/sitemap.xml'],
+  },
+  vite: {
+    resolve: {
+      // `config.vite` replaces the core's `resolve` entirely, so the aliases
+      // set by the framework (boltdocs/entry, boltdocs/client, primitives,
+      // use-sync-external-store) must be replicated here. `@` maps to docs/src.
+      alias: [
+        {
+          find: 'boltdocs/entry',
+          replacement: path.resolve(rootDir, 'boltdocs-entry.tsx'),
+        },
+        {
+          find: 'boltdocs/client',
+          replacement: path.resolve(rootDir, 'boltdocs-client.mjs'),
+        },
+        {
+          find: 'boltdocs/primitives',
+          replacement: path.resolve(
+            rootDir,
+            '../packages/core/src/client/primitives.ts',
+          ),
+        },
+        {
+          find: 'boltdocs/mdx',
+          replacement: path.resolve(
+            rootDir,
+            '../packages/core/src/client/mdx.ts',
+          ),
+        },
+        {
+          find: 'boltdocs/client/router',
+          replacement: path.resolve(
+            rootDir,
+            '../packages/core/src/client/router/index.ts',
+          ),
+        },
+        {
+          find: 'use-sync-external-store/shim/index.js',
+          replacement: 'react',
+        },
+        {
+          find: 'use-sync-external-store/shim',
+          replacement: 'react',
+        },
+        {
+          find: 'use-sync-external-store',
+          replacement: 'react',
+        },
+        {
+          find: '@',
+          replacement: path.resolve(rootDir, 'src'),
+        },
+      ],
+    },
   },
   integrations: {
     analytics: {
