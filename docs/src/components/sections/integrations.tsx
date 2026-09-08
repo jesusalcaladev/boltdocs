@@ -1,66 +1,64 @@
+import { Sigma } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { useTranslations } from '@/i18n/index'
 import {
-  GitBranch,
-  Globe,
-  Layers,
-  Search,
-  Tag,
-  Palette,
-  Code2,
-  Image,
-  MessageSquare,
-  Sigma,
-  BarChart3,
-  Zap,
-} from 'lucide-react'
-import { useTranslations } from '../../i18n/index'
+  Algolia,
+  Mermaid,
+  PostHog,
+  RSS,
+  Disqus,
+  TailwindCSS,
+  SASS,
+  UnoCSS,
+  GoogleAnalytics,
+  GoogleTabManager,
+  MDX,
+  Vercel,
+} from '@/components/sections/icons-integrations'
+import { Section } from '@/theme'
 
-const INTEGRATIONS = [
-  { name: 'React / MDX', icon: <Code2 className="w-5 h-5" /> },
-  { name: 'FlexSearch', icon: <Search className="w-5 h-5" /> },
-  { name: 'Open Graph', icon: <Image className="w-5 h-5" /> },
-  { name: 'Mermaid', icon: <Layers className="w-5 h-5" /> },
-  { name: 'Math', icon: <Sigma className="w-5 h-5" /> },
-  { name: 'Shiki Syntax', icon: <Palette className="w-5 h-5" /> },
-  { name: 'Theme Dev', icon: <Code2 className="w-5 h-5" /> },
-  { name: 'Custom Layouts', icon: <Layers className="w-5 h-5" /> },
-  { name: 'Feedback', icon: <MessageSquare className="w-5 h-5" /> },
-  { name: 'i18n', icon: <Globe className="w-5 h-5" /> },
-  { name: 'Google Analytics', icon: <Tag className="w-5 h-5" /> },
-  { name: 'PostHog', icon: <BarChart3 className="w-5 h-5" /> },
-  { name: 'Vercel', icon: <Zap className="w-5 h-5" /> },
-  { name: 'Versioning', icon: <GitBranch className="w-5 h-5" /> },
+type Integration = { name: string; icon: ReactNode }
+
+const INTEGRATIONS: Integration[] = [
+  { name: 'MDX', icon: <MDX className="size-[1.9rem]" /> },
+  { name: 'Mermaid', icon: <Mermaid className="size-[1.9rem]" /> },
+  { name: 'KaTeX Math', icon: <Sigma className="size-[1.9rem]" /> },
+  { name: 'Disqus', icon: <Disqus className="size-[1.9rem]" /> },
+  { name: 'Tailwindcss', icon: <TailwindCSS className="size-[1.9rem]" /> },
+  { name: 'Sass', icon: <SASS className="size-[1.9rem]" /> },
+  { name: 'UnoCSS', icon: <UnoCSS className="size-[1.9rem]" /> },
+  {
+    name: 'GoogleAnalytics',
+    icon: <GoogleAnalytics className="size-[1.9rem]" />,
+  },
+  {
+    name: 'GoogleTabManager',
+    icon: <GoogleTabManager className="size-[1.9rem]" />,
+  },
+  { name: 'Vercel', icon: <Vercel className="size-[1.9rem] text-white" /> },
+  { name: 'Algolia', icon: <Algolia className="size-[1.9rem]" /> },
+  { name: 'PostHog', icon: <PostHog className="size-[1.9rem]" /> },
+  { name: 'RSS', icon: <RSS className="size-[1.9rem]" /> },
 ]
 
 export const Integrations = () => {
   const t = useTranslations()
+
   return (
-    <section className="py-20 overflow-hidden border-y border-subtle bg-main/60 relative">
-      <div className="max-w-7xl mx-auto px-6 mb-10 relative z-20">
-        <p className="text-center text-sm font-semibold tracking-wider uppercase text-primary-500">
-          {t.integrationsLabel}
-        </p>
-        <h2 className="text-center text-3xl font-bold mt-2 text-body">
+    <Section maxWidth="lg">
+      <div className="mb-8">
+        <h2 className="text-center text-4xl font-extrabold tracking-tighter text-body">
           {t.integrationsTitle}
         </h2>
-      </div>{' '}
-      <div className="relative flex overflow-hidden">
-        <div className="flex flex-wrap justify-center gap-6 items-center py-4">
-          {INTEGRATIONS.map((item) => (
-            <div
-              key={item.name}
-              className="flex items-center gap-3 px-5 py-3 opacity-80 bg-surface border border-subtle rounded-full shadow-xs"
-            >
-              <div className="text-muted">{item.icon}</div>
-              <span className="text-sm font-medium text-paragraph">
-                {item.name}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="absolute inset-y-0 left-0 w-40 bg-linear-to-r from-main to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-40 bg-linear-to-l from-main to-transparent z-10 pointer-events-none" />
       </div>
-    </section>
+
+      <section className="flex w-full flex-row gap-10 flex-wrap justify-center mt-10">
+        {INTEGRATIONS.map((item) => (
+          <div key={item.name} className="flex items-center gap-2.5">
+            <span>{item.icon}</span>
+          </div>
+        ))}
+      </section>
+    </Section>
   )
 }

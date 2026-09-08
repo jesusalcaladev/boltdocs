@@ -1,8 +1,7 @@
-import { FeaturesGrid } from '../../../src/components/sections/features-grid'
-import { Integrations } from '../../../src/components/sections/integrations'
-import { CTASection } from '../../../src/components/sections/cta-section'
-import { Hero } from '../../../src/components/sections/hero'
-import { FeaturedResources } from '../../../src/components/sections/featured-resources'
+import { FeaturesGrid } from '@/components/sections/features-grid'
+import { Integrations } from '@/components/sections/integrations'
+import { Hero } from '@/components/sections/hero'
+import { FeaturedResources } from '@/components/sections/featured-resources'
 
 export default function HomePage() {
   return (
@@ -11,7 +10,6 @@ export default function HomePage() {
       <Integrations />
       <FeaturesGrid />
       <FeaturedResources />
-      <CTASection />
     </div>
   )
 }

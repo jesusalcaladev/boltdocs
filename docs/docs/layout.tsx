@@ -1,9 +1,5 @@
-import { DocsLayout } from 'boltdocs/client'
+import { DocsThemeLayout } from '@/theme'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative">
-      <DocsLayout>{children}</DocsLayout>
-    </div>
-  )
+  return <DocsThemeLayout>{children}</DocsThemeLayout>
 }

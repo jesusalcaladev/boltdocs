@@ -1,65 +1,58 @@
 import { Link } from 'boltdocs/primitives'
-import { useRef } from 'react'
-import { useScrollStagger } from '../../../src/hooks/useScrollAnimation'
-import { Github } from '../../../src/components/ui/icons'
-import { useTranslations } from '../../../src/i18n/index'
+import { Github } from '@/theme/icons'
+import { HeartHandshake } from 'lucide-react'
+import { useTranslations } from '@/i18n/index'
 
 export default function AboutPage() {
-  const contentRef = useRef<HTMLDivElement>(null)
   const t = useTranslations()
 
-  useScrollStagger(contentRef, { stagger: 0.04 })
-
   return (
-    <div className="font-sans antialiased min-h-screen bg-main text-body flex flex-col justify-start relative">
-      <div className="max-w-2xl mx-auto px-6 py-28 md:py-36 w-full grow">
-        <div ref={contentRef} className="flex flex-col gap-10">
-          <div>
-            <span className="font-mono text-xs uppercase tracking-widest text-primary-400 block mb-3">
-              {t.aboutLabel}
-            </span>
-            <h1 className="text-4xl md:text-5xl font-black text-body tracking-tight leading-tight">
-              Boltdocs
-            </h1>
-            <div className="w-full h-px bg-white/10 mt-8" />
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-body">
+    <div className="font-sans antialiased min-h-screen text-body relative overflow-hidden">
+      <div className="max-w-4xl mx-auto px-6 md:px-12 py-10 md:py-16 w-full">
+        <div className="grid md:grid-cols-2 gap-6 mt-10">
+          <div className="p-8">
+            <h2 className="text-2xl font-bold tracking-tight text-body mb-3">
               {t.aboutMissionTitle}
             </h2>
-            <p className="text-body/75 leading-relaxed text-base md:text-lg">
+            <p className="text-paragraph leading-relaxed">
               {t.aboutMissionDescription}
             </p>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-body">
+          <div className="p-8">
+            <h2 className="text-2xl font-bold tracking-tight text-body mb-3">
               {t.aboutOpenSourceTitle}
             </h2>
-            <p className="text-body/75 leading-relaxed text-base md:text-lg">
+            <p className="text-paragraph leading-relaxed">
               {t.aboutOpenSourceDescription}
             </p>
           </div>
+        </div>
 
-          <div className="flex flex-col gap-3">
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-body">
-              {t.aboutDeveloperTitle}
-            </h2>
-            <p className="text-body/75 leading-relaxed text-base md:text-lg">
-              {t.aboutDeveloperDescription}{' '}
-              <strong className="text-body font-bold">
-                {t.aboutDeveloperName}
-              </strong>
-              {t.aboutDeveloperSuffix}
-            </p>
-
-            <div className="pt-3">
+        <div className="p-8 md:p-10 rounded-3xl bg-surface mt-10">
+          <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+            <div className="shrink-0 flex items-center justify-center size-20 text-primary-400">
+              <HeartHandshake className="w-9 h-9" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold tracking-tight text-body mb-3">
+                {t.aboutDeveloperTitle}
+              </h2>
+              <p className="text-paragraph leading-relaxed">
+                {t.aboutDeveloperDescription}{' '}
+                <strong className="text-body font-bold">
+                  {t.aboutDeveloperName}
+                </strong>
+                {t.aboutDeveloperSuffix}
+              </p>
+            </div>
+            <div className="shrink-0">
               <Link
                 href="https://github.com/jesusalcaladev"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 text-body font-bold rounded-xl border border-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer text-sm"
+                className="group inline-flex items-center gap-2 px-6 py-3 bg-primary-500/10 hover:bg-primary-500/20 text-body font-semibold rounded-full border border-primary-500/25 hover:border-primary-500/50 transition-all duration-300 text-sm cursor-pointer"
               >
-                <Github className="w-4.5 h-4.5" /> {t.aboutFollowGithub}
+                <Github className="size-24 text-primary-400" />
+                {t.aboutFollowGithub}
               </Link>
             </div>
           </div>

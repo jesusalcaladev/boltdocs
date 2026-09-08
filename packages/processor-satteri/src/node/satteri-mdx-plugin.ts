@@ -119,7 +119,7 @@ interface PrecompileManifest {
   >
 }
 
-const MANIFEST_VERSION = 1
+const MANIFEST_VERSION = 2
 const COMPILED_DIR_NAME = '.boltdocs'
 
 function getCompileDir(root: string): string {
@@ -437,11 +437,12 @@ function filePathToExportName(filePath: string): string {
 }
 
 export function createSatteriMdxPlugin(
-  config: BoltdocsConfig,
+  config: BoltdocsConfig | undefined,
   getLifecycle: () => IPluginLifecycleManager | undefined,
   pluginOptions?: { docsDir?: string },
 ): Plugin {
-  const processor = createSatteriProcessorPlugin()
+  const codeTheme = config?.theme?.codeTheme
+  const processor = createSatteriProcessorPlugin(codeTheme)
   const mdastPlugins = processor.mdastPlugins ?? []
   const hastPlugins = processor.hastPlugins ?? []
 
@@ -453,10 +454,12 @@ export function createSatteriMdxPlugin(
     userPlugins.remarkPlugins.length > 0 || userPlugins.rehypePlugins.length > 0
 
   const compilerConfigSignature = JSON.stringify({
-    codeTheme: config.theme?.codeTheme || {},
-    shiki: (config as BoltdocsConfig & { shiki?: unknown }).shiki || null,
-    base: config.base || '/',
-    siteUrl: config.siteUrl || '',
+    codeTheme: config?.theme?.codeTheme || {},
+    shiki:
+      (config as (BoltdocsConfig & { shiki?: unknown }) | undefined)?.shiki ||
+      null,
+    base: config?.base || '/',
+    siteUrl: config?.siteUrl || '',
   })
   const compiler = new MdxCompiler(
     [...mdastPlugins, ...userPlugins.remarkPlugins],
@@ -604,7 +607,7 @@ export function createSatteriMdxPlugin(
         os.cpus().length || 4,
         Math.max(2, Math.ceil(mdxFiles.length / 25)),
       )
-      compilePool = new CompilePool(optimalWorkers)
+      compilePool = new CompilePool(optimalWorkers, codeTheme)
       compilePool.start().catch(() => {
         compilePool = null
       })
@@ -1329,7 +1332,17 @@ export function createSatteriMdxPlugin(
         }
       }
 
+      const compileStartTime = performance.now()
       const compiled = await compiler.compile(sourceCode, cleanId)
+      if (
+        process.env.BOLTDOCS_DEBUG === 'true' ||
+        process.env.BOLTDOCS_BENCHMARK === 'true'
+      ) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `[satteri-mdx] on-demand compile ${path.relative(process.cwd(), cleanId)} in ${Math.round(performance.now() - compileStartTime)}ms`,
+        )
+      }
       if (!compiled) {
         throw new Error(
           `[satteri-mdx] Failed to compile ${cleanId}: compiler returned no output`,

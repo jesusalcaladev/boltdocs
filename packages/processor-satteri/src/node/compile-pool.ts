@@ -2,6 +2,7 @@ import Piscina from 'piscina'
 import os from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import type { ShikiCodeTheme } from './satteri-plugins/rehype-shiki-plugin'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -34,7 +35,7 @@ export class CompilePool {
   private startTime = 0
   private _terminated = false
 
-  constructor(numWorkers?: number) {
+  constructor(numWorkers?: number, codeTheme?: ShikiCodeTheme) {
     this.totalWorkers = numWorkers ?? Math.max(2, (os.cpus().length || 2) - 1)
     const workerFile = join(__dirname, 'compile-worker.mjs')
     this.startTime = performance.now()
@@ -44,6 +45,7 @@ export class CompilePool {
       maxThreads: this.totalWorkers,
       minThreads: this.totalWorkers,
       idleTimeout: 30000,
+      workerData: { codeTheme },
     })
   }
 

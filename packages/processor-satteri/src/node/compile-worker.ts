@@ -8,17 +8,25 @@
  * Built-in plugins (remark-meta, rehype-slug, rehype-shiki) are imported
  * directly.  User plugins are handled by the main thread (fallback).
  */
+import { workerData } from 'node:worker_threads'
 import { mdxToJs } from 'satteri'
 import { transformSync } from 'esbuild'
 import { satteriRemarkMetaPlugin } from './satteri-plugins/remark-meta-plugin'
 import { satteriRehypeSlugPlugin } from './satteri-plugins/rehype-slug-plugin'
-import { satteriRehypeShikiPlugin } from './satteri-plugins/rehype-shiki-plugin'
+import {
+  satteriRehypeShikiPlugin,
+  type ShikiCodeTheme,
+} from './satteri-plugins/rehype-shiki-plugin'
+
+const workerCodeTheme = (
+  workerData as { codeTheme?: ShikiCodeTheme } | undefined
+)?.codeTheme
 
 // Built-in plugins (created once per worker, reused for all compilations)
 const DEFAULT_MDAST_PLUGINS = [satteriRemarkMetaPlugin()]
 const DEFAULT_HAST_PLUGINS = [
   satteriRehypeSlugPlugin(),
-  satteriRehypeShikiPlugin(),
+  satteriRehypeShikiPlugin(workerCodeTheme),
 ]
 
 // Eagerly pre-warm Sätteri + Shiki engine at worker instantiation.

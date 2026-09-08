@@ -5,30 +5,41 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
 
-export const MDX_PLUGIN_VERSION = 'v9-transpile-jsx'
-
-function resolveSatteriVersion(): string {
-  try {
-    const require = createRequire(import.meta.url)
-    let directory = path.dirname(require.resolve('satteri'))
-    for (let depth = 0; depth < 6; depth++) {
-      const packagePath = path.join(directory, 'package.json')
-      if (fs.existsSync(packagePath)) {
+function resolvePackageVersion(packageName: string, startDir: string): string {
+  let directory = startDir
+  for (let depth = 0; depth < 10; depth++) {
+    const packagePath = path.join(directory, 'package.json')
+    if (fs.existsSync(packagePath)) {
+      try {
         const packageJson = JSON.parse(
           fs.readFileSync(packagePath, 'utf8'),
         ) as {
           name?: string
           version?: string
         }
-        if (packageJson.name === 'satteri' && packageJson.version) {
+        if (packageJson.name === packageName && packageJson.version) {
           return packageJson.version
         }
+      } catch {
+        // Ignore unparsable package.json and keep walking up.
       }
-      const parent = path.dirname(directory)
-      if (parent === directory) break
-      directory = parent
     }
+    const parent = path.dirname(directory)
+    if (parent === directory) break
+    directory = parent
+  }
+  return 'unknown'
+}
+
+function resolveSatteriVersion(): string {
+  try {
+    const require = createRequire(import.meta.url)
+    return resolvePackageVersion(
+      'satteri',
+      path.dirname(require.resolve('satteri')),
+    )
   } catch {
     // Cache safety falls back to the compiler implementation signature.
   }
@@ -36,7 +47,15 @@ function resolveSatteriVersion(): string {
 }
 
 const SATTERI_VERSION = resolveSatteriVersion()
+const PROCESSOR_VERSION = resolvePackageVersion(
+  '@bdocs/processor-satteri',
+  path.dirname(fileURLToPath(import.meta.url)),
+)
 const PROCESS_CACHE_NONCE = `${process.pid}:${Date.now()}:${Math.random()}`
+
+// Includes the processor package version so any published change to the
+// compiler pipeline (e.g. Shiki highlighting) invalidates cached output.
+export const MDX_PLUGIN_VERSION = `v9-transpile-jsx-p${PROCESSOR_VERSION}`
 
 /** Minimal interface for TransformCache from boltdocs/node/cache. */
 interface TransformCache {
