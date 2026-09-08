@@ -1,6 +1,6 @@
 ---
 title: Solución de Problemas
-sidebarPosition: 20
+sidebarPosition: 3
 description: Problemas comunes y cómo resolverlos al trabajar con Boltdocs.
 ---
 
@@ -36,31 +36,6 @@ Luego ejecuta `pnpm install` nuevamente. Esto le indica a pnpm que permita los s
 
 Alternativamente, puedes ejecutar `pnpm approve-builds` de forma interactiva para seleccionar qué dependencias deben tener permitido ejecutar scripts.
 
----
-
-### `serve -s` muestra la página de inicio en todas las rutas
-
-Si estás probando la compilación estática localmente **con `pnpx serve -s .`, podrías notar que cada URL (por ejemplo, `/about`, `/docs/guides`) renderiza la página de inicio en lugar del contenido esperado.
-
-**Por qué sucede**
-
-La bandera `-s` (aplicación de página única) le dice a `serve` que vuelva a `index.html` para cualquier ruta que no coincida con un archivo. Como `serve` no resuelve automáticamente `/about` a `about.html` (o `about/index.html`) en este modo, el fallback se activa y sirve la página raíz en su lugar.
-
-**Solución**
-
-Usa `serve` **sin** la bandera `-s`:
-
-```sh
-pnpx serve . -l 3000
-```
-
-Sin `-s`, `serve` resuelve correctamente las rutas de URL a sus archivos HTML generados correspondientes (por ejemplo, `/about` → `about.html`, `/docs/guides` → `docs/guides.html`).
-
-**Despliegues en producción**
-
-Este problema no ocurre en plataformas de producción como **Vercel**, **Netlify** o **Cloudflare Pages** — todas manejan la resolución de URLs limpias a archivos correctamente por defecto. El comportamiento de la bandera `-s` es específico de las pruebas locales con el paquete `serve`.
-
----
 
 ### Feedback personalizado lanza error "body stream already read"
 

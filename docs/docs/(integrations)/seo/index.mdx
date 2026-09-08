@@ -1,9 +1,202 @@
 ---
-title: (Placeholder) English source
+title: SEO & Robots
 sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+description: Automatic sitemap, robots.txt, meta tags, and Open Graph images for search engines and social media.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+Boltdocs automatically generates SEO metadata for every page. This includes sitemap.xml, robots.txt, canonical URLs, Open Graph tags, and Twitter Cards.
 
-Original Spanish translation: /docs/es/(integrations)/seo/index.mdx
+
+## SEO Configuration Reference
+
+### `SeoConfig`
+
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **`indexing`** | `'all' \| 'public' \| 'none' \| string` | `'all'` | Controls the `<meta name="robots">` tag. `'all'` and `'public'` emit `index,follow`; `'none'` emits `noindex,nofollow`. Custom strings are emitted as-is. |
+| **`thumbnails`** | `ThumbnailConfig` | — | Open Graph image configuration. |
+| **`defaultImage`** | `string` | — | Fallback OG image for pages without frontmatter. |
+
+### `ThumbnailConfig`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| **`background`** | `string` | Path to the background image for OG cards. |
+| **`theme`** | `'light' \| 'dark'` | Theme for auto-generated thumbnails. |
+
+---
+
+## Robots Configuration Reference
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| **`rules`** | `RobotRule[]` | Array of crawling rules. |
+| **`sitemaps`** | `string[]` | URLs of sitemap.xml files. |
+
+### `RobotRule`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| **`userAgent`** | `string` | Target user agent (e.g. `'*'` for all). |
+| **`allow`** | `string \| string[]` | Paths to allow. |
+| **`disallow`** | `string \| string[]` | Paths to disallow. |
+| **`crawlDelay`** | `number` | Delay between requests (in seconds). |
+
+---
+
+## Auto-Generated Files
+
+### sitemap.xml
+
+Generated at build time. Contains all indexed routes with:
+- `loc` — Full URL
+- `lastmod` — Last modified date (from git or file mtime)
+- `changefreq` — Page update frequency
+- `priority` — Computed from the sidebar position
+
+### Generated robots.txt
+
+Generated from your `robots` configuration. Example output:
+
+```
+User-Agent: *
+Allow: /
+Disallow: /private/
+Sitemap: https://docs.example.com/sitemap.xml
+```
+
+---
+
+## Structured Data (JSON-LD)
+
+Structured data is metadata for search engines and crawlers. It's independent of Boltdocs' internal search index. Use JSON-LD to describe your site, articles, and breadcrumbs via a schema.org-compatible graph.
+
+### Global site data
+
+Use the Node-safe helpers from `boltdocs` in `boltdocs.config.ts`:
+
+```ts
+import {
+  createWebSiteStructuredData,
+  defineConfig,
+  defineStructuredData,
+} from 'boltdocs'
+
+export default defineConfig({
+  siteUrl: 'https://docs.example.com',
+  seo: {
+    structuredData: defineStructuredData(
+      createWebSiteStructuredData({
+        name: 'Example Docs',
+        url: 'https://docs.example.com',
+        description: 'Product documentation',
+      }),
+    ),
+  },
+})
+```
+
+### Page-specific data
+
+Add `structuredData` inside `seo` in the MDX frontmatter:
+
+```mdx
+---
+title: Getting Started
+seo:
+  structuredData:
+    '@context': https://schema.org
+    '@type': TechArticle
+    headline: Getting Started
+---
+```
+
+In external React pages, render `<StructuredData data={...} />` from `boltdocs/client`. The `createArticleStructuredData` and `createBreadcrumbStructuredData` helpers cover the most common article and navigation graphs.
+
+### `StructuredData` Reference
+
+| API | Purpose |
+| :--- | :--- |
+| `defineStructuredData(data)` | Preserves typed JSON-LD objects in configuration files. |
+| `createWebSiteStructuredData(options)` | Creates a `WebSite` graph, with optional search action. |
+| `createArticleStructuredData(options)` | Creates an `Article` graph with author, dates, image, and description. |
+| `createBreadcrumbStructuredData(items)` | Creates a `BreadcrumbList` graph from named URLs. |
+| `<StructuredData data={...} />` | Emits a safe `application/ld+json` script from an external page. |
+
+---
+
+## Per-Page SEO Override
+
+Override global SEO settings in frontmatter:
+
+```md
+---
+title: Internal Page
+seo:
+  noindex: true
+  og:image: /custom-og.png
+  twitter:card: summary
+---
+```
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| **`noindex`** | `boolean` | Adds a noindex meta tag. |
+| **`og:image`** | `string` | Custom Open Graph image. |
+| **`og:type`** | `string` | Open Graph type (default: `'website'`). |
+| **`twitter:card`** | `string` | Twitter card type. |
+
+---
+
+## Open Graph Images
+
+Boltdocs auto-generates OG images using `seo.thumbnails.background`. Every page gets a generated image with:
+- Your background image
+- The page title overlaid
+- The site name in the corner
+
+### Manual OG Image
+
+Override per page:
+
+```md
+---
+seo:
+  og:image: /assets/my-custom-og.png
+---
+```
+
+Or globally:
+
+```ts
+export default defineConfig({
+  seo: {
+    defaultImage: '/default-og.png',
+  },
+})
+```
+
+---
+
+## Canonical URLs
+
+Canonical URLs are automatically generated for every page based on `siteUrl` + page path. This helps consolidate duplicate content issues.
+
+---
+
+## Troubleshooting
+
+### sitemap.xml missing
+
+Make sure `siteUrl` is configured.
+
+### Duplicate content
+
+Check the canonical URLs in the page source. Use `permalink` in frontmatter to set consistent URLs.
+
+### OG images not showing
+
+Verify that `seo.thumbnails.background` points to a valid image. Check card validators for social networks:
+
+- [Facebook Debugger](https://developers.facebook.com/tools/debug/)
+- [Twitter Card Validator](https://cards-dev.twitter.com/validator)

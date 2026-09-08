@@ -1,6 +1,6 @@
 ---
 title: Structured Data
-sidebarPosition: 8
+sidebarPosition: 10
 description: Type-safe JSON-LD helpers and the StructuredData component for website, article, and breadcrumb graphs.
 ---
 
@@ -94,15 +94,6 @@ const breadcrumbs = createStructuredData({
 Add a graph directly to a page's frontmatter:
 
 ```mdx
----
-title: Getting Started
-seo:
-  structuredData:
-    '@context': https://schema.org
-    '@type': TechArticle
-    headline: Getting Started
-    url: https://example.com/docs/start
----
 ```
 
 Global `seo.structuredData` and page-level data are emitted together.

@@ -1,15 +1,16 @@
 ---
 title: Guides
 sidebarPosition: 1
-description: Learn Boltdocs from first install to production operations, content authoring, customization, performance, and experimental APIs.
+sidebarHidden: true
+description: Learn Boltdocs from first install to production operations — navigation, content authoring, customization, security headers and CSP, performance, and CI/CD.
 ---
 
-import { Rocket, Settings, Route, FileText, Code2, Tags, Paintbrush, Globe, Gauge, LifeBuoy, FlaskConical, Terminal, Map } from 'lucide-react'
+import { Rocket, Settings, Route, FileText, Code2, Tags, Paintbrush, Globe, Gauge, LifeBuoy, FlaskConical, Terminal, Map, Shield, ShieldCheck } from 'lucide-react'
 
 A practical path through Boltdocs. Start with the first two guides, then jump to the area that matches the problem you are solving.
 
 <Callout variant="info" title="Recommended path">
-  Install Boltdocs, configure the site, learn how files become routes, then choose a content, customization, performance, or operations guide. The [API reference](/docs/api) is for exact exports and types.
+  Install Boltdocs, configure the site, learn how files become routes, then choose a navigation, content, customization, security, performance, or operations guide. The [API reference](/docs/api) is for exact exports and types.
 </Callout>
 
 ## Start here
@@ -49,6 +50,9 @@ A practical path through Boltdocs. Start with the first two guides, then jump to
 ## Customization
 
 <Cards cols={3}>
+  <Card title="Navigation" icon={<Map />} href="/docs/guides/customization/navigation">
+    Configure the navbar, tabs, sidebar, breadcrumbs, and page navigation — and learn how links resolve, including the `site:` protocol and locale/version inference.
+  </Card>
   <Card title="Icons" icon={<Paintbrush />} href="/docs/guides/customization/icons">
     Use Lucide, SVG, and project-defined icons in tabs and navigation.
   </Card>
@@ -60,17 +64,14 @@ A practical path through Boltdocs. Start with the first two guides, then jump to
   </Card>
 </Cards>
 
-## Navigation & Security
+## Security
 
-<Cards cols={3}>
-  <Card title="Navigation" icon={<Map />} href="/docs/guides/navigation">
-    Configure the navbar, tabs, sidebar, breadcrumbs, and page navigation.
+<Cards cols={2}>
+  <Card title="HTTP Headers" icon={<Shield />} href="/docs/guides/security/headers">
+    Default security headers, custom headers, cache control, and per-platform configuration.
   </Card>
-  <Card title="Headers" icon={<Gauge />} href="/docs/guides/headers/headers">
-    HTTP headers, caching, and security header examples for deployments.
-  </Card>
-  <Card title="CSP" icon={<FlaskConical />} href="/docs/guides/csp/csp">
-    Content Security Policy guidance and examples.
+  <Card title="Content Security Policy" icon={<ShieldCheck />} href="/docs/guides/security/csp">
+    Enable and customize CSP: the default policy, dev vs production, and common integrations.
   </Card>
 </Cards>
 
@@ -80,8 +81,8 @@ A practical path through Boltdocs. Start with the first two guides, then jump to
   <Card title="Cache & Environment" icon={<Gauge />} href="/docs/guides/performance/cache">
     Understand disk caches, invalidation, and cache environment variables.
   </Card>
-  <Card title="CI & Deploy" icon={<Terminal />} href="/docs/guides/operations/ci">
-    CI best practices: audit, doctor, tests, and deploy safely.
+  <Card title="CI/CD & Deployment" icon={<Terminal />} href="/docs/guides/operations/ci">
+    GitHub Actions and GitLab pipelines: doctor checks, previews, and safe production deploys.
   </Card>
   <Card title="Troubleshooting" icon={<LifeBuoy />} href="/docs/guides/operations/troubleshooting">
     Resolve installation, routing, build, and deployment problems.

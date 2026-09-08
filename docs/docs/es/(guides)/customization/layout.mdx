@@ -1,28 +1,11 @@
 ---
 title: Layout Personalizado
-sidebarPosition: 4
+sidebarPosition: 1
 description: Sobreescribe el layout de docs por defecto con tu propio componente React usando docs/layout.tsx.
 ---
 
 Boltdocs envuelve cada página MDX en un layout. Por defecto, usa `DocsLayout` que incluye la navbar, sidebar, área de contenido y navegación "En esta página". Puedes sobreescribir esto creando un layout personalizado.
 
----
-
-## Creando un Layout Personalizado
-
-Crea `docs/layout.tsx` en tu carpeta de docs:
-
-```tsx title="docs/layout.tsx"
-import { DocsLayout } from 'boltdocs/client'
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return <DocsLayout>{children}</DocsLayout>
-}
-```
-
-Esto reemplaza el layout por defecto para **todas** las páginas de tus docs.
-
----
 
 ## Layout Personalizado Completo
 

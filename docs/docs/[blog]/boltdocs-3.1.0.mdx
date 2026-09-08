@@ -23,36 +23,6 @@ tab: "3.1.0"
   **Build output optimized**: Beasties critical CSS inlining has been disabled by default, reducing total HTML output by ~7.3 MB. The default locale duplication bug has also been fixed, saving an additional ~8 MB. Combined, the build output is now ~60% smaller.
 </Callout>
 
----
-
-## `--turbo` — Experimental Build Mode
-
-The new `--turbo` flag activates three native-powered optimizations in a single command:
-
-```bash
-pnpm boltdocs build --turbo
-```
-
-Or set it permanently via environment variable:
-
-```bash
-BOLTDOCS_TURBO=true pnpm boltdocs build
-```
-
-What changes under the hood:
-
-| Component | Without `--turbo` | With `--turbo` |
-| ----------- | ------------------- | ---------------- |
-| MDX compilation | `@mdx-js/rollup` + remark/rehype JS plugins | Sätteri (Rust) + native plugins |
-| Critical CSS | None (external CSS only) | `@bdocs/zig-critters` (Zig/WASM) |
-| Parser | Multi-pass mode | Single-pass with shared buffer |
-
-<Callout type="warning">
-  This flag is experimental. You may encounter CSS compatibility issues from zig-critters or MDX compilation differences from Sätteri. If something breaks, remove `--turbo` and report the issue — your standard build is unaffected.
-</Callout>
-
----
-
 ## Sätteri MDX — Rust-Powered Compilation
 
 The biggest change in `--turbo` mode is the MDX compiler. Sätteri replaces `@mdx-js/rollup` with a Rust-based processor built on pulldown-cmark with MDX extensions.
@@ -253,7 +223,7 @@ The `@bdocs/plugin-rss` plugin generates RSS 2.0 and Atom feeds from your docume
 
 Feeds include all routes by default, organized into a clean `rss/` directory:
 
-```
+```text
 dist/
   rss/
     feed-en.xml
@@ -285,7 +255,7 @@ export default defineConfig({
 | `collections` | `string[]` | all collections | Filter by collection name |
 | `format` | `'rss' \| 'atom' \| 'both'` | `'rss'` | Feed format(s) to generate |
 
-See the [full RSS plugin docs](/docs/plugins/plugin-rss) for details.
+See the [full RSS plugin docs](/docs/plugins/content/plugin-rss) for details.
 
 ---
 

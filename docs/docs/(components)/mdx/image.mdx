@@ -1,9 +1,15 @@
 ---
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+title: Image
+sidebarPosition: 4
+description: Render theme-aware, responsive, and beautifully styled images using the Image component.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+Boltdocs automatically styles default Markdown images with a subtle shadow, rounded corners, and centered alignment. You can also use the `<Image>` component directly to configure theme-aware behavior.
 
-Original Spanish translation: /docs/es/(components)/mdx/image.mdx
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **`src`** | `string` | *Required* | Absolute or relative path to the image asset. |
+| **`alt`** | `string` | `''` | Alternative description text for screen readers and SEO. |
+| **`theme`** | `'light' \| 'dark'` | `undefined` | Restricts visibility to a single theme. The image is hidden when the other theme is active. |

@@ -1,7 +1,6 @@
 {
   "title": "Content & MDX",
-  "icon": "FileCode2",
   "order": 2,
-  "collapsible": true,
+  "collapsible": false,
   "collapsed": false
 }

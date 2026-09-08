@@ -1,7 +1,6 @@
 {
   "title": "Operations & Support",
-  "icon": "LifeBuoy",
-  "order": 5,
-  "collapsible": true,
+  "order": 6,
+  "collapsible": false,
   "collapsed": false
 }

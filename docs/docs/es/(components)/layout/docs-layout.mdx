@@ -6,15 +6,6 @@ description: El componente envoltorio principal para páginas de documentación 
 
 El componente `DocsLayout` es el contenedor de alto nivel que estructura las páginas de documentación estándar.
 
----
-
-## Importación
-
-```tsx
-import { DocsLayout } from 'boltdocs/primitives'
-```
-
----
 
 ## Ejemplo de Ensamblaje de Diseño Componible
 
@@ -212,3 +203,34 @@ Todas las subcomponentes primitivas aceptan estas propiedades comunes para estil
 | **`children`** | `ReactNode` | `undefined` | Los elementos de contenido a renderizar dentro del contenedor. |
 | **`className`** | `string` | `undefined` | Clases Tailwind o CSS personalizadas para estilos utilitarios. |
 | **`style`** | `CSSProperties` | `undefined` | Sobrescrituras de estilo en línea. |
+
+---
+
+## Personalización y estados
+
+La primitiva `DocsLayout` es **neutral en estilo**: es pura composición — contenedores de ranura (`children`, navbar, sidebar, content, `onThisPage`) que aceptan `className` y no exponen atributos de estado. Cada decisión visual (fondos, bordes, espaciado, anchos de columna) pertenece al tema del sitio a través del `className` de cada ranura.
+
+| Estado / Ranura | Mecanismo |
+| :--- | :--- |
+| `DocsLayout` (raíz) | `<div>` de columna flex para toda la página; `bg-main text-body` provienen de tokens del tema |
+| `DocsLayout.Body` | `<div>` de fila flex que agrupa las columnas de sidebar, contenido y on-this-page |
+| `DocsLayout.Content` | `<main>` columna de lectura desplazable |
+| `DocsLayout.ContentMdx` | `<div>` contenedor de lectura con relleno, centrado y de ancho máximo |
+| `DocsLayout.Header` | Ranura `<header>` para migas de pan y el título de la página |
+
+```tsx
+<DocsLayout className="min-h-screen bg-main text-body">
+  <DocsLayout.Body>
+    <Sidebar className="w-64 border-r border-subtle" />
+    <DocsLayout.Content className="bg-main">
+      <DocsLayout.ContentMdx className="mx-auto w-full max-w-4xl px-6 py-8">
+        <DocsLayout.Header className="mb-8 border-b border-subtle pb-6">
+          <Breadcrumbs />
+          <h1 className="mt-3 text-3xl font-bold text-body">{title}</h1>
+        </DocsLayout.Header>
+        {children}
+      </DocsLayout.ContentMdx>
+    </DocsLayout.Content>
+  </DocsLayout.Body>
+</DocsLayout>
+```

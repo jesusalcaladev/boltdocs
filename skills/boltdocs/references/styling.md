@@ -189,6 +189,40 @@ Configure dark mode inside `:root[data-theme="dark"]` or `:root.dark`:
 
 ---
 
+## Primitive State Styling (data-attributes)
+
+All Boltdocs **primitives** (`Sidebar`, `OnThisPage`, `Navbar`, `Tabs`, `Menu`, …) are **style-neutral**: they render semantic structure and behavior, and expose their **state through `data-*` attributes that are present only when true**. Every visual decision (colors, borders, sizes, transitions) belongs to the site theme via CSS — never bake visuals into a primitive.
+
+| Primitive | State attributes | Notes |
+| --------- | --------------- | ----- |
+| `Sidebar` | `data-active`, `data-open`, `data-collapsible`, `data-depth`, `data-badge` (+ `aria-current`, `aria-expanded`) | Active link, open groups, depth for indentation, badge text |
+| `OnThisPage` | `data-active`, `data-level`, `data-otp-root/content/list/fade/indicator` (+ `aria-current`) | Active heading, level for indentation |
+| `Navbar` | `data-open` (mobile drawer, more menu) (+ `aria-expanded`) | `Navbar.Link` has no `data-active` — compute active state in the theme via `useLocalizedTo`/`useLocation` |
+| `Tabs` | `data-selected` (+ `aria-selected`) | Style with `data-[selected=true]:` |
+
+Style states with Tailwind v4 variants or plain CSS:
+
+```tsx
+// Sidebar.Link — style the active state from your theme
+<Sidebar.Link className="data-active:bg-primary-500/10 data-active:text-primary-400" />
+```
+
+```css
+a[data-active] {
+  color: var(--color-primary-500);
+  background: color-mix(in oklab, var(--color-primary-500) 10%, transparent);
+}
+```
+
+Key rules:
+
+- `data-*` attributes are a **stable, documented contract** — theme CSS must not depend on framework-generated class names.
+- Attribute **presence** is the state: `[data-active]` (not `[data-active='true']`), except `data-selected`/`data-level` where the **value** matters (`data-[level=3]:pl-3`, `data-[selected=true]:`).
+- Defaults from the framework (`ui-base/`) are just the framework's own theme and are fully overridable via `className` slots (`itemClassName`, `linkClassName`, `indicatorClassName`, `fadeClassName`, `contentClassName` where the slot repeats per item).
+- RAC-wrapped primitives (Button, Menu, Popover, Tooltip, SearchDialog) additionally pass `isPressed/isHovered/isFocused/isSelected/...` through a render-function `className` and emit their own `data-pressed`, `data-hovered`, `data-focused`, `data-focus-visible`, `data-entering`, `data-exiting`, `data-placement` attributes.
+
+---
+
 ## Custom CSS Variants & Biome Compatibility
 
 When writing custom Tailwind v4 variants, **avoid the multiline parentheses shortcut syntax** as it is incompatible with Biome's CSS formatter:

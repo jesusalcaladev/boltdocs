@@ -21,29 +21,6 @@ export default defineConfig({
 
 Boltdocs reads this file at startup and generates a complete Vite configuration internally. You never need to touch a `vite.config.ts`.
   
----
-
-## Top-Level Keys
-
-| Property | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| **`siteUrl`** | `string` | `undefined` | The production URL of your site. Critical for generating `sitemap.xml` and canonical SEO tags. |
-| **`base`** | `string` | `'/'` | The sub-path where the docs site is deployed (e.g., `/docs`). All static assets and internal links will be relative to this. |
-| **`docsDir`** | `string` | `'./docs'` | Path to the directory containing your Markdown content. Relative to the project root. |
-| **`plugins`** | `BoltdocsPlugin[]` | `[]` | An array of Boltdocs plugins. See the [Plugins tab](/docs/plugins) for the full plugin system reference. |
-| **`theme`** | [`ThemeConfig`](#themeconfig) | — | Controls the visual appearance, navigation, sidebar, and display options. |
-| **`seo`** | [`SeoConfig`](#seoconfig) | — | Controls indexing behavior, Open Graph metadata, and structured data. |
-| **`experimental`** | [`BoltdocsExperimentalConfig`](#experimentalconfig) | — | Enables opt-in APIs that may evolve between releases. |
-| **`robots`** | [`RobotsConfig`](#robotsconfig) | — | Generates `robots.txt` and links your sitemap. |
-| **`integrations`** | [`IntegrationsConfig`](#integrationsconfig) | — | Enables third-party integrations such as Google Analytics 4 and Google Tag Manager. |
-| **`i18n`** | [`I18nConfig`](#i18nconfig) | — | Enables multi-language documentation with locale-based folder routing. |
-| **`versions`** | [`VersionsConfig`](#versionsconfig) | — | Enables side-by-side versioned documentation. |
-| **`collections`** | [`CollectionsConfig`](#collectionsconfig) | — | Configures the dynamic collections (blog) system for grouping related posts. |
-| **`directoryMeta`** | `Record<string, DirectoryMeta>` | — | Override sidebar titles, icons, and ordering for directories using `meta.json` files. |
-| **`security`** | [`SecurityConfig`](#securityconfig) | — | Configures HTTP security headers and CSP rules. |
-| **`vite`** | `ViteUserConfig` | — | Extends the internally generated Vite config with custom options. |
-
----
 
 ## `ThemeConfig`
 

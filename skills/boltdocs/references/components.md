@@ -128,6 +128,25 @@ Use ```` ```mermaid ```` code blocks to define diagrams.
 
 ---
 
+## Layout Primitives & State Contract
+
+The layout primitives (`Sidebar`, `OnThisPage`, `Navbar`, `SearchDialog`, `Breadcrumbs`, `PageNav`, `CodeBlock`, `ErrorBoundary`) live in `'boltdocs/primitives'`. They are **style-neutral**: structure + behavior + `data-*` state attributes come from the primitive; colors/borders/sizes belong to the theme. The styled defaults you see out of the box live in `ui-base/` (e.g. `ui-base/sidebar.tsx`, `ui-base/on-this-page.tsx`) and are fully overridable through `className` slots.
+
+State contract (present-when-true attributes):
+
+| Primitive | State attributes | Behavior owned by the primitive |
+| --------- | --------------- | -------------------------------- |
+| `Sidebar` | `data-active`, `data-open`, `data-collapsible`, `data-depth`, `data-badge` | Collapse/expand groups, active-route detection, scroll-into-view of active item |
+| `OnThisPage` | `data-active`, `data-level`, `data-otp-*` | IntersectionObserver scroll tracking, indicator math, auto-scroll of active item |
+| `Navbar` | `data-open` (drawer/more) | Mobile drawer, more dropdown, click-outside |
+| `Tabs` | `data-selected` | Keyboard roving-tabindex, indicator position |
+
+`Sidebar` slot API: `Root`, `Content`, `Mobile`, `Header`, `Footer`, `Group` (collapsible via `defaultOpen`/`open` + toggle button), `Item`, `Link` (with `data-active` + `aria-current`), `Icon`, `Badge` (`data-badge`). `OnThisPage` slot API: `Root`, `Header`, `Content` (with `fadeClassName`), `List`, `Item` (`data-level`), `Link` (`data-active` + `aria-current`), `Indicator`, `Items`, `Tree` (with `itemClassName`/`linkClassName`/`indicatorClassName`/`contentClassName`/`fadeClassName`). `primitives/link.tsx` is the router `Link`/`NavLink` wrapper (supports `ref` and `data-*` passthrough).
+
+See the docs guide `docs/docs/(guides)/customization/theme-primitives.mdx` for the full theming pattern (the `w-toc`, `w-sidebar`, `top-navbar`, `text-muted`, `border-subtle`, `bg-main` utilities are **theme tokens**, not framework API).
+
+---
+
 ## Collection Components (`post.tsx`, `list.tsx`, `layout.tsx`)
 
 For bracket directories (`[blog]`, `[changelog]`), you can provide custom React components:

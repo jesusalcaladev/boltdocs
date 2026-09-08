@@ -1,9 +1,58 @@
 ---
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+title: Google Tag Manager
+sidebarPosition: 3
+description: Deploy and manage marketing tags, custom scripts, and analytics with Google Tag Manager.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+Google Tag Manager (GTM) lets you manage tags, tracking pixels, and custom scripts on your Boltdocs site without editing code directly.
 
-Original Spanish translation: /docs/es/(integrations)/seo/gtm.mdx
+
+## Configuration Reference
+
+| Property | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| **`tagId`** | `string` | ✓ | Your GTM Container ID (e.g. `'GTM-XXXXXX'`). |
+| **`dataLayerName`** | `string` | — | The name of the GTM global dataLayer variable (defaults to `'dataLayer'`). |
+| **`preview`** | `string` | — | GTM environment query parameter string for testing draft tags. |
+
+### Advanced Example
+
+```ts
+integrations: {
+  gtm: {
+    tagId: 'GTM-XXXXXX',
+    dataLayerName: 'customDataLayer',
+    preview: 'env-3&auth=xxxxx',
+  },
+}
+```
+
+---
+
+## Using the DataLayer
+
+You can interact with GTM by pushing events directly to the dataLayer. In your custom components:
+
+```tsx
+export function LeadButton() {
+  const handlePush = () => {
+    // If you customized dataLayerName, replace 'dataLayer' with your custom name
+    const dataLayer = (window as any).dataLayer || [];
+    dataLayer.push({
+      event: 'form_submission',
+      category: 'lead',
+      action: 'click',
+    });
+  };
+
+  return (
+    <button onClick={handlePush}>
+      Submit Form
+    </button>
+  );
+}
+```
+
+<Callout variant="warning" title="GDPR and consent management">
+  Make sure you configure GTM to respect user consent before loading third-party marketing tags, especially if you're serving users in the EU.
+</Callout>

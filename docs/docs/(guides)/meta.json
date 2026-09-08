@@ -1,6 +1,6 @@
 {
   "title": "Guides",
-  "icon": "BookOpen",
-  "collapsible": true,
+  "order": 1,
+  "collapsible": false,
   "collapsed": false
 }

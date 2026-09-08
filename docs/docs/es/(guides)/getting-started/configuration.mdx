@@ -21,29 +21,6 @@ export default defineConfig({
 
 Boltdocs lee este archivo al iniciar y genera una configuración completa de Vite internamente. Nunca necesitas tocar un `vite.config.ts`.
   
----
-
-## Claves de Nivel Superior
-
-| Propiedad | Tipo | Por Defecto | Descripción |
-| :--- | :--- | :--- | :--- |
-| **`siteUrl`** | `string` | `undefined` | La URL de producción de tu sitio. Crítica para generar `sitemap.xml` y tags canónicos de SEO. |
-| **`base`** | `string` | `'/'` | La sub-ruta donde se despliega el sitio de docs (por ejemplo, `/docs`). Todos los assets estáticos y enlaces internos serán relativos a esto. |
-| **`docsDir`** | `string` | `'./docs'` | Ruta al directorio que contiene tu contenido Markdown. Relativa a la raíz del proyecto. |
-| **`plugins`** | `BoltdocsPlugin[]` | `[]` | Un array de plugins de Boltdocs. Consulta la pestaña [Plugins](/docs/plugins) para la referencia completa del sistema de plugins. |
-| **`theme`** | [`ThemeConfig`](#themeconfig) | — | Controla la apariencia visual, navegación, sidebar y opciones de visualización. |
-| **`seo`** | [`SeoConfig`](#seoconfig) | — | Controla la indexación, los metadatos Open Graph y los datos estructurados. |
-| **`experimental`** | [`BoltdocsExperimentalConfig`](#experimentalconfig) | — | Habilita APIs opt-in que pueden evolucionar entre releases. |
-| **`robots`** | [`RobotsConfig`](#robotsconfig) | — | Genera `robots.txt` y enlaza tu sitemap. |
-| **`integrations`** | [`IntegrationsConfig`](#integrationsconfig) | — | Habilita integraciones de terceros como Google Analytics 4 y Google Tag Manager. |
-| **`i18n`** | [`I18nConfig`](#i18nconfig) | — | Habilita documentación multilingüe con enrutamiento basado en carpetas por locale. |
-| **`versions`** | [`VersionsConfig`](#versionsconfig) | — | Habilita documentación versionada lado a lado. |
-| **`collections`** | [`CollectionsConfig`](#collectionsconfig) | — | Configura el sistema de colecciones dinámicas (blog) para agrupar publicaciones relacionadas. |
-| **`directoryMeta`** | `Record<string, DirectoryMeta>` | — | Sobreescribe títulos del sidebar, iconos y orden para directorios usando archivos `meta.json`. |
-| **`security`** | [`SecurityConfig`](#securityconfig) | — | Configura headers de seguridad HTTP y reglas CSP. |
-| **`vite`** | `ViteUserConfig` | — | Extiende la configuración de Vite generada internamente con opciones personalizadas. |
-
----
 
 ## `ThemeConfig`
 

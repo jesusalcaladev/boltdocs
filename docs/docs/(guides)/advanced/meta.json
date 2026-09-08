@@ -1,7 +1,6 @@
 {
   "title": "Experimental",
-  "icon": "FlaskConical",
-  "order": 6,
-  "collapsible": true,
+  "order": 7,
+  "collapsible": false,
   "collapsed": false
 }

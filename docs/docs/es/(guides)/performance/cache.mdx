@@ -6,25 +6,6 @@ description: Cómo funciona el caché de Boltdocs, qué se cachea y las variable
 
 Boltdocs cachea archivos parseados y transformaciones para que las compilaciones subsiguientes y los reinicios del servidor de desarrollo sean rápidos. Esta guía cubre cómo funciona el caché y cómo configurarlo.
 
----
-
-## Cómo Funciona el Caché
-
-Boltdocs usa un sistema de caché multicapa:
-
-1. **Caché LRU en Memoria** — Caché rápido dentro del proceso para datos calientes
-2. **Caché en Disco** — Persistido en el directorio `.boltdocs/` (organizado bajo `.boltdocs/cache/`, `.boltdocs/build/`, `.boltdocs/generated/`, `.boltdocs/reports/`) para reutilizar entre reinicios
-3. **Invalidación** — Automática basada en mtime del archivo y hash de contenido
-
-### Qué se Cachea
-
-| Tipo de Caché | Qué se Almacena | Ubicación |
-| :--- | :--- | :--- |
-| **Caché de Parser** | Frontmatter, encabezados, metadatos de cada archivo `.md`/`.mdx` | `.boltdocs/cache/parser/` |
-| **Transformación MDX** | Código MDX compilado para cada archivo | `.boltdocs/cache/mdx/` |
-| **Caché de Rutas** | Objetos de ruta construidos con todos los metadatos | `.boltdocs/cache/routes/` |
-
----
 
 ## Comportamiento del Caché
 

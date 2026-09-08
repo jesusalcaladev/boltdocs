@@ -22,22 +22,6 @@ La ejecutas con `npx boltdocs` o — una vez añadida a los scripts de tu `packa
 
 Todos los comandos aceptan un argumento posicional opcional `[root]` que apunta a un directorio de proyecto. Por defecto es `process.cwd()`.
 
----
-
-## Resumen de comandos
-
-| Comando | Qué hace |
-| :--- | :--- |
-| **`dev`** | Inicia el servidor de desarrollo local con HMR (también es el comando por defecto si ejecutas `boltdocs` sin comando). |
-| **`build`** | Compila el sitio en HTML + JS estáticos mediante el motor SSG. |
-| **`preview`** | Sirve el build de producción de `dist/` localmente antes de desplegar. |
-| **`audit`** | Escanea estáticamente los plugins configurados en busca de código sensible. Sale con código no-cero ante riesgo alto — listo para CI. |
-| **`doctor`** | Diagnostica enlaces rotos, frontmatter malformado, traducciones faltantes y presupuestos de rendimiento. |
-| **`generate-changelog`** | Divide un `CHANGELOG.md` en páginas MDX por versión. |
-
-Flags globales: `--help` lista todos los comandos, y `--version` imprime la versión de Boltdocs instalada (leída de `package.json` en runtime — siempre coincide con lo que tienes instalado).
-
----
 
 ## `dev` — servidor de desarrollo
 
@@ -97,8 +81,7 @@ El escaneo nunca ejecuta código de plugins: solo lee `package.json` y los archi
 
 El comando es fail-closed: un plugin no resuelto o no escaneado se trata como no confiable y nunca cuenta como "pasado". Úsalo como puerta antes de fusionar plugins de terceros:
 
-```yaml
-# .github/workflows/security.yml (ejemplo)
+```yaml title=".github/workflows/security.yml"
 - run: pnpm docs:build
 - run: pnpm docs:audit
 ```
@@ -141,7 +124,7 @@ npx boltdocs doctor --budget
 
 Crea un `doctor.json` en la raíz de tu proyecto para personalizar comprobaciones, severidades y comportamiento en CI. Ejecuta `boltdocs doctor --init` para generarlo y luego ajústalo:
 
-```json
+```json title="doctor.json"
 {
   "$schema": "https://boltdocs.vercel.app/schemas/doctor-config.schema.json",
   "checks": {
@@ -258,7 +241,7 @@ docs/changelog/
 
 Para mostrar las páginas generadas en el navbar, enlázalas desde `boltdocs.config.ts`:
 
-```ts
+```ts title="boltdocs.config.ts"
 export default defineConfig({
   theme: {
     navbar: [
@@ -268,9 +251,3 @@ export default defineConfig({
   },
 })
 ```
-
----
-
-## Comandos eliminados
-
-`theme:dev` (preview de temas) ya no está soportado y falla con un mensaje de comando desconocido. Construye tu layout personalizado directamente en tu proyecto — consulta la [guía de layouts personalizados](/docs/es/guides/customization/layout).

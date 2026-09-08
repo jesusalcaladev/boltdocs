@@ -6,23 +6,6 @@ description: Guía completa de enrutamiento, grupos de sidebar, ordenamiento y p
 
 **Tu sistema de archivos es tu mapa del sitio.** Cada archivo `.md` o `.mdx` dentro de `docs/` se convierte automáticamente en una página. Sin configuración de rutas, sin imports — solo archivos.
 
----
-
-## Los Fundamentos
-
-Boltdocs escanea recursivamente tu directorio `docs/` y mapea rutas de archivos a rutas de URL:
-
-| Archivo | URL |
-| :--- | :--- |
-| `docs/index.md` | `/docs` |
-| `docs/guide.md` | `/docs/guide` |
-| `docs/guide/index.md` | `/docs/guide` |
-| `docs/guide/advanced.md` | `/docs/guide/advanced` |
-| `docs/api/config.md` | `/docs/api/config` |
-
-Las extensiones de archivo (`.md`, `.mdx`) siempre se eliminan de la URL final. Un `index.md` dentro de una carpeta se resuelve como la ruta raíz de la carpeta y se convierte en el encabezado plegable del grupo en el sidebar.
-
----
 
 ## Grupos del Sidebar
 

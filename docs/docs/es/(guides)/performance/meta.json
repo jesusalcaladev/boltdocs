@@ -1,7 +1,6 @@
 {
   "title": "Rendimiento",
-  "icon": "Gauge",
-  "order": 4,
-  "collapsible": true,
+  "order": 5,
+  "collapsible": false,
   "collapsed": false
 }

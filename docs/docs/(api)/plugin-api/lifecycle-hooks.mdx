@@ -11,40 +11,6 @@ Lifecycle hooks are the primary way plugins inject behaviour into the
 Boltdocs pipeline. Each hook receives a `PluginContext` as its first
 argument and can be synchronous or async.
 
----
-
-## Build lifecycle hooks
-
-| Hook | Signature | When it runs |
-| :--- | :--- | :--- |
-| `build:before` | `(ctx: PluginContext) => void \| Promise<void>` | Right before static site generation (SSG) starts |
-| `build:after` | `(ctx: PluginContext) => void \| Promise<void>` | Immediately after a production build succeeds |
-| `build:end` | `(ctx: PluginContext) => void \| Promise<void>` | At process completion — runs on both success and error |
-| `build:generate` | `(ctx: PluginContext, { routes, outDir, siteUrl? }) => void \| Promise<void>` | Post-SSG asset generation hook for sitemaps, RSS, robots.txt, OG images |
-
-```ts
-import { definePlugin } from 'boltdocs'
-
-export default definePlugin({
-  name: 'my-build-plugin',
-  hooks: {
-    'build:before'(ctx) {
-      ctx.logger.info('Starting build...')
-    },
-    'build:generate'(ctx, { routes, outDir }) {
-      ctx.logger.info(`Generating static assets for ${routes.length} routes in ${outDir}`)
-    },
-    'build:after'(ctx) {
-      ctx.logger.info(`Build complete! ${ctx.routes.length} routes generated.`)
-    },
-    'build:end'(ctx) {
-      ctx.logger.info('Process finished — cleaning up...')
-    },
-  },
-})
-```
-
----
 
 ## Frontmatter & Route Pipeline hooks
 

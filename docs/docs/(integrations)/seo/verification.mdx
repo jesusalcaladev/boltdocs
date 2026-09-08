@@ -1,9 +1,62 @@
 ---
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+title: Site Verification
+sidebarPosition: 6
+description: Verify site ownership with Google Search Console, Bing Webmaster Tools, Yandex, Pinterest, and Facebook.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+Search engines and platforms require proof of site ownership before granting access to their webmaster tools. Boltdocs automatically injects the correct verification `<meta>` tags for the five most common providers.
 
-Original Spanish translation: /docs/es/(integrations)/seo/verification.mdx
+
+## Configuration Reference
+
+| Property | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| **`google`** | `string` | — | Google Search Console verification code. |
+| **`bing`** | `string` | — | Bing Webmaster Tools verification code. |
+| **`yandex`** | `string` | — | Yandex Webmaster verification code. |
+| **`pinterest`** | `string` | — | Pinterest site claim code. |
+| **`facebook`** | `string` | — | Facebook Business verification code. |
+
+### Single-Provider Example
+
+```ts
+seo: {
+  verification: {
+    google: 'xxxxxxxxxxxxxxxxxxxxxxxxxx',
+  },
+}
+```
+
+Only the meta tags of configured providers are injected. There's no penalty for having verification tags for services you don't use, but it's recommended to keep only what you need.
+
+---
+
+## How It Works
+
+Boltdocs generates the appropriate `<meta name="..." content="...">` tag for each configured provider and injects it into the `<head>` element in both server-rendered HTML and client-side navigation.
+
+```html
+<!-- Example: All providers enabled -->
+<head>
+  <meta name="google-site-verification" content="xxxxxxxxxxx" />
+  <meta name="msvalidate.01" content="xxxxxxxxxxx" />
+  <meta name="yandex-verification" content="xxxxxxxxxxx" />
+  <meta name="p:domain_verify" content="xxxxxxxxxxx" />
+  <meta name="facebook-domain-verification" content="xxxxxxxxxxx" />
+</head>
+```
+
+---
+
+## Troubleshooting
+
+### Verification keeps failing
+
+- Make sure the code is copied exactly (no extra spaces or characters)
+- Verify your site's canonical domain matches what you entered in the webmaster tool (e.g. `https://docs.example.com` vs `https://example.com`)
+- Check that the `<meta>` tag appears in the page source
+
+### Meta tag doesn't appear
+
+- Confirm `seo.verification` is properly nested under the `seo` key (not `integrations`)
+- Check that you're viewing the deployed production site, not a local dev server

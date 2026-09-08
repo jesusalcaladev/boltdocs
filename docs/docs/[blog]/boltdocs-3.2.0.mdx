@@ -19,34 +19,6 @@ tab: "3.2.0"
   Warm builds (no code changes) dropped from ~50s to ~10s — a **5x speedup**. The server Vite build is now properly skipped when nothing changes, the client hash uses a lightweight pre-check, and critical CSS processing runs in parallel across CPU cores.
 </Callout>
 
----
-
-## The cache problem
-
-Before 3.2.0, every build ran the full server Vite build from scratch — even when nothing changed. The root cause was a single line at the end of every build:
-
-```typescript
-await fs.remove(join(root, '.vite-react-ssg-temp'))
-```
-
-This deleted the entire SSR build output directory. The next build's `serverBuildSkipped` check required that directory to exist — but it was always gone. The result: the most expensive step in the pipeline (SSR Vite bundling) ran on every build, making the cache effectively useless.
-
-<Callout type="info">
-  **The fix**: Don't delete the SSR temp directory when the client build was bypassed. If the client code hash hasn't changed, the SSR bundle hasn't changed either — no need to rebuild it.
-</Callout>
-
-### Benchmark results
-
-| Build type | Before 3.2.0 | After 3.2.0 | Speedup |
-| ------------ | -------------- | ------------- | --------- |
-| Cold (first build) | ~82s | ~78s | ~1.05x |
-| Warm (no changes) | ~50s | **~10s** | **5x faster** |
-| Incremental (1 file edit) | ~50s | ~15s | **3.3x faster** |
-
-The cold build barely changes because the server Vite build must run. But warm and incremental builds now skip it entirely — the server bundle is reused from the previous build.
-
----
-
 ## Mtime cache: 5.9x faster stat calls
 
 Every `FileCache.get()` called `fs.statSync()` to check if a file had changed — even when the same file was checked milliseconds apart. For 500 files across multiple cache layers, this meant thousands of blocking syscalls per build.
@@ -280,7 +252,7 @@ Two independent pipeline steps — SEO validation and type generation — now ru
 
 The build now reports per-step timing:
 
-```
+```text
 [pipeline] Build steps:
   ConfigResolve        52ms
   RouteGenerate        11ms
@@ -362,7 +334,7 @@ The 3.1.x `install` carried `react-aria-components` as a hard dependency alongsi
 
 Two categories of "size" — **client bundle** (bytes shipped to every browser) and **`node_modules` footprint** (bytes unpacked on disk per consumer install) — measured separately so you can read the table top-to-bottom without confusion.
 
-**Client bundle — bytes shipped to browsers (per cold-load)**
+#### Client bundle — bytes shipped to browsers (per cold-load)
 
 | Surface | Before 3.2.0 | After 3.2.0 | Notes |
 | --------- | -------------- | ------------- | ------- |
@@ -464,7 +436,7 @@ pnpm add @bdocs/unist-utils
 The package includes: visitors (`visitNodes`, `visitRehypeElements`, `visitMdxElements`), builders (`createMdxAttribute`, `createMdxElement`, `createRehypeElement`), h-properties helpers, class-list mutation (`addNodeClass`, `removeNodeClass`, `hasNodeClass`), meta string parsing (`parseMetaString`), and type guards.
 
 <Callout type="info">
-  See the [full `@bdocs/unist-utils` docs](/docs/plugins/unist-utils) for API reference, migration guide, and examples.
+  See the [full `@bdocs/unist-utils` docs](/docs/plugins/content/unist-utils) for API reference, migration guide, and examples.
 </Callout>
 
 ---
@@ -647,7 +619,7 @@ pnpm add boltdocs@latest
 
 A small subset of installs will see a `peerDependencies` warning from npm/pnpm:
 
-```
+```text
 boltdocs@3.2.0 requires react-aria-components@^1.16.0 as a peer
 ```
 

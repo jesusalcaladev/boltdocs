@@ -1,9 +1,17 @@
 ---
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+title: Field
+sidebarPosition: 3
+description: Document API properties, configuration keys, or schema definitions inline with the Field component.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+The `<Field>` component is a clean way to document specific settings, configuration parameters, or API properties. It renders a clean border, monospace parameter details, type tags, and indicators that show whether the parameter is required.
 
-Original Spanish translation: /docs/es/(components)/mdx/field.mdx
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **`name`** | `string` | *Required* | The name of the property, variable, or option in monospace code style. |
+| **`type`** | `string` | `undefined` | The type representation of the property (e.g. `'string'`, `'number'`, `'boolean'`). |
+| **`required`** | `boolean` | `false` | When `true`, shows a red `'required'` tag next to the type. |
+| **`description`** | `string` | `undefined` | Optional summary text. You can also pass the description directly as children for formatted content. |
+| **`children`** | `ReactNode` | `undefined` | The body description explaining what the field is for. |

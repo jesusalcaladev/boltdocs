@@ -1,9 +1,33 @@
 ---
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+title: Paths
+sidebarPosition: 3
+description: PluginPathsAPI — safe path resolution within the workspace for Boltdocs plugins with directory traversal protection.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+# `ctx.paths` — PluginPathsAPI
 
-Original Spanish translation: /docs/es/(api)/plugin-api/paths.mdx
+Path resolution helpers that validate every result stays within the
+workspace. Both `resolveDocs` and `resolveAsset` reject paths that
+escape the base directory.
+
+```ts
+const mdxFile = ctx.paths.resolveDocs('guides', 'getting-started', 'installation.mdx')
+const image = ctx.paths.resolveAsset('public', 'logo.webp')
+const fileUrl = ctx.paths.safeFileURL('/absolute/path/diagram.svg')
+```
+
+They throw an `Error` when the resolved path falls outside the workspace:
+
+```ts
+// Throws: Path '../../etc/passwd' resolves to '/etc/passwd' which is
+// outside the workspace boundary...
+ctx.paths.resolveDocs('../../etc/passwd')
+```
+
+---
+
+## See also
+
+- [PluginContext](/docs/api/plugin-api) — base context object
+- [Virtual Modules](/docs/api/plugin-api/virtual-modules) — runtime virtual module declarations
+- [Middleware](/docs/api/plugin-api/middleware) — transform middleware pipeline

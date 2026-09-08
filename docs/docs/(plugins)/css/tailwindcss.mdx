@@ -1,9 +1,30 @@
 ---
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+title: Tailwind CSS
+description: Tailwind CSS v4 integration plugin.
+sidebarPosition: 2
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+The `@bdocs/plugin-tailwindcss` plugin provides official integration for **Tailwind CSS v4** in Boltdocs via `@tailwindcss/vite`.
 
-Original Spanish translation: /docs/es/(plugins)/css/tailwindcss.mdx
+## Installation
+
+Install `@bdocs/plugin-tailwindcss` and `tailwindcss`:
+
+```bash
+pnpm add -D @bdocs/plugin-tailwindcss tailwindcss
+```
+
+
+## Usage in CSS
+
+In your CSS file (e.g., `docs/index.css`), add the Tailwind v4 directive:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #2563eb;
+}
+```
+
+Now utility classes like `bg-brand`, `text-slate-900`, `dark:bg-slate-950`, `flex`, and `grid` are ready to use in your MDX pages and components!

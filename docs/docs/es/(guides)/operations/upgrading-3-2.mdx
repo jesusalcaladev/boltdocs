@@ -1,35 +1,18 @@
 ---
 title: "Actualizar a Boltdocs 3.2.0 — Cambios semi-breaking"
-sidebarPosition: 4
+sidebarPosition: 2
 description: "La auditoría completa de cambios en peer dependencies, dependencias movidas y comportamiento runtime en boltdocs 3.2.0. Incluye recetas de migración, manejo de CI / lockfile-strict y FAQ."
 badge: Migración
 ---
 
 # Actualizar a Boltdocs 3.2.0
 
-3.2.0 es **semver-minor documentado**, pero toca tu `node_modules` al instalar en tres lugares. Esta página es la auditoría + las recetas que te llevan más allá de los install warnings limpiamente. Si solo necesitás el titular: leé el [blog post del release 3.2.0](/es/blog/boltdocs-3.2.0#reducción-del-peso-del-paquete), y volvé si tu `pnpm install` se queja.
+3.2.0 es **semver-minor documentado**, pero toca tu `node_modules` al instalar en tres lugares. Esta página es la auditoría + las recetas que te llevan más allá de los install warnings limpiamente. Si solo necesitás el titular: leé el [blog post del release 3.2.0](/docs/es/blog/boltdocs-3.2.0#reducción-del-peso-del-paquete), y volvé si tu `pnpm install` se queja.
 
 <Callout type="warn">
   **Alerta para setups de CI estrictos.** Equipos que rompen builds con peer warnings (Husky, Renovate, monorepos con `--strict-peer-dependencies`) verán un CI rojo al primer install. La sección [3 más abajo](#3-setups-de-ci--lockfile-estrictos) tiene la fix de una línea en `.npmrc`.
 </Callout>
 
----
-
-## 1. La auditoría de un vistazo
-
-| Concern | Qué cambió | Quién es afectado | Acción requerida |
-| --------- | ------------ | ------------------- | ----------------- |
-| `react-aria-components` | Promovida de `dependencies` a un `peerDependencies` **requerido** | Todo consumidor de Boltdocs | Agregá `react-aria-components: ^1.16.0` a tus `dependencies` (o aceptá el peer warning si tu wrapper de framework lo provee) |
-| `sharp` | Removido de core; ahora `peerDependenciesMeta.optional` de `@bdocs/plugin-image-optimizer` | Solo si no usás `@bdocs/plugin-image-optimizer`: victoria pura (ahorrás ~30 MB desempaquetados) | Si dependías de `sharp` como transitivo de `boltdocs`, instalá `sharp` explícitamente o agregá el plugin optimizer |
-| `svgo` | Igual que `sharp` (movido fuera de core) | Solo si no usás el image optimizer: victoria pura (~5 MB desempaquetados) | Igual que `sharp` |
-| Iconos de lenguajes en code blocks MDX | `lang-icons.tsx` eliminado por completo del bundle del core | Usuarios finales (sin acción) | Ninguna — los títulos de los code blocks ya no renderizan ningún icono de lenguaje; las páginas envían cero bytes para el set de iconos sin importar si contienen code blocks |
-| Iconos sociales/nav | Nuevo entry `icons-prod.tsx`; `Github`, `Discord`, `XSocial`, `Bluesky` extraídos del set de lenguajes | Autores de plugins que importaban desde `'../icons-dev'` | Actualizá los import paths a `'../icons-prod'` (solo interno — no es un cambio de API pública) |
-| Subpath exports del cliente | `'boltdocs/primitives'`, `'boltdocs/mdx'`, `'boltdocs/server'` ya estaban separados (3.1.0) — ahora en el mapa `exports` | Usuarios finales que importan desde estos subpaths | Ninguna — retrocompatible |
-| Campo `optionalDependencies` | Removido por completo del `package.json` | Pipelines de CI que escanean `optionalDependencies` | Ninguna — el campo simplemente no está más |
-
-Un nuevo test fija este contrato: `packages/core/tests/package-shape.test.ts`. Cualquier PR futuro que accidentalmente re-infle el surface area rompe el CI.
-
----
 
 ## 2. Recetas de migración
 
@@ -196,7 +179,7 @@ Sí. `@bdocs/ssg` es un paquete separado del workspace y tiene sus propios `peer
 
 ### "¿Va a crecer el tamaño de mi bundle `boltdocs/client` después del upgrade?"
 
-No. De hecho, en páginas con code blocks MDX, el bundle **baja** ~17 KB (el módulo completo `lang-icons.tsx` fue eliminado del core). Las páginas sin code blocks ya estaban en cero bytes para estos íconos desde el lazy-load de 3.2.0. Consultá la [sección de peso del paquete en el blog](/es/blog/boltdocs-3.2.0#reducción-del-peso-del-paquete) para la tabla completa de antes/después.
+No. De hecho, en páginas con code blocks MDX, el bundle **baja** ~17 KB (el módulo completo `lang-icons.tsx` fue eliminado del core). Las páginas sin code blocks ya estaban en cero bytes para estos íconos desde el lazy-load de 3.2.0. Consultá la [sección de peso del paquete en el blog](/docs/es/blog/boltdocs-3.2.0#reducción-del-peso-del-paquete) para la tabla completa de antes/después.
 
 ---
 
@@ -214,7 +197,7 @@ El lockfile revierte sin ediciones manuales porque 3.1.x y 3.2.0 comparten la mi
 
 ## Ver también
 
-- [Blog post del release 3.2.0](/es/blog/boltdocs-3.2.0) — el **porqué** detrás de estas decisiones
-- [Guía de instalación](/es/getting-started) — flujo de install nuevo
-- [Guía de autoría de plugins](/es/plugins) — para autores de plugins afectados por el split de iconos
-- [Referencia de configuración](/es/configuration) — schema completo de configuración
+- [Blog post del release 3.2.0](/docs/es/blog/boltdocs-3.2.0) — el **porqué** detrás de estas decisiones
+- [Guía de instalación](/docs/es/guides/getting-started/installation) — flujo de install nuevo
+- [Guía de autoría de plugins](/docs/es/plugins) — para autores de plugins afectados por el split de iconos
+- [Referencia de configuración](/docs/es/guides/getting-started/configuration) — schema completo de configuración

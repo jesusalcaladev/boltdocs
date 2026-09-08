@@ -11,58 +11,36 @@ tags: ["Release", "Performance"]
 tab: "3.3.0"
 ---
 
-## Boltdocs 3.3.0 is here
+# Boltdocs 3.3.0 is here
 
-Boltdocs 3.3.0 continues the Nitro work started in 3.1.0 and 3.2.0: less work during startup, better concurrency, and a smaller set of assumptions in core. It also adds a small group of opt-in APIs for teams that want more control over SEO, transitions, and custom pages.
+Boltdocs 3.3.0 continues the Nitro work started in 3.1.0 and 3.2.0: less work during startup, better concurrency, and fewer assumptions in core — plus opt-in APIs for SEO, transitions, and custom pages.
 
 <Callout type="info">
-  On the 100-page benchmark site, the 3.3.0 cold build dropped from **17.85s to 14.50s** compared with the previous published run (about 19% faster), dev startup improved to **5.3s**, and warm builds now finish in **3.1s**. These numbers are benchmark results, not a guarantee for every project; use the [benchmark page](/benchmark) to inspect the methodology and current results.
+  On the 100-page benchmark site, the cold build dropped from **17.85s to 14.50s** compared with the previous published run (~19% faster), dev startup improved to **5.3s**, and warm builds finish in **3.1s**. These are benchmark results, not a guarantee for every project — methodology on the [benchmark page](/benchmark).
 </Callout>
-
----
-
----
 
 ## Faster startup and builds
 
-3.3.0 moves more work out of the critical startup path. On the 100-page benchmark site, the cold build dropped from **17.85s to 14.50s** and dev startup from **5.5s to 5.3s** compared with the previous published run:
-
-- **Early Sätteri precompilation** starts from `configResolved()` so MDX workers can prepare files while Vite initializes.
-- **Dynamic worker sizing** avoids a fixed pool that can over-saturate smaller machines. The pool scales with CPU count and the number of files.
-- **Non-blocking dev startup** lets the server listen before background route generation finishes. The first request can arrive while the route tree is being prepared.
-
-The benchmark comparison is available on the [performance page](/benchmark). Treat it as a reproducible reference point, not as a promise about a particular application.
-
----
+- **Early Sätteri precompilation** starts at `configResolved()`, so MDX workers prepare files while Vite initializes its graph.
+- **Dynamic worker sizing** scales the pool with CPU count and file count instead of a fixed size.
+- **Non-blocking dev startup** lets the server listen before background route generation finishes.
+- **Lazy Shiki grammars**: only ~10 common languages load eagerly; the rest register on demand. The highlighter is ready in ~250ms instead of ~2.5s.
+- **Full-site dev prewarming**: after startup, every route compiles in the background in small priority batches, so navigation hits already-built modules.
+- **Compact route payload**: route data serializes without indentation, cutting what the browser parses before hydration.
 
 ## A CSS-agnostic core
 
-Core no longer assumes that every project uses Tailwind CSS. Vanilla CSS, CSS Modules, custom properties, and the built-in theme tokens work without adding a CSS framework.
+Core no longer assumes Tailwind CSS: vanilla CSS, CSS Modules, custom properties, and built-in theme tokens work out of the box. CSS integrations are explicit plugins:
 
-CSS integrations are now explicit plugins:
+| Package                                                                    | Purpose                                      |
+| -------------------------------------------------------------------------- | -------------------------------------------- |
+| [`@bdocs/plugin-tailwindcss`](/docs/plugins/css/tailwindcss)               | Tailwind CSS v4 through the Vite integration |
+| [`@bdocs/plugin-sass`](/docs/plugins/css/sass)                             | SASS and SCSS preprocessing                  |
+| [`@bdocs/plugin-unocss`](/docs/plugins/css/unocss)                         | UnoCSS atomic utilities                      |
 
-| Package | Purpose |
-| :--- | :--- |
-| [`@bdocs/plugin-tailwindcss`](/docs/plugins/css/tailwindcss) | Tailwind CSS v4 through the Vite integration. |
-| [`@bdocs/plugin-sass`](/docs/plugins/css/sass) | SASS and SCSS preprocessing. |
-| [`@bdocs/plugin-unocss`](/docs/plugins/css/unocss) | UnoCSS atomic utilities. |
+## Typed plugin hooks
 
-For example:
-
-```ts title="boltdocs.config.ts"
-import { defineConfig } from 'boltdocs'
-import tailwindcssPlugin from '@bdocs/plugin-tailwindcss'
-
-export default defineConfig({
-  plugins: [tailwindcssPlugin()],
-})
-```
-
----
-
-## The next-generation plugin API
-
-The `definePlugin` API gives plugin authors typed lifecycle hooks and clear extension points for client UI, providers, frontmatter, search indexing, and post-build assets.
+`definePlugin()` gives plugin authors typed lifecycle hooks across client UI, providers, frontmatter, search indexing, and build assets:
 
 ```ts
 import { definePlugin } from 'boltdocs'
@@ -83,15 +61,13 @@ export default definePlugin(() => ({
 }))
 ```
 
-Read the [Plugin API reference](/docs/api/plugin-api) for the complete hook and namespace list.
-
----
+Complete hook list in the [Plugin API reference](/docs/api/plugin-api).
 
 ## Opt-in SEO and page APIs
 
-### Structured Data (JSON-LD)
+### JSON-LD structured data
 
-JSON-LD belongs to SEO and discoverability, not the internal search dialog. Configure a global graph with helpers imported from the Node entrypoint:
+Configure a global graph with helpers from the Node entrypoint; per-page data goes through `seo.structuredData` in frontmatter:
 
 ```ts
 import {
@@ -104,37 +80,31 @@ export default defineConfig({
   siteUrl: 'https://example.com',
   seo: {
     structuredData: defineStructuredData(
-      createWebSiteStructuredData({
-        name: 'Example Docs',
-        url: 'https://example.com',
-      }),
+      createWebSiteStructuredData({ name: 'Example Docs', url: 'https://example.com' }),
     ),
   },
 })
 ```
 
-Use `seo.structuredData` in page frontmatter for page-specific data, or render `<StructuredData data={...} />` from an external React page. See the [SEO guide](/docs/integrations/seo) for article and breadcrumb helpers.
+Article and breadcrumb helpers in the [SEO guide](/docs/integrations/seo).
 
 ### View Transitions
 
-View Transitions are opt-in and degrade to normal updates when the browser does not implement `document.startViewTransition`:
+Opt-in, and degrade to normal updates when the browser lacks `document.startViewTransition`:
 
 ```ts
 export default defineConfig({
   experimental: {
-    viewTransitions: {
-      enabled: true,
-      types: ['page'],
-    },
+    viewTransitions: { enabled: true, types: ['page'] },
   },
 })
 ```
 
-Custom layouts and external pages can call `useViewTransition()` from `boltdocs/client`. See [Experimental Features](/docs/guides/advanced/experimental).
+Custom layouts can call `useViewTransition()` from `boltdocs/client`. See [Experimental Features](/docs/guides/advanced/experimental).
 
-### Static `pages-external` file routing
+### Static pages-external routing
 
-A project can opt into literal file routes without building one `pages` object:
+Literal file routes without building a `pages` object:
 
 ```text
 docs/pages-external/
@@ -143,34 +113,26 @@ docs/pages-external/
 └── pricing.mdx   → /pricing
 ```
 
-Enable it with `experimental.fileRouting`. Dynamic segments such as `[id]`, route groups, and reserved helper files are intentionally ignored in this first version. The existing `pages-external/index.tsx` API remains available. The [External Pages guide](/docs/guides/customization/external-pages) covers both APIs.
-
----
+Enabled with `experimental.fileRouting`. Dynamic segments, route groups, and reserved helper files are ignored in this first version; the existing `pages-external/index.tsx` API remains available. Both APIs are covered in the [External Pages guide](/docs/guides/customization/external-pages).
 
 ## Collections show recent posts first
 
-Collection posts now use descending publication dates. Newest posts appear first, while missing or invalid dates are placed after dated posts. This applies to `usePosts()`, `useRecentPosts()`, virtual collection data, and pagination in the default blog template.
+Collection posts sort by descending publication date across `usePosts()`, `useRecentPosts()`, virtual collection data, and default blog pagination. Missing or invalid dates are placed last.
 
----
+## A sharper plugin audit
 
-## A sharper plugin security audit
+`boltdocs audit` statically scans installed plugins for risky calls **without executing them**. This release fixes correctness and speed:
 
-`boltdocs audit` — the static scan that inspects installed plugins for risky calls **without ever executing them** — received a round of correctness and performance work:
-
-- **Accurate plugin resolution.** Plugins are now paired with their installed packages through the config's import specifiers, so scoped packages resolve correctly even when the plugin `name` differs from the package name. `boltdocs-plugin-mermaid` now audits `@bdocs/plugin-mermaid` instead of reporting `Unresolved`.
-- **Bounded scans.** Each plugin is scanned within a total byte budget (8 MB by default). If a huge minified bundle crosses the budget, the scan stops and reports a `scan-truncated` finding — an incomplete scan is never reported as clean.
-- **Fail-closed summaries.** Plugins that cannot be resolved or scanned are treated as untrusted and never count toward "all plugins passed".
-- **Faster startup.** The audit loads only `config.plugins` (skipping the full configuration validation), gates the rule catalog with a single quick-reject pre-pass, and `--help`/`--version` no longer load the full UI toolkit — the CLI starts roughly 30% faster.
-
-Run it before adding a third-party plugin:
+- **Accurate resolution** — scoped packages pair via import specifiers even when the plugin name differs (`boltdocs-plugin-mermaid` now audits `@bdocs/plugin-mermaid`).
+- **Bounded scans** — each plugin gets an 8 MB byte budget; crossing it reports `scan-truncated` instead of a false clean pass.
+- **Fail-closed summaries** — unresolvable or unscannable plugins count as untrusted.
+- **~30% faster CLI** — audits skip full config validation, and `--help`/`--version` no longer load the UI toolkit.
 
 ```bash
 boltdocs audit
 ```
 
-The scan reports child-process and dynamic-code calls, network access, file writes and reads, environment-variable reads, and metadata red flags (install scripts, bundled dependencies, missing license or provenance). See the [CLI reference](/docs/guides/getting-started/cli) for the full output format, including the CI exit-code contract.
-
----
+Reported signals and the CI exit-code contract live in the [CLI reference](/docs/guides/getting-started/cli).
 
 ## Upgrade
 
@@ -178,6 +140,4 @@ The scan reports child-process and dynamic-code calls, network access, file writ
 pnpm add boltdocs@latest @bdocs/ssg@latest
 ```
 
-CSS framework users should also install the plugin they use. Existing projects can upgrade without enabling the experimental flags; both `viewTransitions` and `fileRouting` remain opt-in.
-
-Read the [3.3.0 release post](/docs/blog/boltdocs-3.3.0), the [releases](/docs/releases), and the [full documentation](/docs/) for the detailed API references.
+CSS framework users should install their integration plugin. Existing projects can upgrade without enabling any experimental flag.

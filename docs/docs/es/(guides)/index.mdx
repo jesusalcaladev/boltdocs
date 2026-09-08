@@ -1,15 +1,16 @@
 ---
 title: Guías
 sidebarPosition: 1
-description: Aprende Boltdocs desde la instalación hasta operaciones en producción, autoría de contenido, personalización, rendimiento y APIs experimentales.
+sidebarHidden: true
+description: Aprende Boltdocs desde la instalación hasta operaciones en producción — navegación, autoría de contenido, personalización, cabeceras de seguridad y CSP, rendimiento y CI/CD.
 ---
 
-import { Rocket, Settings, Route, FileText, Code2, Tags, Paintbrush, Globe, Gauge, LifeBuoy, FlaskConical, Terminal, Map } from 'lucide-react'
+import { Rocket, Settings, Route, FileText, Code2, Tags, Paintbrush, Globe, Gauge, LifeBuoy, FlaskConical, Terminal, Map, Shield, ShieldCheck } from 'lucide-react'
 
 Un recorrido práctico por Boltdocs. Comienza con las dos primeras guías y luego salta al área que corresponda al problema que estás resolviendo.
 
 <Callout variant="info" title="Ruta recomendada">
-  Instala Boltdocs, configura el sitio, aprende cómo los archivos se convierten en rutas y después elige una guía de contenido, personalización, rendimiento u operaciones. La [referencia de API](/docs/es/api) contiene los exports y tipos exactos.
+  Instala Boltdocs, configura el sitio, aprende cómo los archivos se convierten en rutas y después elige una guía de navegación, contenido, personalización, seguridad, rendimiento u operaciones. La [referencia de API](/docs/es/api) contiene los exports y tipos exactos.
 </Callout>
 
 ## Empieza aquí
@@ -49,6 +50,9 @@ Un recorrido práctico por Boltdocs. Comienza con las dos primeras guías y lueg
 ## Personalización
 
 <Cards cols={3}>
+  <Card title="Navegación" icon={<Map />} href="/docs/es/guides/customization/navigation">
+    Configura navbar, tabs, sidebar, breadcrumbs y navegación de página — y aprende cómo resuelven los enlaces, incluyendo el protocolo `site:` y la inferencia de locale/versión.
+  </Card>
   <Card title="Iconos" icon={<Paintbrush />} href="/docs/es/guides/customization/icons">
     Usa Lucide, SVG e iconos propios en tabs y navegación.
   </Card>
@@ -60,17 +64,14 @@ Un recorrido práctico por Boltdocs. Comienza con las dos primeras guías y lueg
   </Card>
 </Cards>
 
-## Navegación y Seguridad
+## Seguridad
 
-<Cards cols={3}>
-  <Card title="Navegación" icon={<Map />} href="/docs/es/guides/navigation">
-    Configura navbar, tabs, sidebar, breadcrumbs y navegación de página.
+<Cards cols={2}>
+  <Card title="Cabeceras HTTP" icon={<Shield />} href="/docs/es/guides/security/headers">
+    Cabeceras de seguridad por defecto, cabeceras personalizadas, control de caché y configuración por plataforma.
   </Card>
-  <Card title="Encabezados" icon={<Gauge />} href="/docs/es/guides/headers/headers">
-    Encabezados HTTP, caching y seguridad para despliegues.
-  </Card>
-  <Card title="CSP" icon={<FlaskConical />} href="/docs/es/guides/csp/csp">
-    Guía sobre Política de Seguridad de Contenido (CSP).
+  <Card title="Content Security Policy" icon={<ShieldCheck />} href="/docs/es/guides/security/csp">
+    Activa y personaliza CSP: la política por defecto, dev vs producción e integraciones comunes.
   </Card>
 </Cards>
 
@@ -80,8 +81,8 @@ Un recorrido práctico por Boltdocs. Comienza con las dos primeras guías y lueg
   <Card title="Caché y entorno" icon={<Gauge />} href="/docs/es/guides/performance/cache">
     Entiende caches de disco, invalidación y variables de entorno.
   </Card>
-  <Card title="CI & Despliegue" icon={<Terminal />} href="/docs/es/guides/operations/ci">
-    Buenas prácticas de CI: audit, doctor, tests y despliegue seguro.
+  <Card title="CI/CD y despliegue" icon={<Terminal />} href="/docs/es/guides/operations/ci">
+    Pipelines de GitHub Actions y GitLab: checks con doctor, previews y despliegues seguros a producción.
   </Card>
   <Card title="Solución de problemas" icon={<LifeBuoy />} href="/docs/es/guides/operations/troubleshooting">
     Resuelve problemas de instalación, routing, build y despliegue.

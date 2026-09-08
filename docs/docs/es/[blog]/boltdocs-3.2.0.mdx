@@ -18,34 +18,6 @@ tags: ["Release"]
   Los warm builds (sin cambios de código) bajaron de ~50s a ~10s — una **aceleración de 5x**. El server Vite build ahora se salta correctamente cuando nada cambia, el hash del cliente usa un pre-check ligero, y el procesamiento del CSS crítico corre en paralelo entre los cores del CPU.
 </Callout>
 
----
-
-## El problema de la caché
-
-Antes de 3.2.0, cada build ejecutaba el server Vite build completo desde cero — incluso cuando nada había cambiado. La causa raíz era una sola línea al final de cada build:
-
-```typescript
-await fs.remove(join(root, '.vite-react-ssg-temp'))
-```
-
-Esto eliminaba todo el directorio de output del build SSR. El check `serverBuildSkipped` del siguiente build necesitaba que ese directorio existiera — pero siempre estaba eliminado. El resultado: el paso más costoso del pipeline (bundling Vite SSR) se ejecutaba en cada build, haciendo la caché inútil.
-
-<Callout type="info">
-  **La corrección**: No eliminar el directorio temporal del SSR cuando el client build fue saltado. Si el hash del código del cliente no cambió, el bundle SSR tampoco cambió — no es necesario reconstruirlo.
-</Callout>
-
-### Resultados del benchmark
-
-| Tipo de build | Antes de 3.2.0 | Después de 3.2.0 | Aceleración |
-| --------------- | ----------------- | ------------------- | ------------- |
-| Cold (primer build) | ~82s | ~78s | ~1.05x |
-| Warm (sin cambios) | ~50s | **~10s** | **5x** |
-| Incremental (1 archivo editado) | ~50s | ~15s | **3.3x** |
-
-El cold build apenas cambia porque el server Vite build debe ejecutarse. Pero los warm e incrementales ahora lo saltan por completo — el bundle SSR se reutiliza del build anterior.
-
----
-
 ## Caché mtime: llamadas stat 5.9x más rápidas
 
 Cada `FileCache.get()` ejecutaba `fs.statSync()` para verificar si un archivo había cambiado — incluso cuando el mismo archivo se verificaba milisegundos después. Para 500 archivos en múltiples capas de caché, esto significaba miles de llamadas síncronas bloqueantes por build.
@@ -250,7 +222,7 @@ Dos pasos independientes del pipeline — validación SEO y generación de tipos
 
 El build ahora reporta el tiempo por pasos:
 
-```
+```text
 [pipeline] Build steps:
   ConfigResolve        52ms
   RouteGenerate        11ms
@@ -332,7 +304,7 @@ El `install` de 3.1.x cargaba `react-aria-components` como dependencia dura junt
 
 Dos categorías de "tamaño" — **bundle del cliente** (bytes que viajan al navegador) y **footprint de `node_modules`** (bytes desempaquetados en disco por install del consumidor) — medidas por separado para que puedas leer la tabla de arriba a abajo sin confusión.
 
-**Bundle del cliente — bytes que viajan al navegador (por cold load)**
+#### Bundle del cliente — bytes que viajan al navegador (por cold load)
 
 | Superficie | Antes de 3.2.0 | Después de 3.2.0 | Notas |
 | ------------ | ---------------- | ------------------ | ------- |
@@ -434,7 +406,7 @@ pnpm add @bdocs/unist-utils
 El paquete incluye: visitors (`visitNodes`, `visitRehypeElements`, `visitMdxElements`), builders (`createMdxAttribute`, `createMdxElement`, `createRehypeElement`), helpers de h-properties, mutación de class-list (`addNodeClass`, `removeNodeClass`, `hasNodeClass`), parseo de meta strings (`parseMetaString`), y type guards.
 
 <Callout type="info">
-  Consultá la [doc completa de `@bdocs/unist-utils`](/es/plugins/unist-utils) para la referencia de API, guía de migración y ejemplos.
+  Consultá la [doc completa de `@bdocs/unist-utils`](/docs/es/plugins/content/unist-utils) para la referencia de API, guía de migración y ejemplos.
 </Callout>
 
 ---
@@ -505,7 +477,7 @@ ctx.virtualModules.add(
 Reglas: ids duplicados lanzan error, el prefijo `virtual:boltdocs-*` está reservado, y el flag `eager` existe para futura auto-inyección.
 
 <Callout type="info">
-  Consultá la [Plugin API Reference](/es/api/plugin-api) completa. La API se separó en páginas dedicadas — [Caches](/es/api/plugin-api/caches), [Diagnostics](/es/api/plugin-api/diagnostics), [Paths](/es/api/plugin-api/paths), [Virtual Modules](/es/api/plugin-api/virtual-modules), [Middleware](/es/api/plugin-api/middleware), [Server](/es/api/plugin-api/server), y [HMR](/es/api/plugin-api/hmr).
+  Consultá la [Plugin API Reference](/docs/es/api/plugin-api) completa. La API se separó en páginas dedicadas — [Caches](/docs/es/api/plugin-api/caches), [Diagnostics](/docs/es/api/plugin-api/diagnostics), [Paths](/docs/es/api/plugin-api/paths), [Virtual Modules](/docs/es/api/plugin-api/virtual-modules), [Middleware](/docs/es/api/plugin-api/middleware), [Server](/docs/es/api/plugin-api/server), y [HMR](/docs/es/api/plugin-api/hmr).
 </Callout>
 
 ---
@@ -528,7 +500,7 @@ const plugin = {
 }
 ```
 
-Consultá la [Middleware API docs](/es/api/plugin-api#ctxmiddleware--pluginmiddlewareapi) para la referencia completa.
+Consultá la [Middleware API docs](/docs/es/api/plugin-api#ctxmiddleware--pluginmiddlewareapi) para la referencia completa.
 
 ---
 
@@ -545,7 +517,7 @@ Consultá la [Middleware API docs](/es/api/plugin-api#ctxmiddleware--pluginmiddl
     icon={<Sparkles />}
   >
     Lanzamiento de la **Plugin v3.2 API** — caches, diagnostics, paths, virtual
-    modules, middleware, server y hooks HMR. Consultá la [guía de migración](/es/blog/boltdocs-3.2.0).
+    modules, middleware, server y hooks HMR. Consultá la [guía de migración](/docs/es/blog/boltdocs-3.2.0).
   </Timeline.Item>
 
   <Timeline.Item
@@ -581,7 +553,7 @@ Se renderiza como:
 - **Generación desde datos** — cada `Timeline.Item` es un elemento React normal, así podés hacer `.map()` sobre un array JSON de releases.
 
 <Callout type="info">
-  Consultá la [doc completa de Timeline](/es/components/mdx/timeline) para ver la API completa, notas de accesibilidad y el patrón de changelog guiado por datos.
+  Consultá la [doc completa de Timeline](/docs/es/components/mdx/timeline) para ver la API completa, notas de accesibilidad y el patrón de changelog guiado por datos.
 </Callout>
 
 ---
@@ -596,7 +568,7 @@ pnpm add boltdocs@latest
 
 Un subset pequeño de installs verá un `peerDependencies` warning de npm/pnpm:
 
-```
+```text
 boltdocs@3.2.0 requiere react-aria-components@^1.16.0 como peer
 ```
 

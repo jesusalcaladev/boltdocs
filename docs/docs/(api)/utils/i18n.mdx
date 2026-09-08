@@ -1,9 +1,55 @@
 ---
-title: (Placeholder) English source
-sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+title: getTranslated
+description: Extract translated values from a language mapping dictionary.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+The `getTranslated` utility extracts localized strings or pages depending on the active language code.
 
-Original Spanish translation: /docs/es/(api)/utils/i18n.mdx
+
+## Signature
+
+```ts
+function getTranslated(
+  value: string | Record<string, string> | undefined,
+  locale: string,
+  fallback?: string
+): string
+```
+
+### Parameters
+
+| Name | Type | Description |
+| :--- | :--- | :--- |
+| **`value`** | `string \| Record<string, string> \| undefined` | A key-value localization map or a simple default string. |
+| **`locale`** | `string` | The active region language key (e.g., `'es'`). |
+| **`fallback`** | `string` | Fallback label returned if the current region doesn't match any key in the dictionary. |
+
+---
+
+## Example: Localizing Layout Titles
+
+```tsx
+import { getTranslated, useI18n } from 'boltdocs/client'
+
+const headingTranslations = {
+  en: 'Welcome to the documentation',
+  es: 'Bienvenido a la documentación',
+  fr: 'Bienvenue dans la documentation'
+}
+
+export function LocalizedBanner() {
+  const { currentLocale } = useI18n()
+
+  const bannerText = getTranslated(
+    headingTranslations,
+    currentLocale || 'en',
+    'Welcome'
+  )
+
+  return (
+    <header className="py-6 border-b">
+      <h1 className="text-2xl font-bold">{bannerText}</h1>
+    </header>
+  )
+}
+```

@@ -1,9 +1,67 @@
 ---
-title: (Placeholder) English source
+title: Search
 sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+description: Boltdocs ships with dependency-free, compile-time search across all your pages, supporting both built-in FlexSearch and cloud Algolia.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+Every Boltdocs site comes with built-in search. By default, it operates fully offline and client-side, compiling your documents' headings and body text into a static index at build time. For larger projects, it also integrates natively with Algolia.
 
-Original Spanish translation: /docs/es/(integrations)/search/index.mdx
+
+## Default Search Behavior
+
+By default, search is triggered by:
+* Clicking the **Search** button in the top navigation bar.
+* Pressing `Cmd+K` (macOS) or `Ctrl+K` (Windows / Linux).
+
+The default dialog renders search matches grouped by page, showing highlighted text snippets.
+
+---
+
+## Search in Custom Layouts
+
+If you're building a custom layout using your own React shell, you can render the pre-built search modal component anywhere in your DOM:
+
+```tsx
+import { SearchDialog } from 'boltdocs'
+
+export function MyLayout({ children }) {
+  return (
+    <div>
+      <SearchDialog />
+      <main>{children}</main>
+    </div>
+  )
+}
+```
+
+---
+
+## Excluding Pages from Search
+
+Pages with `sidebarHidden: true` are still indexed for search by default. To exclude a page from the search index entirely, set `hidden: true` in its frontmatter:
+
+```md
+---
+title: Internal Notes
+hidden: true
+---
+```
+
+<Callout variant="tip">
+  Use `sidebarHidden: true` to hide a page from navigation while keeping it in search. Use `hidden: true` to exclude from both the sidebar and the search index.
+</Callout>
+
+---
+
+## Search Integrations
+
+Dive deeper into setup or customize the UI by reading the following guides:
+
+<Cards cols={2}>
+  <Card title="Custom FlexSearch UI" href="/docs/integrations/search/flexsearch" icon="⚙️">
+    Build a fully custom search bar interface and query the offline index programmatically using the useSearch hook.
+  </Card>
+  <Card title="Algolia DocSearch" href="/docs/integrations/search/algolia" icon="🔍">
+    Connect to Algolia cloud search for advanced analytics, synonym matching, and faster indexing on large sites.
+  </Card>
+</Cards>

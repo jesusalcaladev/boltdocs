@@ -24,34 +24,6 @@ import { File, Image, Clock } from 'lucide-react'
   only loads when there's actually a diagram on the page.
 </Callout>
 
----
-
-## Route-Level Code Splitting
-
-Every MDX page used to be eagerly loaded into the main bundle. That meant touching one page recompiled everything. In a big project, that's painful.
-
-### Dev startup is now ~45% faster
-
-With 2.8.0, MDX modules load on demand via `React.lazy`. The numbers speak for themselves:
-
-- **Dev server cold start**: from 3.4s down to ~1.8s on a 68-page site
-- **HMR**: only recompiles the page you're actually editing
-- **Production build**: each page gets its own chunk
-
-```tsx showLineNumbers
-// Before: eager — everything in memory
-const modules = import.meta.glob('/docs/**/*.mdx', { eager: true })
-
-// After: lazy + smart prefetch
-const modules = import.meta.glob('/docs/**/*.mdx')
-```
-
-### Background prefetch
-
-After the first render, `requestIdleCallback` preloads MDX chunks in batches of 6. By the time a user clicks a link, the chunk is already cached. Navigation feels instant.
-
----
-
 ## `boltdocs doctor --budget`
 
 The `doctor` command now has a `--budget` flag. It checks your build against configurable thresholds and yells at you if something is off:
@@ -109,7 +81,7 @@ Every violation is a `DoctorIssue` with configurable severity. Set `failOnError:
 
 The output directory is no longer a dumping ground:
 
-```
+```text
 .boltdocs/
 ├── build/        ← SSG build cache
 ├── cache/        ← Processing caches (routes, etc.)
@@ -160,7 +132,7 @@ graph TD
 
 The SSG build output went from this noisy mess:
 
-```
+```text
 ✓ built in 3.2s
 ✓ built in 3.5s
 📄 /docs/...
@@ -171,7 +143,7 @@ The SSG build output went from this noisy mess:
 
 To this:
 
-```
+```text
 ✦ Client build complete
 ✦ Server build complete
 ✦ Rendering complete

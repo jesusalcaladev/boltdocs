@@ -19,31 +19,6 @@ tab: "3.0.0"
   A Zig-compiled native parser that's 5-6x faster than the old JS parser. Vercel Analytics and Speed Insights with zero config. Giscus comments that just work and dozens of fixes and improvements I've been sitting on for months.
 </Callout>
 
----
-
-## Native Parser — 5-6x Faster Builds
-
-This is the big one. I rewrote the markdown parser in Zig and compiled it to a native binary.
-
-The old JS parser crawled your docs directory, extracted frontmatter, parsed headings, and collected plain text for search — but it did all of that in JavaScript. The new `@bdocs/parser` does the same thing, but it's a compiled binary that runs 5-6x faster.
-
-Some numbers from my benchmarks:
-
-| Files | JS Parser | Native Parser | Speedup |
-| ------- | ----------- | --------------- | --------- |
-| 100 | 574ms | 98ms | **5.9x** |
-| 500 | 1,398ms | 278ms | **5.0x** |
-| 1,000 | 2,447ms | 463ms | **5.3x** |
-| 2,000 | 4,835ms | 828ms | **5.8x** |
-
-The binary is compiled for 5 platforms — Linux x64/ARM64, macOS x64/ARM64, and Windows x64. When you install `boltdocs`, the postinstall script automatically downloads the right binary from GitHub Releases. If that fails (corporate firewall, no internet, whatever), it falls back to a WASM build that works everywhere.
-
-Set `FORCE_WASM=true` if you want to skip the native binary entirely. The WASM version is still 5x faster than the old JS parser.
-
-Check the [`@bdocs/parser` package](https://www.npmjs.com/package/@bdocs/parser) for details.
-
----
-
 ## Breaking Change: Integrations Config
 
 The `integrations` config has been reorganized into logical sections. This is a breaking change — the old flat structure no longer works.

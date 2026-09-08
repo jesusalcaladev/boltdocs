@@ -13,47 +13,6 @@ Boltdocs es **100% Agnóstico a Frameworks de CSS** por diseño. El núcleo sopo
 - **Tokens de Tema Nativos**: Variables `:root` y tokens de tema oscuro `[data-theme='dark']` / `.dark` incluidos en `base-theme.css`.
 - **Extremadamente Rápido**: Potenciado por la empaquetación nativa de CSS de Vite y PostCSS.
 
----
-
-## Uso Básico
-
-Importa tu archivo CSS en tu layout personalizado (`docs/layout.tsx`) o componentes:
-
-```tsx title="docs/layout.tsx"
-import './style.css'
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return <div className="custom-container">{children}</div>
-}
-```
-
-### Ejemplo de CSS Modules
-
-```css title="button.module.css"
-.primaryButton {
-  background-color: var(--bdocs-primary);
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.primaryButton:hover {
-  background-color: var(--bdocs-primary-hover);
-}
-```
-
-```tsx title="CustomButton.tsx"
-import styles from './button.module.css'
-
-export function CustomButton({ children }: { children: React.ReactNode }) {
-  return <button className={styles.primaryButton}>{children}</button>
-}
-```
-
----
 
 ## Variables CSS Base
 

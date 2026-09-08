@@ -22,6 +22,7 @@ Boltdocs is a **React/Vite documentation framework** powered by the Sätteri Rus
 - **Plugin context APIs**: Caches, diagnostics, paths, virtual modules, middleware, HMR, and server APIs
 - **`@bdocs/plugin-llms-text`**: Automatic `llms.txt` file generation for LLM optimization (llmstxt.org)
 - **CSS framework agnostic**: Tailwind CSS v4, SASS/SCSS, UnoCSS, or vanilla CSS — all supported via plugins
+- **Style-neutral primitives**: Layout/UI primitives ship structure + behavior + `data-*` state attributes; all visuals are decided by the theme via CSS
 
 ## When to Apply
 
@@ -33,6 +34,7 @@ Use these guidelines when:
 - Writing MDX page content using built-in components like `<Callout>`, `<Card>`, or Mermaid diagrams
 - Overriding HTML tags or registering global React components in `mdx-components.tsx`
 - Styling the documentation theme via CSS variables, Tailwind CSS v4, SASS, or UnoCSS
+- Theming or replacing layout primitives (`Sidebar`, `OnThisPage`, `Navbar`) — style `data-*` state attributes, never bake visuals into a primitive
 - Setting up collections (`[blog]`, `[changelog]`) with custom post/list/layout components
 - Configuring i18n, versioning, SEO, analytics, or security features
 - Using the CLI commands (dev, build, preview, audit, doctor, generate-changelog)
@@ -66,6 +68,7 @@ Read the following documents in the `references/` directory for detailed specifi
    - Custom components via `mdx-components.tsx`
    - Plugin client UI slots (`'header:right'`, `'search:dialog'`, etc.)
    - Plugin-provided MDX components and providers
+   - **Layout primitives & state contract** — style-neutral `Sidebar`/`OnThisPage`/`Navbar`/`Tabs` with `data-*` attributes (`data-active`, `data-open`, `data-selected`, `data-level`, …)
 
 5. **[Plugin API](references/plugin-api.md)**
    - `definePlugin` and `createPlugin` API reference
@@ -87,6 +90,7 @@ Read the following documents in the `references/` directory for detailed specifi
    - Vanilla CSS and CSS Modules (zero-config core support)
    - Theme CSS variables and semantic color mappings
    - Dark mode overrides and `@custom-variant` syntax
+   - **Primitive state styling** — theme `data-*` state attributes (`data-active`, `data-selected`, `data-open`, …) via CSS or Tailwind variants
    - Biome compatibility
 
 8. **[CLI Reference](references/cli.md)**

@@ -1,27 +1,11 @@
 ---
 title: Páginas Externas
-sidebarPosition: 5
+sidebarPosition: 3
 description: Registra páginas React que no son MDX en el router de Boltdocs usando la convención pages-external.
 ---
 
 Boltdocs te permite registrar páginas React personalizadas que viven fuera del pipeline MDX. Esto es útil para landing pages, layouts completamente personalizados o páginas que necesitan interactividad del lado del cliente más allá de lo que Markdown ofrece.
 
----
-
-## Cómo Funciona
-
-Crea una carpeta `pages-external/` en tu directorio de docs. Boltdocs importa automáticamente cualquier archivo `index.tsx` que encuentre allí y fusiona sus rutas en el router.
-
-```
-docs/
-├── pages-external/
-│   └── index.tsx        → Rutas React personalizadas
-├── guides/
-│   └── index.mdx        → Rutas MDX
-└── index.md             → Ruta MDX
-```
-
----
 
 ## Definiendo Páginas
 
@@ -142,7 +126,7 @@ Cada URL de locale se sirve con el archivo localizado cuando existe y, si no, co
 
 Los directorios que no coinciden con un locale configurado siguen siendo segmentos de URL literales (`guides/start.mdx` → `/guides/start`).
 
-Consulta [Funciones Experimentales](/docs/es/guides/advanced/experimental) para la API opt-in completa.
+Consulta [File-routing estático](/docs/guides/advanced/file-routing) para la API opt-in completa.
 
 ---
 

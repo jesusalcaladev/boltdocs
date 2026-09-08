@@ -1,7 +1,6 @@
 {
   "title": "Personalización",
-  "icon": "Paintbrush",
   "order": 3,
-  "collapsible": true,
+  "collapsible": false,
   "collapsed": false
 }

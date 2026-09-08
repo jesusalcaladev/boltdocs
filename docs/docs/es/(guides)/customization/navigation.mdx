@@ -1,7 +1,7 @@
 ---
 title: Navegación
-sidebarPosition: 3
-description: El modelo completo de navegación — navbar, tabs, sidebar, breadcrumbs, on-this-page y page nav — y cómo configurar cada capa para que los lectores nunca se pierdan.
+sidebarPosition: 2
+description: El modelo completo de navegación — navbar, tabs, sidebar, breadcrumbs, on-this-page, page nav y el resolvedor de enlaces — incluyendo el protocolo site: y cómo se infieren los prefijos de locale y versión.
 ---
 
 Boltdocs trae un sistema de navegación de cuatro capas. Entender las capas — y qué clave de configuración controla cada una — es la diferencia entre un sitio que los lectores recorren con fluidez y uno en el que se pierden.
@@ -69,7 +69,7 @@ export default defineConfig({
 Opciones de display relacionadas: `theme.githubRepo` añade automáticamente el icono de GitHub, y `theme.socialLinks` añade iconos de Discord/X/Bluesky.
 
 <Callout variant="note" title="¿Construyendo un navbar personalizado?">
-El navbar por defecto es un componente — consulta el [componente Navbar](/docs/es/components/layout/navbar) para componer el tuyo con búsqueda, toggle de tema y drawer móvil.
+El navbar por defecto es un componente — consulta el [componente Navbar](/docs/components/layout/navbar) para componer el tuyo con búsqueda, toggle de tema y drawer móvil.
 </Callout>
 
 ---
@@ -105,7 +105,7 @@ export default defineConfig({
 | **`text`** | `string \| Record<string, string>` | Etiqueta mostrada en la tira de tabs. |
 | **`icon`** | `string` | Nombre de icono Lucide o SVG en bruto opcional. |
 
-Los paréntesis se eliminan de las URLs: `docs/(guides)/getting-started` se sirve en `/docs/guides/getting-started`. Los tabs funcionan con i18n anidando carpetas de locale dentro de ellos. Consulta [File-System Routing](/docs/es/guides/getting-started/routing) para las convenciones completas de carpetas.
+Los paréntesis se eliminan de las URLs: `docs/(guides)/getting-started` se sirve en `/docs/guides/getting-started`. Los tabs funcionan con i18n anidando carpetas de locale dentro de ellos. Consulta [File-System Routing](/docs/guides/getting-started/routing) para las convenciones completas de carpetas.
 
 ---
 
@@ -164,7 +164,7 @@ Definir `theme.sidebar` para un prefijo desactiva el auto-descubrimiento para es
 | **`badge`** | Renderiza un badge pequeño junto al item (p. ej. `'New'`, `'Beta'`). |
 | **`icon`** | Icono Lucide o SVG en bruto junto al item. |
 
-Consulta la [guía de Routing](/docs/es/guides/getting-started/routing) para las reglas de orden y la [guía de Metadatos](/docs/es/guides/content/metadata) para `meta.json` en profundidad.
+Consulta la [guía de Routing](/docs/guides/getting-started/routing) para las reglas de orden y la [guía de Metadatos](/docs/guides/content/metadata) para `meta.json` en profundidad.
 
 ---
 
@@ -172,9 +172,9 @@ Consulta la [guía de Routing](/docs/es/guides/getting-started/routing) para las
 
 Estos tres son **automáticos** — el layout por defecto los deriva de los metadatos de ruta. No los configuras, pero debes saber qué hacen y cómo sustituirlos:
 
-- **Breadcrumbs** — una ruta de migas sobre el título (p. ej. `Guías → Personalización → Navegación`), construida desde la cadena de grupos de la ruta y localizada automáticamente. Referencia: [Breadcrumbs](/docs/es/components/layout/breadcrumbs).
-- **OnThisPage** — el TOC del rail derecho que lista los headings `h2`–`h4` de la página. Referencia: [OnThisPage](/docs/es/components/layout/on-this-page).
-- **PageNav** — enlaces "Anterior / Siguiente" al final, siguiendo el orden del sidebar. Referencia: [PageNav](/docs/es/components/layout/page-nav).
+- **Breadcrumbs** — una ruta de migas sobre el título (p. ej. `Guías → Navegación`), construida desde la cadena de grupos de la ruta y localizada automáticamente. Referencia: [Breadcrumbs](/docs/components/layout/breadcrumbs).
+- **OnThisPage** — el TOC del rail derecho que lista los headings `h2`–`h4` de la página. Referencia: [OnThisPage](/docs/components/layout/on-this-page).
+- **PageNav** — enlaces "Anterior / Siguiente" al final, siguiendo el orden del sidebar. Referencia: [PageNav](/docs/components/layout/page-nav).
 
 ### Usarlos en un layout personalizado
 
@@ -197,50 +197,154 @@ export function MyLayout() {
 
 ---
 
-## Links y hrefs
+## Links y hrefs — cómo funciona la resolución
 
-Todos los enlaces de Boltdocs — entradas del navbar, entradas del sidebar, cards y enlaces MDX — pasan por el mismo resolvedor de rutas (`useLocalizedTo`). Añade automáticamente el locale y la versión que el visitante está leyendo, así que escribes **hrefs canónicos** y el framework los localiza. El resolvedor nunca reescribe URLs externas.
+Todos los enlaces de Boltdocs — entradas del navbar, entradas del sidebar, cards y enlaces MDX — pasan por el mismo resolvedor de rutas (`useLocalizedTo`). Calcula la URL final a partir de una **ruta canónica sin localizar** más el contexto del visitante (locale, versión y base de docs). Escribes hrefs canónicos; el framework los localiza. El resolvedor nunca reescribe URLs externas.
+
+### Orden de resolución
+
+Cuando el resolvedor ve un href, aplica estas reglas en orden:
+
+1. **Las URLs externas pasan intactas** — `https://…`, `http://…`, relativas de protocolo `//…`, otros esquemas URI (`mailto:`, `tel:`, `data:`), anclas internas (`#section`) y strings solo de query (`?q=term`).
+2. **El prefijo `site:` fuerza la resolución contra la raíz del sitio** — el destino se resuelve contra la raíz del sitio, fuera de la base de docs.
+3. **Las rutas conocidas ganan** — si la ruta coincide con una ruta del índice de rutas (incluidas las páginas de `pages-external/` y las rutas de colección), se respeta su propio tipo: las páginas externas se quedan en la raíz, las colecciones se quedan bajo la base.
+4. **Las rutas desconocidas con `/` se tratan como rutas de docs** — se aplica la base configurada y se añaden los prefijos de locale/versión activos.
+
+### Tabla de decisión de hrefs
 
 | Href | Tipo | Resolución |
 | :--- | :--- | :--- |
-| `/docs/guides/getting-started` | **Página de docs** | Localizada con el locale/versión activos. La forma canónica es la ruta sin localizar. |
-| `/showcase`, `/pricing` | **Página externa** | Ruta servida por una página de `pages-external/`. Las rutas externas conocidas se mantienen tal cual. |
-| `/` | **Raíz del sitio** | Resuelve a la raíz del sitio (localizada). |
+| `/docs/guides/getting-started` | **Página de docs** | Ruta canónica de docs. Localizada con el locale/versión activos. |
+| `/guides/getting-started` | **Página de docs (sin base)** | La base se antepone automáticamente → `/docs/guides/getting-started`. |
+| `/roadmap`, `/showcase` | **Página externa** | Ruta servida por una página de `pages-external/`. Las rutas externas conocidas se mantienen tal cual. |
+| `site:/` | **Raíz del sitio** | Resuelve a la raíz del sitio (localizada: `/` en el locale por defecto, `/es` en español). |
+| `site:/roadmap` | **Externa con prefijo site** | Fuerza la resolución contra la raíz del sitio → `/roadmap`, incluso si la ruta no está en el índice. |
+| `site:/blog/post` | **Colección con prefijo site** | Una colección conocida recibe la base → `/docs/blog/post`. |
 | `https://example.com`, `//cdn...` | **URL externa** | Nunca se reescribe — se pasa tal cual. |
 | `#section`, `?q=term` | **Ancla / query** | Se pasa tal cual, unida a la URL de la página actual. |
-| `site:/path` | **Prefijo site** | El prefijo opcional `site:` fuerza la resolución contra la raíz del sitio, fuera del base de docs. |
 
-### Hrefs en `boltdocs.config.ts`
+### El protocolo `site:`
 
-El navbar y el sidebar aceptan rutas canónicas — los mismos valores que escribirías en Markdown:
+`site:` es un prefijo tipo URI que le dice al resolvedor que **deje de tratar el destino como una ruta de docs**. Es la vía de escape para enlaces que deben resolverse contra la raíz del sitio en lugar de la base de docs. En prosa a menudo lo verás escrito como `site://` — la forma soportada es el prefijo `site:` seguido de la ruta absoluta (`site:/ruta`).
+
+¿Cuándo se necesita?
+
+- **Enlazar a páginas de nivel superior del sitio** — la home, pricing, roadmap o una landing que vive fuera de `docs/`. Si la ruta no está en el índice del resolvedor, un `/roadmap` simple se trataría como ruta de docs y se convertiría en `/docs/roadmap`. `site:/roadmap` siempre resuelve a `/roadmap`.
+- **Enlazar desde superficies que se renderizan pronto** — banners, heroes y páginas externas que se renderizan antes de la hidratación pueden tener un índice de rutas vacío. `site:` mantiene esos enlaces correctos.
+- **Enlazar a entradas de colección desde cualquier lugar** — `site:/blog/mi-post` resuelve a `/docs/blog/mi-post` (la base se aplica a colecciones conocidas), así los enlaces de colección funcionan aunque el índice no esté cargado.
+
+```mdx
+- [Home](site:/)
+- [Roadmap](site:/roadmap)
+- [Último release](site:/blog/boltdocs-3.3.0)
+```
 
 ```ts title="boltdocs.config.ts"
 export default defineConfig({
   theme: {
     navbar: [
+      { label: 'Home', href: 'site:/' },
       { label: 'Docs', href: '/docs/guides' },
       { label: 'Showcase', href: '/showcase' },
-      // Las URLs externas pasan por el resolvedor sin tocarlas — no hace falta flag especial.
-      { label: 'GitHub', href: 'https://github.com/my-org/my-project' },
     ],
   },
 })
 ```
 
-### Hrefs en MDX
+<Callout variant="note" title="Las rutas externas conocidas no necesitan site:">
+Si una página está registrada en el índice de rutas (por ejemplo una página de `pages-external/` como `/showcase`), un href `/showcase` simple ya resuelve correctamente — `site:` es para cuando quieres ser explícito o cuando la ruta puede no ser conocida.
+</Callout>
 
-Escribe las mismas rutas canónicas en Markdown — los prefijos de locale y versión se añaden automáticamente al renderizar:
+---
 
-```mdx
-- [Guías](/docs/guides)
-- [Showcase](/showcase)
-- [Docs externos](https://example.com)
-- [Saltar a una sección](#links-y-hrefs)
+## Cómo funciona la inferencia de locale
+
+El i18n se basa en **convenciones de carpetas**, y el resolvedor refleja esa convención en las URLs:
+
+- **Las rutas canónicas nunca contienen un locale.** Escribes `/docs/guides/getting-started`, no `/es/docs/guides/getting-started`.
+- El **locale activo** viene del contexto del visitante (la URL en la que está más su preferencia guardada).
+- Cuando el locale activo **no es el predeterminado**, el resolvedor lo antepone: `/docs/guides/getting-started` → `/docs/es/guides/getting-started`.
+- El **locale predeterminado nunca recibe prefijo** — vive en la raíz de la base.
+- El parsing también es consciente del locale: un primer segmento que coincida con un locale configurado (p. ej. `/docs/es/...`) se reconoce y se elimina antes de clasificar, así los enlaces mixtos también resuelven.
+
+```text
+Locale activo: es (predeterminado: en)
+  /docs/guides/getting-started  →  /docs/es/guides/getting-started
+  site:/                        →  /es
+  /docs/es/guides/getting-started  →  /docs/es/guides/getting-started (se mantiene)
+
+Locale activo: en (predeterminado: en)
+  /docs/guides/getting-started  →  /docs/guides/getting-started (sin prefijo)
 ```
 
-### Hrefs en componentes personalizados
+Consulta [Internacionalización](/docs/integrations/globalization/i18n) para el layout de carpetas y el comportamiento de respaldo.
 
-Usa la primitiva `Link` de `boltdocs/primitives` para navegación localizada, o llama a `useLocalizedTo()` directamente cuando necesites el string resuelto (p. ej. para calcular un estado activo):
+---
+
+## Cómo funciona la inferencia de versión
+
+El versionado sigue el mismo patrón que el locale:
+
+- **Las rutas canónicas no contienen segmento de versión.** Escribes `/docs/guides/getting-started`.
+- La **versión activa** viene del contexto del visitante. Cuando no es la versión predeterminada, el resolvedor antepone el/los segmento(s) de versión construidos desde `versions.prefix` + la ruta de la versión.
+- **Una versión explícita en el destino gana** sobre la preferencia activa: `/docs/v2/guides/getting-started` resuelve exactamente a eso, aunque el visitante esté leyendo `v1`.
+- Si el **versionado está desactivado** (o la versión es desconocida), nunca se añade un segmento de versión — una preferencia obsoleta no puede corromper las URLs.
+
+```text
+Config: versions: { prefix: 'v', defaultVersion: 'v1', versions: [{ path: 'v1' }, { path: 'v2' }] }
+
+Versión activa: v1 (predeterminada)
+  /docs/guides/getting-started  →  /docs/guides/getting-started (sin prefijo)
+
+Versión activa: v2, locale: es
+  /docs/guides/getting-started  →  /docs/v2/es/guides/getting-started
+```
+
+Consulta [Versionado](/docs/integrations/globalization/versioning) para el layout de carpetas y la estructura de URLs.
+
+---
+
+## Buenas prácticas para navegar desde MDX
+
+**1. Escribe siempre hrefs canónicos.** Hardcodear prefijos de locale o versión rompe la localización — el resolvedor espera rutas canónicas sin localizar y añade los prefijos él mismo.
+
+```mdx
+<!-- ✅ Canónico — se localiza automáticamente -->
+- [Primeros pasos](/docs/guides/getting-started)
+
+<!-- ❌ Nunca escribas prefijos de locale/versión a mano -->
+- [Primeros pasos](/es/docs/guides/getting-started)
+- [Primeros pasos](/v2/docs/guides/getting-started)
+```
+
+**2. Usa rutas absolutas canónicas para enlaces entre páginas.** Son inequívocas sin importar dónde viva la página actual:
+
+```mdx
+- [Routing](/docs/guides/getting-started/routing)
+- [Instalación](/docs/guides/getting-started/installation)
+```
+
+**3. Usa enlaces relativos para saltos dentro de la misma carpeta** y `../` para carpetas hermanas:
+
+```mdx
+[Siguiente: metadatos](../content/metadata)
+```
+
+**4. Usa `site:` para todo lo que deba vivir en la raíz del sitio** — home, páginas de marketing o entradas de colección referenciadas desde fuera del tab de docs:
+
+```mdx
+[Home](site:/)
+[Blog](/docs/blog)
+[Showcase](/showcase)
+```
+
+**5. Mantén las anclas y queries locales.** `#section` y `?q=term` se conservan y se unen a la página actual:
+
+```mdx
+[Saltar a la sección site:](#el-protocolo-site)
+```
+
+**6. Prefiere `<Link>` sobre `<a>` en componentes.** La primitiva `Link` de `boltdocs/primitives` pasa cada href por el resolvedor y mantiene la navegación client-side rápida. Llama a `useLocalizedTo()` directamente solo cuando necesites el string resuelto (estados activos, analytics, menús):
 
 ```tsx
 import { Link } from 'boltdocs/primitives'
@@ -269,7 +373,9 @@ Hardcodear `/es/docs/guides` o `/v2/docs/guides` rompe la localización — el r
 
 ## Dónde seguir
 
-- [File-System Routing](/docs/es/guides/getting-started/routing) — convenciones de carpetas, orden y tabs en profundidad.
-- [Metadatos](/docs/es/guides/content/metadata) — `meta.json` y `_meta.json` para grupos del sidebar.
-- [Layout personalizado](/docs/es/guides/customization/layout) — compón el shell completo de la página tú mismo.
-- [Referencia de DocsLayout](/docs/es/components/layout/docs-layout) — cada región que el layout por defecto conecta.
+- [File-System Routing](/docs/guides/getting-started/routing) — convenciones de carpetas, orden y tabs en profundidad.
+- [Metadatos](/docs/guides/content/metadata) — `meta.json` y `_meta.json` para grupos del sidebar.
+- [Internacionalización](/docs/integrations/globalization/i18n) — carpetas de locale y rutas de respaldo.
+- [Versionado](/docs/integrations/globalization/versioning) — prefijos de versión y estructura de URLs.
+- [Layout personalizado](/docs/guides/customization/layout) — compón el shell completo de la página tú mismo.
+- [Referencia de DocsLayout](/docs/components/layout/docs-layout) — cada región que el layout por defecto conecta.

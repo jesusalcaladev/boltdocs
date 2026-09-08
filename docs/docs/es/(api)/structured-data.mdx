@@ -1,6 +1,6 @@
 ---
 title: Structured Data
-sidebarPosition: 8
+sidebarPosition: 10
 description: Helpers tipados de JSON-LD y componente StructuredData para graphs de website, artículos y breadcrumbs.
 ---
 
@@ -94,15 +94,6 @@ const breadcrumbs = createStructuredData({
 Agrega un graph directamente en el frontmatter de una página:
 
 ```mdx
----
-title: Primeros pasos
-seo:
-  structuredData:
-    '@context': https://schema.org
-    '@type': TechArticle
-    headline: Primeros pasos
-    url: https://example.com/docs/start
----
 ```
 
 El `seo.structuredData` global y el de la página se emiten juntos.

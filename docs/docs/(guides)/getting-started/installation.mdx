@@ -1,9 +1,100 @@
 ---
-title: (Placeholder) English source
+title: Installation
 sidebarPosition: 1
-description: Placeholder English source created to resolve orphaned translation. Please replace with full content.
+description: Install Boltdocs and run your first documentation site in under two minutes.
 ---
 
-This is a placeholder English page created automatically because a Spanish translation exists at the same path. Replace this content with the correct English source.
+Boltdocs requires **Node.js 18+** and a package manager. We recommend `pnpm` for its speed and disk efficiency, but `npm` and `yarn` work perfectly too.
 
-Original Spanish translation: /docs/es/(guides)/getting-started/installation.mdx
+If you're starting from scratch, use `create-boltdocs` to generate a complete project with all the boilerplate ready:
+```sh
+pnpm create boltdocs@latest my-docs
+```
+Then jump straight to [running the dev server](#run-the-dev-server).
+
+<Callout variant="note" title="Build scripts on pnpm 10+">
+  pnpm 10+ blocks lifecycle scripts (preinstall/postinstall) of dependencies by default. The `create-boltdocs` template already includes the required `pnpm.onlyBuiltDependencies` configuration, so `pnpm install` works out of the box. If you're adding Boltdocs to an existing project manually, see the [troubleshooting guide](/docs/guides/operations/troubleshooting#err_pnpm_ignored_builds) for the required configuration.
+</Callout>
+
+
+## Create the Docs Directory
+
+Boltdocs expects your content to live in a `docs/` folder at the root of your project. Create it and add your first page:
+
+```sh
+mkdir docs
+echo "# Hello, Boltdocs!" > docs/index.md
+```
+
+---
+
+## Add a Configuration File
+
+Create `boltdocs.config.ts` at the root of your project:
+
+```ts title="boltdocs.config.ts"
+import { defineConfig } from 'boltdocs'
+
+export default defineConfig({
+  siteUrl: 'https://my-project.com',
+  theme: {
+    title: 'My Project Docs',
+    githubRepo: 'my-org/my-project',
+  },
+})
+```
+
+This file is the single source of truth for your documentation site. You don't need a `vite.config.ts` — Boltdocs generates the full Vite configuration internally.
+
+---
+
+## Add Scripts to `package.json`
+
+```json title="package.json"
+{
+  "scripts": {
+    "docs:dev": "boltdocs",
+    "docs:build": "boltdocs build",
+    "docs:preview": "boltdocs preview"
+  }
+}
+```
+
+---
+
+## Run the Dev Server
+
+```sh
+pnpm docs:dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) and you'll see your documentation site running locally with hot reload.
+
+<Callout variant="note">
+  The first start is a bit slower while Boltdocs builds its internal route map and warms up the file cache. Subsequent restarts are nearly instant.
+</Callout>
+
+---
+
+## Build for Production
+
+```sh
+pnpm docs:build
+```
+
+The output is generated in `dist/`. Every page is pre-rendered as static HTML, with a client bundle for navigation and search.
+
+---
+
+import { Route, Settings } from 'lucide-react'
+
+## What's Next?
+
+<Cards cols={2}>
+  <Card title="Configuration" href="/docs/guides/getting-started/configuration" icon={<Settings />}>
+    Learn how to customize the title, logo, navigation, and every other option in your configuration file.
+  </Card>
+  <Card title="File-System Routing" href="/docs/guides/getting-started/routing" icon={<Route />}>
+    Learn how Boltdocs turns your `docs/` folder into a complete navigation structure.
+  </Card>
+</Cards>

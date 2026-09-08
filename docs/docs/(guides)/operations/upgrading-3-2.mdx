@@ -1,6 +1,6 @@
 ---
 title: "3.2.0 Upgrade"
-sidebarPosition: 4
+sidebarPosition: 2
 description: "The complete audit of peer dependency changes, moved dependencies, and runtime behavior in boltdocs 3.2.0. Includes migration recipes, CI / lockfile-strict handling, and FAQ."
 ---
 
@@ -12,23 +12,6 @@ description: "The complete audit of peer dependency changes, moved dependencies,
   **Heads-up for CI-strict setups.** Teams that hard-fail builds on peer warnings (Husky, Renovate, monorepos with `--strict-peer-dependencies`) will see a red CI on first install. Section [3 below](#3-ci--lockfile-strict-setups) has the one-line `.npmrc` fix.
 </Callout>
 
----
-
-## 1. The audit at a glance
-
-| Concern | What changed | Who is affected | Action required |
-| --------- | -------------- | ----------------- | ----------------- |
-| `react-aria-components` | Promoted from `dependencies` to a **required** `peerDependencies` | Every Boltdocs consumer | Add `react-aria-components: ^1.16.0` to your `dependencies` (or accept the peer warning if your framework wrapper provides it) |
-| `sharp` | Removed from core; now `peerDependenciesMeta.optional` of `@bdocs/plugin-image-optimizer` | Only if you don't use `@bdocs/plugin-image-optimizer`: pure win (you save ~30 MB unpacked) | If you previously relied on `sharp` being a transitive of `boltdocs`, install `sharp` explicitly or add the optimizer plugin |
-| `svgo` | Same as `sharp` (moved out of core) | Only if you don't use the image optimizer: pure win (~5 MB unpacked) | Same as `sharp` |
-| Lang icons in MDX code blocks | `lang-icons.tsx` removed entirely from the core bundle | End users (no action) | None — code block titles no longer render any language icon; pages ship zero bytes for the icon set regardless of whether they contain code blocks |
-| Social/nav icons | New `icons-prod.tsx` entry; `Github`, `Discord`, `XSocial`, `Bluesky` extracted from the language set | Plugin authors who import from `'../icons-dev'` | Update import paths to `'../icons-prod'` (only internal — not a public API change) |
-| Client subpath exports | `'boltdocs/primitives'`, `'boltdocs/mdx'`, `'boltdocs/server'` already split (3.1.0) — now in `exports` map | End users who import from these subpaths | None — backward compatible |
-| `optionalDependencies` field | Removed entirely from `package.json` | CI pipelines that scan for `optionalDependencies` | None — the field just isn't there anymore |
-
-A new test pins this contract: `packages/core/tests/package-shape.test.ts`. Any future PR that accidentally re-bloats the surface area breaks CI.
-
----
 
 ## 2. Migration recipes
 
@@ -213,6 +196,6 @@ The lockfile reverts without manual edits because 3.1.x and 3.2.0 share the same
 ## See also
 
 - [Boltdocs 3.2.0 release blog post](/docs/blog/boltdocs-3.2.0) — the **why** behind these decisions
-- [Installation guide](/docs/getting-started) — fresh-install flow
+- [Installation guide](/docs/guides/getting-started/installation) — fresh-install flow
 - [Plugin authoring guide](/docs/plugins) — for plugin authors affected by the icons split
-- [Boltdocs config reference](/docs/configuration) — full config schema
+- [Boltdocs config reference](/docs/guides/getting-started/configuration) — full config schema

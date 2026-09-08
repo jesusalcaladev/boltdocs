@@ -1,6 +1,6 @@
 {
   "title": "Referencia de API",
-  "icon": "Code2",
-  "collapsible": true,
+  "order": 6,
+  "collapsible": false,
   "collapsed": false
 }

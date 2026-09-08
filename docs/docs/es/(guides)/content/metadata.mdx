@@ -1,30 +1,11 @@
 ---
 title: Meta Loaders
-sidebarPosition: 8
+sidebarPosition: 3
 description: Controla los grupos del sidebar con meta.json o _meta.json — metadatos por directorio para títulos, iconos, orden y estado plegable.
 ---
 
 Boltdocs carga automáticamente archivos `meta.json` o `_meta.json` de tus directorios de docs para controlar los metadatos de los grupos del sidebar sin editar cada página individual.
 
----
-
-## Cómo Funciona
-
-Coloca un archivo `meta.json` en cualquier carpeta dentro de `docs/`. Boltdocs escanea estos archivos en tiempo de compilación y aplica los metadatos al grupo del sidebar de ese directorio.
-
-```
-docs/
-├── guides/
-│   ├── meta.json          ← se aplica a todas las páginas de guides/
-│   ├── index.md
-│   ├── installation.md
-│   └── configuration.md
-└── api/
-    ├── _meta.json         ← también funciona con prefijo de guión bajo
-    └── reference.md
-```
-
----
 
 ## Referencia de meta.json
 

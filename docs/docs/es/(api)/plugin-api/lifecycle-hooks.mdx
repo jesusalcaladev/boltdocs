@@ -12,40 +12,6 @@ inyectan comportamiento en el pipeline de Boltdocs. Cada hook recibe
 un `PluginContext` como primer argumento y puede ser síncrono o
 asíncrono.
 
----
-
-## Hooks del ciclo de vida de build
-
-| Hook | Firma | Cuándo se ejecuta |
-| :--- | :--- | :--- |
-| `build:before` | `(ctx: PluginContext) => void \| Promise<void>` | Justo antes de que comience la generación de sitio estático (SSG) |
-| `build:after` | `(ctx: PluginContext) => void \| Promise<void>` | Inmediatamente después de que un build de producción sea exitoso |
-| `build:end` | `(ctx: PluginContext) => void \| Promise<void>` | Al completar el proceso — se ejecuta tanto en éxito como en error |
-| `build:generate` | `(ctx: PluginContext, { routes, outDir, siteUrl? }) => void \| Promise<void>` | Hook post-SSG para generar assets estáticos (sitemaps, RSS, robots.txt, imágenes OG) |
-
-```ts
-import { definePlugin } from 'boltdocs'
-
-export default definePlugin({
-  name: 'mi-plugin-build',
-  hooks: {
-    'build:before'(ctx) {
-      ctx.logger.info('Iniciando build...')
-    },
-    'build:generate'(ctx, { routes, outDir }) {
-      ctx.logger.info(`Generando assets estáticos para ${routes.length} rutas en ${outDir}`)
-    },
-    'build:after'(ctx) {
-      ctx.logger.info(`Build completo! ${ctx.routes.length} rutas generadas.`)
-    },
-    'build:end'(ctx) {
-      ctx.logger.info('Proceso finalizado — limpiando...')
-    },
-  },
-})
-```
-
----
 
 ## Hooks del Pipeline de Frontmatter & Rutas
 
